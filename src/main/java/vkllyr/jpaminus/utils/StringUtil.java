@@ -1,4 +1,4 @@
-package vkllyr.jpaminus.common;
+package vkllyr.jpaminus.utils;
 
 public class StringUtil {
 

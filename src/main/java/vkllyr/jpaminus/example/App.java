@@ -9,6 +9,7 @@ import vkllyr.jpaminus.describer.query.desc.SimpleQueryDesc;
 import vkllyr.jpaminus.describer.query.desc.WhereOption;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.Date;
 
 public class App {
@@ -24,6 +25,7 @@ public class App {
             @Override
             public Object intercept(Object o, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
 
+                Parameter[] parameters = method.getParameters();
                 Object result = methodProxy.invokeSuper(o, args);
                 return result;
             }

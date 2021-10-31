@@ -3,7 +3,7 @@ package vkllyr.jpaminus.parser.preParse;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import vkllyr.jpaminus.JPAMinusManager;
-import vkllyr.jpaminus.common.ThreadLocalUtils;
+import vkllyr.jpaminus.utils.ThreadLocalUtils;
 import vkllyr.jpaminus.model.TField;
 import vkllyr.jpaminus.model.TFieldAndArgs;
 

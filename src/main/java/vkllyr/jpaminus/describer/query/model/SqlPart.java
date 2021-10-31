@@ -1,6 +1,6 @@
 package vkllyr.jpaminus.describer.query.model;
 
-import vkllyr.jpaminus.common.ArrayUtils;
+import vkllyr.jpaminus.utils.ArrayUtils;
 
 public class SqlPart {
 

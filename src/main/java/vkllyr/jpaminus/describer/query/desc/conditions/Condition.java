@@ -1,7 +1,7 @@
 package vkllyr.jpaminus.describer.query.desc.conditions;
 
 import vkllyr.jpaminus.describer.query.desc.Param;
-import vkllyr.jpaminus.describer.query.model.CheckCondition;
+import vkllyr.jpaminus.parser.definition.sqlPart.CheckCondition;
 import vkllyr.jpaminus.describer.query.model.SqlPart;
 
 import java.util.function.BiPredicate;
@@ -25,7 +25,7 @@ public class Condition<B, P> {
     public static <B, P> Condition<B, P> between(Function<B, P> field, Param<P> leftParam, Param<P> rightParam, BiPredicate<P, P> checkParam) {
         CheckCondition<P> checkCondition = new CheckCondition<P>(leftParam, rightParam) {
             @Override
-            public boolean check(P[] params) {
+            public boolean check(Object[] params) {
                 return checkParam.test(params[0], params[1]);
             }
         };
@@ -46,8 +46,8 @@ public class Condition<B, P> {
     public static <B, P> Condition<B, P> isNull(Function<B, P> field, Param<P> param, Predicate<P> checkParam) {
         CheckCondition<P> checkCondition = new CheckCondition<P>(param) {
             @Override
-            public boolean check(P[] params) {
-                return checkParam.test(params[0]);
+            public boolean check(Object[] params) {
+                return checkParam.test((P) params[0]);
             }
         };
 
@@ -63,8 +63,8 @@ public class Condition<B, P> {
     public static <B, P> Condition<B, P> equal(Function<B, P> fieldA, Function<B, P> fieldB, Param<P> param, Predicate<P> checkParam) {
         CheckCondition<P> checkCondition = new CheckCondition<P>(param) {
             @Override
-            public boolean check(P[] params) {
-                return checkParam.test(params[0]);
+            public boolean check(Object[] params) {
+                return checkParam.test((P) params[0]);
             }
         };
 
