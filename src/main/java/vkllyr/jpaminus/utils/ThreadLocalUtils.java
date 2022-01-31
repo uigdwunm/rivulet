@@ -1,7 +1,5 @@
 package vkllyr.jpaminus.utils;
 
-import vkllyr.jpaminus.model.TFieldAndArgs;
-
 import java.util.ConcurrentModificationException;
 
 public class ThreadLocalUtils {

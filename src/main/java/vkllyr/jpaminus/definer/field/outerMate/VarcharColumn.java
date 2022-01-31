@@ -13,10 +13,10 @@ public @interface VarcharColumn {
     // 列注释，非必填
     String desc() default Constant.EMPTY_STR;
 
-    // 是否有一个空的默认值(由于java注解值不允许为null，所以对于空的情况要特殊判断)
-    boolean isDefaultEmpty() default false;
+    // 是否需要默认值，默认不需要
+    boolean isDefault() default false;
 
-    // 默认值，非必填
+    // 默认值，非必填，上面isDefault为true时这个值才会解析
     String defaultValue() default Constant.EMPTY_STR;
 
 
@@ -30,14 +30,11 @@ public @interface VarcharColumn {
         public Info(VarcharColumn varchar) {
             super(varchar.name(), varchar.desc());
             this.length = varchar.length();
-            if (varchar.isDefaultEmpty()) {
-                // 如果明确有一个空字符串的默认值，则直接加上
-                defalultValue = Constant.EMPTY_STR;
-            } else if (Constant.EMPTY_STR.equals(varchar.defaultValue())) {
-                // 明确没有空字符串的默认值，还是有空字符串，则认为没有设置过默认值
-                defalultValue = null;
-            } else {
+            if (varchar.isDefault()) {
+                // isDefault为true时才解析默认值
                 defalultValue = varchar.defaultValue();
+            } else {
+                defalultValue = null;
             }
         }
 

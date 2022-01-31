@@ -1,10 +1,10 @@
 package vkllyr.jpaminus.utils;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 public class MStringBuilder {
 
-    private final LinkedList<String> strs = new LinkedList<>();
+    private final ArrayList<String> strs = new ArrayList<>();
 
     private int length;
 
@@ -14,6 +14,24 @@ public class MStringBuilder {
         strs.add(str);
         length += str.length();
         return this;
+    }
+
+    public int size() {
+        return strs.size();
+    }
+
+    public int charSize() {
+        return this.length;
+    }
+
+    public void set(int index, String str) {
+        strs.add(index, str);
+    }
+
+    public void append(String[] strs) {
+        for (String str : strs) {
+            this.append(str);
+        }
     }
 
     @Override

@@ -3,10 +3,9 @@ package vkllyr.jpaminus.example;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
-import vkllyr.jpaminus.describer.query.builder.QueryBuilder;
-import vkllyr.jpaminus.describer.query.builder.SelectBuilder;
-import vkllyr.jpaminus.describer.query.desc.SimpleQueryDesc;
-import vkllyr.jpaminus.describer.query.desc.WhereOption;
+import vkllyr.jpaminus.describer.query.definition.SimpleQueryDesc;
+import vkllyr.jpaminus.describer.query.desc.QueryBuilder;
+import vkllyr.jpaminus.describer.query.desc.SelectBuilder;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
