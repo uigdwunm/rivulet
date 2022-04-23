@@ -1,5 +1,7 @@
 package zly.rivulet.base.definition;
 
+import zly.rivulet.base.mapper.MapDefinition;
+
 /**
  * Description 总的definition标识
  *
@@ -7,4 +9,5 @@ package zly.rivulet.base.definition;
  * Date 2022/2/27 10:49
  **/
 public interface FinalDefinition extends Definition {
+    MapDefinition getMapDefinition();
 }

@@ -2,18 +2,19 @@ package zly.rivulet.base;
 
 import zly.rivulet.base.analyzer.Analyzer;
 import zly.rivulet.base.convertor.ConvertorManager;
-import zly.rivulet.base.definition.Definition;
-import zly.rivulet.base.describer.Desc;
+import zly.rivulet.base.definition.FinalDefinition;
+import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.exception.ParseException;
 import zly.rivulet.base.executor.Executor;
 import zly.rivulet.base.preparser.PreParser;
-import zly.rivulet.base.preparser.Rock;
 import zly.rivulet.base.runparser.Fish;
 import zly.rivulet.base.runparser.RuntimeParser;
 import zly.rivulet.base.runparser.param_manager.ParamManager;
+import zly.rivulet.base.utils.EchoUtil;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,9 +33,10 @@ public abstract class RivuletManager {
 
     protected final ConvertorManager convertorManager;
 
-    private final Map<String, Definition> definitionMap = new ConcurrentHashMap<>();
 
-    private final Map<Method, Rock> methodRockMap = new ConcurrentHashMap<>();
+    private final Map<String, WholeDesc> wholeDescMap = new HashMap<>();
+
+    private final Map<Method, FinalDefinition> methodFinalDefinitionMap = new ConcurrentHashMap<>();
 
     protected RivuletManager(PreParser preParser, RuntimeParser runtimeParser, Analyzer analyzer, Executor executor, RivuletProperties configProperties, ConvertorManager convertorManager) {
         this.preParser = preParser;
@@ -45,43 +47,59 @@ public abstract class RivuletManager {
         this.convertorManager = convertorManager;
     }
 
-    public void initParser(List<Desc> allDescList, List<Method> allProxyMethod) {
-        for (Desc desc : allDescList) {
-            String key = "";
-            if (definitionMap.get(key) == null) {
-                Definition definition = preParser.parse(desc);
-                definitionMap.put(key, definition);
+    /**
+     * Description 初始化方法，预创建出所有用到的definition，并按key存储好
+     * 只会在启动时执行一次
+     *
+     * @author zhaolaiyuan
+     * Date 2022/3/20 10:15
+     **/
+    public void initParser(List<WholeDesc> allWholeDescList, List<Method> allProxyMethod) {
+        try {
+            Map<String, WholeDesc> wholeDescMap = this.wholeDescMap;
+            for (WholeDesc wholeDesc : allWholeDescList) {
+                String key = ;
+                wholeDescMap.put(key, wholeDesc);
             }
-        }
-        for (Method proxyMethod : allProxyMethod) {
-            Annotation annotation = ;
-            if (annotation == null) {
-                throw
+
+            for (Method proxyMethod : allProxyMethod) {
+                Annotation annotation = ;
+                if (annotation == null) {
+                    throw
+                }
+                String key = ;
+                WholeDesc wholeDesc = wholeDescMap.get(key);
+                if (wholeDesc == null) {
+                    throw
+                }
+                FinalDefinition finalDefinition = preParser.parse(wholeDesc, proxyMethod);
+
+                finalDefinition = analyzer.preAnalyze(finalDefinition);
+
+                methodFinalDefinitionMap.put(proxyMethod, finalDefinition);
             }
-            String key = "";
-            Definition definition = definitionMap.get(key);
-            if (definition == null) {
-                throw
-            }
-            Rock rock = preParser.bind(definition, proxyMethod);
-            rock = analyzer.preAnalyze(rock);
-            methodRockMap.put(proxyMethod, rock);
+        } finally {
+            // 清理回响
+            EchoUtil.clear();
         }
     }
 
 
     public Object exec(Method method, ParamManager paramManager) {
-        Rock rock = methodRockMap.get(method);
-        if (rock == null) {
-            // 没有预先定义方法
-            throw ParseException.undefinedMethod();
+        try {
+            FinalDefinition finalDefinition = methodFinalDefinitionMap.get(method);
+            if (finalDefinition == null) {
+                // 没有预先定义方法
+                throw ParseException.undefinedMethod();
+            }
+
+            Fish fish = runtimeParser.parse(finalDefinition, paramManager);
+            fish = analyzer.runTimeAnalyze(fish);
+
+            return executor.execute(fish, finalDefinition.getMapDefinition());
+        } finally {
+            // 清理回响
+            EchoUtil.clear();
         }
-
-        Fish fish = runtimeParser.parse(rock.getDefinition(), paramManager);
-        fish = analyzer.runTimeAnalyze(fish);
-
-        return executor.execute(fish, rock.getMapDefinition());
-
-
     }
 }

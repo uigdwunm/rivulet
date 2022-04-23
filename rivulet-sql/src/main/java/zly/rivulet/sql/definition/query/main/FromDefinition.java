@@ -1,20 +1,26 @@
 package zly.rivulet.sql.definition.query.main;
 
-import zly.rivulet.base.definer.ModelMeta;
 import zly.rivulet.base.definition.AbstractDefinition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
+import zly.rivulet.base.preparser.ParamDefinitionManager;
+import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
+import zly.rivulet.sql.preparser.SqlPreParseHelper;
 
-public class FromDefinition extends AbstractDefinition {
-    protected FromDefinition() {
-        super(CheckCondition.IS_TRUE);
+public abstract class FromDefinition extends AbstractDefinition {
+
+    protected FromDefinition(CheckCondition checkCondition, ParamDefinitionManager paramDefinitionManager) {
+        super(checkCondition, paramDefinitionManager);
     }
 
-    public FromDefinition(ModelMeta from) {
-        this();
+    public static FromDefinition createFromDefinition(SqlPreParseHelper sqlPreParseHelper, Class<?> modelFrom, SqlQueryMetaDesc<?, ?> subQueryFrom) {
+        if (subQueryFrom != null) {
+            return new FromSingleDefinition(sqlPreParseHelper, subQueryFrom);
+        } else if ()
+        return null;
     }
 
     @Override
-    public FromDefinition clone() {
+    public FromDefinition forAnalyze() {
         return null;
     }
 }

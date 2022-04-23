@@ -1,8 +1,8 @@
 package zly.rivulet.mysql.definer;
 
-import zly.rivulet.base.definer.FieldMeta;
+import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 
-public class MySQLFieldMeta implements FieldMeta {
+public class MySQLFieldMeta implements SQLFieldMeta {
 
     private String fieldName;
 

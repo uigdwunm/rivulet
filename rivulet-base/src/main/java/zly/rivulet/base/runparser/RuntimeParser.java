@@ -1,6 +1,7 @@
 package zly.rivulet.base.runparser;
 
 import zly.rivulet.base.definition.AbstractDefinition;
+import zly.rivulet.base.definition.FinalDefinition;
 import zly.rivulet.base.runparser.param_manager.ParamManager;
 
 public interface RuntimeParser {
@@ -11,5 +12,5 @@ public interface RuntimeParser {
      * @author zhaolaiyuan
      * Date 2021/12/5 12:00
      **/
-    Fish parse(AbstractDefinition definition, ParamManager paramManager);
+    Fish parse(FinalDefinition definition, ParamManager paramManager);
 }

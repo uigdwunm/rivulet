@@ -1,9 +1,12 @@
 package zly.rivulet.base.preparser;
 
 import zly.rivulet.base.definition.Definition;
+import zly.rivulet.base.definition.FinalDefinition;
 import zly.rivulet.base.describer.Desc;
+import zly.rivulet.base.describer.WholeDesc;
 
 import java.lang.reflect.Method;
+import java.util.function.BiFunction;
 
 public interface PreParser {
 
@@ -13,7 +16,5 @@ public interface PreParser {
      * @author zhaolaiyuan
      * Date 2021/12/5 12:06
      **/
-    Definition parse(Desc desc);
-
-    Rock bind(Definition definition, Method method);
+    FinalDefinition parse(WholeDesc wholeDesc, Method method);
 }

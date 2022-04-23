@@ -8,16 +8,8 @@ import zly.rivulet.base.runparser.statement.Statement;
  * @author zhaolaiyuan
  * Date 2022/2/1 11:03
  **/
-public abstract class Fish {
-
-    private final Statement statement;
+public interface Fish {
 
 
-    protected Fish(Statement statement) {
-        this.statement = statement;
-    }
-
-    public Statement getStatement() {
-        return statement;
-    }
+    Statement getStatement();
 }

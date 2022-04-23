@@ -3,8 +3,8 @@ package zly.rivulet.mysql.discriber.function.example;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
-import zly.rivulet.sql.discriber.query.QueryBuilder;
-import zly.rivulet.sql.discriber.query.desc.Mapping;
+import zly.rivulet.sql.describer.query.QueryBuilder;
+import zly.rivulet.sql.describer.query.desc.Mapping;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;

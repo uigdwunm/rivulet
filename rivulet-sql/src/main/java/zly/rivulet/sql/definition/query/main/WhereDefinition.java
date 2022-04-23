@@ -1,22 +1,39 @@
 package zly.rivulet.sql.definition.query.main;
 
-import zly.rivulet.base.definition.AbstractDefinition;
+import zly.rivulet.base.definition.AbstractContainerDefinition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
-import zly.rivulet.sql.discriber.query.desc.Where;
+import zly.rivulet.sql.definition.query.operate.OperateDefinition;
+import zly.rivulet.sql.describer.query.desc.Condition;
+import zly.rivulet.sql.preparser.SqlPreParseHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class WhereDefinition extends AbstractDefinition {
-    protected WhereDefinition() {
-        super(CheckCondition.IS_TRUE);
+public class WhereDefinition extends AbstractContainerDefinition {
+
+    private final ArrayList<OperateDefinition> operateDefinitionList = new ArrayList<>();
+
+    private WhereDefinition(CheckCondition checkCondition) {
+        super(checkCondition, null);
     }
 
-    public WhereDefinition(List<? extends Where.Item<?,?>> whereItemList) {
-        this();
+    public WhereDefinition(SqlPreParseHelper sqlPreParseHelper, List<? extends Condition<?, ?, ?>> whereItemList) {
+        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getSqlParamDefinitionManager());
+
+        List<OperateDefinition> operateDefinitionList = this.operateDefinitionList;
+        for (Condition<?, ?, ?> item : whereItemList) {
+            operateDefinitionList.add(item.getOperate().createDefinition(sqlPreParseHelper, item));
+        }
     }
 
     @Override
-    public WhereDefinition clone() {
+    public WhereDefinition forAnalyze() {
+        WhereDefinition whereDefinition = new WhereDefinition(super.getCheckCondition());
         return null;
+    }
+
+    @Override
+    public ArrayList<?> getList() {
+        return this.operateDefinitionList;
     }
 }

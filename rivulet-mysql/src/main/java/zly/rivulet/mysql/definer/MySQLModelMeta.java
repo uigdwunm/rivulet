@@ -1,10 +1,10 @@
 package zly.rivulet.mysql.definer;
 
-import zly.rivulet.base.definer.ModelMeta;
+import zly.rivulet.sql.definer.meta.SQLModelMeta;
 
 import java.util.List;
 
-public class MySQLModelMeta implements ModelMeta {
+public class MySQLModelMeta extends SQLModelMeta {
 
     private Class<?> modelClass;
 
@@ -13,5 +13,10 @@ public class MySQLModelMeta implements ModelMeta {
     @Override
     public Class<?> getModelClass() {
         return this.modelClass;
+    }
+
+    @Override
+    public Object getProxy() {
+        return null;
     }
 }

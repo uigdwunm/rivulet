@@ -10,7 +10,7 @@ import zly.rivulet.base.describer.SingleValueElementDesc;
  * @author zhaolaiyuan
  * Date 2021/9/20 11:53
  **/
-public abstract class Param<C> implements SingleValueElementDesc<C, C> {
+public abstract class Param<C> implements SingleValueElementDesc<?, C> {
 
     private final Class<C> clazz;
 
@@ -34,5 +34,13 @@ public abstract class Param<C> implements SingleValueElementDesc<C, C> {
 
     public ParamCheckType getParamCheckType() {
         return paramCheckType;
+    }
+
+    public static <C> Param<C> of(Class<C> clazz, String pathKey, ParamCheckType paramCheckType) {
+        return new StandardParam<>(clazz, pathKey, paramCheckType);
+    }
+
+    public static StaticParam<?> staticOf(Object paramValue) {
+        return new StaticParam<>(paramValue);
     }
 }

@@ -5,7 +5,7 @@ import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.definer.FieldMeta;
 import zly.rivulet.base.definition.param.ParamDefinition;
 import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.sql.discriber.param.SqlParamCheckType;
+import zly.rivulet.sql.describer.param.SqlParamCheckType;
 
 public class SqlParamDefinition implements ParamDefinition {
 

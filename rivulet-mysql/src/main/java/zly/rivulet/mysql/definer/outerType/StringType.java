@@ -1,4 +1,6 @@
 package zly.rivulet.mysql.definer.outerType;
 
-public interface StringType {
+import zly.rivulet.base.definer.outerType.OriginOuterType;
+
+public interface StringType extends OriginOuterType {
 }

@@ -1,6 +1,8 @@
 package zly.rivulet.base.definition;
 
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
+import zly.rivulet.base.describer.param.Param;
+import zly.rivulet.base.preparser.ParamDefinitionManager;
 import zly.rivulet.base.runparser.param_manager.ParamManager;
 
 /**
@@ -16,7 +18,10 @@ public abstract class AbstractDefinition implements Definition, Checked {
      **/
     private final CheckCondition checkCondition;
 
-    protected AbstractDefinition(CheckCondition checkCondition) {
+    protected AbstractDefinition(CheckCondition checkCondition, ParamDefinitionManager paramDefinitionManager) {
+        if (paramDefinitionManager != null) {
+            checkCondition.registerParam(paramDefinitionManager);
+        }
         this.checkCondition = checkCondition;
     }
 
@@ -28,6 +33,10 @@ public abstract class AbstractDefinition implements Definition, Checked {
         }
 
         return checkCondition.checkCondition(paramManager);
+    }
+
+    protected CheckCondition getCheckCondition() {
+        return this.checkCondition;
     }
 
 }
