@@ -4,7 +4,7 @@ import zly.rivulet.base.definition.AbstractContainerDefinition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.sql.definition.query.operate.OperateDefinition;
 import zly.rivulet.sql.describer.query.desc.Condition;
-import zly.rivulet.sql.preparser.SqlPreParseHelper;
+import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,11 +17,11 @@ public class WhereDefinition extends AbstractContainerDefinition {
         super(checkCondition, null);
     }
 
-    public WhereDefinition(SqlPreParseHelper sqlPreParseHelper, List<? extends Condition<?, ?, ?>> whereItemList) {
+    public WhereDefinition(SqlPreParseHelper sqlPreParseHelper, List<? extends Condition<?, ?>> whereItemList) {
         super(CheckCondition.IS_TRUE, sqlPreParseHelper.getSqlParamDefinitionManager());
 
         List<OperateDefinition> operateDefinitionList = this.operateDefinitionList;
-        for (Condition<?, ?, ?> item : whereItemList) {
+        for (Condition<?, ?> item : whereItemList) {
             operateDefinitionList.add(item.getOperate().createDefinition(sqlPreParseHelper, item));
         }
     }

@@ -1,10 +1,9 @@
 package zly.rivulet.sql.definition.query.main;
 
 import zly.rivulet.base.definition.AbstractDefinition;
-import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.describer.field.FieldMapping;
-import zly.rivulet.sql.preparser.SqlPreParseHelper;
+import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
 
 import java.util.List;
 

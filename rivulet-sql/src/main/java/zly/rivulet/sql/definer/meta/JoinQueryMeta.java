@@ -20,7 +20,7 @@ public class JoinQueryMeta {
 
     private JoinRelation innerJoinRelation;
 
-    public class JoinRelation {
+    public static class JoinRelation {
 
         private QueryFromMeta joinModel;
 

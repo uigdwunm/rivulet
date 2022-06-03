@@ -3,6 +3,7 @@ package zly.rivulet.sql.definition.param;
 import zly.rivulet.base.convertor.Convertor;
 import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.definer.FieldMeta;
+import zly.rivulet.base.definer.outerType.SelfType;
 import zly.rivulet.base.definition.param.ParamDefinition;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.sql.describer.param.SqlParamCheckType;
@@ -22,7 +23,11 @@ public class SqlParamDefinition implements ParamDefinition {
 
     public SqlParamDefinition(Param<?> paramDesc, FieldMeta fieldMeta, ConvertorManager convertorManager) {
         this.originDesc = paramDesc;
-        this.convertor = convertorManager.get(paramDesc.getClazz(), fieldMeta.getOriginOuterType());
+        if (fieldMeta == null) {
+            this.convertor = convertorManager.get(paramDesc.getClazz(), SelfType.class);
+        } else {
+            this.convertor = convertorManager.get(paramDesc.getClazz(), fieldMeta.getOriginOuterType());
+        }
         if (paramDesc.getParamCheckType() != null) {
             this.sqlParamCheckType = (SqlParamCheckType) paramDesc.getParamCheckType();
         } else {

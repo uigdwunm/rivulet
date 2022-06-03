@@ -13,6 +13,7 @@ public @interface MySQLInt {
 
     BooleanEnum zerofill() default BooleanEnum.DEFAULT;
 
+
     class Type extends ExactNumericType {
 
         private final int minValue;

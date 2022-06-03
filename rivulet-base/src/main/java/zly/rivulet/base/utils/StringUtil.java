@@ -51,4 +51,8 @@ public class StringUtil {
         String abdc = StringUtil.capitalizeFirstChar("zbdc");
         System.out.print(abdc);
     }
+
+    public static String defaultIfBlank(String value, String defaultValue) {
+        return isBlank(value) ? defaultValue : value;
+    }
 }

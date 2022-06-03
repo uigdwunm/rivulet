@@ -1,8 +1,7 @@
 package zly.rivulet.base.definition;
 
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
-import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.base.preparser.ParamDefinitionManager;
+import zly.rivulet.base.preparser.param.ParamDefinitionManager;
 import zly.rivulet.base.runparser.param_manager.ParamManager;
 
 /**

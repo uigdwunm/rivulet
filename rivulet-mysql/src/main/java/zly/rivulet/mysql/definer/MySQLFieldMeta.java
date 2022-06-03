@@ -1,15 +1,53 @@
 package zly.rivulet.mysql.definer;
 
+import zly.rivulet.base.definer.outerType.OriginOuterType;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 
-public class MySQLFieldMeta implements SQLFieldMeta {
+public final class MySQLFieldMeta implements SQLFieldMeta {
 
-    private String fieldName;
+    private final String fieldName;
 
-    private Class<?> fieldType;
+    private final Class<?> fieldType;
 
+    private final String columnName;
 
-    private String name;
+    private final OriginOuterType originOuterType;
 
-    private MySQLType type;
+    private final String comment;
+
+    private final String defaultValue;
+
+    public MySQLFieldMeta(String fieldName, Class<?> fieldType, String columnName, OriginOuterType originOuterType, String comment, String defaultValue) {
+        this.fieldName = fieldName;
+        this.fieldType = fieldType;
+        this.columnName = columnName;
+        this.originOuterType = originOuterType;
+        this.comment = comment;
+        this.defaultValue = defaultValue;
+    }
+
+    public String getFieldName() {
+        return fieldName;
+    }
+
+    public Class<?> getFieldType() {
+        return fieldType;
+    }
+
+    public String getColumnName() {
+        return columnName;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    @Override
+    public OriginOuterType getOriginOuterType() {
+        return this.originOuterType;
+    }
 }

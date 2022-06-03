@@ -16,6 +16,10 @@ public class UnbelievableException extends RuntimeException {
         super(msg, e);
     }
 
+    public static UnbelievableException unbelievable() {
+        return new UnbelievableException("不可能出现的异常");
+    }
+
     public static UnbelievableException unknownType() {
         return new UnbelievableException("未知的类型");
     }

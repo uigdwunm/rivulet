@@ -4,7 +4,7 @@ import zly.rivulet.base.definition.AbstractContainerDefinition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.mapper.MapDefinition;
 import zly.rivulet.sql.describer.query.desc.Mapping;
-import zly.rivulet.sql.preparser.SqlPreParseHelper;
+import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
 
 import java.util.ArrayList;
 import java.util.List;

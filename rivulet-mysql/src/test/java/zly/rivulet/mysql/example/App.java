@@ -1,41 +1,44 @@
 package zly.rivulet.mysql.example;
 
-import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
+import zly.rivulet.base.adapter.DefaultBeanManager;
+import zly.rivulet.base.convertor.ConvertorManager;
+import zly.rivulet.mysql.MySQLRivuletManager;
+import zly.rivulet.mysql.MySQLRivuletProperties;
+import zly.rivulet.mysql.example.config.UserDescConfig;
+import zly.rivulet.mysql.example.enums.UserType;
 import zly.rivulet.mysql.example.model.UserDO;
-import zly.rivulet.mysql.example.model.UserJoinVO;
-import zly.rivulet.mysql.example.model.UserType;
-import zly.rivulet.sql.describer.query.QueryBuilder;
-import zly.rivulet.sql.describer.query.desc.Mapping;
+import zly.rivulet.mysql.example.runparser.UserMapper;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.Date;
 
 public class App {
 
 
     public static void main(String[] args) {
-        UserDO userDO = new UserDO(1, "张小三", 18, true, UserType.VIP, new Date());
+        UserDO userDO = new UserDO(1, "张小三", "123", 2L, 18, true, UserType.VIP, new Date(), 1, 2);
 
-        Enhancer enhancer = new Enhancer();
-        enhancer.setSuperclass(UserDO.class);
-        enhancer.setCallback(new MethodInterceptor() {
-            @Override
-            public Object intercept(Object o, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
+        ConvertorManager convertorManager = new ConvertorManager();
 
-                Parameter[] parameters = method.getParameters();
-                Object result = methodProxy.invokeSuper(o, args);
-                return result;
-            }
-        });
 
-        QueryBuilder.query(UserDO.class, UserJoinVO.class).select(
-            Mapping.of(UserJoinVO::setName, UserDO::getName),
-            Mapping.of(UserJoinVO::setAge, UserDO::getAge)
-        ).build();
+        Class<UserMapper> userMapperClass = UserMapper.class;
+        Class<UserDescConfig> userDescConfigClass = UserDescConfig.class;
 
+        DefaultBeanManager beanManager = new DefaultBeanManager();
+        MySQLRivuletManager rivuletManager = new MySQLRivuletManager(
+            new MySQLRivuletProperties(),
+            new ConvertorManager(),
+            beanManager
+        );
+
+        beanManager.register(UserDescConfig.class, rivuletManager);
+        beanManager.register(UserMapper.class, rivuletManager);
+
+        rivuletManager.initParser(
+            beanManager.getAllConfigMethod(),
+            beanManager.getAllProxyMethod()
+        );
+
+        UserMapper bean = beanManager.getBean(UserMapper.class);
 
     }
 

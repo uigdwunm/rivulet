@@ -19,8 +19,6 @@ public class QueryBuilder<F, S> {
      **/
     protected Class<F> modelFrom;
 
-    protected SqlQueryMetaDesc<?, F> subQueryFrom;
-
     /**
      * 查询结果映射模型
      **/
@@ -39,7 +37,7 @@ public class QueryBuilder<F, S> {
     /**
      * where查询子项
      **/
-    protected List<Condition<F, F, ?>> whereItemList;
+    protected List<Condition<F, ?>> whereItemList;
 
     /**
      * 分组字段的列表
@@ -49,7 +47,7 @@ public class QueryBuilder<F, S> {
     /**
      * having查询子项
      **/
-    protected List<Condition<F, F, ?>> havingItemList;
+    protected List<Condition<F, ?>> havingItemList;
 
     /**
      * order排序子项
@@ -70,14 +68,9 @@ public class QueryBuilder<F, S> {
         return new SelectBuilder<>(from, select);
     }
 
-    public static <F, S> SelectBuilder<F, S> query(SqlQueryMetaDesc<?, F> from, Class<S> select) {
-        return new SelectBuilder<>(from, select);
-    }
-
     public final SqlQueryMetaDesc<F, S> build() {
         return new SqlQueryMetaDesc<>(
             this.modelFrom,
-            this.subQueryFrom,
             this.selectModel,
             this.mappedItemList,
             this.nameMapped,

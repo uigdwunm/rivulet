@@ -15,12 +15,9 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
      * 查询主要模型，from
      * 有两种赋值方式，
      * modelFrom 是表模型或联表模型
-     * subQueryFrom 是子查询模型
      *
      **/
     protected final Class<F> modelFrom;
-
-    protected final SqlQueryMetaDesc<?, F> subQueryFrom;
 
     /**
      * 查询结果映射模型
@@ -40,7 +37,7 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
     /**
      * where查询子项
      **/
-    protected final List<Condition<F, F, ?>> whereItemList;
+    protected final List<Condition<F, ?>> whereItemList;
 
     /**
      * 分组字段的列表
@@ -50,7 +47,7 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
     /**
      * having查询子项
      **/
-    protected final List<Condition<F, F, ?>> havingItemList;
+    protected final List<Condition<F, ?>> havingItemList;
 
     /**
      * order排序子项
@@ -67,9 +64,13 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
      **/
     protected final Param<Integer> limit;
 
-    public SqlQueryMetaDesc(Class<F> modelFrom, SqlQueryMetaDesc<?, F> subQueryFrom, Class<S> selectModel, List<Mapping.Item<F, S, ?>> mappedItemList, boolean nameMapped, List<Condition<F, F, ?>> whereItemList, List<FieldMapping<F, ?>> groupFieldList, List<Condition<F, F, ?>> havingItemList, List<OrderBy.Item<F, ?>> orderFieldList, Param<Integer> skit, Param<Integer> limit) {
+    /**
+     * TODO 是否包含原生语句
+     **/
+//    protected final boolean isHaveNativeStatement;
+
+    public SqlQueryMetaDesc(Class<F> modelFrom, Class<S> selectModel, List<Mapping.Item<F, S, ?>> mappedItemList, boolean nameMapped, List<Condition<F, ?>> whereItemList, List<FieldMapping<F, ?>> groupFieldList, List<Condition<F, ?>> havingItemList, List<OrderBy.Item<F, ?>> orderFieldList, Param<Integer> skit, Param<Integer> limit) {
         this.modelFrom = modelFrom;
-        this.subQueryFrom = subQueryFrom;
         this.selectModel = selectModel;
         this.mappedItemList = mappedItemList;
         this.nameMapped = nameMapped;
@@ -85,10 +86,6 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
         return modelFrom;
     }
 
-    public SqlQueryMetaDesc<?, F> getSubQueryFrom() {
-        return subQueryFrom;
-    }
-
     public Class<S> getSelectModel() {
         return selectModel;
     }
@@ -101,7 +98,7 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
         return nameMapped;
     }
 
-    public List<Condition<F, F, ?>> getWhereItemList() {
+    public List<Condition<F, ?>> getWhereItemList() {
         return whereItemList;
     }
 
@@ -109,7 +106,7 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
         return groupFieldList;
     }
 
-    public List<Condition<F, F, ?>> getHavingItemList() {
+    public List<Condition<F, ?>> getHavingItemList() {
         return havingItemList;
     }
 
@@ -123,5 +120,10 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
 
     public Param<Integer> getLimit() {
         return limit;
+    }
+
+    @Override
+    public Class<?> getMainFrom() {
+        return modelFrom;
     }
 }

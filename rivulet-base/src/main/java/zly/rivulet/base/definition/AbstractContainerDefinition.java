@@ -1,10 +1,9 @@
 package zly.rivulet.base.definition;
 
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
-import zly.rivulet.base.preparser.ParamDefinitionManager;
+import zly.rivulet.base.preparser.param.ParamDefinitionManager;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public abstract class AbstractContainerDefinition extends AbstractDefinition {
 

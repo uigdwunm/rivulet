@@ -1,0 +1,46 @@
+package zly.rivulet.base.utils;
+
+import java.util.Collection;
+import java.util.Iterator;
+
+public class View<T> implements Iterable<T> {
+
+    private final Object[] elements;
+
+    private View(Object[] elements) {
+        this.elements = elements;
+    }
+
+    public static <T> View<T> create(T[] elements) {
+        Object[] copy = new Object[elements.length];
+        System.arraycopy(elements, 0, copy, 0, elements.length);
+        return new View<>(copy);
+    }
+
+    public static <T> View<T> create(Collection<T> elements) {
+        Object[] copy = new Object[elements.size()];
+        System.arraycopy(elements.toArray(), 0, copy, 0, elements.size());
+        return new View<>(copy);
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new ViewIterator();
+    }
+
+    private class ViewIterator implements Iterator<T> {
+
+        private int index = 0;
+
+        @Override
+        public boolean hasNext() {
+            return index != elements.length;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public T next() {
+            return (T) elements[index++];
+        }
+    }
+}

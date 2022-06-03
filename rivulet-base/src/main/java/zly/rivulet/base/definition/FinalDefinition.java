@@ -1,6 +1,7 @@
 package zly.rivulet.base.definition;
 
 import zly.rivulet.base.mapper.MapDefinition;
+import zly.rivulet.base.preparser.param.ParamDefinitionManager;
 
 /**
  * Description 总的definition标识
@@ -10,4 +11,6 @@ import zly.rivulet.base.mapper.MapDefinition;
  **/
 public interface FinalDefinition extends Definition {
     MapDefinition getMapDefinition();
+
+    ParamDefinitionManager getParamDefinitionManager();
 }

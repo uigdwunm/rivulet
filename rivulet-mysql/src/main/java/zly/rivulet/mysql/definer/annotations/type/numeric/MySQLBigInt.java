@@ -32,10 +32,9 @@ public @interface MySQLBigInt {
             }
         }
 
-        @Override
-        public void registerDefaultConverter(ConvertorManager convertorManager) {
+        public static void registerConvertors(ConvertorManager convertorManager) {
             convertorManager.register(
-                new Convertor<BigInteger, MySQLBigInt.Type>() {
+                new Convertor<BigInteger, MySQLBigInt.Type>(BigInteger.class, Type.class) {
                     @Override
                     public BigInteger convertToJavaType(Object outerValue) {
                         // TODO
@@ -47,15 +46,6 @@ public @interface MySQLBigInt {
                         return innerValue.toString();
                     }
 
-                    @Override
-                    public Class<BigInteger> getJavaType() {
-                        return BigInteger.class;
-                    }
-
-                    @Override
-                    public Class<Type> getOriginOuterType() {
-                        return Type.class;
-                    }
                 }
             );
         }

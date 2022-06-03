@@ -1,9 +1,8 @@
 package zly.rivulet.sql.definition.query;
 
 import zly.rivulet.base.definition.AbstractDefinition;
-import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.FinalDefinition;
-import zly.rivulet.base.definition.param.ParamDefinition;
+import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.param.Param;
@@ -13,14 +12,15 @@ import zly.rivulet.sql.definition.query.main.*;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.query.desc.Condition;
 import zly.rivulet.sql.describer.query.desc.OrderBy;
+import zly.rivulet.sql.preparser.SQLAliasManager;
+import zly.rivulet.sql.preparser.SQLProxyModelManager;
 import zly.rivulet.sql.preparser.SqlParamDefinitionManager;
-import zly.rivulet.sql.preparser.SqlPreParseHelper;
+import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class SqlQueryDefinition implements FinalDefinition, QueryFromMeta {
+public class SqlQueryDefinition implements FinalDefinition, QueryFromMeta, SingleValueElementDefinition {
 
     private final SqlQueryMetaDesc<?, ?> metaDesc;
 
@@ -44,11 +44,15 @@ public class SqlQueryDefinition implements FinalDefinition, QueryFromMeta {
 
     private final List<AbstractDefinition> subDefinitionList = new ArrayList<>();
 
+    private SQLAliasManager aliasManager;
+
+    private SqlParamDefinitionManager paramDefinitionManager;
+
     private SqlQueryDefinition(SqlQueryMetaDesc<?, ?> metaDesc) {
         this.metaDesc = metaDesc;
     }
 
-    public SqlQueryDefinition(SqlPreParseHelper sqlPreParseHelper,  WholeDesc wholeDesc) {
+    public SqlQueryDefinition(SqlPreParseHelper sqlPreParseHelper, WholeDesc wholeDesc) {
         SqlQueryMetaDesc<?, ?> metaDesc = (SqlQueryMetaDesc<?, ?>) wholeDesc;
 
         // 标记进入了一层子查询(用于解析别名)
@@ -56,7 +60,8 @@ public class SqlQueryDefinition implements FinalDefinition, QueryFromMeta {
 
         // 解析赋值
         this.metaDesc = metaDesc;
-        this.fromDefinition = FromDefinition.createFromDefinition(sqlPreParseHelper, metaDesc.getModelFrom(), metaDesc.getSubQueryFrom());
+        SQLProxyModelManager sqlProxyModelManager = sqlPreParseHelper.getSQLProxyModelManager();
+        this.fromDefinition = new FromDefinition(sqlPreParseHelper, wholeDesc.getMainFrom(), sqlProxyModelManager.getMainProxyModel());
         this.selectDefinition = new SelectDefinition(
             sqlPreParseHelper,
             this.fromDefinition,
@@ -67,7 +72,7 @@ public class SqlQueryDefinition implements FinalDefinition, QueryFromMeta {
 
         this.subDefinitionList.add(selectDefinition);
         this.subDefinitionList.add(fromDefinition);
-        List<? extends Condition<?, ?, ?>> whereItemList = metaDesc.getWhereItemList();
+        List<? extends Condition<?, ?>> whereItemList = metaDesc.getWhereItemList();
         if (whereItemList != null) {
             this.whereDefinition = new WhereDefinition(sqlPreParseHelper, whereItemList);
             this.subDefinitionList.add(this.whereDefinition);
@@ -78,7 +83,7 @@ public class SqlQueryDefinition implements FinalDefinition, QueryFromMeta {
             this.groupDefinition = new GroupDefinition(sqlPreParseHelper, groupFieldList);
             this.subDefinitionList.add(this.groupDefinition);
         }
-        List<? extends Condition<?, ?, ?>> havingItemList = metaDesc.getHavingItemList();
+        List<? extends Condition<?, ?>> havingItemList = metaDesc.getHavingItemList();
         if (havingItemList != null) {
             this.havingDefinition = new HavingDefinition(sqlPreParseHelper, havingItemList);
             this.subDefinitionList.add(this.havingDefinition);
@@ -103,6 +108,9 @@ public class SqlQueryDefinition implements FinalDefinition, QueryFromMeta {
 
         // 标记进入了一层子查询(用于解析别名)
         sqlPreParseHelper.endSub();
+
+        this.aliasManager = sqlPreParseHelper.getAliasManager();
+        this.paramDefinitionManager = sqlPreParseHelper.getSqlParamDefinitionManager();
     }
 
     @Override
@@ -110,6 +118,8 @@ public class SqlQueryDefinition implements FinalDefinition, QueryFromMeta {
         SqlQueryDefinition sqlQueryDefinition = new SqlQueryDefinition(this.metaDesc);
         sqlQueryDefinition.selectDefinition = selectDefinition.forAnalyze();
         sqlQueryDefinition.fromDefinition = fromDefinition.forAnalyze();
+        // TODO 这里要注意
+        sqlQueryDefinition.aliasManager = aliasManager;
 
         if (whereDefinition != null) {
             sqlQueryDefinition.whereDefinition = whereDefinition.forAnalyze();
@@ -176,5 +186,14 @@ public class SqlQueryDefinition implements FinalDefinition, QueryFromMeta {
 
     public List<AbstractDefinition> getSubDefinitionList() {
         return this.subDefinitionList;
+    }
+
+    public SQLAliasManager getAliasManager() {
+        return aliasManager;
+    }
+
+    @Override
+    public SqlParamDefinitionManager getParamDefinitionManager() {
+        return paramDefinitionManager;
     }
 }

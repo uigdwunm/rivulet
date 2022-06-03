@@ -1,7 +1,7 @@
 package zly.rivulet.mysql.definer.outerType;
 
 import zly.rivulet.base.utils.BooleanEnum;
-import zly.rivulet.mysql.exception.ModelDefineException;
+import zly.rivulet.sql.exception.SQLModelDefineException;
 
 public abstract class ExactNumericType implements Exact, NumericType {
 
@@ -18,7 +18,7 @@ public abstract class ExactNumericType implements Exact, NumericType {
     ) {
         this.maximumDisplayWidth = maximumDisplayWidth;
         if (unSigned.isFalse() && zerofill.isTrue()) {
-            throw ModelDefineException.zerofillMustUnSigned();
+            throw SQLModelDefineException.zerofillMustUnSigned();
         }
 
         this.zerofill = zerofill.isTrue();

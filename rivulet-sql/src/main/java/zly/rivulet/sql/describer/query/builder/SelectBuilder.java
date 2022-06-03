@@ -13,11 +13,6 @@ public class SelectBuilder<F, S> extends WhereBuilder<F, S> {
         super.selectModel = select;
     }
 
-    public SelectBuilder(SqlQueryMetaDesc<?, F> from, Class<S> select) {
-        super.subQueryFrom = from;
-        super.selectModel = select;
-    }
-
     public final WhereBuilder<F, S> nameMapped() {
         super.nameMapped = true;
         super.mappedItemList = Collections.emptyList();

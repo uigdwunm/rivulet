@@ -17,13 +17,17 @@ public class ConvertorManager {
     }
 
     public <T1, T2 extends OriginOuterType> Convertor<T1, T2> get(Class<T1> javaType, OriginOuterType outerType) {
-        String key = getKey(javaType, outerType.getClass());
+        return get(javaType, outerType.getClass());
+    }
+
+    public <T1, T2 extends OriginOuterType> Convertor<T1, T2> get(Class<T1> javaType, Class<?> outerTypeClass) {
+        String key = getKey(javaType, outerTypeClass);
 
         return (Convertor<T1, T2>) CONVERTER_MAP.get(key);
     }
 
 
     private static String getKey(Class<?> javaType, Class<?> outerType) {
-        return javaType.getName() + ',' + outerType.getName();
+        return javaType.getName() + '_' + outerType.getName();
     }
 }

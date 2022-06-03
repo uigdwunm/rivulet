@@ -3,7 +3,7 @@ package zly.rivulet.base.definition.checkCondition;
 
 import zly.rivulet.base.definition.param.ParamDefinition;
 import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.base.preparser.ParamDefinitionManager;
+import zly.rivulet.base.preparser.param.ParamDefinitionManager;
 import zly.rivulet.base.runparser.param_manager.ParamManager;
 import zly.rivulet.base.utils.StringUtil;
 
@@ -84,12 +84,16 @@ public abstract class CheckCondition {
             @Override
             protected boolean check(Object... paramValues) {
                 Object paramValue = paramValues[0];
+                if (paramValue == null) {
+                    return false;
+                }
                 if (paramValue instanceof Collection) {
                     return !((Collection<?>) paramValue).isEmpty();
-                } else if (paramValue instanceof Array) {
-
                 }
-                return ;
+                if (paramValue.getClass().isArray()) {
+                    return Array.getLength(paramValue) > 0;
+                }
+                throw new IllegalArgumentException();
             }
         };
     }

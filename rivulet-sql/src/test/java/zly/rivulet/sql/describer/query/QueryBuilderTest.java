@@ -9,8 +9,6 @@ public class QueryBuilderTest {
 
     @Test
     public void query() {
-        SqlQueryMetaDesc<User, User> query = QueryBuilder.query(User.class, User.class).build();
-        SelectBuilder<User, Student> query1 = QueryBuilder.query(query, Student.class);
     }
 
     @Test

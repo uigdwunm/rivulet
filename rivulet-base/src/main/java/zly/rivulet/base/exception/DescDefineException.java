@@ -12,4 +12,8 @@ public class DescDefineException extends RuntimeException {
         }
         return new DescDefineException("未知的查询模型" + knownModel.getName());
     }
+
+    public static DescDefineException noMatchDescKey() {
+        return new DescDefineException("没找到匹配的key");
+    }
 }
