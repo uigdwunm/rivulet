@@ -5,8 +5,11 @@ import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.utils.BooleanEnum;
 import zly.rivulet.mysql.definer.outerType.ExactNumericType;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.math.BigInteger;
 
+@Retention(RetentionPolicy.RUNTIME)
 public @interface MySQLBigInt {
     int maximumDisplayWidth() default 1;
 
@@ -21,8 +24,8 @@ public @interface MySQLBigInt {
 
         private final BigInteger maxValue;
 
-        public Type(int maximumDisplayWidth, BooleanEnum unSigned, BooleanEnum zerofill) {
-            super(maximumDisplayWidth, unSigned, zerofill);
+        public Type(MySQLBigInt mySQLBigInt) {
+            super(mySQLBigInt.maximumDisplayWidth(), mySQLBigInt.unSigned(), mySQLBigInt.zerofill());
             if (this.unSigned) {
                 this.minValue = BigInteger.ZERO;
                 this.maxValue = new BigInteger("2").pow(64).subtract(BigInteger.ONE);
@@ -46,6 +49,21 @@ public @interface MySQLBigInt {
                         return innerValue.toString();
                     }
 
+                }
+            );
+
+            convertorManager.register(
+                new Convertor<Long, MySQLBigInt.Type>(Long.class, Type.class) {
+
+                    @Override
+                    public Long convertToJavaType(Object outerValue) {
+                        return null;
+                    }
+
+                    @Override
+                    public String convertToStatement(Long innerValue) {
+                        return innerValue.toString();
+                    }
                 }
             );
         }

@@ -53,7 +53,8 @@ public class DefaultBeanManager implements BeanManager {
             }
 
             if (isProxy) {
-//                beans.put()
+                Object proxyMapper = createProxyMapper(clazz, rivuletManager);
+                beans.put(clazz, proxyMapper);
             }
 
         }
@@ -83,7 +84,12 @@ public class DefaultBeanManager implements BeanManager {
             @Override
             public Object intercept(Object o, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
                 // 执行
-                return rivuletManager.exec(method, args);
+                RivuletQueryMapper rivuletQueryMapper = method.getAnnotation(RivuletQueryMapper.class);
+                if (rivuletQueryMapper != null) {
+                    return rivuletManager.exec(method, args);
+                } else {
+                    return methodProxy.invokeSuper(o, args);
+                }
             }
         });
         return enhancer.create();

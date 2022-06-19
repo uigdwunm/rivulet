@@ -7,6 +7,7 @@ import zly.rivulet.base.definer.outerType.OriginOuterType;
 import zly.rivulet.base.exception.ModelDefineException;
 import zly.rivulet.base.utils.StringUtil;
 import zly.rivulet.base.utils.View;
+import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLBigInt;
 import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLInt;
 import zly.rivulet.mysql.definer.annotations.type.string.MySQLVarchar;
 import zly.rivulet.sql.definer.SqlDefiner;
@@ -41,7 +42,7 @@ public class MySQLDefiner extends SqlDefiner {
         Comment commentAnno = clazz.getAnnotation(Comment.class);
         String comment = commentAnno != null ? commentAnno.value() : null;
 
-        List<MySQLFieldMeta> fieldMetaList = Arrays.stream(clazz.getFields())
+        List<MySQLFieldMeta> fieldMetaList = Arrays.stream(clazz.getDeclaredFields())
             .map(field -> this.parseFieldMeta(clazz, field))
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
@@ -65,6 +66,8 @@ public class MySQLDefiner extends SqlDefiner {
         annotation_TypeCreator_Map.put(MySQLVarchar.class, anno -> new MySQLVarchar.Type((MySQLVarchar) anno));
         MySQLVarchar.Type.registerConvertors(super.convertorManager);
 
+        annotation_TypeCreator_Map.put(MySQLBigInt.class, anno -> new MySQLBigInt.Type((MySQLBigInt) anno));
+        MySQLBigInt.Type.registerConvertors(super.convertorManager);
     }
 
     private MySQLFieldMeta parseFieldMeta(Class<?> clazz, Field field) {
@@ -83,7 +86,7 @@ public class MySQLDefiner extends SqlDefiner {
                 // 默认值
                 defaultValue = ((DefaultValue) annotation).defaultValue();
             } else {
-                Function<Annotation, OriginOuterType> originOuterTypeCreator = annotation_TypeCreator_Map.get(annotation.getClass());
+                Function<Annotation, OriginOuterType> originOuterTypeCreator = annotation_TypeCreator_Map.get(annotation.annotationType());
                 if (originOuterTypeCreator != null) {
                     if (originOuterType != null) {
                         // 每个字段只能有一个类型
@@ -96,6 +99,10 @@ public class MySQLDefiner extends SqlDefiner {
         if (sqlColumn == null) {
             // 没有这个注解说明不是表字段，不进行解析
             return null;
+        }
+        if (originOuterType == null) {
+            // 没有类型
+            throw ModelDefineException.loseType(clazz, field);
         }
 
         return new MySQLFieldMeta(

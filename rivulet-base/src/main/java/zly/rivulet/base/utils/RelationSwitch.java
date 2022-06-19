@@ -38,6 +38,7 @@ public class RelationSwitch {
         return createRootSwitch(true);
     }
 
+    @Deprecated
     public static RelationSwitch createRootSwitch(boolean isEnable) {
         return new RelationSwitch(isEnable, null);
     }

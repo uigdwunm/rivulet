@@ -30,11 +30,6 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
     protected final List<Mapping.Item<F, S, ?>> mappedItemList;
 
     /**
-     * 映射模型剩余字段是否按名称匹配（如果有不匹配会报错）
-     **/
-    protected final boolean nameMapped;
-
-    /**
      * where查询子项
      **/
     protected final List<Condition<F, ?>> whereItemList;
@@ -69,11 +64,10 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
      **/
 //    protected final boolean isHaveNativeStatement;
 
-    public SqlQueryMetaDesc(Class<F> modelFrom, Class<S> selectModel, List<Mapping.Item<F, S, ?>> mappedItemList, boolean nameMapped, List<Condition<F, ?>> whereItemList, List<FieldMapping<F, ?>> groupFieldList, List<Condition<F, ?>> havingItemList, List<OrderBy.Item<F, ?>> orderFieldList, Param<Integer> skit, Param<Integer> limit) {
+    public SqlQueryMetaDesc(Class<F> modelFrom, Class<S> selectModel, List<Mapping.Item<F, S, ?>> mappedItemList, List<Condition<F, ?>> whereItemList, List<FieldMapping<F, ?>> groupFieldList, List<Condition<F, ?>> havingItemList, List<OrderBy.Item<F, ?>> orderFieldList, Param<Integer> skit, Param<Integer> limit) {
         this.modelFrom = modelFrom;
         this.selectModel = selectModel;
         this.mappedItemList = mappedItemList;
-        this.nameMapped = nameMapped;
         this.whereItemList = whereItemList;
         this.groupFieldList = groupFieldList;
         this.havingItemList = havingItemList;
@@ -92,10 +86,6 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
 
     public List<Mapping.Item<F, S, ?>> getMappedItemList() {
         return mappedItemList;
-    }
-
-    public boolean isNameMapped() {
-        return nameMapped;
     }
 
     public List<Condition<F, ?>> getWhereItemList() {

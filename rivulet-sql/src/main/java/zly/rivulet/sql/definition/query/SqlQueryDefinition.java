@@ -16,6 +16,7 @@ import zly.rivulet.sql.preparser.SQLAliasManager;
 import zly.rivulet.sql.preparser.SQLProxyModelManager;
 import zly.rivulet.sql.preparser.SqlParamDefinitionManager;
 import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
+import zly.rivulet.sql.preparser.helper.node.ProxyNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,20 +55,19 @@ public class SqlQueryDefinition implements FinalDefinition, QueryFromMeta, Singl
 
     public SqlQueryDefinition(SqlPreParseHelper sqlPreParseHelper, WholeDesc wholeDesc) {
         SqlQueryMetaDesc<?, ?> metaDesc = (SqlQueryMetaDesc<?, ?>) wholeDesc;
-
-        // 标记进入了一层子查询(用于解析别名)
-        sqlPreParseHelper.startSub();
+        SQLProxyModelManager sqlProxyModelManager = sqlPreParseHelper.getSQLProxyModelManager();
+        sqlProxyModelManager.registerProxyModel(wholeDesc.getMainFrom());
+        ProxyNode rootProxyNode = sqlProxyModelManager.getRootProxyNode();
+        rootProxyNode.setQueryFromMeta(this);
 
         // 解析赋值
         this.metaDesc = metaDesc;
-        SQLProxyModelManager sqlProxyModelManager = sqlPreParseHelper.getSQLProxyModelManager();
         this.fromDefinition = new FromDefinition(sqlPreParseHelper, wholeDesc.getMainFrom(), sqlProxyModelManager.getMainProxyModel());
         this.selectDefinition = new SelectDefinition(
             sqlPreParseHelper,
             this.fromDefinition,
             metaDesc.getSelectModel(),
-            metaDesc.getMappedItemList(),
-            metaDesc.isNameMapped()
+            metaDesc.getMappedItemList()
         );
 
         this.subDefinitionList.add(selectDefinition);
@@ -105,9 +105,6 @@ public class SqlQueryDefinition implements FinalDefinition, QueryFromMeta, Singl
         }
 
         this.mapDefinition = selectDefinition.getMapDefinition();
-
-        // 标记进入了一层子查询(用于解析别名)
-        sqlPreParseHelper.endSub();
 
         this.aliasManager = sqlPreParseHelper.getAliasManager();
         this.paramDefinitionManager = sqlPreParseHelper.getSqlParamDefinitionManager();

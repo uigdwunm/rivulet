@@ -7,6 +7,7 @@ import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.exception.DescDefineException;
 import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.preparser.PreParser;
+import zly.rivulet.base.preparser.helper.PreParseHelper;
 import zly.rivulet.sql.SqlRivuletProperties;
 import zly.rivulet.sql.definer.SqlDefiner;
 import zly.rivulet.sql.definition.query.HalfFinalDefinition;
@@ -48,8 +49,21 @@ public class SqlPreParser implements PreParser {
         return this.parse(wholeDesc, method);
     }
 
+    public FinalDefinition parse(String key, SqlPreParseHelper sqlPreParseHelper) {
+        WholeDesc wholeDesc = wholeDescMap.get(key);
+        if (wholeDesc == null) {
+            throw DescDefineException.noMatchDescKey();
+        }
+        return this.parse(wholeDesc, sqlPreParseHelper);
+    }
+
     public FinalDefinition parse(WholeDesc wholeDesc, Method method) {
-        SqlPreParseHelper sqlPreParseHelper = new SqlPreParseHelper(this, wholeDesc, method);
+        SqlPreParseHelper sqlPreParseHelper = new SqlPreParseHelper(this, method);
+        return this.parse(wholeDesc, sqlPreParseHelper);
+    }
+
+    private FinalDefinition parse(WholeDesc wholeDesc, SqlPreParseHelper sqlPreParseHelper) {
+        Method method = sqlPreParseHelper.getMethod();
 
         if (wholeDesc instanceof SqlQueryMetaDesc) {
             RivuletQueryMapper annotation = method.getAnnotation(RivuletQueryMapper.class);
@@ -79,7 +93,7 @@ public class SqlPreParser implements PreParser {
         return convertorManager;
     }
 
-    public SqlDefiner getDefiner() {
+    public SqlDefiner getSqlDefiner() {
         return definer;
     }
 }

@@ -30,11 +30,6 @@ public class QueryBuilder<F, S> {
     protected List<Mapping.Item<F, S, ?>> mappedItemList;
 
     /**
-     * 映射模型剩余字段是否按名称匹配（如果有不匹配会报错）
-     **/
-    protected boolean nameMapped;
-
-    /**
      * where查询子项
      **/
     protected List<Condition<F, ?>> whereItemList;
@@ -73,7 +68,6 @@ public class QueryBuilder<F, S> {
             this.modelFrom,
             this.selectModel,
             this.mappedItemList,
-            this.nameMapped,
             this.whereItemList,
             this.groupFieldList,
             this.havingItemList,

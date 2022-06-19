@@ -4,6 +4,10 @@ import zly.rivulet.base.convertor.Convertor;
 import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.mysql.definer.outerType.VariableStringType;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+@Retention(RetentionPolicy.RUNTIME)
 public @interface MySQLVarchar {
 
     int length();

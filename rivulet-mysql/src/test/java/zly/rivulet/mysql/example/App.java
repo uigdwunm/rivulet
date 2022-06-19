@@ -8,6 +8,7 @@ import zly.rivulet.mysql.example.config.UserDescConfig;
 import zly.rivulet.mysql.example.enums.UserType;
 import zly.rivulet.mysql.example.model.UserDO;
 import zly.rivulet.mysql.example.runparser.UserMapper;
+import zly.rivulet.mysql.example.vo.UserVO;
 
 import java.util.Date;
 
@@ -33,12 +34,13 @@ public class App {
         beanManager.register(UserDescConfig.class, rivuletManager);
         beanManager.register(UserMapper.class, rivuletManager);
 
-        rivuletManager.initParser(
+        rivuletManager.preParse(
             beanManager.getAllConfigMethod(),
             beanManager.getAllProxyMethod()
         );
 
         UserMapper bean = beanManager.getBean(UserMapper.class);
+        UserVO select = bean.select(101L);
 
     }
 

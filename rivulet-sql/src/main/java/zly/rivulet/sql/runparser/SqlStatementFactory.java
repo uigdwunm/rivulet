@@ -10,10 +10,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SqlStatementFactory {
     /**
-     * key是 Definition的class
+     * 初始化statement生成器，一个语句必须先执行初始化才能执行运行时statement
      **/
-    private final Map<Class<? extends Definition>, StatementInitCreator> DEFINITION_INIT_CREATOR_MAP = new HashMap<>();
+    private final Map<Class<? extends Definition>, StatementInitCreator> DEFINITION_INIT_CREATOR_MAP = new ConcurrentHashMap<>();
 
+    /**
+     * 运行时statement生成器，运行时主要走这里的
+     **/
     private final Map<Class<? extends Definition>, StatementRunCreator> DEFINITION_RUN_CREATOR_MAP = new ConcurrentHashMap<>();
 
     /**

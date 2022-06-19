@@ -5,7 +5,6 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import zly.rivulet.base.definition.FinalDefinition;
 import zly.rivulet.base.describer.field.FieldMapping;
-import zly.rivulet.base.exception.ModelDefineException;
 import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.utils.StringUtil;
 import zly.rivulet.sql.definer.QueryComplexModel;
@@ -20,6 +19,8 @@ import zly.rivulet.sql.definition.field.FieldDefinition;
 import zly.rivulet.sql.definition.query.HalfFinalDefinition;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.exception.SQLDescDefineException;
+import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
+import zly.rivulet.sql.preparser.helper.node.ProxyNode;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -36,30 +37,24 @@ import java.util.Map;
 public class SQLProxyModelManager {
 
     private final static ThreadLocal<FieldDefinition> THREAD_LOCAL = new ThreadLocal<>();
-    private final Object mainProxyModel;
 
-    private final SqlDefiner definer;
-
-    private final SqlPreParser sqlPreParser;
-
-    private final SQLAliasManager aliasManager;
-
-    private final Map<Object, SQLAliasManager.AliasFlag> proxy_aliasFlag_map = new HashMap<>();
-
+    private final SqlPreParseHelper sqlPreParseHelper;
+    /**
+     * 每个代理对象，都对应自己专属的QueryFromMeta
+     **/
     private final Map<Object, QueryFromMeta> proxy_queryMeta_map = new HashMap<>();
 
-    public SQLProxyModelManager(Class<?> clazz, SqlDefiner definer, SqlPreParser sqlPreParser, SQLAliasManager aliasManager, Method proxyMethod) {
-        if (QueryComplexModel.class.isAssignableFrom(clazz)) {
-            this.mainProxyModel = this.createComplexProxyModel(clazz, proxyMethod);
-        } else {
-            this.mainProxyModel = createProxyModel(clazz);
-        }
-        this.definer = definer;
-        this.sqlPreParser = sqlPreParser;
-        this.aliasManager = aliasManager;
+    private ProxyNode curr;
+
+    public SQLProxyModelManager(SqlPreParseHelper sqlPreParseHelper) {
+        this.sqlPreParseHelper = sqlPreParseHelper;
+        this.curr = ProxyNode.craeteRoot();
     }
 
     public Object createComplexProxyModel(Class<?> clazz, Method proxyMethod) {
+        SqlPreParser sqlPreParser = sqlPreParseHelper.getSqlPreParser();
+        SqlDefiner sqlDefiner = sqlPreParser.getSqlDefiner();
+        SQLAliasManager aliasManager = sqlPreParseHelper.getAliasManager();
         Object o = this.proxyDONewInstance(clazz);
         // 每个字段注入代理对象
         for (Field field : clazz.getDeclaredFields()) {
@@ -69,20 +64,28 @@ public class SQLProxyModelManager {
                 // 两个注解都有，或两个注解都没有，报错
                 throw SQLDescDefineException.unknowQueryType();
             }
-            // 只要存在一个，则注入代理对象
-            Object fieldProxy = this.createProxyModel(field.getType());
-            this.proxyDOFieldSetValue(field, o, fieldProxy);
 
             if (sqlModelJoin != null) {
                 // TODO 检查DO对象是否是表，
 
+                // 注入代理对象
+                Object fieldProxy = this.registerSingleModel(field.getType());
+                this.proxyDOFieldSetValue(field, o, fieldProxy);
+
                 // 找到对应的queryMeta存起来，等会会来取
-                proxy_queryMeta_map.put(o, definer.createOrGetModelMeta(clazz));
+                proxy_queryMeta_map.put(o, sqlDefiner.createOrGetModelMeta(clazz));
             } else if (sqlSubJoin != null) {
                 // TODO 检查vo对象是否是子查询的vo
 
-                // 找到对应的queryMeta存起来，等会会来取
-                FinalDefinition finalDefinition = sqlPreParser.parse(sqlSubJoin.value(), proxyMethod);
+                // 注入代理对象
+                Object fieldProxy = this.registerSingleModel(field.getType());
+                this.proxyDOFieldSetValue(field, o, fieldProxy);
+
+                // 递归解析子查询
+                //TODO 这里仍然拿不到 子查询的对象
+
+
+                FinalDefinition finalDefinition = sqlPreParser.parse(sqlSubJoin.value(), sqlPreParseHelper);
                 if (finalDefinition instanceof SqlQueryDefinition) {
                     SqlQueryDefinition sqlQueryDefinition = (SqlQueryDefinition) finalDefinition;
                     SQLAliasManager subAliasManager = sqlQueryDefinition.getAliasManager();
@@ -130,7 +133,8 @@ public class SQLProxyModelManager {
         }
     }
 
-    public Object createProxyModel(Class<?> clazz) {
+    public Object registerSingleModel(Class<?> clazz) {
+        SqlDefiner sqlDefiner = sqlPreParseHelper.getSqlPreParser().getSqlDefiner();
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(clazz);
         enhancer.setCallback(new MethodInterceptor() {
@@ -156,7 +160,7 @@ public class SQLProxyModelManager {
                     System.arraycopy(methodNameArr, 3, fieldNameArr, 0, methodNameArr.length - 3);
                     String fieldName = new String(fieldNameArr);
 
-                    SQLModelMeta modelMeta = definer.createOrGetModelMeta(o.getClass());
+                    SQLModelMeta modelMeta = sqlDefiner.createOrGetModelMeta(o.getClass());
                     SQLFieldMeta fieldMeta = modelMeta.getFieldMeta(fieldName);
                     SQLAliasManager.AliasFlag aliasFlag = proxy_aliasFlag_map.get(o);
 
@@ -165,25 +169,13 @@ public class SQLProxyModelManager {
                 return result;
             }
         });
-        return enhancer.create();
-    }
-
-    /**
-     * Description 进入了一层子查询
-     *
-     * @author zhaolaiyuan
-     * Date 2022/4/5 15:24
-     **/
-    public void startSub() {
-        aliasManager.startSub();
-    }
-
-    public void endSub() {
-        aliasManager.endSub();
+        Object proxyModel = enhancer.create();
+        curr.createSub(proxyModel);
+        return proxyModel;
     }
 
     public Object getMainProxyModel() {
-        return mainProxyModel;
+        return curr.getProxyModel();
     }
 
     public QueryFromMeta getQueryMeta(Object proxy) {
@@ -191,7 +183,19 @@ public class SQLProxyModelManager {
     }
 
     public FieldDefinition parseField(FieldMapping fieldMapping) {
-        fieldMapping.getMapping(mainProxyModel);
+        fieldMapping.getMapping(curr.getProxyModel());
         return THREAD_LOCAL.get();
+    }
+
+    public Object registerProxyModel(Class<?> mainFrom) {
+        if (QueryComplexModel.class.isAssignableFrom(mainFrom)) {
+            return this.createComplexProxyModel(mainFrom, sqlPreParseHelper.getMethod());
+        } else {
+            return registerSingleModel(mainFrom);
+        }
+    }
+
+    public ProxyNode getRootProxyNode() {
+        return curr;
     }
 }

@@ -1,6 +1,5 @@
 package zly.rivulet.sql.describer.join;
 
-import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.query.desc.JoinCondition;
 
 import java.util.ArrayList;

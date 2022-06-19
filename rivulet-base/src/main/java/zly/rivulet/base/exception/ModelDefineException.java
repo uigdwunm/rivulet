@@ -21,4 +21,8 @@ public class ModelDefineException extends RuntimeException {
         Class<?> declaringClass = method.getDeclaringClass();
         return new ModelDefineException("字段映射只能解析getter方法");
     }
+
+    public static ModelDefineException loseType(Class<?> clazz, Field field) {
+        return new ModelDefineException("映射字段定义缺少类型");
+    }
 }

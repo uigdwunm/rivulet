@@ -5,6 +5,10 @@ import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.utils.BooleanEnum;
 import zly.rivulet.mysql.definer.outerType.ExactNumericType;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+@Retention(RetentionPolicy.RUNTIME)
 public @interface MySQLInt {
 
     int maximumDisplayWidth() default 1;

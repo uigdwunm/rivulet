@@ -18,38 +18,23 @@ import java.lang.reflect.Method;
 
 public class SqlPreParseHelper implements PreParseHelper {
 
+
     private final SqlPreParser sqlPreParser;
 
     private final SqlParamDefinitionManager sqlParamDefinitionManager;
 
-    private final WholeDesc wholeDesc;
-
     private final SQLProxyModelManager sqlProxyModelManager;
-
-    private final SQLAliasManager aliasManager;
 
     private final SqlRivuletProperties configProperties;
 
     private final Method method;
 
-    public SqlPreParseHelper(SqlPreParser sqlPreParser, WholeDesc wholeDesc, Method method) {
+    public SqlPreParseHelper(SqlPreParser sqlPreParser, Method method) {
         this.sqlPreParser = sqlPreParser;
         this.sqlParamDefinitionManager = new SqlParamDefinitionManager(method.getParameters(), sqlPreParser.getConvertorManager());
-        this.wholeDesc = wholeDesc;
-        SqlRivuletProperties configProperties = sqlPreParser.getConfigProperties();
-        SQLAliasManager aliasManager = new SQLAliasManager(configProperties.isUseShortAlias());
-        this.aliasManager = aliasManager;
-        this.sqlProxyModelManager = new SQLProxyModelManager(wholeDesc.getMainFrom(), sqlPreParser.getDefiner(), sqlPreParser, aliasManager, method);
-        this.configProperties = configProperties;
+        this.configProperties = sqlPreParser.getConfigProperties();
         this.method = method;
-    }
-
-    public void startSub() {
-        sqlProxyModelManager.startSub();
-    }
-
-    public void endSub() {
-        sqlProxyModelManager.endSub();
+        this.sqlProxyModelManager = new SQLProxyModelManager(this);
     }
 
     public SqlPreParser getSqlPreParser() {
@@ -60,20 +45,8 @@ public class SqlPreParseHelper implements PreParseHelper {
         return sqlParamDefinitionManager;
     }
 
-    public WholeDesc getWholeDesc() {
-        return wholeDesc;
-    }
-
     public SQLProxyModelManager getSQLProxyModelManager() {
         return sqlProxyModelManager;
-    }
-
-    public SQLProxyModelManager getSqlProxyModelManager() {
-        return sqlProxyModelManager;
-    }
-
-    public SQLAliasManager getAliasManager() {
-        return aliasManager;
     }
 
     public SqlRivuletProperties getConfigProperties() {

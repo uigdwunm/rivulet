@@ -54,7 +54,7 @@ public abstract class RivuletManager {
      * @author zhaolaiyuan
      * Date 2022/3/20 10:15
      **/
-    public void initParser(List<Method> allWholeDescMethodList, List<Method> allProxyMethod) {
+    public void preParse(List<Method> allWholeDescMethodList, List<Method> allProxyMethod) {
         Map<String, WholeDesc> wholeDescMap = this.getWholeDescMap(allWholeDescMethodList);
 
         PreParser preParser = this.createPreParser(wholeDescMap);

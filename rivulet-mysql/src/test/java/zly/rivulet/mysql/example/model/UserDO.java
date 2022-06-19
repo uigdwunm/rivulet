@@ -1,6 +1,7 @@
 package zly.rivulet.mysql.example.model;
 
 import zly.rivulet.base.definer.annotations.Comment;
+import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLBigInt;
 import zly.rivulet.mysql.definer.annotations.type.string.MySQLVarchar;
 import zly.rivulet.mysql.example.enums.UserType;
 import zly.rivulet.sql.definer.annotations.SqlColumn;
@@ -11,6 +12,8 @@ import java.util.Date;
 // PropertyDescriptor
 @SqlTable("t_user")
 public class UserDO {
+    @SqlColumn("id")
+    @MySQLBigInt
     private long id;
 
     @SqlColumn

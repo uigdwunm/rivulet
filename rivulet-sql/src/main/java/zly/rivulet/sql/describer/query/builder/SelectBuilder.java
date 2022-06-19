@@ -14,21 +14,12 @@ public class SelectBuilder<F, S> extends WhereBuilder<F, S> {
     }
 
     public final WhereBuilder<F, S> nameMapped() {
-        super.nameMapped = true;
         super.mappedItemList = Collections.emptyList();
         return this;
     }
 
     @SafeVarargs
-    public final WhereBuilder<F, S> nameMapped(Mapping.Item<F, S, ?>... unMappedItems) {
-        super.nameMapped = true;
-        super.mappedItemList = Arrays.asList(unMappedItems);
-        return this;
-    }
-
-    @SafeVarargs
     public final WhereBuilder<F, S> select(Mapping.Item<F, S, ?> ... items) {
-        super.nameMapped = false;
         super.mappedItemList = Arrays.asList(items);
         return this;
     }

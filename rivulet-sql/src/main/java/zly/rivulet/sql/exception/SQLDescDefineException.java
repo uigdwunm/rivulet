@@ -23,4 +23,8 @@ public class SQLDescDefineException extends RuntimeException {
     public static SQLDescDefineException unknowQueryType() {
         return new SQLDescDefineException("位置的查询类型");
     }
+
+    public static SQLDescDefineException selectAndFromNoMatch() {
+        return new SQLDescDefineException("select对象和from对象不匹配，无法自动映射查询结果");
+    }
 }

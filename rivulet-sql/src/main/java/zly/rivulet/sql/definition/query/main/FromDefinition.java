@@ -5,8 +5,10 @@ import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.sql.definer.QueryComplexModel;
 import zly.rivulet.sql.definer.SqlDefiner;
 import zly.rivulet.sql.definer.meta.QueryFromMeta;
+import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.query.operate.OperateDefinition;
 import zly.rivulet.sql.describer.join.ComplexDescriber;
+import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.preparser.SQLProxyModelManager;
 import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
 import zly.rivulet.sql.preparser.SqlPreParser;
@@ -75,5 +77,14 @@ public class FromDefinition extends AbstractDefinition {
     @Override
     public FromDefinition forAnalyze() {
         return null;
+    }
+
+    public Class<?> getFromMode() {
+        if (from instanceof SQLModelMeta) {
+            return ((SQLModelMeta) from).getModelClass();
+        } else {
+            // 随便返回一个,无意义
+            return SqlQueryMetaDesc.class;
+        }
     }
 }

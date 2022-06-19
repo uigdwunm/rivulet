@@ -1,6 +1,5 @@
 package zly.rivulet.base.runparser;
 
-import zly.rivulet.base.definition.AbstractDefinition;
 import zly.rivulet.base.definition.FinalDefinition;
 import zly.rivulet.base.runparser.param_manager.ParamManager;
 
