@@ -2,17 +2,15 @@ package zly.rivulet.sql.preparser.helper;
 
 import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
 import zly.rivulet.base.describer.SingleValueElementDesc;
-import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.preparser.helper.PreParseHelper;
 import zly.rivulet.sql.SqlRivuletProperties;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
-import zly.rivulet.sql.preparser.SQLAliasManager;
-import zly.rivulet.sql.preparser.SQLProxyModelManager;
 import zly.rivulet.sql.preparser.SqlParamDefinitionManager;
 import zly.rivulet.sql.preparser.SqlPreParser;
+import zly.rivulet.sql.preparser.helper.node.QueryProxyNode;
 
 import java.lang.reflect.Method;
 
@@ -23,7 +21,7 @@ public class SqlPreParseHelper implements PreParseHelper {
 
     private final SqlParamDefinitionManager sqlParamDefinitionManager;
 
-    private final SQLProxyModelManager sqlProxyModelManager;
+    private QueryProxyNode currNode;
 
     private final SqlRivuletProperties configProperties;
 
@@ -34,7 +32,6 @@ public class SqlPreParseHelper implements PreParseHelper {
         this.sqlParamDefinitionManager = new SqlParamDefinitionManager(method.getParameters(), sqlPreParser.getConvertorManager());
         this.configProperties = sqlPreParser.getConfigProperties();
         this.method = method;
-        this.sqlProxyModelManager = new SQLProxyModelManager(this);
     }
 
     public SqlPreParser getSqlPreParser() {
@@ -45,8 +42,12 @@ public class SqlPreParseHelper implements PreParseHelper {
         return sqlParamDefinitionManager;
     }
 
-    public SQLProxyModelManager getSQLProxyModelManager() {
-        return sqlProxyModelManager;
+    public QueryProxyNode getCurrNode() {
+        return currNode;
+    }
+
+    public void setCurrNode(QueryProxyNode currNode) {
+        this.currNode = currNode;
     }
 
     public SqlRivuletProperties getConfigProperties() {

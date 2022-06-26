@@ -1,6 +1,7 @@
 package zly.rivulet.mysql.definer;
 
 import zly.rivulet.base.utils.View;
+import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 
 import java.util.HashMap;
@@ -13,18 +14,18 @@ public class MySQLModelMeta extends SQLModelMeta {
 
     private final Class<?> modelClass;
 
-    private final View<MySQLFieldMeta> fieldMetaList;
+    private final View<SQLFieldMeta> fieldMetaList;
 
-    private final Map<String, MySQLFieldMeta> nameMetaMap;
+    private final Map<String, SQLFieldMeta> nameMetaMap;
 
     private final String comment;
 
-    public MySQLModelMeta(String tableName, Class<?> modelClass, View<MySQLFieldMeta> fieldMetaList, String comment) {
+    public MySQLModelMeta(String tableName, Class<?> modelClass, View<SQLFieldMeta> fieldMetaList, String comment) {
         this.tableName = tableName;
         this.modelClass = modelClass;
         this.fieldMetaList = fieldMetaList;
-        Map<String, MySQLFieldMeta> map = new HashMap<>();
-        for (MySQLFieldMeta mySQLFieldMeta : fieldMetaList) {
+        Map<String, SQLFieldMeta> map = new HashMap<>();
+        for (SQLFieldMeta mySQLFieldMeta : fieldMetaList) {
             map.put(mySQLFieldMeta.getFieldName(), mySQLFieldMeta);
         }
         this.nameMetaMap = map;
@@ -32,11 +33,12 @@ public class MySQLModelMeta extends SQLModelMeta {
         this.comment = comment;
     }
 
+    @Override
     public String getTableName() {
         return tableName;
     }
 
-    public View<MySQLFieldMeta> getFieldMetaList() {
+    public View<SQLFieldMeta> getFieldMetaList() {
         return fieldMetaList;
     }
 

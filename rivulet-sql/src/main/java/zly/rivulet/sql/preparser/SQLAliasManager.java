@@ -1,11 +1,10 @@
 package zly.rivulet.sql.preparser;
 
-import zly.rivulet.base.exception.UnbelievableException;
-import zly.rivulet.base.utils.StringUtil;
+import zly.rivulet.base.definer.ModelMeta;
 import zly.rivulet.sql.SqlRivuletProperties;
 import zly.rivulet.sql.definer.annotations.SqlQueryAlias;
+import zly.rivulet.sql.definer.meta.SQLModelMeta;
 
-import java.lang.reflect.Field;
 import java.util.*;
 
 public class SQLAliasManager {
@@ -36,18 +35,18 @@ public class SQLAliasManager {
     private void initAlias() {
         Map<String, Integer> repeatAlias = new HashMap<>();
         for (AliasFlag aliasFlag : allAliasSet) {
-            String alias = aliasFlag.getAlias();
-            String fieldName = aliasFlag.getFieldName();
-            Integer count = repeatAlias.compute(fieldName, (k, v) -> {
+            String alias = aliasFlag.alias;
+            boolean isForce = aliasFlag.isForce;
+            Integer count = repeatAlias.compute(alias, (k, v) -> {
                 if (v == null) {
                     return 0;
                 }
                 return v + 1;
             });
-            if (alias != null) {
+            if (isForce) {
                 this.aliasMap.put(aliasFlag, alias);
             } else {
-                this.aliasMap.put(aliasFlag, fieldName + '_' + count);
+                String put = this.aliasMap.put(aliasFlag, alias + '_' + count);
             }
             int tableCount = repeatAlias.size();
             String shortName;
@@ -63,9 +62,24 @@ public class SQLAliasManager {
         }
     }
 
-    public static AliasFlag createFlag(Field field) {
-        SqlQueryAlias alias = field.getAnnotation(SqlQueryAlias.class);
-        return new AliasFlag(alias != null ? alias.value() : null, field.getName());
+    public static AliasFlag createModelAlias(String alias, SQLModelMeta sqlModelMeta) {
+        return new AliasFlag(alias, false, sqlModelMeta, false);
+    }
+
+    public static AliasFlag createModelAlias(SqlQueryAlias sqlQueryAlias, SQLModelMeta sqlModelMeta) {
+        return new AliasFlag(sqlQueryAlias.value(), true, sqlModelMeta, false);
+    }
+
+    public static AliasFlag createModelAlias(SqlQueryAlias sqlQueryAlias) {
+        return new AliasFlag(sqlQueryAlias.value(), true, null, false);
+    }
+
+    public static AliasFlag createModelAlias(String alias) {
+        return new AliasFlag(alias, false, null, false);
+    }
+
+    public static AliasFlag fieldAlias(String fieldName, boolean isForce) {
+        return new AliasFlag(fieldName, isForce, null, true);
     }
 
     /**
@@ -97,26 +111,46 @@ public class SQLAliasManager {
     public static class AliasFlag {
 
         /**
-         * {@code @Alias} 注解中的名称，如果存在，则别名一定是这个
+         * 预先指定的别名，可能是{@link SqlQueryAlias}注解指定的，可能是query中的字段名
          **/
         private final String alias;
 
         /**
-         * 原字段名
+         * 是否强制使用上面的别名，如果是通过 {@link SqlQueryAlias}注解 指定的就是强制使用的
          **/
-        private final String fieldName;
+        private final boolean isForce;
 
-        private AliasFlag(String alias, String fieldName) {
+        /**
+         * 如果对应到一个表，则记录
+         **/
+        private final ModelMeta modelMeta;
+
+        /**
+         * 是否是字段
+         **/
+        private final boolean isField;
+
+        private AliasFlag(String alias, boolean isForce, ModelMeta modelMeta, boolean isField) {
             this.alias = alias;
-            this.fieldName = fieldName;
+            this.isForce = isForce;
+            this.modelMeta = modelMeta;
+            this.isField = isField;
         }
 
         public String getAlias() {
             return alias;
         }
 
-        public String getFieldName() {
-            return fieldName;
+        public boolean isForce() {
+            return isForce;
+        }
+
+        public ModelMeta getModelMeta() {
+            return modelMeta;
+        }
+
+        public boolean isField() {
+            return isField;
         }
     }
 }

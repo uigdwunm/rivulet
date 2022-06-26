@@ -81,8 +81,17 @@ public class ProxyNode {
         this.queryFromMeta = queryFromMeta;
     }
 
-    public void merge() {
-
+    public void setProxyModel(Object proxyModel) {
+        this.proxyModel = proxyModel;
     }
 
+    /**
+     * Description 合并子查询的node数据
+     *
+     * @author zhaolaiyuan
+     * Date 2022/6/19 12:13
+     **/
+    public void addSubNode(ProxyNode subNode) {
+        // TODO
+    }
 }

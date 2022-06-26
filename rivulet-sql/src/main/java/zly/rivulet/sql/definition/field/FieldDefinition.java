@@ -9,7 +9,12 @@ import zly.rivulet.sql.preparser.SQLAliasManager;
 public class FieldDefinition implements SingleValueElementDefinition {
 
     /**
-     * 所属表的别名标识
+     * 引用别名，就是当前字段所属范围的引用表别名
+     **/
+    private final SQLAliasManager.AliasFlag referenceAlias;
+
+    /**
+     * 当前字段本身的别名，不一定有
      **/
     private final SQLAliasManager.AliasFlag aliasFlag;
 
@@ -17,7 +22,8 @@ public class FieldDefinition implements SingleValueElementDefinition {
 
     private final FieldMeta fieldMeta;
 
-    public FieldDefinition(SQLAliasManager.AliasFlag aliasFlag, ModelMeta modelMeta, FieldMeta fieldMeta) {
+    public FieldDefinition(SQLAliasManager.AliasFlag referenceAlias, SQLAliasManager.AliasFlag aliasFlag, ModelMeta modelMeta, FieldMeta fieldMeta) {
+        this.referenceAlias = referenceAlias;
         this.aliasFlag = aliasFlag;
         this.modelMeta = modelMeta;
         this.fieldMeta = fieldMeta;

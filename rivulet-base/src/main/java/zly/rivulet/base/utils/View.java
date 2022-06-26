@@ -11,6 +11,10 @@ public class View<T> implements Iterable<T> {
         this.elements = elements;
     }
 
+    public int size() {
+        return elements.length;
+    }
+
     public static <T> View<T> create(T[] elements) {
         Object[] copy = new Object[elements.length];
         System.arraycopy(elements, 0, copy, 0, elements.length);

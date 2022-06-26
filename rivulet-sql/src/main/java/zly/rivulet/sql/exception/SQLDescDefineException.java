@@ -21,7 +21,7 @@ public class SQLDescDefineException extends RuntimeException {
     }
 
     public static SQLDescDefineException unknowQueryType() {
-        return new SQLDescDefineException("位置的查询类型");
+        return new SQLDescDefineException("未知的查询类型");
     }
 
     public static SQLDescDefineException selectAndFromNoMatch() {

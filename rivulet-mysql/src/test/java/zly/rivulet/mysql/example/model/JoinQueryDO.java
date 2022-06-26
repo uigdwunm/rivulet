@@ -18,7 +18,7 @@ public class JoinQueryDO implements QueryComplexModel {
     @SQLModelJoin
     private ProvinceDO provinceDO;
 
-    @SQLSubJoin("")
+    @SQLSubJoin("sdf")
     private UserVO userFriend;
 
     @Override

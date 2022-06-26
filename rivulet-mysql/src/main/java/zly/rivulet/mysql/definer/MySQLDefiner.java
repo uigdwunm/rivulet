@@ -13,6 +13,7 @@ import zly.rivulet.mysql.definer.annotations.type.string.MySQLVarchar;
 import zly.rivulet.sql.definer.SqlDefiner;
 import zly.rivulet.sql.definer.annotations.SqlColumn;
 import zly.rivulet.sql.definer.annotations.SqlTable;
+import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -42,7 +43,7 @@ public class MySQLDefiner extends SqlDefiner {
         Comment commentAnno = clazz.getAnnotation(Comment.class);
         String comment = commentAnno != null ? commentAnno.value() : null;
 
-        List<MySQLFieldMeta> fieldMetaList = Arrays.stream(clazz.getDeclaredFields())
+        List<SQLFieldMeta> fieldMetaList = Arrays.stream(clazz.getDeclaredFields())
             .map(field -> this.parseFieldMeta(clazz, field))
             .filter(Objects::nonNull)
             .collect(Collectors.toList());

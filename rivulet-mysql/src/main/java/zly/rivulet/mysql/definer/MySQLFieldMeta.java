@@ -3,7 +3,7 @@ package zly.rivulet.mysql.definer;
 import zly.rivulet.base.definer.outerType.OriginOuterType;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 
-public final class MySQLFieldMeta implements SQLFieldMeta {
+public final class MySQLFieldMeta extends SQLFieldMeta {
 
     private final String fieldName;
 

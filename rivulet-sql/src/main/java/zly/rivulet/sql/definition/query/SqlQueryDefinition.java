@@ -17,6 +17,7 @@ import zly.rivulet.sql.preparser.SQLProxyModelManager;
 import zly.rivulet.sql.preparser.SqlParamDefinitionManager;
 import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
 import zly.rivulet.sql.preparser.helper.node.ProxyNode;
+import zly.rivulet.sql.preparser.helper.node.QueryProxyNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,14 +56,11 @@ public class SqlQueryDefinition implements FinalDefinition, QueryFromMeta, Singl
 
     public SqlQueryDefinition(SqlPreParseHelper sqlPreParseHelper, WholeDesc wholeDesc) {
         SqlQueryMetaDesc<?, ?> metaDesc = (SqlQueryMetaDesc<?, ?>) wholeDesc;
-        SQLProxyModelManager sqlProxyModelManager = sqlPreParseHelper.getSQLProxyModelManager();
-        sqlProxyModelManager.registerProxyModel(wholeDesc.getMainFrom());
-        ProxyNode rootProxyNode = sqlProxyModelManager.getRootProxyNode();
-        rootProxyNode.setQueryFromMeta(this);
+        QueryProxyNode queryProxyNode = new QueryProxyNode(sqlPreParseHelper, metaDesc);
 
         // 解析赋值
         this.metaDesc = metaDesc;
-        this.fromDefinition = new FromDefinition(sqlPreParseHelper, wholeDesc.getMainFrom(), sqlProxyModelManager.getMainProxyModel());
+        this.fromDefinition = new FromDefinition(sqlPreParseHelper);
         this.selectDefinition = new SelectDefinition(
             sqlPreParseHelper,
             this.fromDefinition,

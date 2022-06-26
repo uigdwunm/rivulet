@@ -11,5 +11,8 @@ import java.util.List;
  * Date 2022/6/5 20:42
  **/
 public abstract class MapDefinition {
-    private List<SelectMapping<?, ?>> mappingList;
+
+    public Class<?> getResultModelClass() {
+        return null;
+    }
 }

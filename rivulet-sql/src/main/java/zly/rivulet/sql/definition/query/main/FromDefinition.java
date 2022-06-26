@@ -3,15 +3,15 @@ package zly.rivulet.sql.definition.query.main;
 import zly.rivulet.base.definition.AbstractDefinition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.sql.definer.QueryComplexModel;
-import zly.rivulet.sql.definer.SqlDefiner;
 import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.query.operate.OperateDefinition;
 import zly.rivulet.sql.describer.join.ComplexDescriber;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
-import zly.rivulet.sql.preparser.SQLProxyModelManager;
 import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
-import zly.rivulet.sql.preparser.SqlPreParser;
+import zly.rivulet.sql.preparser.helper.node.FromNode;
+import zly.rivulet.sql.preparser.helper.node.ModelProxyNode;
+import zly.rivulet.sql.preparser.helper.node.QueryProxyNode;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,18 +37,18 @@ public class FromDefinition extends AbstractDefinition {
         }
     }
 
-    public FromDefinition(SqlPreParseHelper sqlPreParseHelper, Class<?> mainFromClass, Object proxyModel) {
+    public FromDefinition(SqlPreParseHelper sqlPreParseHelper) {
         super(CheckCondition.IS_TRUE, sqlPreParseHelper.getSqlParamDefinitionManager());
 
-        SqlPreParser sqlPreParser = sqlPreParseHelper.getSqlPreParser();
-        SqlDefiner definer = sqlPreParser.getDefiner();
-        SQLProxyModelManager sqlProxyModelManager = sqlPreParseHelper.getSQLProxyModelManager();
+        QueryProxyNode proxyNode = sqlPreParseHelper.getCurrNode();
+        Object proxyModel = proxyNode.getProxyModel();
 
         if (proxyModel instanceof QueryComplexModel) {
             // 是联表查询对象
-            QueryComplexModel queryComplexModel = (QueryComplexModel) proxyModel;
+            QueryComplexModel queryComplexModel = (QueryComplexModel) proxyNode.getProxyModel();
             ComplexDescriber complexDescriber = queryComplexModel.register();
-            this.from = sqlProxyModelManager.getQueryMeta(complexDescriber.getModelFrom());
+
+            this.from = proxyNode.getFromNode(complexDescriber.getModelFrom());
             this.leftJoinRelations = complexDescriber.getLeftJoinRelations().stream()
                 .map(relation -> convert(sqlPreParseHelper, relation))
                 .collect(Collectors.toList());
@@ -58,16 +58,17 @@ public class FromDefinition extends AbstractDefinition {
             this.innerJoinRelations = complexDescriber.getInnerJoinRelations().stream()
                 .map(relation -> convert(sqlPreParseHelper, relation))
                 .collect(Collectors.toList());
-
         } else {
-            // 单表查询对象
-            this.from = definer.createOrGetModelMeta(mainFromClass);
+            // 单表查询对象,node里一定有一个唯一的fromNode
+            FromNode fromNode = proxyNode.getFromNodeList().get(0);
+            ModelProxyNode modelProxyNode = (ModelProxyNode) fromNode;
+            this.from = modelProxyNode.getModelMeta();
         }
     }
 
     private JoinRelation convert(SqlPreParseHelper sqlPreParseHelper, ComplexDescriber.Relation<?> desc) {
-        SQLProxyModelManager sqlProxyModelManager = sqlPreParseHelper.getSQLProxyModelManager();
-        QueryFromMeta queryMeta = sqlProxyModelManager.getQueryMeta(desc.getModelRelation());
+        QueryProxyNode proxyNode = sqlPreParseHelper.getCurrNode();
+        QueryFromMeta queryMeta = proxyNode.getFromNode(desc.getModelRelation());
         List<OperateDefinition> operateDefinitionList = desc.getConditionList().stream()
             .map(item -> item.getOperate().createDefinition(sqlPreParseHelper, item))
             .collect(Collectors.toList());
