@@ -61,7 +61,7 @@ public class SqlPreParseHelper implements PreParseHelper {
     public SingleValueElementDefinition parse(SingleValueElementDesc<?, ?> singleValueElementDesc) {
         if (singleValueElementDesc instanceof FieldMapping) {
             FieldMapping<?, ?> fieldMapping = (FieldMapping<?, ?>) singleValueElementDesc;
-            return sqlProxyModelManager.parseField(fieldMapping);
+            return currNode.parseField((FieldMapping<Object, Object>) fieldMapping);
         } else if (singleValueElementDesc instanceof SqlQueryMetaDesc) {
             return (SqlQueryDefinition) sqlPreParser.parse((SqlQueryMetaDesc<?, ?>) singleValueElementDesc, method);
         } else if (singleValueElementDesc instanceof Param) {

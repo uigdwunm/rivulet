@@ -1,7 +1,11 @@
 package zly.rivulet.sql.preparser.helper.node;
 
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
+import zly.rivulet.sql.definition.query.mapping.MappingDefinition;
 import zly.rivulet.sql.preparser.SQLAliasManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Description 单表model的代理对象节点
@@ -28,6 +32,8 @@ public class ModelProxyNode implements FromNode {
 
     private final SQLModelMeta modelMeta;
 
+    private final List<MappingDefinition> mappingDefinitionList = new ArrayList<>();
+
     public ModelProxyNode(QueryProxyNode parentNode, Object proxyModel, SQLAliasManager.AliasFlag aliasFlag, SQLModelMeta modelMeta) {
         this.parentNode = parentNode;
         this.proxyModel = proxyModel;
@@ -41,7 +47,7 @@ public class ModelProxyNode implements FromNode {
     }
 
     @Override
-    public Class<?> getModelClass() {
+    public Class<?> getFromModelClass() {
         return modelMeta.getModelClass();
     }
 
@@ -50,7 +56,20 @@ public class ModelProxyNode implements FromNode {
         return this.parentNode;
     }
 
+    @Override
+    public List<MappingDefinition> getMappingDefinitionList() {
+        return this.mappingDefinitionList;
+    }
+
     public SQLModelMeta getModelMeta() {
         return modelMeta;
+    }
+
+    public SQLAliasManager.AliasFlag getAliasFlag() {
+        return aliasFlag;
+    }
+
+    public void addMappingDefinition(MappingDefinition mappingDefinition) {
+        this.mappingDefinitionList.add(mappingDefinition);
     }
 }

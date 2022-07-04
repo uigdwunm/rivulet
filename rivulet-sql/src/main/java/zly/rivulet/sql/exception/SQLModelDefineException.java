@@ -15,4 +15,8 @@ public class SQLModelDefineException extends RuntimeException {
     public static SQLModelDefineException zerofillMustUnSigned() {
         return new SQLModelDefineException("零填充属性必须是无符号的!");
     }
+
+    public static SQLModelDefineException needNoArgumentsConstructor() {
+        return new SQLModelDefineException("必须有一个无参构造方法!");
+    }
 }

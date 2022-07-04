@@ -3,6 +3,8 @@ package zly.rivulet.mysql.definer;
 import zly.rivulet.base.definer.outerType.OriginOuterType;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 
+import java.lang.reflect.Field;
+
 public final class MySQLFieldMeta extends SQLFieldMeta {
 
     private final String fieldName;
@@ -17,13 +19,16 @@ public final class MySQLFieldMeta extends SQLFieldMeta {
 
     private final String defaultValue;
 
-    public MySQLFieldMeta(String fieldName, Class<?> fieldType, String columnName, OriginOuterType originOuterType, String comment, String defaultValue) {
-        this.fieldName = fieldName;
-        this.fieldType = fieldType;
+    private final Field field;
+
+    public MySQLFieldMeta(Field field, String columnName, OriginOuterType originOuterType, String comment, String defaultValue) {
+        this.fieldName = field.getName();
+        this.fieldType = field.getDeclaringClass();
         this.columnName = columnName;
         this.originOuterType = originOuterType;
         this.comment = comment;
         this.defaultValue = defaultValue;
+        this.field = field;
     }
 
     public String getFieldName() {
@@ -49,5 +54,15 @@ public final class MySQLFieldMeta extends SQLFieldMeta {
     @Override
     public OriginOuterType getOriginOuterType() {
         return this.originOuterType;
+    }
+
+    @Override
+    public String getOriginName() {
+        return this.columnName;
+    }
+
+    @Override
+    public Field getField() {
+        return field;
     }
 }

@@ -27,6 +27,10 @@ public class View<T> implements Iterable<T> {
         return new View<>(copy);
     }
 
+    public T get(int index) {
+        return (T) elements[index];
+    }
+
     @Override
     public Iterator<T> iterator() {
         return new ViewIterator();

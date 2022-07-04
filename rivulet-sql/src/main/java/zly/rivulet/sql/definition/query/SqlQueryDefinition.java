@@ -12,6 +12,7 @@ import zly.rivulet.sql.definition.query.main.*;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.query.desc.Condition;
 import zly.rivulet.sql.describer.query.desc.OrderBy;
+import zly.rivulet.sql.mapper.SqlMapDefinition;
 import zly.rivulet.sql.preparser.SQLAliasManager;
 import zly.rivulet.sql.preparser.SQLProxyModelManager;
 import zly.rivulet.sql.preparser.SqlParamDefinitionManager;
@@ -42,7 +43,7 @@ public class SqlQueryDefinition implements FinalDefinition, QueryFromMeta, Singl
 
     private LimitDefinition limit;
 
-    private MapDefinition mapDefinition;
+    private SqlMapDefinition mapDefinition;
 
     private final List<AbstractDefinition> subDefinitionList = new ArrayList<>();
 
@@ -57,6 +58,7 @@ public class SqlQueryDefinition implements FinalDefinition, QueryFromMeta, Singl
     public SqlQueryDefinition(SqlPreParseHelper sqlPreParseHelper, WholeDesc wholeDesc) {
         SqlQueryMetaDesc<?, ?> metaDesc = (SqlQueryMetaDesc<?, ?>) wholeDesc;
         QueryProxyNode queryProxyNode = new QueryProxyNode(sqlPreParseHelper, metaDesc);
+        sqlPreParseHelper.setCurrNode(queryProxyNode);
 
         // 解析赋值
         this.metaDesc = metaDesc;
@@ -104,7 +106,7 @@ public class SqlQueryDefinition implements FinalDefinition, QueryFromMeta, Singl
 
         this.mapDefinition = selectDefinition.getMapDefinition();
 
-        this.aliasManager = sqlPreParseHelper.getAliasManager();
+        this.aliasManager = SQLAliasManager.create(sqlPreParseHelper.getConfigProperties(), queryProxyNode);
         this.paramDefinitionManager = sqlPreParseHelper.getSqlParamDefinitionManager();
     }
 
@@ -175,7 +177,7 @@ public class SqlQueryDefinition implements FinalDefinition, QueryFromMeta, Singl
     }
 
     @Override
-    public MapDefinition getMapDefinition() {
+    public SqlMapDefinition getMapDefinition() {
         return mapDefinition;
     }
 

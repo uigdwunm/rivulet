@@ -1,8 +1,13 @@
 package zly.rivulet.base.definer;
 
 import zly.rivulet.base.definer.outerType.OriginOuterType;
-import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
+
+import java.lang.reflect.Field;
 
 public interface FieldMeta {
     OriginOuterType getOriginOuterType();
+
+    String getOriginName();
+
+    Field getField();
 }

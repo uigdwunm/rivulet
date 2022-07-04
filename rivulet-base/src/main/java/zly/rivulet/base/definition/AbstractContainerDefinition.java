@@ -16,5 +16,4 @@ public abstract class AbstractContainerDefinition extends AbstractDefinition {
         super(checkCondition, paramDefinitionManager);
     }
 
-    public abstract ArrayList<?> getList();
 }

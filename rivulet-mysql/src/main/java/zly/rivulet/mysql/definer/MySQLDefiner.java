@@ -107,8 +107,7 @@ public class MySQLDefiner extends SqlDefiner {
         }
 
         return new MySQLFieldMeta(
-            field.getName(),
-            field.getDeclaringClass(),
+            field,
             StringUtil.defaultIfBlank(sqlColumn.value(), field.getName()),
             originOuterType,
             comment,

@@ -4,6 +4,9 @@ import zly.rivulet.base.definer.ModelMeta;
 import zly.rivulet.sql.SqlRivuletProperties;
 import zly.rivulet.sql.definer.annotations.SqlQueryAlias;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
+import zly.rivulet.sql.preparser.helper.node.FromNode;
+import zly.rivulet.sql.preparser.helper.node.ProxyNode;
+import zly.rivulet.sql.preparser.helper.node.QueryProxyNode;
 
 import java.util.*;
 
@@ -25,11 +28,29 @@ public class SQLAliasManager {
 
     private final SqlRivuletProperties configProperties;
 
-    public SQLAliasManager(SqlRivuletProperties configProperties, Set<AliasFlag> allAliasSet, Map<AliasFlag, AliasFlag> aliasToParentAlias) {
+    private SQLAliasManager(SqlRivuletProperties configProperties, Set<AliasFlag> allAliasSet, Map<AliasFlag, AliasFlag> aliasToParentAlias) {
         this.configProperties = configProperties;
         this.allAliasSet = allAliasSet;
         this.aliasToParentAlias = aliasToParentAlias;
         initAlias();
+    }
+
+    public static SQLAliasManager create(SqlRivuletProperties configProperties, QueryProxyNode queryProxyNode) {
+        Set<AliasFlag> allAliasSet = new HashSet<>();
+        Map<AliasFlag, AliasFlag> aliasToParentAlias = new HashMap<>();
+        create(allAliasSet, aliasToParentAlias, queryProxyNode);
+        return new SQLAliasManager(configProperties, allAliasSet, aliasToParentAlias);
+    }
+
+    private static void create(Set<AliasFlag> allAliasSet, Map<AliasFlag, AliasFlag> aliasToParentAlias, ProxyNode proxyNode) {
+        if (proxyNode instanceof QueryProxyNode) {
+            QueryProxyNode queryProxyNode = (QueryProxyNode) proxyNode;
+            for (FromNode fromNode : queryProxyNode.getFromNodeList()) {
+                fromNode.getal
+            }
+
+        }
+
     }
 
     private void initAlias() {
@@ -74,12 +95,20 @@ public class SQLAliasManager {
         return new AliasFlag(sqlQueryAlias.value(), true, null, false);
     }
 
-    public static AliasFlag createModelAlias(String alias) {
-        return new AliasFlag(alias, false, null, false);
+    public static AliasFlag createModelAlias(String suggestedAlias) {
+        return new AliasFlag(suggestedAlias, false, null, false);
     }
 
-    public static AliasFlag fieldAlias(String fieldName, boolean isForce) {
-        return new AliasFlag(fieldName, isForce, null, true);
+    public static AliasFlag createFieldAlias(SqlQueryAlias sqlQueryAlias) {
+        return new AliasFlag(sqlQueryAlias.value(), true, null, true);
+    }
+
+    public static AliasFlag createFieldAlias(String suggestedAlias) {
+        return new AliasFlag(suggestedAlias, false, null, true);
+    }
+
+    public static AliasFlag createFieldAlias() {
+        return new AliasFlag("column", false, null, true);
     }
 
     /**

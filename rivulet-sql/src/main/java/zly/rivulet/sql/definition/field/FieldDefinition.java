@@ -13,18 +13,12 @@ public class FieldDefinition implements SingleValueElementDefinition {
      **/
     private final SQLAliasManager.AliasFlag referenceAlias;
 
-    /**
-     * 当前字段本身的别名，不一定有
-     **/
-    private final SQLAliasManager.AliasFlag aliasFlag;
-
     private final ModelMeta modelMeta;
 
     private final FieldMeta fieldMeta;
 
-    public FieldDefinition(SQLAliasManager.AliasFlag referenceAlias, SQLAliasManager.AliasFlag aliasFlag, ModelMeta modelMeta, FieldMeta fieldMeta) {
+    public FieldDefinition(SQLAliasManager.AliasFlag referenceAlias, ModelMeta modelMeta, FieldMeta fieldMeta) {
         this.referenceAlias = referenceAlias;
-        this.aliasFlag = aliasFlag;
         this.modelMeta = modelMeta;
         this.fieldMeta = fieldMeta;
     }
@@ -32,5 +26,17 @@ public class FieldDefinition implements SingleValueElementDefinition {
     @Override
     public Definition forAnalyze() {
         return null;
+    }
+
+    public SQLAliasManager.AliasFlag getReferenceAlias() {
+        return referenceAlias;
+    }
+
+    public ModelMeta getModelMeta() {
+        return modelMeta;
+    }
+
+    public FieldMeta getFieldMeta() {
+        return fieldMeta;
     }
 }

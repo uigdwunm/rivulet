@@ -32,8 +32,4 @@ public class WhereDefinition extends AbstractContainerDefinition {
         return null;
     }
 
-    @Override
-    public ArrayList<?> getList() {
-        return this.operateDefinitionList;
-    }
 }

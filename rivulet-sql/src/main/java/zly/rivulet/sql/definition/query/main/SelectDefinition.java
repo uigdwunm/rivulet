@@ -2,28 +2,22 @@ package zly.rivulet.sql.definition.query.main;
 
 import zly.rivulet.base.definition.AbstractContainerDefinition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
+import zly.rivulet.base.describer.Desc;
 import zly.rivulet.base.describer.field.SelectMapping;
 import zly.rivulet.base.utils.View;
-import zly.rivulet.sql.definer.meta.SQLFieldMeta;
-import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.query.mapping.MappingDefinition;
 import zly.rivulet.sql.describer.query.desc.Mapping;
 import zly.rivulet.sql.exception.SQLDescDefineException;
 import zly.rivulet.sql.mapper.Assigner;
+import zly.rivulet.sql.mapper.ContainerAssigner;
+import zly.rivulet.sql.mapper.ModelAssigner;
+import zly.rivulet.sql.mapper.SqlMapDefinition;
 import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
-import zly.rivulet.sql.preparser.helper.node.FromNode;
-import zly.rivulet.sql.preparser.helper.node.ModelProxyNode;
 import zly.rivulet.sql.preparser.helper.node.QueryProxyNode;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 /**
  * Description
@@ -40,6 +34,8 @@ public class SelectDefinition extends AbstractContainerDefinition {
 
     private final View<MappingDefinition> mappingDefinitionList;
 
+    private final SqlMapDefinition mapDefinition;
+
 //    protected SelectDefinition() {
 //        super(CheckCondition.IS_TRUE);
 //    }
@@ -48,35 +44,29 @@ public class SelectDefinition extends AbstractContainerDefinition {
         super(CheckCondition.IS_TRUE, sqlPreParseHelper.getSqlParamDefinitionManager());
         this.selectModel = selectModel;
         if (mappedItemList == null || mappedItemList.isEmpty()) {
-            // 比较select对象和from对象必须是同一个才能进行补齐。
+            // 比较select对象和from对象必须是同一个。
             if (!selectModel.equals(fromDefinition.getFromMode())) {
                 throw SQLDescDefineException.selectAndFromNoMatch();
             }
+            // 结果对象就是查询对象
+
             QueryProxyNode currNode = sqlPreParseHelper.getCurrNode();
-            List<MappingDefinition> mappingDefinitionList = new ArrayList<>();
-            Assigner assigner = new Assigner(sqlPreParseHelper, currNode, mappingDefinitionList);
-
-            // 需要按名称映射，先把所有的set方法都找到
-            Set<Method> setMethodSet = Arrays.stream(selectModel.getMethods())
-                .filter(method -> method.getName().startsWith("set"))
-                .collect(Collectors.toSet());
-
-            // 找到所有对应的field
-
-
-            // TODO 需要考虑联表查询结果的映射怎么搞
-
-            SelectMapping<?, ?> selectMapping = new SelectMapping() {
-                @Override
-                public void setMapping(Object o, Object o2) {
-
-                }
-            };
-
+            Assigner assigner = new ContainerAssigner(sqlPreParseHelper, currNode, 0);
+            this.mapDefinition = new SqlMapDefinition(assigner);
+            this.mappingDefinitionList = View.create(currNode.getMappingDefinitionList());
         } else {
-            this.mappingDefinitionList = mappedItemList.stream()
-                .map(item -> new MappingDefinition(sqlPreParseHelper, item.getDesc(), item.getSelectField()))
-                .collect(Collectors.toList());
+            List<MappingDefinition> mappingDefinitions = new ArrayList<>();
+            List<SelectMapping<Object, Object>> selectMappingList = new ArrayList<>();
+            // 结果对象是新的vo
+            // 这里可能有子查询的情况
+            for (Mapping.Item<?, ?, ?> item : mappedItemList) {
+                MappingDefinition mappingDefinition = new MappingDefinition(sqlPreParseHelper, item);
+                mappingDefinitions.add(mappingDefinition);
+                selectMappingList.add((SelectMapping<Object, Object>) item.getSelectField());
+            }
+            Assigner assigner = new ModelAssigner(selectModel, selectMappingList);
+            this.mapDefinition = new SqlMapDefinition(assigner);
+            this.mappingDefinitionList = View.create(mappingDefinitions);
         }
     }
 
@@ -85,8 +75,11 @@ public class SelectDefinition extends AbstractContainerDefinition {
         return null;
     }
 
-    @Override
-    public ArrayList<?> getList() {
-        return null;
+    public View<MappingDefinition> getMappingDefinitionList() {
+        return mappingDefinitionList;
+    }
+
+    public SqlMapDefinition getMapDefinition() {
+        return mapDefinition;
     }
 }

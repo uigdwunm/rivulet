@@ -1,5 +1,7 @@
 package zly.rivulet.base.definition;
 
+import zly.rivulet.base.describer.Desc;
+
 /**
  * Description 预解析后得到的信息
  *
@@ -15,4 +17,5 @@ public interface Definition {
      * Date 2022/3/27 11:33
      **/
     Definition forAnalyze();
+
 }
