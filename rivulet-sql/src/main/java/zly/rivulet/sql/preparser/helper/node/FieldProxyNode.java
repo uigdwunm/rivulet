@@ -32,4 +32,9 @@ public class FieldProxyNode implements SelectNode {
         return aliasFlag;
     }
 
+    @Override
+    public ProxyNode getParentNode() {
+        return this.parentNode;
+    }
+
 }

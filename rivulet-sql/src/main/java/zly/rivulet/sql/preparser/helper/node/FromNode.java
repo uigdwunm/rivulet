@@ -11,7 +11,5 @@ public interface FromNode extends ProxyNode {
 
     Class<?> getFromModelClass();
 
-    QueryProxyNode getParentNode();
-
     List<MappingDefinition> getMappingDefinitionList();
 }

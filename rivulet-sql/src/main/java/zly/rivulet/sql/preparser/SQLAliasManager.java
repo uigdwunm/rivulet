@@ -1,12 +1,16 @@
 package zly.rivulet.sql.preparser;
 
 import zly.rivulet.base.definer.ModelMeta;
+import zly.rivulet.base.exception.UnbelievableException;
+import zly.rivulet.base.utils.StringUtil;
 import zly.rivulet.sql.SqlRivuletProperties;
 import zly.rivulet.sql.definer.annotations.SqlQueryAlias;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
+import zly.rivulet.sql.exception.SQLDescDefineException;
 import zly.rivulet.sql.preparser.helper.node.FromNode;
 import zly.rivulet.sql.preparser.helper.node.ProxyNode;
 import zly.rivulet.sql.preparser.helper.node.QueryProxyNode;
+import zly.rivulet.sql.preparser.helper.node.SelectNode;
 
 import java.util.*;
 
@@ -46,7 +50,19 @@ public class SQLAliasManager {
         if (proxyNode instanceof QueryProxyNode) {
             QueryProxyNode queryProxyNode = (QueryProxyNode) proxyNode;
             for (FromNode fromNode : queryProxyNode.getFromNodeList()) {
-                fromNode.getal
+                allAliasSet.add(fromNode.getAliasFlag());
+                ProxyNode parentNode = fromNode.getParentNode();
+                if (parentNode != null) {
+                    aliasToParentAlias.put(fromNode.getAliasFlag(), parentNode.getAliasFlag());
+                }
+                create(allAliasSet, aliasToParentAlias, fromNode);
+            }
+            for (SelectNode selectNode : queryProxyNode.getSelectNodeList()) {
+
+            }
+
+            for (QueryProxyNode whereNode : queryProxyNode.getWhereSubQueryList()) {
+
             }
 
         }
@@ -99,6 +115,10 @@ public class SQLAliasManager {
         return new AliasFlag(suggestedAlias, false, null, false);
     }
 
+    public static AliasFlag createModelAlias() {
+        return new AliasFlag(null, false, null, false);
+    }
+
     public static AliasFlag createFieldAlias(SqlQueryAlias sqlQueryAlias) {
         return new AliasFlag(sqlQueryAlias.value(), true, null, true);
     }
@@ -108,7 +128,7 @@ public class SQLAliasManager {
     }
 
     public static AliasFlag createFieldAlias() {
-        return new AliasFlag("column", false, null, true);
+        return new AliasFlag(null, false, null, true);
     }
 
     /**
@@ -140,14 +160,15 @@ public class SQLAliasManager {
     public static class AliasFlag {
 
         /**
-         * 预先指定的别名，可能是{@link SqlQueryAlias}注解指定的，可能是query中的字段名
+         * 别名建议值，可能是{@link SqlQueryAlias}注解指定的，可能是query中的字段名
+         * 可能为空，为空表示随便指定一个
          **/
-        private final String alias;
+        private String alias;
 
         /**
          * 是否强制使用上面的别名，如果是通过 {@link SqlQueryAlias}注解 指定的就是强制使用的
          **/
-        private final boolean isForce;
+        private boolean isForce;
 
         /**
          * 如果对应到一个表，则记录
@@ -164,6 +185,29 @@ public class SQLAliasManager {
             this.isForce = isForce;
             this.modelMeta = modelMeta;
             this.isField = isField;
+        }
+
+        private AliasFlag(ModelMeta modelMeta, boolean isField) {
+            this.alias = null;
+            this.isForce = false;
+            this.modelMeta = modelMeta;
+            this.isField = isField;
+        }
+
+        public void suggestedAlias(String alias) {
+            if (StringUtil.isBlank(alias)) {
+                return;
+            }
+            this.alias = alias;
+            this.isForce = false;
+        }
+
+        public void forceAlias(String alias) {
+            if (isForce) {
+                throw UnbelievableException.unbelievable();
+            }
+            this.alias = alias;
+            this.isForce = true;
         }
 
         public String getAlias() {

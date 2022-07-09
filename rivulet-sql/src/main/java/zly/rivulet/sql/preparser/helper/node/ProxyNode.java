@@ -20,4 +20,7 @@ import java.util.function.Function;
 public interface ProxyNode {
 
     SQLAliasManager.AliasFlag getAliasFlag();
+
+    ProxyNode getParentNode();
+
 }

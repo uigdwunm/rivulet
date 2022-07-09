@@ -1,15 +1,12 @@
 package zly.rivulet.sql.definition.query.mapping;
 
 import zly.rivulet.base.definition.Definition;
-import zly.rivulet.base.definition.FinalDefinition;
-import zly.rivulet.base.definition.param.ParamDefinition;
 import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
 import zly.rivulet.base.describer.SingleValueElementDesc;
-import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.field.SelectMapping;
 import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.sql.definition.field.FieldDefinition;
+import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.describer.function.MFunctionDesc;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.query.desc.Mapping;
@@ -28,17 +25,17 @@ public class MappingDefinition implements SingleValueElementDefinition {
 
     private SelectMapping<?, ?> selectField;
 
-    private SingleValueElementDefinition definition;
+    private final SingleValueElementDefinition definition;
 
     /**
      * 引用别名，就是当前select字段的引用表别名，有可能为空，比如子查询
      **/
-    private SQLAliasManager.AliasFlag referenceAlias;
+    private final SQLAliasManager.AliasFlag referenceAlias;
 
     /**
      * 别名，这个select字段自己的别名
      **/
-    private SQLAliasManager.AliasFlag aliasFlag;
+    private final SQLAliasManager.AliasFlag aliasFlag;
 
     public MappingDefinition(FieldDefinition fieldDefinition, SQLAliasManager.AliasFlag referenceAlias, SQLAliasManager.AliasFlag aliasFlag) {
         this.definition = fieldDefinition;
@@ -46,49 +43,50 @@ public class MappingDefinition implements SingleValueElementDefinition {
         this.aliasFlag = aliasFlag;
     }
 
-    public MappingDefinition(SqlPreParseHelper sqlPreParseHelper, Mapping.Item<?, ?, ?> item) {
-        SingleValueElementDesc<?, ?> desc = item.getDesc();
-        this.desc = desc;
+    public MappingDefinition(SqlPreParseHelper sqlPreParseHelper, Mapping.Item<?, ?, ?> item, FieldDefinition fieldDefinition) {
+        this.definition = fieldDefinition;
+        this.desc = item.getDesc();
         this.selectField = item.getSelectField();
         QueryProxyNode currNode = sqlPreParseHelper.getCurrNode();
+        this.referenceAlias = currNode.getAliasFlag();
+        SQLAliasManager.AliasFlag aliasFlag = SQLAliasManager.createFieldAlias(fieldDefinition.getFieldMeta().getOriginName());
+        currNode.addSelectNode(new FieldProxyNode(currNode, aliasFlag));
+        this.aliasFlag = aliasFlag;
+    }
 
-        if (desc instanceof FieldMapping) {
-            FieldMapping<Object, Object> fieldMapping = (FieldMapping<Object, Object>) desc;
-            SingleValueElementDefinition definition = currNode.parseField(fieldMapping);
-            if (definition instanceof FieldDefinition) {
-                FieldDefinition fieldDefinition = (FieldDefinition) definition;
-                this.referenceAlias = fieldDefinition.getReferenceAlias();
-                SQLAliasManager.AliasFlag aliasFlag = SQLAliasManager.createFieldAlias(fieldDefinition.getFieldMeta().getOriginName());
-                currNode.addSelectNode(new FieldProxyNode(currNode, aliasFlag));
-                this.aliasFlag = aliasFlag;
-            } else if (definition instanceof MappingDefinition) {
-                // 如果是vo对象的get映射方法，则会返回MappingDefinition
-                MappingDefinition mappingDefinition = (MappingDefinition) definition;
-                this.referenceAlias = mappingDefinition.referenceAlias;
-                this.aliasFlag = mappingDefinition.aliasFlag;
-            } else {
-                throw UnbelievableException.unknownType();
-            }
-            this.definition = definition;
-        } else if (desc instanceof SqlQueryMetaDesc) {
-            SqlPreParser sqlPreParser = sqlPreParseHelper.getSqlPreParser();
-            Method method = sqlPreParseHelper.getMethod();
-            FinalDefinition finalDefinition = sqlPreParser.parse((SqlQueryMetaDesc<?, ?>) desc, method);
-            QueryProxyNode subQueryNode = sqlPreParseHelper.getCurrNode();
-            currNode.addSelectNode(subQueryNode);
-            // 这里替换回来
-            sqlPreParseHelper.setCurrNode(currNode);
-            this.definition = (SingleValueElementDefinition) finalDefinition;
-        } else if (desc instanceof Param) {
-            SqlParamDefinitionManager sqlParamDefinitionManager = sqlPreParseHelper.getSqlParamDefinitionManager();
-            ParamDefinition paramDefinition = sqlParamDefinitionManager.register((Param<?>) desc);
-            this.definition = paramDefinition;
-        } else if (desc instanceof MFunctionDesc) {
+    public MappingDefinition(SqlPreParseHelper sqlPreParseHelper, SqlQueryMetaDesc<?, ?> sqlQueryMetaDesc, SelectMapping<?, ?> selectField) {
+        this.desc = sqlQueryMetaDesc;
+        this.selectField = selectField;
+        QueryProxyNode currNode = sqlPreParseHelper.getCurrNode();
+        SqlPreParser sqlPreParser = sqlPreParseHelper.getSqlPreParser();
+        Method method = sqlPreParseHelper.getMethod();
+        SqlQueryDefinition sqlQueryDefinition = (SqlQueryDefinition) sqlPreParser.parse(sqlQueryMetaDesc, method);
+        QueryProxyNode subQueryNode = sqlPreParseHelper.getCurrNode();
+        currNode.addSelectNode(subQueryNode, sqlQueryDefinition);
+        // 这里替换回来
+        sqlPreParseHelper.setCurrNode(currNode);
+        this.definition = sqlQueryDefinition;
+        // select中的子查询不属于任何node
+        this.referenceAlias = currNode.getAliasFlag();
+        this.aliasFlag = subQueryNode.getAliasFlag();
+    }
 
-        } else {
-            throw UnbelievableException.unknownType();
-        }
+    public MappingDefinition(SqlPreParseHelper sqlPreParseHelper, Param<?> paramDesc, SelectMapping<?, ?> selectField) {
+        this.desc = paramDesc;
+        this.selectField = selectField;
+        SqlParamDefinitionManager sqlParamDefinitionManager = sqlPreParseHelper.getSqlParamDefinitionManager();
+        this.definition = sqlParamDefinitionManager.register(paramDesc);
+        this.referenceAlias = sqlPreParseHelper.getCurrNode().getAliasFlag();
+        this.aliasFlag = SQLAliasManager.createFieldAlias();
+    }
 
+    public MappingDefinition(SqlPreParseHelper sqlPreParseHelper, MFunctionDesc<?, ?> functionDesc, SelectMapping<?, ?> selectField) {
+        // TODO
+        this.desc = functionDesc;
+        this.selectField = selectField;
+        this.definition = null;
+        this.referenceAlias = sqlPreParseHelper.getCurrNode().getAliasFlag();
+        this.aliasFlag = SQLAliasManager.createFieldAlias();
     }
 
     public SelectMapping<?, ?> getSelectField() {

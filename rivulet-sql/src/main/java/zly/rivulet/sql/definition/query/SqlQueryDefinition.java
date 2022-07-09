@@ -6,7 +6,6 @@ import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefiniti
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.base.mapper.MapDefinition;
 import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definition.query.main.*;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
@@ -14,10 +13,8 @@ import zly.rivulet.sql.describer.query.desc.Condition;
 import zly.rivulet.sql.describer.query.desc.OrderBy;
 import zly.rivulet.sql.mapper.SqlMapDefinition;
 import zly.rivulet.sql.preparser.SQLAliasManager;
-import zly.rivulet.sql.preparser.SQLProxyModelManager;
 import zly.rivulet.sql.preparser.SqlParamDefinitionManager;
 import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
-import zly.rivulet.sql.preparser.helper.node.ProxyNode;
 import zly.rivulet.sql.preparser.helper.node.QueryProxyNode;
 
 import java.util.ArrayList;

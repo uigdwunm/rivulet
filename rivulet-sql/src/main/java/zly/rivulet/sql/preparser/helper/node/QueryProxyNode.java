@@ -80,7 +80,7 @@ public class QueryProxyNode implements FromNode, SelectNode {
     /**
      * 当前节点的别名flag
      **/
-    private SQLAliasManager.AliasFlag aliasFlag;
+    private final SQLAliasManager.AliasFlag aliasFlag = SQLAliasManager.createModelAlias();
 
     /**
      * 整个definition解析完还会把结果塞到这里
@@ -158,13 +158,7 @@ public class QueryProxyNode implements FromNode, SelectNode {
                 QueryProxyNode subNode = sqlPreParseHelper.getCurrNode();
                 subNode.sqlQueryDefinition = subQueryDefinition;
 
-                SQLAliasManager.AliasFlag modelAlias;
-                if (sqlQueryAlias != null) {
-                    modelAlias = SQLAliasManager.createModelAlias(sqlQueryAlias);
-                } else {
-                    modelAlias = SQLAliasManager.createModelAlias(field.getName());
-                }
-                this.acceptSubQueryProxyModel(field, subNode, subQueryDefinition, modelAlias);
+                this.acceptSubQueryProxyModel(subNode, subQueryDefinition, sqlQueryAlias, field.getName());
                 // 这里替换回来
                 sqlPreParseHelper.setCurrNode(currNode);
 
@@ -191,12 +185,16 @@ public class QueryProxyNode implements FromNode, SelectNode {
      * @author zhaolaiyuan
      * Date 2022/6/25 11:32
      **/
-    private void acceptSubQueryProxyModel(Field field, QueryProxyNode subNode, SqlQueryDefinition subQueryDefinition, SQLAliasManager.AliasFlag modelAlias) {
+    private void acceptSubQueryProxyModel(QueryProxyNode subNode, SqlQueryDefinition subQueryDefinition, SqlQueryAlias sqlQueryAlias, String suggestedAlias) {
         //
         // 为子节点关联父节点
         subNode.parentNode = this;
         // 为子结点弄上别名
-        subNode.aliasFlag = SQLAliasManager.createModelAlias(field.getName());
+        if (sqlQueryAlias != null) {
+            subNode.aliasFlag.forceAlias(sqlQueryAlias.value());
+        } else {
+            subNode.aliasFlag.suggestedAlias(suggestedAlias);
+        }
         MapDefinition mapDefinition = subQueryDefinition.getMapDefinition();
         FromDefinition fromDefinition = subQueryDefinition.getFromDefinition();
         // 先判断 from对象和结果对象是不是同一个
@@ -350,13 +348,25 @@ public class QueryProxyNode implements FromNode, SelectNode {
         return fromNodeList;
     }
 
+    public List<SelectNode> getSelectNodeList() {
+        return selectNodeList;
+    }
+
+    public List<QueryProxyNode> getWhereSubQueryList() {
+        return whereSubQueryList;
+    }
+
     public QueryFromMeta getFromNode(Object proxyModel) {
         return null;
     }
 
-    public void addSelectNode(SelectNode subQueryNode) {
-//        subQueryNode.setParentNode(this);
+    public void addSelectNode(FieldProxyNode subQueryNode) {
         this.selectNodeList.add(subQueryNode);
+    }
+
+    public void addSelectNode(QueryProxyNode subQueryNode, SqlQueryDefinition subQueryDefinition) {
+        this.selectNodeList.add(subQueryNode);
+        this.acceptSubQueryProxyModel(subQueryNode, subQueryDefinition, null, null);
     }
 
     public Field getField(FromNode subFromNode) {
@@ -392,10 +402,5 @@ public class QueryProxyNode implements FromNode, SelectNode {
 
     public void setSqlQueryDefinition(SqlQueryDefinition sqlQueryDefinition) {
         this.sqlQueryDefinition = sqlQueryDefinition;
-    }
-
-    @Override
-    public void setParentNode(QueryProxyNode parentNode) {
-        this.parentNode = parentNode;
     }
 }
