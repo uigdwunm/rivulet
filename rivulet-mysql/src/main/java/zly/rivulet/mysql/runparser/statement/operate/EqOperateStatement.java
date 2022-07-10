@@ -1,4 +1,4 @@
-package zly.rivulet.mysql.runparser.statement.query.operate;
+package zly.rivulet.mysql.runparser.statement.operate;
 
 import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.utils.FormatCollectHelper;

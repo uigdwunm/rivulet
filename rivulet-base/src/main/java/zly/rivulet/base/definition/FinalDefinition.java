@@ -1,6 +1,6 @@
 package zly.rivulet.base.definition;
 
-import zly.rivulet.base.mapper.MapDefinition;
+import zly.rivulet.base.assigner.Assigner;
 import zly.rivulet.base.preparser.param.ParamDefinitionManager;
 
 /**
@@ -10,7 +10,7 @@ import zly.rivulet.base.preparser.param.ParamDefinitionManager;
  * Date 2022/2/27 10:49
  **/
 public interface FinalDefinition extends Definition {
-    MapDefinition getMapDefinition();
+    Assigner<?> getAssigner();
 
     ParamDefinitionManager getParamDefinitionManager();
 }

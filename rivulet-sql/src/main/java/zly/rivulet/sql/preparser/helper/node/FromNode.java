@@ -1,9 +1,9 @@
 package zly.rivulet.sql.preparser.helper.node;
 
-import zly.rivulet.sql.definition.query.mapping.MappingDefinition;
+import zly.rivulet.sql.definer.meta.QueryFromMeta;
+import zly.rivulet.sql.definition.query.mapping.MapDefinition;
 
 import java.util.List;
-import java.util.Objects;
 
 public interface FromNode extends ProxyNode {
 
@@ -11,5 +11,7 @@ public interface FromNode extends ProxyNode {
 
     Class<?> getFromModelClass();
 
-    List<MappingDefinition> getMappingDefinitionList();
+    List<MapDefinition> getMapDefinitionList();
+
+    QueryFromMeta getQueryFromMeta();
 }

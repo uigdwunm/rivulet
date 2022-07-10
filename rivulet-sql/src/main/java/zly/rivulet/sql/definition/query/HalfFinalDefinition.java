@@ -1,8 +1,8 @@
 package zly.rivulet.sql.definition.query;
 
+import zly.rivulet.base.assigner.Assigner;
 import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.FinalDefinition;
-import zly.rivulet.base.mapper.MapDefinition;
 import zly.rivulet.base.preparser.param.ParamDefinitionManager;
 
 /**
@@ -22,7 +22,7 @@ public class HalfFinalDefinition implements FinalDefinition {
     }
 
     @Override
-    public MapDefinition getMapDefinition() {
+    public Assigner<?> getAssigner() {
         return null;
     }
 

@@ -1,29 +1,30 @@
-package zly.rivulet.sql.mapper;
+package zly.rivulet.sql.assigner;
 
 import zly.rivulet.base.describer.field.SelectMapping;
 import zly.rivulet.base.utils.View;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.field.FieldDefinition;
-import zly.rivulet.sql.definition.query.mapping.MappingDefinition;
+import zly.rivulet.sql.definition.query.mapping.MapDefinition;
 import zly.rivulet.sql.preparser.SQLAliasManager;
-import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
 import zly.rivulet.sql.preparser.helper.node.FieldProxyNode;
 import zly.rivulet.sql.preparser.helper.node.ModelProxyNode;
 import zly.rivulet.sql.preparser.helper.node.QueryProxyNode;
 
 import java.lang.reflect.Field;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModelAssigner extends Assigner {
+public class ModelSQLAssigner extends SQLAssigner {
 
     /**
      * 每个字段的赋值器
      **/
     private final View<SelectMapping<Object, Object>> fieldAssignerList;
 
-    public ModelAssigner(ModelProxyNode modelProxyNode, int indexStart) {
+    public ModelSQLAssigner(ModelProxyNode modelProxyNode, int indexStart) {
         super(modelProxyNode.getFromModelClass(), indexStart);
         SQLModelMeta modelMeta = modelProxyNode.getModelMeta();
         QueryProxyNode parentNode = modelProxyNode.getParentNode();
@@ -42,23 +43,27 @@ public class ModelAssigner extends Assigner {
             FieldDefinition fieldDefinition = new FieldDefinition(parentNode.getAliasFlag(), modelMeta, sqlFieldMeta);
             SQLAliasManager.AliasFlag aliasFlag = SQLAliasManager.createFieldAlias(sqlFieldMeta.getFieldName());
             parentNode.addSelectNode(new FieldProxyNode(parentNode, aliasFlag));
-            modelProxyNode.addMappingDefinition(new MappingDefinition(fieldDefinition, parentNode.getAliasFlag(), aliasFlag));
+            modelProxyNode.addMappingDefinition(new MapDefinition(fieldDefinition, parentNode.getAliasFlag(), aliasFlag));
         }
         this.fieldAssignerList = View.create(fieldAssignerList);
     }
 
-    public ModelAssigner(Class<?> selectModel, List<SelectMapping<Object, Object>> selectMappingList) {
+    public ModelSQLAssigner(Class<?> selectModel, List<SelectMapping<Object, Object>> selectMappingList) {
         super(selectModel, 0);
         this.fieldAssignerList = View.create(selectMappingList);
     }
 
     @Override
-    public Object assign(List<Object> resultValues) {
-        Object o = containerCreator.get();
+    public Object assign(ResultSet resultSet) {
+        Object o = super.buildContainer();
         int size = fieldAssignerList.size();
         for (int i = 0; i < size; i++) {
             SelectMapping<Object, Object> selectMapping = fieldAssignerList.get(i);
-            selectMapping.setMapping(o, resultValues.get(super.indexStart + i));
+            try {
+                selectMapping.setMapping(o, resultSet.getObject(super.indexStart + i + 1));
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
         return o;
     }

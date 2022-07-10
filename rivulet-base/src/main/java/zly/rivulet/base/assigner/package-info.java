@@ -4,4 +4,4 @@
  * @author zhaolaiyuan
  * Date 2021/12/5 11:15
  **/
-package zly.rivulet.base.mapper;
+package zly.rivulet.base.assigner;

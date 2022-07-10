@@ -1,11 +1,11 @@
 package zly.rivulet.base.runparser.param_manager;
 
-import zly.rivulet.base.definition.param.ParamDefinition;
+import zly.rivulet.base.definition.param.ParamDefinitionSQL;
 
 public interface ParamManager {
 
-    Object getParam(ParamDefinition paramDefinition);
+    Object getParam(ParamDefinitionSQL paramDefinition);
 
-    String getStatement(ParamDefinition paramDefinition);
+    String getStatement(ParamDefinitionSQL paramDefinition);
 
 }

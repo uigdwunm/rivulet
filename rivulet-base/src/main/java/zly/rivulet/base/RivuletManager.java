@@ -107,7 +107,7 @@ public abstract class RivuletManager {
         Fish fish = runtimeParser.parse(finalDefinition, paramManager);
         fish = analyzer.runTimeAnalyze(fish);
 
-        return executor.execute(fish, finalDefinition.getMapDefinition());
+        return executor.execute(fish, finalDefinition.getAssigner());
     }
 
     protected abstract PreParser createPreParser(Map<String, WholeDesc> wholeDescMap);

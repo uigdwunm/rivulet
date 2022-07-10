@@ -58,11 +58,21 @@ public class SQLAliasManager {
                 create(allAliasSet, aliasToParentAlias, fromNode);
             }
             for (SelectNode selectNode : queryProxyNode.getSelectNodeList()) {
-
+                allAliasSet.add(selectNode.getAliasFlag());
+                ProxyNode parentNode = selectNode.getParentNode();
+                if (parentNode != null) {
+                    aliasToParentAlias.put(selectNode.getAliasFlag(), parentNode.getAliasFlag());
+                }
+                create(allAliasSet, aliasToParentAlias, selectNode);
             }
 
             for (QueryProxyNode whereNode : queryProxyNode.getWhereSubQueryList()) {
-
+                allAliasSet.add(whereNode.getAliasFlag());
+                ProxyNode parentNode = whereNode.getParentNode();
+                if (parentNode != null) {
+                    aliasToParentAlias.put(whereNode.getAliasFlag(), parentNode.getAliasFlag());
+                }
+                create(allAliasSet, aliasToParentAlias, whereNode);
             }
 
         }
@@ -138,6 +148,9 @@ public class SQLAliasManager {
      * Date 2022/5/14 15:45
      **/
     public String getAlias(AliasFlag aliasFlag) {
+        if (aliasFlag == null) {
+            return null;
+        }
         // 找到最顶层的别名，因为每个子查询都有自己AliasManager，所有最顶层的一定是对应正确的
         AliasFlag parent = aliasToParentAlias.get(aliasFlag);
         while (parent != null) {

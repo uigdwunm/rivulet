@@ -43,7 +43,7 @@ public class MySQLDefiner extends SqlDefiner {
         Comment commentAnno = clazz.getAnnotation(Comment.class);
         String comment = commentAnno != null ? commentAnno.value() : null;
 
-        List<SQLFieldMeta> fieldMetaList = Arrays.stream(clazz.getDeclaredFields())
+        List<MySQLFieldMeta> fieldMetaList = Arrays.stream(clazz.getDeclaredFields())
             .map(field -> this.parseFieldMeta(clazz, field))
             .filter(Objects::nonNull)
             .collect(Collectors.toList());

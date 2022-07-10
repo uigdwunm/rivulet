@@ -7,11 +7,10 @@ import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.exception.DescDefineException;
 import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.preparser.PreParser;
-import zly.rivulet.base.preparser.helper.PreParseHelper;
 import zly.rivulet.sql.SqlRivuletProperties;
 import zly.rivulet.sql.definer.SqlDefiner;
 import zly.rivulet.sql.definition.query.HalfFinalDefinition;
-import zly.rivulet.sql.definition.query.SqlQueryDefinition;
+import zly.rivulet.sql.definition.query.SqlQueryDefinitionSQL;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
 
@@ -70,7 +69,7 @@ public class SqlPreParser implements PreParser {
             // 开始解析前先塞一个标识，用于解决循环嵌套子查询
             key_queryDefinition_map.put(annotation.value(), HalfFinalDefinition.instance);
             // 查询方法
-            SqlQueryDefinition sqlQueryDefinition = new SqlQueryDefinition(sqlPreParseHelper, wholeDesc);
+            SqlQueryDefinitionSQL sqlQueryDefinition = new SqlQueryDefinitionSQL(sqlPreParseHelper, wholeDesc);
             key_queryDefinition_map.put(annotation.value(), sqlQueryDefinition);
             return sqlQueryDefinition;
 //        } else if () {

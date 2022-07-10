@@ -1,7 +1,7 @@
 package zly.rivulet.base.executor;
 
+import zly.rivulet.base.assigner.Assigner;
 import zly.rivulet.base.runparser.Fish;
-import zly.rivulet.base.mapper.MapDefinition;
 
 public interface Executor {
 
@@ -11,6 +11,6 @@ public interface Executor {
      * @author zhaolaiyuan
      * Date 2021/12/5 11:52
      **/
-    Object execute(Fish fish, MapDefinition mapDefinition);
+    Object execute(Fish fish, Assigner<?> assigner);
 
 }

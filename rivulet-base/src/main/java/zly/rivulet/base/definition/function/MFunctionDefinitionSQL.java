@@ -3,7 +3,7 @@ package zly.rivulet.base.definition.function;
 import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
 import zly.rivulet.base.runparser.statement.Statement;
 
-public abstract class MFunctionDefinition implements SingleValueElementDefinition {
+public abstract class MFunctionDefinitionSQL implements SingleValueElementDefinition {
 
     private Class<?> returnType;
 

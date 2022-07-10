@@ -2,9 +2,8 @@ package zly.rivulet.mysql.runparser.statement.query;
 
 import zly.rivulet.base.runparser.param_manager.ParamManager;
 import zly.rivulet.base.utils.FormatCollectHelper;
-import zly.rivulet.base.utils.StringUtil;
 import zly.rivulet.mysql.runparser.statement.SingleValueElementStatement;
-import zly.rivulet.sql.definition.query.SqlQueryDefinition;
+import zly.rivulet.sql.definition.query.SqlQueryDefinitionSQL;
 import zly.rivulet.sql.preparser.SQLAliasManager;
 import zly.rivulet.sql.runparser.SqlStatementFactory;
 import zly.rivulet.sql.runparser.statement.SqlStatement;
@@ -15,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class MySqlQueryStatement implements SingleValueElementStatement {
 
-    private final SqlQueryDefinition definition;
+    private final SqlQueryDefinitionSQL definition;
 
     /**
      * 子语句列表，select、from、where之类的
@@ -25,14 +24,14 @@ public class MySqlQueryStatement implements SingleValueElementStatement {
 
     private final String cache;
 
-    private MySqlQueryStatement(SqlQueryDefinition definition, List<SqlStatement> subStatementList) {
+    private MySqlQueryStatement(SqlQueryDefinitionSQL definition, List<SqlStatement> subStatementList) {
         this.definition = definition;
         this.subStatementList = subStatementList;
         this.cache = this.createStatement();
     }
 
     @Override
-    public SqlQueryDefinition getOriginDefinition() {
+    public SqlQueryDefinitionSQL getOriginDefinition() {
         return this.definition;
     }
 
@@ -68,32 +67,36 @@ public class MySqlQueryStatement implements SingleValueElementStatement {
 
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
-            SqlQueryDefinition.class,
+            SqlQueryDefinitionSQL.class,
             (definition, soleFlag, initHelper) -> {
-                SqlQueryDefinition sqlQueryDefinition = (SqlQueryDefinition) definition;
-                // 解析这个查询类型时必须把别名管理器换成相应的，防止多层子查询别名混乱
-                SQLAliasManager outerAliasManager = initHelper.getAliasManager();
-                initHelper.setAliasManager(sqlQueryDefinition.getAliasManager());
+                SqlQueryDefinitionSQL sqlQueryDefinition = (SqlQueryDefinitionSQL) definition;
+                // 别名管理器
+                SQLAliasManager aliasManager = initHelper.getAliasManager();
+                if (aliasManager == null) {
+                    // 如果没有，说明是第一次进来，就从查询中塞进去
+                    aliasManager = sqlQueryDefinition.getAliasManager();
+                    initHelper.setAliasManager(aliasManager);
+                }
                 List<SqlStatement> subStatementList = sqlQueryDefinition.getSubDefinitionList().stream()
                     .map(subDefinition -> sqlStatementFactory.init(subDefinition, soleFlag.subSwitch(), initHelper))
                     .collect(Collectors.toList());
-                // 解析完子查询了，换回来
-                initHelper.setAliasManager(outerAliasManager);
                 return new MySqlQueryStatement(sqlQueryDefinition, subStatementList);
             },
             (definition, helper) -> {
-                SqlQueryDefinition sqlQueryDefinition = (SqlQueryDefinition) definition;
-                // 解析这个查询类型时必须把别名管理器换成相应的，防止多层子查询别名混乱
-                SQLAliasManager outerAliasManager = helper.getAliasManager();
-                helper.setAliasManager(sqlQueryDefinition.getAliasManager());
+                SqlQueryDefinitionSQL sqlQueryDefinition = (SqlQueryDefinitionSQL) definition;
+                // 别名管理器
+                SQLAliasManager aliasManager = helper.getAliasManager();
+                if (aliasManager == null) {
+                    // 如果没有，说明是第一次进来，就从查询中塞进去
+                    aliasManager = sqlQueryDefinition.getAliasManager();
+                    helper.setAliasManager(aliasManager);
+                }
                 ParamManager paramManager = helper.getParamManager();
                 List<SqlStatement> subStatementList = sqlQueryDefinition.getSubDefinitionList().stream()
                     .filter(subDefinition -> subDefinition.check(paramManager))
                     .map(subDefinition -> sqlStatementFactory.getOrCreate(subDefinition, helper))
                     .collect(Collectors.toList());
 
-                // 解析完子查询了，换回来
-                helper.setAliasManager(outerAliasManager);
                 return new MySqlQueryStatement(sqlQueryDefinition, subStatementList);
             }
         );

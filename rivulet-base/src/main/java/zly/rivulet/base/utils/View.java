@@ -1,7 +1,10 @@
 package zly.rivulet.base.utils;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class View<T> implements Iterable<T> {
 
@@ -29,6 +32,10 @@ public class View<T> implements Iterable<T> {
 
     public T get(int index) {
         return (T) elements[index];
+    }
+
+    public Stream<T> stream() {
+        return (Stream<T>) Arrays.stream(elements);
     }
 
     @Override

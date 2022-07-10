@@ -1,4 +1,4 @@
-package zly.rivulet.sql.mapper;
+package zly.rivulet.sql.assigner;
 
 import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.utils.View;
@@ -8,36 +8,36 @@ import zly.rivulet.sql.preparser.helper.node.ModelProxyNode;
 import zly.rivulet.sql.preparser.helper.node.QueryProxyNode;
 
 import java.lang.reflect.Field;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContainerAssigner extends Assigner {
+public class ContainerSQLAssigner extends SQLAssigner {
 
-    private final View<Assigner> assignerList;
+    private final View<SQLAssigner> assignerList;
 
     private int size = 0;
 
-    public ContainerAssigner(
+    public ContainerSQLAssigner(
         SqlPreParseHelper sqlPreParseHelper,
         QueryProxyNode queryProxyNode,
         int indexStart
     ) {
         super(queryProxyNode.getFromModelClass(), indexStart);
-        List<Assigner> assignerList = new ArrayList<>();
+        List<SQLAssigner> SQLAssignerList = new ArrayList<>();
         QueryProxyNode currNode = sqlPreParseHelper.getCurrNode();
 
         for (FromNode subFromNode : queryProxyNode.getFromNodeList()) {
-            Assigner assigner;
+            SQLAssigner sqlAssigner;
             if (subFromNode instanceof ModelProxyNode) {
                 ModelProxyNode modelProxyNode = (ModelProxyNode) subFromNode;
-                assigner = new ModelAssigner(modelProxyNode, indexStart);
+                sqlAssigner = new ModelSQLAssigner(modelProxyNode, indexStart);
             } else if (subFromNode instanceof QueryProxyNode) {
                 QueryProxyNode subQueryProxyNode = (QueryProxyNode) subFromNode;
                 if (subQueryProxyNode.getFromModelClass().equals(subQueryProxyNode.getSelectModelClass())) {
-                    SqlMapDefinition subMapDefinition = subQueryProxyNode.getSqlQueryDefinition().getMapDefinition();
-                    assigner = subMapDefinition.getAssigner();
+                    sqlAssigner = subQueryProxyNode.getSqlQueryDefinition().getAssigner();
                 } else {
-                    assigner = new ContainerAssigner(sqlPreParseHelper, subQueryProxyNode, indexStart);
+                    sqlAssigner = new ContainerSQLAssigner(sqlPreParseHelper, subQueryProxyNode, indexStart);
                 }
             } else {
                 throw UnbelievableException.unknownType();
@@ -46,28 +46,28 @@ public class ContainerAssigner extends Assigner {
             // 需要把自己塞到父类中
             Field field = queryProxyNode.getField(currNode);
             field.setAccessible(true);
-            assigner.setAssigner((outerContainer, o) -> {
+            sqlAssigner.setAssigner((outerContainer, o) -> {
                 try {
                     field.set(outerContainer, o);
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException(e);
                 }
             });
-            indexStart += assigner.size();
-            this.size += assigner.size();
-            assignerList.add(assigner);
-            currNode.addMappingDefinitionList(subFromNode.getMappingDefinitionList());
+            indexStart += sqlAssigner.size();
+            this.size += sqlAssigner.size();
+            SQLAssignerList.add(sqlAssigner);
+            currNode.addMappingDefinitionList(subFromNode.getMapDefinitionList());
         }
-        this.assignerList = View.create(assignerList);
+        this.assignerList = View.create(SQLAssignerList);
     }
 
 
     @Override
-    public Object assign(List<Object> resultValues) {
-        Object o = super.containerCreator.get();
+    public Object assign(ResultSet resultSet) {
+        Object o = super.buildContainer();
 
-        for (Assigner subAssigner : assignerList) {
-            subAssigner.assign(o, resultValues);
+        for (SQLAssigner subSQLAssigner : assignerList) {
+            subSQLAssigner.assign(o, resultSet);
         }
         return o;
     }

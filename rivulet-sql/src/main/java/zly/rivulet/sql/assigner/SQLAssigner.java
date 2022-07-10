@@ -1,14 +1,15 @@
-package zly.rivulet.sql.mapper;
+package zly.rivulet.sql.assigner;
 
+import zly.rivulet.base.assigner.Assigner;
 import zly.rivulet.base.describer.field.SelectMapping;
 import zly.rivulet.sql.exception.SQLModelDefineException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
+import java.sql.ResultSet;
 import java.util.function.Supplier;
 
-public abstract class Assigner {
+public abstract class SQLAssigner implements Assigner<ResultSet> {
     /**
      * 把自己塞到父对象的assigner
      **/
@@ -17,14 +18,14 @@ public abstract class Assigner {
     /**
      * 创建当前容器的
      **/
-    protected final Supplier<?> containerCreator;
+    private final Supplier<?> containerCreator;
 
     /**
      * 在select中的位置索引起始
      **/
     protected final int indexStart;
 
-    protected Assigner(Class<?> modelClass, int indexStart) {
+    protected SQLAssigner(Class<?> modelClass, int indexStart) {
         this.containerCreator = this.buildContainerCreator(modelClass);
         this.indexStart = indexStart;
     }
@@ -46,14 +47,17 @@ public abstract class Assigner {
         }
     }
 
-    public Object assign(Object parentContainer, List<Object> resultValues) {
-        Object o = this.assign(resultValues);
-        // 把自己塞到父容器
-        assigner.setMapping(parentContainer, o);
-        return o;
+    public Object buildContainer() {
+        return containerCreator.get();
     }
 
-    public abstract Object assign(List<Object> resultValues);
+    public void assign(Object parentContainer, ResultSet resultSet) {
+        Object o = this.assign(resultSet);
+        // 把自己塞到父容器
+        assigner.setMapping(parentContainer, o);
+    }
+
+    public abstract Object assign(ResultSet resultSet);
 
     public abstract int size();
 

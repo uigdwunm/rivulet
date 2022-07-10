@@ -48,7 +48,7 @@ public class FromDefinition extends AbstractDefinition {
             QueryComplexModel queryComplexModel = (QueryComplexModel) proxyNode.getProxyModel();
             ComplexDescriber complexDescriber = queryComplexModel.register();
 
-            this.from = proxyNode.getFromNode(complexDescriber.getModelFrom());
+            this.from = proxyNode.getFromNode(complexDescriber.getModelFrom()).getQueryFromMeta();
             this.leftJoinRelations = complexDescriber.getLeftJoinRelations().stream()
                 .map(relation -> convert(sqlPreParseHelper, relation))
                 .collect(Collectors.toList());
@@ -68,7 +68,7 @@ public class FromDefinition extends AbstractDefinition {
 
     private JoinRelation convert(SqlPreParseHelper sqlPreParseHelper, ComplexDescriber.Relation<?> desc) {
         QueryProxyNode proxyNode = sqlPreParseHelper.getCurrNode();
-        QueryFromMeta queryMeta = proxyNode.getFromNode(desc.getModelRelation());
+        QueryFromMeta queryMeta = proxyNode.getFromNode(desc.getModelRelation()).getQueryFromMeta();
         List<OperateDefinition> operateDefinitionList = desc.getConditionList().stream()
             .map(item -> item.getOperate().createDefinition(sqlPreParseHelper, item))
             .collect(Collectors.toList());

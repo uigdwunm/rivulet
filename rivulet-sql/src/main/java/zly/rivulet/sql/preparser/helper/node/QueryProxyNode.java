@@ -4,11 +4,10 @@ import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import zly.rivulet.base.definition.FinalDefinition;
-import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
+import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.field.SelectMapping;
 import zly.rivulet.base.exception.UnbelievableException;
-import zly.rivulet.base.mapper.MapDefinition;
 import zly.rivulet.base.utils.View;
 import zly.rivulet.sql.definer.QueryComplexModel;
 import zly.rivulet.sql.definer.SqlDefiner;
@@ -19,9 +18,10 @@ import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.field.FieldDefinition;
-import zly.rivulet.sql.definition.query.SqlQueryDefinition;
+import zly.rivulet.sql.definition.query.SqlQueryDefinitionSQL;
 import zly.rivulet.sql.definition.query.main.FromDefinition;
-import zly.rivulet.sql.definition.query.mapping.MappingDefinition;
+import zly.rivulet.sql.definition.query.main.SelectDefinition;
+import zly.rivulet.sql.definition.query.mapping.MapDefinition;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.exception.SQLDescDefineException;
 import zly.rivulet.sql.preparser.SQLAliasManager;
@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 public class QueryProxyNode implements FromNode, SelectNode {
-    ThreadLocal<SingleValueElementDefinition> THREAD_LOCAL = new ThreadLocal<>();
+    ThreadLocal<SQLSingleValueElementDefinition> THREAD_LOCAL = new ThreadLocal<>();
 
     /**
      * 当前query的所有select
@@ -85,19 +85,19 @@ public class QueryProxyNode implements FromNode, SelectNode {
     /**
      * 整个definition解析完还会把结果塞到这里
      **/
-    private SqlQueryDefinition sqlQueryDefinition;
+    private SqlQueryDefinitionSQL sqlQueryDefinition;
 
     /**
      * 结果对象class
      **/
     private final Class<?> selectModelClass;
 
-    private final List<MappingDefinition> mappingDefinitionList = new ArrayList<>();
+    private final List<MapDefinition> mapDefinitionList = new ArrayList<>();
 
     /**
      * 结果对象字段名和MappingDefinition的映射，vo结果并且子查询时才有
      **/
-    private final Map<String, MappingDefinition> mappingDefinitionMap = new HashMap<>();
+    private final Map<String, MapDefinition> mappingDefinitionMap = new HashMap<>();
 
     public QueryProxyNode(SqlPreParseHelper sqlPreParseHelper, SqlQueryMetaDesc<?, ?> metaDesc) {
         Class<?> mainFrom = metaDesc.getMainFrom();
@@ -153,7 +153,7 @@ public class QueryProxyNode implements FromNode, SelectNode {
                 // 保留当前的外层node节点
                 QueryProxyNode currNode = sqlPreParseHelper.getCurrNode();
                 FinalDefinition finalDefinition = sqlPreParser.parse(sqlSubJoin.value(), sqlPreParseHelper);
-                SqlQueryDefinition subQueryDefinition = (SqlQueryDefinition) finalDefinition;
+                SqlQueryDefinitionSQL subQueryDefinition = (SqlQueryDefinitionSQL) finalDefinition;
                 // 上面的解析过程会把curr替换成子查询对应的node
                 QueryProxyNode subNode = sqlPreParseHelper.getCurrNode();
                 subNode.sqlQueryDefinition = subQueryDefinition;
@@ -185,7 +185,7 @@ public class QueryProxyNode implements FromNode, SelectNode {
      * @author zhaolaiyuan
      * Date 2022/6/25 11:32
      **/
-    private void acceptSubQueryProxyModel(QueryProxyNode subNode, SqlQueryDefinition subQueryDefinition, SqlQueryAlias sqlQueryAlias, String suggestedAlias) {
+    private void acceptSubQueryProxyModel(QueryProxyNode subNode, SqlQueryDefinitionSQL subQueryDefinition, SqlQueryAlias sqlQueryAlias, String suggestedAlias) {
         //
         // 为子节点关联父节点
         subNode.parentNode = this;
@@ -195,10 +195,10 @@ public class QueryProxyNode implements FromNode, SelectNode {
         } else {
             subNode.aliasFlag.suggestedAlias(suggestedAlias);
         }
-        MapDefinition mapDefinition = subQueryDefinition.getMapDefinition();
+        SelectDefinition selectDefinition = subQueryDefinition.getSelectDefinition();
         FromDefinition fromDefinition = subQueryDefinition.getFromDefinition();
         // 先判断 from对象和结果对象是不是同一个
-        if (fromDefinition.getFromMode().equals(mapDefinition.getResultModelClass())) {
+        if (fromDefinition.getFromMode().equals(selectDefinition.getSelectModel())) {
             // 结果对象和from对象是同一个,那么可以直接返回fromModel对应的代理对象
             return;
         }
@@ -206,8 +206,8 @@ public class QueryProxyNode implements FromNode, SelectNode {
         subNode.proxyModel = proxyVO;
 
         // 执行一遍vo的映射方法，生成vo字段名与映射definition的对应关系
-        View<MappingDefinition> subMappingDefinitionList = subQueryDefinition.getSelectDefinition().getMappingDefinitionList();
-        for (MappingDefinition mappingDefinition : subMappingDefinitionList) {
+        View<MapDefinition> subMappingDefinitionList = subQueryDefinition.getSelectDefinition().getMapDefinitionList();
+        for (MapDefinition mappingDefinition : subMappingDefinitionList) {
             SelectMapping<Object, Object> selectField = (SelectMapping<Object, Object>) mappingDefinition.getSelectField();
             // 代理方法内部会删掉
             THREAD_LOCAL.set(mappingDefinition);
@@ -216,9 +216,8 @@ public class QueryProxyNode implements FromNode, SelectNode {
 
     }
 
-    public Object createProxyVO(SqlQueryDefinition subQueryDefinition) {
-        MapDefinition mapDefinition = subQueryDefinition.getMapDefinition();
-        Class<?> resultModelClass = mapDefinition.getResultModelClass();
+    public Object createProxyVO(SqlQueryDefinitionSQL subQueryDefinition) {
+        Class<?> resultModelClass = subQueryDefinition.getSelectDefinition().getSelectModel();
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(resultModelClass);
         enhancer.setCallback(new MethodInterceptor() {
@@ -236,9 +235,9 @@ public class QueryProxyNode implements FromNode, SelectNode {
 
                     System.arraycopy(methodNameArr, 3, fieldNameArr, 0, methodNameArr.length - 3);
                     String fieldName = new String(fieldNameArr);
-                    MappingDefinition mappingDefinition = (MappingDefinition) THREAD_LOCAL.get();
+                    MapDefinition mapDefinition = (MapDefinition) THREAD_LOCAL.get();
                     THREAD_LOCAL.remove();
-                    mappingDefinitionMap.put(fieldName, mappingDefinition);
+                    mappingDefinitionMap.put(fieldName, mapDefinition);
                     // vo对象要解析set方法
                     return null;
                 }
@@ -254,8 +253,8 @@ public class QueryProxyNode implements FromNode, SelectNode {
                 System.arraycopy(methodNameArr, 3, fieldNameArr, 0, methodNameArr.length - 3);
                 String fieldName = new String(fieldNameArr);
 
-                MappingDefinition mappingDefinition = mappingDefinitionMap.get(fieldName);
-                THREAD_LOCAL.set(mappingDefinition);
+                MapDefinition mapDefinition = mappingDefinitionMap.get(fieldName);
+                THREAD_LOCAL.set(mapDefinition);
                 return result;
             }
         });
@@ -280,8 +279,8 @@ public class QueryProxyNode implements FromNode, SelectNode {
                 }
 
 
-                SingleValueElementDefinition singleValueElementDefinition = THREAD_LOCAL.get();
-                if (singleValueElementDefinition == null) {
+                SQLSingleValueElementDefinition SQLSingleValueElementDefinition = THREAD_LOCAL.get();
+                if (SQLSingleValueElementDefinition == null) {
                     char[] methodNameArr = methodName.toCharArray();
                     char[] fieldNameArr = new char[methodNameArr.length - 3];
                     methodNameArr[3] = (char) (methodNameArr[3] + 32);
@@ -309,9 +308,7 @@ public class QueryProxyNode implements FromNode, SelectNode {
         try {
             // TODO 实例化这里注意下
             return clazz.newInstance();
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -356,15 +353,21 @@ public class QueryProxyNode implements FromNode, SelectNode {
         return whereSubQueryList;
     }
 
-    public QueryFromMeta getFromNode(Object proxyModel) {
-        return null;
+    /**
+     * Description 通过代理模型查询对应的fromNode
+     *
+     * @author zhaolaiyuan
+     * Date 2022/7/10 10:35
+     **/
+    public FromNode getFromNode(Object proxyModel) {
+        return this.proxy_fromNode_map.get(proxyModel);
     }
 
     public void addSelectNode(FieldProxyNode subQueryNode) {
         this.selectNodeList.add(subQueryNode);
     }
 
-    public void addSelectNode(QueryProxyNode subQueryNode, SqlQueryDefinition subQueryDefinition) {
+    public void addSelectNode(QueryProxyNode subQueryNode, SqlQueryDefinitionSQL subQueryDefinition) {
         this.selectNodeList.add(subQueryNode);
         this.acceptSubQueryProxyModel(subQueryNode, subQueryDefinition, null, null);
     }
@@ -373,7 +376,7 @@ public class QueryProxyNode implements FromNode, SelectNode {
         return fromNode_field_map.get(subFromNode);
     }
 
-    public SingleValueElementDefinition parseField(FieldMapping<Object, Object> fieldMapping) {
+    public SQLSingleValueElementDefinition parseField(FieldMapping<Object, Object> fieldMapping) {
         fieldMapping.getMapping(proxyModel);
         return THREAD_LOCAL.get();
     }
@@ -384,23 +387,24 @@ public class QueryProxyNode implements FromNode, SelectNode {
     }
 
     @Override
-    public List<MappingDefinition> getMappingDefinitionList() {
-        return mappingDefinitionList;
+    public List<MapDefinition> getMapDefinitionList() {
+        return mapDefinitionList;
     }
 
-    public void addMappingDefinition(MappingDefinition mappingDefinition) {
-        this.mappingDefinitionList.add(mappingDefinition);
+    @Override
+    public QueryFromMeta getQueryFromMeta() {
+        return this.sqlQueryDefinition;
     }
 
-    public void addMappingDefinitionList(List<MappingDefinition> mappingDefinitionList) {
-        this.mappingDefinitionList.addAll(mappingDefinitionList);
+    public void addMappingDefinitionList(List<MapDefinition> mapDefinitionList) {
+        this.mapDefinitionList.addAll(mapDefinitionList);
     }
 
-    public SqlQueryDefinition getSqlQueryDefinition() {
+    public SqlQueryDefinitionSQL getSqlQueryDefinition() {
         return sqlQueryDefinition;
     }
 
-    public void setSqlQueryDefinition(SqlQueryDefinition sqlQueryDefinition) {
+    public void setSqlQueryDefinition(SqlQueryDefinitionSQL sqlQueryDefinition) {
         this.sqlQueryDefinition = sqlQueryDefinition;
     }
 }

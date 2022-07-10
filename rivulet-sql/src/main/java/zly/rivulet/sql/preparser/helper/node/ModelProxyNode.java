@@ -1,7 +1,8 @@
 package zly.rivulet.sql.preparser.helper.node;
 
+import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
-import zly.rivulet.sql.definition.query.mapping.MappingDefinition;
+import zly.rivulet.sql.definition.query.mapping.MapDefinition;
 import zly.rivulet.sql.preparser.SQLAliasManager;
 
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ public class ModelProxyNode implements FromNode {
 
     private final SQLModelMeta modelMeta;
 
-    private final List<MappingDefinition> mappingDefinitionList = new ArrayList<>();
+    private final List<MapDefinition> mapDefinitionList = new ArrayList<>();
 
     public ModelProxyNode(QueryProxyNode parentNode, Object proxyModel, SQLAliasManager.AliasFlag aliasFlag, SQLModelMeta modelMeta) {
         this.parentNode = parentNode;
@@ -57,8 +58,13 @@ public class ModelProxyNode implements FromNode {
     }
 
     @Override
-    public List<MappingDefinition> getMappingDefinitionList() {
-        return this.mappingDefinitionList;
+    public List<MapDefinition> getMapDefinitionList() {
+        return this.mapDefinitionList;
+    }
+
+    @Override
+    public QueryFromMeta getQueryFromMeta() {
+        return this.getModelMeta();
     }
 
     public SQLModelMeta getModelMeta() {
@@ -69,7 +75,7 @@ public class ModelProxyNode implements FromNode {
         return aliasFlag;
     }
 
-    public void addMappingDefinition(MappingDefinition mappingDefinition) {
-        this.mappingDefinitionList.add(mappingDefinition);
+    public void addMappingDefinition(MapDefinition mapDefinition) {
+        this.mapDefinitionList.add(mapDefinition);
     }
 }

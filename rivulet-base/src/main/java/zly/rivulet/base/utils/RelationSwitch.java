@@ -35,12 +35,7 @@ public class RelationSwitch {
      * Date 2022/1/22 10:27
      **/
     public static RelationSwitch createRootSwitch() {
-        return createRootSwitch(true);
-    }
-
-    @Deprecated
-    public static RelationSwitch createRootSwitch(boolean isEnable) {
-        return new RelationSwitch(isEnable, null);
+        return new RelationSwitch(true, null);
     }
 
     /**

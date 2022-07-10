@@ -34,27 +34,33 @@ public class FormatCollectHelper {
         currLineTab--;
     }
 
-    public void append(String str) {
+    public FormatCollectHelper append(String str) {
         currLine.append(str);
+        return this;
     }
 
-    public void append(StringBuilder str) {
+    public FormatCollectHelper append(StringBuilder str) {
         currLine.append(str);
+        return this;
     }
 
-    public void append(int str) {
+    public FormatCollectHelper append(int str) {
         currLine.append(str);
+        return this;
     }
 
-    public void append(long str) {
+    public FormatCollectHelper append(long str) {
         currLine.append(str);
+        return this;
     }
 
-    public void append(boolean str) {
+    public FormatCollectHelper append(boolean str) {
         currLine.append(str);
+        return this;
     }
 
-    public void append(char str) {
+    public FormatCollectHelper append(char str) {
         currLine.append(str);
+        return this;
     }
 }

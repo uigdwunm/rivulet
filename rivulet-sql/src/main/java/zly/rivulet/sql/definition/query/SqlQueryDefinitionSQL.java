@@ -2,16 +2,16 @@ package zly.rivulet.sql.definition.query;
 
 import zly.rivulet.base.definition.AbstractDefinition;
 import zly.rivulet.base.definition.FinalDefinition;
-import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
+import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.param.Param;
+import zly.rivulet.sql.assigner.SQLAssigner;
 import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definition.query.main.*;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.query.desc.Condition;
 import zly.rivulet.sql.describer.query.desc.OrderBy;
-import zly.rivulet.sql.mapper.SqlMapDefinition;
 import zly.rivulet.sql.preparser.SQLAliasManager;
 import zly.rivulet.sql.preparser.SqlParamDefinitionManager;
 import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
@@ -20,7 +20,7 @@ import zly.rivulet.sql.preparser.helper.node.QueryProxyNode;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SqlQueryDefinition implements FinalDefinition, QueryFromMeta, SingleValueElementDefinition {
+public class SqlQueryDefinitionSQL implements FinalDefinition, QueryFromMeta, SQLSingleValueElementDefinition {
 
     private final SqlQueryMetaDesc<?, ?> metaDesc;
 
@@ -40,7 +40,7 @@ public class SqlQueryDefinition implements FinalDefinition, QueryFromMeta, Singl
 
     private LimitDefinition limit;
 
-    private SqlMapDefinition mapDefinition;
+    private SQLAssigner sqlAssigner;
 
     private final List<AbstractDefinition> subDefinitionList = new ArrayList<>();
 
@@ -48,11 +48,13 @@ public class SqlQueryDefinition implements FinalDefinition, QueryFromMeta, Singl
 
     private SqlParamDefinitionManager paramDefinitionManager;
 
-    private SqlQueryDefinition(SqlQueryMetaDesc<?, ?> metaDesc) {
+    private SQLAliasManager.AliasFlag aliasFlag;
+
+    private SqlQueryDefinitionSQL(SqlQueryMetaDesc<?, ?> metaDesc) {
         this.metaDesc = metaDesc;
     }
 
-    public SqlQueryDefinition(SqlPreParseHelper sqlPreParseHelper, WholeDesc wholeDesc) {
+    public SqlQueryDefinitionSQL(SqlPreParseHelper sqlPreParseHelper, WholeDesc wholeDesc) {
         SqlQueryMetaDesc<?, ?> metaDesc = (SqlQueryMetaDesc<?, ?>) wholeDesc;
         QueryProxyNode queryProxyNode = new QueryProxyNode(sqlPreParseHelper, metaDesc);
         sqlPreParseHelper.setCurrNode(queryProxyNode);
@@ -101,15 +103,16 @@ public class SqlQueryDefinition implements FinalDefinition, QueryFromMeta, Singl
             this.subDefinitionList.add(this.limit);
         }
 
-        this.mapDefinition = selectDefinition.getMapDefinition();
+        this.sqlAssigner = selectDefinition.getSqlAssigner();
 
         this.aliasManager = SQLAliasManager.create(sqlPreParseHelper.getConfigProperties(), queryProxyNode);
         this.paramDefinitionManager = sqlPreParseHelper.getSqlParamDefinitionManager();
+        this.aliasFlag = queryProxyNode.getAliasFlag();
     }
 
     @Override
-    public SqlQueryDefinition forAnalyze() {
-        SqlQueryDefinition sqlQueryDefinition = new SqlQueryDefinition(this.metaDesc);
+    public SqlQueryDefinitionSQL forAnalyze() {
+        SqlQueryDefinitionSQL sqlQueryDefinition = new SqlQueryDefinitionSQL(this.metaDesc);
         sqlQueryDefinition.selectDefinition = selectDefinition.forAnalyze();
         sqlQueryDefinition.fromDefinition = fromDefinition.forAnalyze();
         // TODO 这里要注意
@@ -173,11 +176,6 @@ public class SqlQueryDefinition implements FinalDefinition, QueryFromMeta, Singl
         return limit;
     }
 
-    @Override
-    public SqlMapDefinition getMapDefinition() {
-        return mapDefinition;
-    }
-
     public List<AbstractDefinition> getSubDefinitionList() {
         return this.subDefinitionList;
     }
@@ -187,7 +185,17 @@ public class SqlQueryDefinition implements FinalDefinition, QueryFromMeta, Singl
     }
 
     @Override
+    public SQLAssigner getAssigner() {
+        return this.sqlAssigner;
+    }
+
+    @Override
     public SqlParamDefinitionManager getParamDefinitionManager() {
         return paramDefinitionManager;
+    }
+
+    @Override
+    public SQLAliasManager.AliasFlag getAliasFlag() {
+        return this.aliasFlag;
     }
 }

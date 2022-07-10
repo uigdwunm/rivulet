@@ -14,18 +14,18 @@ public class MySQLModelMeta extends SQLModelMeta {
 
     private final Class<?> modelClass;
 
-    private final View<SQLFieldMeta> fieldMetaList;
+    private final View<MySQLFieldMeta> fieldMetaList;
 
-    private final Map<String, SQLFieldMeta> nameMetaMap;
+    private final Map<String, MySQLFieldMeta> nameMetaMap;
 
     private final String comment;
 
-    public MySQLModelMeta(String tableName, Class<?> modelClass, View<SQLFieldMeta> fieldMetaList, String comment) {
+    public MySQLModelMeta(String tableName, Class<?> modelClass, View<MySQLFieldMeta> fieldMetaList, String comment) {
         this.tableName = tableName;
         this.modelClass = modelClass;
         this.fieldMetaList = fieldMetaList;
-        Map<String, SQLFieldMeta> map = new HashMap<>();
-        for (SQLFieldMeta mySQLFieldMeta : fieldMetaList) {
+        Map<String, MySQLFieldMeta> map = new HashMap<>();
+        for (MySQLFieldMeta mySQLFieldMeta : fieldMetaList) {
             map.put(mySQLFieldMeta.getFieldName(), mySQLFieldMeta);
         }
         this.nameMetaMap = map;
@@ -39,7 +39,7 @@ public class MySQLModelMeta extends SQLModelMeta {
     }
 
     public View<SQLFieldMeta> getFieldMetaList() {
-        return fieldMetaList;
+        return (View) fieldMetaList;
     }
 
     public String getComment() {

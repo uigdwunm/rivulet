@@ -11,5 +11,4 @@ import zly.rivulet.base.definition.Definition;
  **/
 public interface SingleValueElementDefinition extends Definition {
 
-
 }

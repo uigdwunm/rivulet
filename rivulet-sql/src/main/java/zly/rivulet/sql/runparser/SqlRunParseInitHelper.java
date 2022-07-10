@@ -6,6 +6,9 @@ public class SqlRunParseInitHelper {
 
     private SQLAliasManager aliasManager;
 
+    public SqlRunParseInitHelper() {
+    }
+
     public SQLAliasManager getAliasManager() {
         return aliasManager;
     }

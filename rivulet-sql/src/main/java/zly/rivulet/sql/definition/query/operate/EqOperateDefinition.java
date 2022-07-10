@@ -1,16 +1,16 @@
 package zly.rivulet.sql.definition.query.operate;
 
 import zly.rivulet.base.definition.Definition;
-import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
+import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
 import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.sql.describer.query.desc.AbstractCondition;
 import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
 
 public class EqOperateDefinition extends OperateDefinition {
 
-    private SingleValueElementDefinition leftElement;
+    private SQLSingleValueElementDefinition leftElement;
 
-    private SingleValueElementDefinition rightElement;
+    private SQLSingleValueElementDefinition rightElement;
 
     public EqOperateDefinition(SqlPreParseHelper sqlPreParseHelper, AbstractCondition<?, ?, ?> condition) {
         super(condition.getCheckCondition(), sqlPreParseHelper.getSqlParamDefinitionManager());
@@ -21,11 +21,11 @@ public class EqOperateDefinition extends OperateDefinition {
         this.rightElement = sqlPreParseHelper.parse(rightFieldMapped);
     }
 
-    public SingleValueElementDefinition getLeftElement() {
+    public SQLSingleValueElementDefinition getLeftElement() {
         return leftElement;
     }
 
-    public SingleValueElementDefinition getRightElement() {
+    public SQLSingleValueElementDefinition getRightElement() {
         return rightElement;
     }
 
