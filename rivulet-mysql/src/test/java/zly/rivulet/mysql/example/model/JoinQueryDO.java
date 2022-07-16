@@ -5,7 +5,7 @@ import zly.rivulet.sql.definer.QueryComplexModel;
 import zly.rivulet.sql.definer.annotations.SQLModelJoin;
 import zly.rivulet.sql.definer.annotations.SQLSubJoin;
 import zly.rivulet.sql.describer.join.ComplexDescriber;
-import zly.rivulet.sql.describer.query.desc.JoinCondition;
+import zly.rivulet.sql.describer.query.condition.JoinCondition;
 
 public class JoinQueryDO implements QueryComplexModel {
 
@@ -24,7 +24,13 @@ public class JoinQueryDO implements QueryComplexModel {
     @Override
     public ComplexDescriber register() {
         ComplexDescriber complexDescriber = ComplexDescriber.from(userDO);
-        complexDescriber.leftJoin(cityDO).on(JoinCondition.equalTo(cityDO::getCode, userDO::getCityCode));
+        complexDescriber.leftJoin(cityDO).on(
+            JoinCondition.equalTo(cityDO::getCode, userDO::getCityCode),
+            JoinCondition.or(
+                JoinCondition.equalTo(cityDO::getCode, userDO::getCityCode),
+                JoinCondition.equalTo(cityDO::getCode, userDO::getCityCode)
+            )
+        );
         complexDescriber.leftJoin(provinceDO).on(JoinCondition.equalTo(cityDO::getProvinceCode, provinceDO::getCode));
         complexDescriber.leftJoin(userFriend).on(JoinCondition.equalTo(userFriend::getId, userDO::getFriendId));
 

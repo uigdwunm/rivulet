@@ -10,7 +10,7 @@ import zly.rivulet.sql.assigner.SQLAssigner;
 import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definition.query.main.*;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
-import zly.rivulet.sql.describer.query.desc.Condition;
+import zly.rivulet.sql.describer.query.condition.Condition;
 import zly.rivulet.sql.describer.query.desc.OrderBy;
 import zly.rivulet.sql.preparser.SQLAliasManager;
 import zly.rivulet.sql.preparser.SqlParamDefinitionManager;
@@ -20,7 +20,7 @@ import zly.rivulet.sql.preparser.helper.node.QueryProxyNode;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SqlQueryDefinitionSQL implements FinalDefinition, QueryFromMeta, SQLSingleValueElementDefinition {
+public class SqlQueryDefinition implements FinalDefinition, QueryFromMeta, SQLSingleValueElementDefinition {
 
     private final SqlQueryMetaDesc<?, ?> metaDesc;
 
@@ -50,11 +50,11 @@ public class SqlQueryDefinitionSQL implements FinalDefinition, QueryFromMeta, SQ
 
     private SQLAliasManager.AliasFlag aliasFlag;
 
-    private SqlQueryDefinitionSQL(SqlQueryMetaDesc<?, ?> metaDesc) {
+    private SqlQueryDefinition(SqlQueryMetaDesc<?, ?> metaDesc) {
         this.metaDesc = metaDesc;
     }
 
-    public SqlQueryDefinitionSQL(SqlPreParseHelper sqlPreParseHelper, WholeDesc wholeDesc) {
+    public SqlQueryDefinition(SqlPreParseHelper sqlPreParseHelper, WholeDesc wholeDesc) {
         SqlQueryMetaDesc<?, ?> metaDesc = (SqlQueryMetaDesc<?, ?>) wholeDesc;
         QueryProxyNode queryProxyNode = new QueryProxyNode(sqlPreParseHelper, metaDesc);
         sqlPreParseHelper.setCurrNode(queryProxyNode);
@@ -111,8 +111,8 @@ public class SqlQueryDefinitionSQL implements FinalDefinition, QueryFromMeta, SQ
     }
 
     @Override
-    public SqlQueryDefinitionSQL forAnalyze() {
-        SqlQueryDefinitionSQL sqlQueryDefinition = new SqlQueryDefinitionSQL(this.metaDesc);
+    public SqlQueryDefinition forAnalyze() {
+        SqlQueryDefinition sqlQueryDefinition = new SqlQueryDefinition(this.metaDesc);
         sqlQueryDefinition.selectDefinition = selectDefinition.forAnalyze();
         sqlQueryDefinition.fromDefinition = fromDefinition.forAnalyze();
         // TODO 这里要注意
@@ -194,7 +194,6 @@ public class SqlQueryDefinitionSQL implements FinalDefinition, QueryFromMeta, SQ
         return paramDefinitionManager;
     }
 
-    @Override
     public SQLAliasManager.AliasFlag getAliasFlag() {
         return this.aliasFlag;
     }

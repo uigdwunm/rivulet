@@ -5,9 +5,11 @@ import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.sql.definer.QueryComplexModel;
 import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
+import zly.rivulet.sql.definition.query.join.JoinType;
 import zly.rivulet.sql.definition.query.operate.OperateDefinition;
 import zly.rivulet.sql.describer.join.ComplexDescriber;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
+import zly.rivulet.sql.preparser.SQLAliasManager;
 import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
 import zly.rivulet.sql.preparser.helper.node.FromNode;
 import zly.rivulet.sql.preparser.helper.node.ModelProxyNode;
@@ -19,11 +21,9 @@ import java.util.stream.Collectors;
 public class FromDefinition extends AbstractDefinition {
     private QueryFromMeta from;
 
-    private List<JoinRelation> leftJoinRelations;
+    private SQLAliasManager.AliasFlag mainFromAliasFlag;
 
-    private List<JoinRelation> rightJoinRelations;
-
-    private List<JoinRelation> innerJoinRelations;
+    private List<JoinRelation> joinRelations;
 
     public static class JoinRelation {
 
@@ -31,9 +31,31 @@ public class FromDefinition extends AbstractDefinition {
 
         private List<OperateDefinition> operateDefinitionList;
 
-        public JoinRelation(QueryFromMeta joinModel, List<OperateDefinition> operateDefinitionList) {
+        private SQLAliasManager.AliasFlag aliasFlag;
+
+        private JoinType joinType;
+
+        public JoinRelation(QueryFromMeta joinModel, List<OperateDefinition> operateDefinitionList, SQLAliasManager.AliasFlag aliasFlag, JoinType joinType) {
             this.joinModel = joinModel;
             this.operateDefinitionList = operateDefinitionList;
+            this.aliasFlag = aliasFlag;
+            this.joinType = joinType;
+        }
+
+        public QueryFromMeta getJoinModel() {
+            return joinModel;
+        }
+
+        public List<OperateDefinition> getOperateDefinitionList() {
+            return operateDefinitionList;
+        }
+
+        public SQLAliasManager.AliasFlag getAliasFlag() {
+            return aliasFlag;
+        }
+
+        public JoinType getJoinType() {
+            return joinType;
         }
     }
 
@@ -48,14 +70,10 @@ public class FromDefinition extends AbstractDefinition {
             QueryComplexModel queryComplexModel = (QueryComplexModel) proxyNode.getProxyModel();
             ComplexDescriber complexDescriber = queryComplexModel.register();
 
-            this.from = proxyNode.getFromNode(complexDescriber.getModelFrom()).getQueryFromMeta();
-            this.leftJoinRelations = complexDescriber.getLeftJoinRelations().stream()
-                .map(relation -> convert(sqlPreParseHelper, relation))
-                .collect(Collectors.toList());
-            this.rightJoinRelations = complexDescriber.getRightJoinRelations().stream()
-                .map(relation -> convert(sqlPreParseHelper, relation))
-                .collect(Collectors.toList());
-            this.innerJoinRelations = complexDescriber.getInnerJoinRelations().stream()
+            FromNode mainFromNode = proxyNode.getFromNode(complexDescriber.getModelFrom());
+            this.from = mainFromNode.getQueryFromMeta();
+            this.mainFromAliasFlag = mainFromNode.getAliasFlag();
+            this.joinRelations = complexDescriber.getJoinRelations().stream()
                 .map(relation -> convert(sqlPreParseHelper, relation))
                 .collect(Collectors.toList());
         } else {
@@ -68,11 +86,11 @@ public class FromDefinition extends AbstractDefinition {
 
     private JoinRelation convert(SqlPreParseHelper sqlPreParseHelper, ComplexDescriber.Relation<?> desc) {
         QueryProxyNode proxyNode = sqlPreParseHelper.getCurrNode();
-        QueryFromMeta queryMeta = proxyNode.getFromNode(desc.getModelRelation()).getQueryFromMeta();
         List<OperateDefinition> operateDefinitionList = desc.getConditionList().stream()
             .map(item -> item.getOperate().createDefinition(sqlPreParseHelper, item))
             .collect(Collectors.toList());
-        return new JoinRelation(queryMeta, operateDefinitionList);
+        FromNode fromNode = proxyNode.getFromNode(desc.getModelRelation());
+        return new JoinRelation(fromNode.getQueryFromMeta(), operateDefinitionList, fromNode.getAliasFlag(), desc.getJoinType());
     }
 
     @Override
@@ -87,5 +105,17 @@ public class FromDefinition extends AbstractDefinition {
             // 随便返回一个,无意义
             return SqlQueryMetaDesc.class;
         }
+    }
+
+    public QueryFromMeta getFrom() {
+        return from;
+    }
+
+    public SQLAliasManager.AliasFlag getMainFromAliasFlag() {
+        return mainFromAliasFlag;
+    }
+
+    public List<JoinRelation> getJoinRelations() {
+        return joinRelations;
     }
 }

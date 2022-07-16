@@ -1,4 +1,4 @@
-package zly.rivulet.sql.describer.query.desc;
+package zly.rivulet.sql.describer.query.condition;
 
 import zly.rivulet.sql.definition.query.operate.BetweenOperateDefinition;
 import zly.rivulet.sql.definition.query.operate.EqOperateDefinition;
@@ -19,18 +19,20 @@ public enum ConditionOperate {
 //    IN("in"),
 //    NOT_IN("not in"),
 //    IS_NULL(""),
-    NOT_NULL(NotNullOperateDefinition::new)
-    
+    NOT_NULL(NotNullOperateDefinition::new),
+    AND(),
+    OR(),
+
     ;
 
-    private final BiFunction<SqlPreParseHelper, AbstractCondition<?, ?, ?>, OperateDefinition> operate;
+    private final BiFunction<SqlPreParseHelper, Condition<?, ?>, OperateDefinition> operate;
 
 
-    ConditionOperate(BiFunction<SqlPreParseHelper, AbstractCondition<?, ?, ?>, OperateDefinition> operate) {
+    ConditionOperate(BiFunction<SqlPreParseHelper, Condition<?, ?>, OperateDefinition> operate) {
         this.operate = operate;
     }
 
-    public OperateDefinition createDefinition(SqlPreParseHelper sqlPreParseHelper, AbstractCondition<?, ?, ?> condition) {
+    public OperateDefinition createDefinition(SqlPreParseHelper sqlPreParseHelper, Condition<?, ?> condition) {
         return operate.apply(sqlPreParseHelper, condition);
     }
 

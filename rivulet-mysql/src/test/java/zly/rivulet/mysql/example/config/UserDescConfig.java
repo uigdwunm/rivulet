@@ -10,7 +10,7 @@ import zly.rivulet.mysql.example.vo.UserVO;
 import zly.rivulet.sql.describer.param.SqlParamCheckType;
 import zly.rivulet.sql.describer.query.QueryBuilder;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
-import zly.rivulet.sql.describer.query.desc.Condition;
+import zly.rivulet.sql.describer.query.condition.Condition;
 import zly.rivulet.sql.describer.query.desc.Mapping;
 
 @RivuletDescConfig
@@ -25,7 +25,11 @@ public class UserDescConfig {
             )
             .where(
                 Condition.equalTo(UserDO::getId, Param.of(Long.class, "id", SqlParamCheckType.PLACEHOLDER)),
-                Condition.equalTo(UserDO::getName, UserDO::getCode)
+                Condition.equalTo(UserDO::getName, UserDO::getCode),
+                Condition.or(
+                    Condition.equalTo(UserDO::getId, Param.of(Long.class, "id", SqlParamCheckType.PLACEHOLDER)),
+                    Condition.equalTo(UserDO::getName, UserDO::getCode)
+                )
             ).build();
     }
 
@@ -39,7 +43,11 @@ public class UserDescConfig {
                 Mapping.of(UserJoinVO::setProvinceName, joinDO -> joinDO.getProvinceDO().getName())
             ).where(
                 Condition.equalTo(joinDO -> joinDO.getUserDO().getId(), Param.of(Long.class, "aa.id", SqlParamCheckType.PLACEHOLDER)),
-                Condition.equalTo(joinDO -> joinDO.getUserDO().getName(), joinDO -> joinDO.getUserDO().getCode())
+                Condition.equalTo(joinDO -> joinDO.getUserDO().getName(), joinDO -> joinDO.getUserDO().getCode()),
+                Condition.or(
+                    Condition.equalTo(joinDO -> joinDO.getUserDO().getId(), Param.of(Long.class, "aa.id", SqlParamCheckType.PLACEHOLDER)),
+                    Condition.equalTo(joinDO -> joinDO.getUserDO().getName(), joinDO -> joinDO.getUserDO().getCode())
+                )
             ).build();
     }
 }

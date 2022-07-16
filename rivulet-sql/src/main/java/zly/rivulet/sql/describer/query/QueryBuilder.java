@@ -3,7 +3,8 @@ package zly.rivulet.sql.describer.query;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.sql.describer.query.builder.SelectBuilder;
-import zly.rivulet.sql.describer.query.desc.Condition;
+import zly.rivulet.sql.describer.query.condition.Condition;
+import zly.rivulet.sql.describer.query.condition.ConditionContainer;
 import zly.rivulet.sql.describer.query.desc.Mapping;
 import zly.rivulet.sql.describer.query.desc.OrderBy;
 
@@ -32,7 +33,7 @@ public class QueryBuilder<F, S> {
     /**
      * where查询子项
      **/
-    protected List<Condition<F, ?>> whereItemList;
+    protected ConditionContainer whereConditionContainer;
 
     /**
      * 分组字段的列表
@@ -68,7 +69,7 @@ public class QueryBuilder<F, S> {
             this.modelFrom,
             this.selectModel,
             this.mappedItemList,
-            this.whereItemList,
+            this.whereConditionContainer,
             this.groupFieldList,
             this.havingItemList,
             this.orderFieldList,

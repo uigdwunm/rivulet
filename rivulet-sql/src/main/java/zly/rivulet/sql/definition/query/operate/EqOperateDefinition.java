@@ -1,18 +1,23 @@
 package zly.rivulet.sql.definition.query.operate;
 
 import zly.rivulet.base.definition.Definition;
-import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
+import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
 import zly.rivulet.base.describer.SingleValueElementDesc;
-import zly.rivulet.sql.describer.query.desc.AbstractCondition;
+import zly.rivulet.sql.describer.query.condition.Condition;
+import zly.rivulet.sql.describer.query.condition.ConditionElement;
 import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
 
 public class EqOperateDefinition extends OperateDefinition {
 
-    private SQLSingleValueElementDefinition leftElement;
+    private SingleValueElementDefinition leftElement;
 
-    private SQLSingleValueElementDefinition rightElement;
+    private SingleValueElementDefinition rightElement;
 
-    public EqOperateDefinition(SqlPreParseHelper sqlPreParseHelper, AbstractCondition<?, ?, ?> condition) {
+    public EqOperateDefinition(SqlPreParseHelper sqlPreParseHelper, Condition<?, ?> condition) {
+        this(sqlPreParseHelper, (ConditionElement<?, ?>) condition);
+    }
+
+    public EqOperateDefinition(SqlPreParseHelper sqlPreParseHelper, ConditionElement<?, ?> condition) {
         super(condition.getCheckCondition(), sqlPreParseHelper.getSqlParamDefinitionManager());
         SingleValueElementDesc<?, ?> leftFieldMapped = condition.getLeftFieldMapped();
         SingleValueElementDesc<?, ?> rightFieldMapped = condition.getRightFieldMappeds()[0];
@@ -21,11 +26,11 @@ public class EqOperateDefinition extends OperateDefinition {
         this.rightElement = sqlPreParseHelper.parse(rightFieldMapped);
     }
 
-    public SQLSingleValueElementDefinition getLeftElement() {
+    public SingleValueElementDefinition getLeftElement() {
         return leftElement;
     }
 
-    public SQLSingleValueElementDefinition getRightElement() {
+    public SingleValueElementDefinition getRightElement() {
         return rightElement;
     }
 

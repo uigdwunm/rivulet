@@ -1,6 +1,6 @@
 package zly.rivulet.sql.describer.query.builder;
 
-import zly.rivulet.sql.describer.query.desc.Condition;
+import zly.rivulet.sql.describer.query.condition.Condition;
 
 import java.util.Arrays;
 

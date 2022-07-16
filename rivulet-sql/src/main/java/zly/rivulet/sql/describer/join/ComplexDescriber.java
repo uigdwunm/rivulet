@@ -1,6 +1,8 @@
 package zly.rivulet.sql.describer.join;
 
-import zly.rivulet.sql.describer.query.desc.JoinCondition;
+import zly.rivulet.sql.definition.query.join.JoinType;
+import zly.rivulet.sql.definition.query.join.SQLJoinType;
+import zly.rivulet.sql.describer.query.condition.JoinCondition;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,11 +23,7 @@ public class ComplexDescriber {
      **/
     private final Object modelFrom;
 
-    private final List<Relation<?>> leftJoinRelations = new ArrayList<>();
-
-    private final List<Relation<?>> rightJoinRelations = new ArrayList<>();
-
-    private final List<Relation<?>> innerJoinRelations = new ArrayList<>();
+    private final List<Relation<?>> joinRelations = new ArrayList<>();
 
     private ComplexDescriber(Object modelFrom) {
         this.modelFrom = modelFrom;
@@ -36,25 +34,17 @@ public class ComplexDescriber {
     }
 
     public <R> Relation<R> leftJoin(R joinModel) {
-        Relation<R> leftJoin = new Relation<>(joinModel);
-        this.leftJoinRelations.add(leftJoin);
+        Relation<R> leftJoin = new Relation<>(joinModel, SQLJoinType.LEFT_JOIN);
+        joinRelations.add(leftJoin);
         return leftJoin;
+    }
+
+    public List<Relation<?>> getJoinRelations() {
+        return joinRelations;
     }
 
     public Object getModelFrom() {
         return modelFrom;
-    }
-
-    public List<Relation<?>> getLeftJoinRelations() {
-        return leftJoinRelations;
-    }
-
-    public List<Relation<?>> getRightJoinRelations() {
-        return rightJoinRelations;
-    }
-
-    public List<Relation<?>> getInnerJoinRelations() {
-        return innerJoinRelations;
     }
 
     public static class Relation<R> {
@@ -67,13 +57,16 @@ public class ComplexDescriber {
          **/
         private final R modelRelation;
 
-        private final List<JoinCondition<?, ?, ?>> conditionList = new ArrayList<>();
+        private final JoinType joinType;
 
-        public Relation(R modelRelation) {
+        private final List<JoinCondition<?, ?>> conditionList = new ArrayList<>();
+
+        public Relation(R modelRelation, JoinType joinType) {
             this.modelRelation = modelRelation;
+            this.joinType = joinType;
         }
 
-        public final void on(JoinCondition<?, ?, ?>... conditions) {
+        public final void on(JoinCondition<?, ?>... conditions) {
             conditionList.addAll(Arrays.asList(conditions));
         }
 
@@ -81,8 +74,12 @@ public class ComplexDescriber {
             return modelRelation;
         }
 
-        public List<JoinCondition<?, ?, ?>> getConditionList() {
+        public List<JoinCondition<?, ?>> getConditionList() {
             return conditionList;
+        }
+
+        public JoinType getJoinType() {
+            return joinType;
         }
     }
 

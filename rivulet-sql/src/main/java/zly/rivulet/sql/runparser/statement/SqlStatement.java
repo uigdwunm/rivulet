@@ -18,5 +18,4 @@ public interface SqlStatement extends Statement {
      **/
     void formatGetStatement(FormatCollectHelper formatCollectHelper);
 
-    Definition getOriginDefinition();
 }

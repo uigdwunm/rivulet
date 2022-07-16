@@ -18,7 +18,7 @@ import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.field.FieldDefinition;
-import zly.rivulet.sql.definition.query.SqlQueryDefinitionSQL;
+import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.definition.query.main.FromDefinition;
 import zly.rivulet.sql.definition.query.main.SelectDefinition;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
@@ -60,7 +60,7 @@ public class QueryProxyNode implements FromNode, SelectNode {
     /**
      * where条件中如果出现子查询也记录到这里
      **/
-    private List<QueryProxyNode> whereSubQueryList;
+    private List<QueryProxyNode> whereSubQueryList = new ArrayList<>();
 
     /**
      * 当前节点所属的父节点,如果是根节点则为null
@@ -85,7 +85,7 @@ public class QueryProxyNode implements FromNode, SelectNode {
     /**
      * 整个definition解析完还会把结果塞到这里
      **/
-    private SqlQueryDefinitionSQL sqlQueryDefinition;
+    private SqlQueryDefinition sqlQueryDefinition;
 
     /**
      * 结果对象class
@@ -153,7 +153,7 @@ public class QueryProxyNode implements FromNode, SelectNode {
                 // 保留当前的外层node节点
                 QueryProxyNode currNode = sqlPreParseHelper.getCurrNode();
                 FinalDefinition finalDefinition = sqlPreParser.parse(sqlSubJoin.value(), sqlPreParseHelper);
-                SqlQueryDefinitionSQL subQueryDefinition = (SqlQueryDefinitionSQL) finalDefinition;
+                SqlQueryDefinition subQueryDefinition = (SqlQueryDefinition) finalDefinition;
                 // 上面的解析过程会把curr替换成子查询对应的node
                 QueryProxyNode subNode = sqlPreParseHelper.getCurrNode();
                 subNode.sqlQueryDefinition = subQueryDefinition;
@@ -185,7 +185,7 @@ public class QueryProxyNode implements FromNode, SelectNode {
      * @author zhaolaiyuan
      * Date 2022/6/25 11:32
      **/
-    private void acceptSubQueryProxyModel(QueryProxyNode subNode, SqlQueryDefinitionSQL subQueryDefinition, SqlQueryAlias sqlQueryAlias, String suggestedAlias) {
+    private void acceptSubQueryProxyModel(QueryProxyNode subNode, SqlQueryDefinition subQueryDefinition, SqlQueryAlias sqlQueryAlias, String suggestedAlias) {
         //
         // 为子节点关联父节点
         subNode.parentNode = this;
@@ -216,7 +216,7 @@ public class QueryProxyNode implements FromNode, SelectNode {
 
     }
 
-    public Object createProxyVO(SqlQueryDefinitionSQL subQueryDefinition) {
+    public Object createProxyVO(SqlQueryDefinition subQueryDefinition) {
         Class<?> resultModelClass = subQueryDefinition.getSelectDefinition().getSelectModel();
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(resultModelClass);
@@ -367,7 +367,7 @@ public class QueryProxyNode implements FromNode, SelectNode {
         this.selectNodeList.add(subQueryNode);
     }
 
-    public void addSelectNode(QueryProxyNode subQueryNode, SqlQueryDefinitionSQL subQueryDefinition) {
+    public void addSelectNode(QueryProxyNode subQueryNode, SqlQueryDefinition subQueryDefinition) {
         this.selectNodeList.add(subQueryNode);
         this.acceptSubQueryProxyModel(subQueryNode, subQueryDefinition, null, null);
     }
@@ -400,11 +400,11 @@ public class QueryProxyNode implements FromNode, SelectNode {
         this.mapDefinitionList.addAll(mapDefinitionList);
     }
 
-    public SqlQueryDefinitionSQL getSqlQueryDefinition() {
+    public SqlQueryDefinition getSqlQueryDefinition() {
         return sqlQueryDefinition;
     }
 
-    public void setSqlQueryDefinition(SqlQueryDefinitionSQL sqlQueryDefinition) {
+    public void setSqlQueryDefinition(SqlQueryDefinition sqlQueryDefinition) {
         this.sqlQueryDefinition = sqlQueryDefinition;
     }
 }

@@ -3,7 +3,7 @@ package zly.rivulet.sql.definition.query.main;
 import zly.rivulet.base.definition.AbstractContainerDefinition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.sql.definition.query.operate.OperateDefinition;
-import zly.rivulet.sql.describer.query.desc.Condition;
+import zly.rivulet.sql.describer.query.condition.Condition;
 import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
 
 import java.util.ArrayList;

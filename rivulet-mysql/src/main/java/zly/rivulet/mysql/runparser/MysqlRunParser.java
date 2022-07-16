@@ -7,6 +7,7 @@ import zly.rivulet.base.runparser.RuntimeParser;
 import zly.rivulet.base.runparser.param_manager.ParamManager;
 import zly.rivulet.base.utils.RelationSwitch;
 import zly.rivulet.mysql.MySQLRivuletProperties;
+import zly.rivulet.mysql.runparser.statement.FieldStatement;
 import zly.rivulet.mysql.runparser.statement.query.MapStatement;
 import zly.rivulet.mysql.runparser.statement.query.MySqlQueryStatement;
 import zly.rivulet.mysql.runparser.statement.query.SelectStatement;
@@ -74,5 +75,6 @@ public class MysqlRunParser implements RuntimeParser {
         MySqlQueryStatement.registerToFactory(sqlStatementFactory);
         SelectStatement.registerToFactory(sqlStatementFactory);
         MapStatement.registerToFactory(sqlStatementFactory);
+        FieldStatement.registerToFactory(sqlStatementFactory);
     }
 }

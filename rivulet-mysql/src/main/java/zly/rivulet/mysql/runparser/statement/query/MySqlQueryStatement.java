@@ -2,8 +2,9 @@ package zly.rivulet.mysql.runparser.statement.query;
 
 import zly.rivulet.base.runparser.param_manager.ParamManager;
 import zly.rivulet.base.utils.FormatCollectHelper;
+import zly.rivulet.mysql.runparser.statement.QueryFromStatement;
 import zly.rivulet.mysql.runparser.statement.SingleValueElementStatement;
-import zly.rivulet.sql.definition.query.SqlQueryDefinitionSQL;
+import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.preparser.SQLAliasManager;
 import zly.rivulet.sql.runparser.SqlStatementFactory;
 import zly.rivulet.sql.runparser.statement.SqlStatement;
@@ -12,9 +13,9 @@ import java.util.List;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
-public class MySqlQueryStatement implements SingleValueElementStatement {
+public class MySqlQueryStatement implements SingleValueElementStatement, QueryFromStatement {
 
-    private final SqlQueryDefinitionSQL definition;
+    private final SqlQueryDefinition definition;
 
     /**
      * 子语句列表，select、from、where之类的
@@ -24,14 +25,14 @@ public class MySqlQueryStatement implements SingleValueElementStatement {
 
     private final String cache;
 
-    private MySqlQueryStatement(SqlQueryDefinitionSQL definition, List<SqlStatement> subStatementList) {
+    private MySqlQueryStatement(SqlQueryDefinition definition, List<SqlStatement> subStatementList) {
         this.definition = definition;
         this.subStatementList = subStatementList;
         this.cache = this.createStatement();
     }
 
     @Override
-    public SqlQueryDefinitionSQL getOriginDefinition() {
+    public SqlQueryDefinition getOriginDefinition() {
         return this.definition;
     }
 
@@ -67,9 +68,9 @@ public class MySqlQueryStatement implements SingleValueElementStatement {
 
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
-            SqlQueryDefinitionSQL.class,
+            SqlQueryDefinition.class,
             (definition, soleFlag, initHelper) -> {
-                SqlQueryDefinitionSQL sqlQueryDefinition = (SqlQueryDefinitionSQL) definition;
+                SqlQueryDefinition sqlQueryDefinition = (SqlQueryDefinition) definition;
                 // 别名管理器
                 SQLAliasManager aliasManager = initHelper.getAliasManager();
                 if (aliasManager == null) {
@@ -83,7 +84,7 @@ public class MySqlQueryStatement implements SingleValueElementStatement {
                 return new MySqlQueryStatement(sqlQueryDefinition, subStatementList);
             },
             (definition, helper) -> {
-                SqlQueryDefinitionSQL sqlQueryDefinition = (SqlQueryDefinitionSQL) definition;
+                SqlQueryDefinition sqlQueryDefinition = (SqlQueryDefinition) definition;
                 // 别名管理器
                 SQLAliasManager aliasManager = helper.getAliasManager();
                 if (aliasManager == null) {

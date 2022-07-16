@@ -20,6 +20,6 @@ public interface SingleValueElementStatement extends SqlStatement {
      * Date 2022/1/23 14:18
      **/
     default void singleFormatGetStatement(FormatCollectHelper formatCollectHelper) {
-        singleFormatGetStatement(formatCollectHelper);
+        formatGetStatement(formatCollectHelper);
     }
 }
