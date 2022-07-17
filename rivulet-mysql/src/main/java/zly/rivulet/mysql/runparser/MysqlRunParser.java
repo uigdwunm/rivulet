@@ -2,6 +2,7 @@ package zly.rivulet.mysql.runparser;
 
 import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.definition.FinalDefinition;
+import zly.rivulet.base.preparser.param.ParamDefinitionManager;
 import zly.rivulet.base.runparser.Fish;
 import zly.rivulet.base.runparser.RuntimeParser;
 import zly.rivulet.base.runparser.param_manager.ParamManager;
@@ -12,18 +13,17 @@ import zly.rivulet.mysql.runparser.statement.ModelFromStatement;
 import zly.rivulet.mysql.runparser.statement.operate.AndOperateStatement;
 import zly.rivulet.mysql.runparser.statement.operate.EqOperateStatement;
 import zly.rivulet.mysql.runparser.statement.operate.OrOperateStatement;
+import zly.rivulet.mysql.runparser.statement.param.SQLParamStatement;
 import zly.rivulet.mysql.runparser.statement.query.*;
-import zly.rivulet.sql.definition.query.main.FromDefinition;
+import zly.rivulet.sql.definition.query.SQLFinalDefinition;
+import zly.rivulet.sql.preparser.SQLAliasManager;
 import zly.rivulet.sql.runparser.SqlRunParseHelper;
 import zly.rivulet.sql.runparser.SqlRunParseInitHelper;
 import zly.rivulet.sql.runparser.SqlStatementFactory;
 import zly.rivulet.sql.runparser.statement.SqlStatement;
 
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 public class MysqlRunParser implements RuntimeParser {
 
@@ -52,29 +52,33 @@ public class MysqlRunParser implements RuntimeParser {
         // 有查询条件的父级不能缓存
         // 有排序的容器不能缓存
         //
-
+        SQLFinalDefinition sqlFinalDefinition = (SQLFinalDefinition) definition;
         // 先初始化
-        initStatement(definition);
+        initStatement(sqlFinalDefinition);
 
         SqlRunParseHelper sqlRunParseHelper = new SqlRunParseHelper(paramManager);
-        SqlStatement rootStatement = sqlStatementFactory.getOrCreate(definition, sqlRunParseHelper);
+        SqlStatement rootStatement = sqlStatementFactory.getOrCreate(sqlFinalDefinition, sqlRunParseHelper);
 
         return null;
     }
 
-    public void initStatement(FinalDefinition definition) {
+    public void initStatement(SQLFinalDefinition definition) {
         Object o = isInitRecord.get(definition);
         if (o != null) {
             // 已经初始化过了
             return;
         }
         RelationSwitch rootSwitch = RelationSwitch.createRootSwitch();
-        SqlRunParseInitHelper sqlRunParseInitHelper = new SqlRunParseInitHelper();
+        ParamDefinitionManager paramDefinitionManager = definition.getParamDefinitionManager();
+        SQLAliasManager aliasManager = definition.getAliasManager();
+        SqlRunParseInitHelper sqlRunParseInitHelper = new SqlRunParseInitHelper(paramDefinitionManager, aliasManager);
         sqlStatementFactory.init(definition, rootSwitch, sqlRunParseInitHelper);
         isInitRecord.put(definition, definition);
     }
 
     private void registerStatement(SqlStatementFactory sqlStatementFactory) {
+        SQLParamStatement.registerToFactory(sqlStatementFactory);
+
         MySqlQueryStatement.registerToFactory(sqlStatementFactory);
         SelectStatement.registerToFactory(sqlStatementFactory);
         ModelFromStatement.registerToFactory(sqlStatementFactory);

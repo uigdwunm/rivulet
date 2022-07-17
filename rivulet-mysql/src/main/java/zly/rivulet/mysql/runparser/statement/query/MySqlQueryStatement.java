@@ -70,13 +70,6 @@ public class MySqlQueryStatement implements SingleValueElementStatement, QueryFr
             SqlQueryDefinition.class,
             (definition, soleFlag, initHelper) -> {
                 SqlQueryDefinition sqlQueryDefinition = (SqlQueryDefinition) definition;
-                // 别名管理器
-                SQLAliasManager aliasManager = initHelper.getAliasManager();
-                if (aliasManager == null) {
-                    // 如果没有，说明是第一次进来，就从查询中塞进去
-                    aliasManager = sqlQueryDefinition.getAliasManager();
-                    initHelper.setAliasManager(aliasManager);
-                }
                 List<SqlStatement> subStatementList = sqlQueryDefinition.getSubDefinitionList().stream()
                     .map(subDefinition -> sqlStatementFactory.init(subDefinition, soleFlag.subSwitch(), initHelper))
                     .collect(Collectors.toList());
@@ -84,13 +77,6 @@ public class MySqlQueryStatement implements SingleValueElementStatement, QueryFr
             },
             (definition, helper) -> {
                 SqlQueryDefinition sqlQueryDefinition = (SqlQueryDefinition) definition;
-                // 别名管理器
-                SQLAliasManager aliasManager = helper.getAliasManager();
-                if (aliasManager == null) {
-                    // 如果没有，说明是第一次进来，就从查询中塞进去
-                    aliasManager = sqlQueryDefinition.getAliasManager();
-                    helper.setAliasManager(aliasManager);
-                }
                 ParamManager paramManager = helper.getParamManager();
                 List<SqlStatement> subStatementList = sqlQueryDefinition.getSubDefinitionList().stream()
                     .filter(subDefinition -> subDefinition.check(paramManager))

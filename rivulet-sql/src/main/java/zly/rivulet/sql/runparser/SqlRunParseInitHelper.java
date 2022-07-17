@@ -1,19 +1,25 @@
 package zly.rivulet.sql.runparser;
 
+import zly.rivulet.base.preparser.param.ParamDefinitionManager;
 import zly.rivulet.sql.preparser.SQLAliasManager;
 
 public class SqlRunParseInitHelper {
 
-    private SQLAliasManager aliasManager;
+    private final ParamDefinitionManager paramDefinitionManager;
 
-    public SqlRunParseInitHelper() {
+
+    private final SQLAliasManager aliasManager;
+
+    public SqlRunParseInitHelper(ParamDefinitionManager paramDefinitionManager, SQLAliasManager aliasManager) {
+        this.paramDefinitionManager = paramDefinitionManager;
+        this.aliasManager = aliasManager;
     }
 
     public SQLAliasManager getAliasManager() {
         return aliasManager;
     }
 
-    public void setAliasManager(SQLAliasManager aliasManager) {
-        this.aliasManager = aliasManager;
+    public ParamDefinitionManager getParamDefinitionManager() {
+        return paramDefinitionManager;
     }
 }

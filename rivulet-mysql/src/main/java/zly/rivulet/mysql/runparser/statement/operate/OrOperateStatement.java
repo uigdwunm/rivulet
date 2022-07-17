@@ -1,7 +1,7 @@
 package zly.rivulet.mysql.runparser.statement.operate;
 
 import zly.rivulet.base.utils.FormatCollectHelper;
-import zly.rivulet.sql.definition.query.operate.AndOperateDefinition;
+import zly.rivulet.sql.definition.query.operate.OrOperateDefinition;
 import zly.rivulet.sql.runparser.SqlStatementFactory;
 
 import java.util.List;
@@ -35,17 +35,17 @@ public class OrOperateStatement implements OperateStatement {
 
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
-            OrOperateStatement.class,
+            OrOperateDefinition.class,
             (definition, soleFlag, initHelper) -> {
-                OrOperateStatement orOperateDefinition = (OrOperateStatement) definition;
-                List<OperateStatement> operateStatementList = orOperateDefinition.getSubOperateList().stream()
+                OrOperateDefinition orOperateDefinition = (OrOperateDefinition) definition;
+                List<OperateStatement> operateStatementList = orOperateDefinition.getOperateDefinitionList().stream()
                     .map(subOperation -> (OperateStatement) sqlStatementFactory.init(subOperation, soleFlag.subSwitch(), initHelper))
                     .collect(Collectors.toList());
                 return new OrOperateStatement(operateStatementList);
             },
             (definition, helper) -> {
-                OrOperateStatement orOperateDefinition = (OrOperateStatement) definition;
-                List<OperateStatement> operateStatementList = orOperateDefinition.getSubOperateList().stream()
+                OrOperateDefinition orOperateDefinition = (OrOperateDefinition) definition;
+                List<OperateStatement> operateStatementList = orOperateDefinition.getOperateDefinitionList().stream()
                     .map(subOperation -> (OperateStatement) sqlStatementFactory.getOrCreate(subOperation, helper))
                     .collect(Collectors.toList());
                 return new OrOperateStatement(operateStatementList);

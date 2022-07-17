@@ -1,5 +1,6 @@
 package zly.rivulet.base.preparser.param;
 
+import zly.rivulet.base.convertor.Convertor;
 import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.definer.FieldMeta;
 import zly.rivulet.base.definition.param.ParamDefinition;
@@ -122,5 +123,16 @@ public abstract class ParamDefinitionManager {
         fields[i - 1] = field;
         field.setAccessible(true);
         initParam(paramName, fields, i + 1, field.getType());
+    }
+
+    public Object getStaticParam(ParamDefinition paramDefinition) {
+        return staticParamMap.get(paramDefinition);
+    }
+
+    public String getStaticStatement(ParamDefinition paramDefinition) {
+
+        Object param = this.getStaticParam(paramDefinition);
+        Convertor<Object, ?> convertor = (Convertor<Object, ?>) paramDefinition.getConvertor();
+        return convertor.convertToStatement(param);
     }
 }

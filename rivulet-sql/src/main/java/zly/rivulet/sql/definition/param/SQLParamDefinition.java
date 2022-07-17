@@ -46,6 +46,10 @@ public class SQLParamDefinition implements ParamDefinition {
         return this.convertor;
     }
 
+    public SqlParamCheckType getSqlParamCheckType() {
+        return sqlParamCheckType;
+    }
+
     @Override
     public Param<?> getOriginDesc() {
         return this.originDesc;

@@ -21,7 +21,7 @@ import zly.rivulet.sql.preparser.helper.node.QueryProxyNode;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SqlQueryDefinition implements FinalDefinition, QueryFromMeta, SQLSingleValueElementDefinition {
+public class SqlQueryDefinition implements SQLFinalDefinition, QueryFromMeta, SQLSingleValueElementDefinition {
 
     private final SqlQueryMetaDesc<?, ?> metaDesc;
 
@@ -181,6 +181,7 @@ public class SqlQueryDefinition implements FinalDefinition, QueryFromMeta, SQLSi
         return this.subDefinitionList;
     }
 
+    @Override
     public SQLAliasManager getAliasManager() {
         return aliasManager;
     }
