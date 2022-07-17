@@ -1,6 +1,5 @@
 package zly.rivulet.sql.definition.query.operate;
 
-import zly.rivulet.base.definition.Definition;
 import zly.rivulet.sql.describer.query.condition.Condition;
 import zly.rivulet.sql.describer.query.condition.ConditionElement;
 import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
@@ -16,7 +15,7 @@ public class BetweenOperateDefinition extends OperateDefinition {
     }
 
     @Override
-    public Definition forAnalyze() {
+    public BetweenOperateDefinition forAnalyze() {
         return null;
     }
 }

@@ -8,9 +8,12 @@ import zly.rivulet.base.runparser.param_manager.ParamManager;
 import zly.rivulet.base.utils.RelationSwitch;
 import zly.rivulet.mysql.MySQLRivuletProperties;
 import zly.rivulet.mysql.runparser.statement.FieldStatement;
-import zly.rivulet.mysql.runparser.statement.query.MapStatement;
-import zly.rivulet.mysql.runparser.statement.query.MySqlQueryStatement;
-import zly.rivulet.mysql.runparser.statement.query.SelectStatement;
+import zly.rivulet.mysql.runparser.statement.ModelFromStatement;
+import zly.rivulet.mysql.runparser.statement.operate.AndOperateStatement;
+import zly.rivulet.mysql.runparser.statement.operate.EqOperateStatement;
+import zly.rivulet.mysql.runparser.statement.operate.OrOperateStatement;
+import zly.rivulet.mysql.runparser.statement.query.*;
+import zly.rivulet.sql.definition.query.main.FromDefinition;
 import zly.rivulet.sql.runparser.SqlRunParseHelper;
 import zly.rivulet.sql.runparser.SqlRunParseInitHelper;
 import zly.rivulet.sql.runparser.SqlStatementFactory;
@@ -74,7 +77,16 @@ public class MysqlRunParser implements RuntimeParser {
     private void registerStatement(SqlStatementFactory sqlStatementFactory) {
         MySqlQueryStatement.registerToFactory(sqlStatementFactory);
         SelectStatement.registerToFactory(sqlStatementFactory);
+        ModelFromStatement.registerToFactory(sqlStatementFactory);
         MapStatement.registerToFactory(sqlStatementFactory);
         FieldStatement.registerToFactory(sqlStatementFactory);
+
+        FromStatement.registerToFactory(sqlStatementFactory);
+        JoinStatement.registerToFactory(sqlStatementFactory);
+
+        WhereStatement.registerToFactory(sqlStatementFactory);
+        EqOperateStatement.registerToFactory(sqlStatementFactory);
+        AndOperateStatement.registerToFactory(sqlStatementFactory);
+        OrOperateStatement.registerToFactory(sqlStatementFactory);
     }
 }

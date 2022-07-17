@@ -1,6 +1,6 @@
 package zly.rivulet.base.runparser.param_manager;
 
-import zly.rivulet.base.definition.param.ParamDefinitionSQL;
+import zly.rivulet.base.definition.param.ParamDefinition;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,12 +16,12 @@ public class StaticParamManager implements ParamManager {
     private final Map<String, Object> cache = new HashMap<>();
 
     @Override
-    public Object getParam(ParamDefinitionSQL paramDefinition) {
+    public Object getParam(ParamDefinition paramDefinition) {
         return null;
     }
 
     @Override
-    public String getStatement(ParamDefinitionSQL paramDefinition) {
+    public String getStatement(ParamDefinition paramDefinition) {
         return null;
     }
 }

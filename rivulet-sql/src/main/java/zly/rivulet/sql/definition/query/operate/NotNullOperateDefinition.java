@@ -27,7 +27,7 @@ public class NotNullOperateDefinition extends OperateDefinition {
     }
 
     @Override
-    public Definition forAnalyze() {
+    public NotNullOperateDefinition forAnalyze() {
         return null;
     }
 }

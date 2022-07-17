@@ -43,7 +43,7 @@ public interface Condition<F, C> {
     }
 
     static <F, C> Condition<F, C> equalTo(FieldMapping<F, C> leftElement, Param<C> rightElement) {
-        return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, ConditionOperate.EQ, rightElement);
+        return ConditionElement.equalTo(leftElement, rightElement);
     }
 
     static <F, C> Condition<F, C> between(SingleValueElementDesc<F, C> leftElement, SingleValueElementDesc<F, C> beforeElement, SingleValueElementDesc<F, C> afterElement) {

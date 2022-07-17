@@ -1,7 +1,7 @@
 package zly.rivulet.base.definition.checkCondition;
 
 
-import zly.rivulet.base.definition.param.ParamDefinitionSQL;
+import zly.rivulet.base.definition.param.ParamDefinition;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.preparser.param.ParamDefinitionManager;
 import zly.rivulet.base.runparser.param_manager.ParamManager;
@@ -19,7 +19,7 @@ public abstract class CheckCondition {
     protected Param<?>[] params;
 
     // 解析后的参数
-    private ParamDefinitionSQL[] paramDefinitions;
+    private ParamDefinition[] paramDefinitions;
 
     public boolean checkCondition(ParamManager paramManager) {
         if (paramDefinitions == null) {
@@ -41,7 +41,7 @@ public abstract class CheckCondition {
             return;
         }
         int length = params.length;
-        this.paramDefinitions = new ParamDefinitionSQL[length];
+        this.paramDefinitions = new ParamDefinition[length];
         for (int i = 0; i < length; i++) {
             paramDefinitions[i] = paramDefinitionManager.register(params[i]);
         }

@@ -31,7 +31,6 @@ public class MySqlQueryStatement implements SingleValueElementStatement, QueryFr
         this.cache = this.createStatement();
     }
 
-    @Override
     public SqlQueryDefinition getOriginDefinition() {
         return this.definition;
     }

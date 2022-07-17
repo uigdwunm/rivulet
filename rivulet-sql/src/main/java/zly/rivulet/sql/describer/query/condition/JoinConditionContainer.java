@@ -15,10 +15,14 @@ public abstract class JoinConditionContainer<F, C> implements JoinCondition<F, C
     }
 
     public static class AND<F, C> extends JoinConditionContainer<F, C> {
-        private ConditionOperate operate;
 
         public AND(List<JoinCondition<?, ?>> conditionElementList) {
             super(conditionElementList);
+        }
+
+        @Override
+        public ConditionOperate getOperate() {
+            return ConditionOperate.AND;
         }
     }
 
@@ -26,6 +30,11 @@ public abstract class JoinConditionContainer<F, C> implements JoinCondition<F, C
 
         public OR(List<JoinCondition<?, ?>> conditionElementList) {
             super(conditionElementList);
+        }
+
+        @Override
+        public ConditionOperate getOperate() {
+            return ConditionOperate.OR;
         }
     }
 }

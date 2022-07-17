@@ -47,7 +47,6 @@ public class FieldStatement implements SingleValueElementStatement {
 
     }
 
-    @Override
     public Definition getOriginDefinition() {
         return null;
     }

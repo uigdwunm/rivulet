@@ -8,4 +8,7 @@ public abstract class OperateDefinition extends AbstractDefinition {
     protected OperateDefinition(CheckCondition checkCondition, ParamDefinitionManager paramDefinitionManager) {
         super(checkCondition, paramDefinitionManager);
     }
+
+    @Override
+    public abstract OperateDefinition forAnalyze();
 }

@@ -1,9 +1,6 @@
 package zly.rivulet.sql.describer.query.condition;
 
-import zly.rivulet.sql.definition.query.operate.BetweenOperateDefinition;
-import zly.rivulet.sql.definition.query.operate.EqOperateDefinition;
-import zly.rivulet.sql.definition.query.operate.NotNullOperateDefinition;
-import zly.rivulet.sql.definition.query.operate.OperateDefinition;
+import zly.rivulet.sql.definition.query.operate.*;
 import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
 
 import java.util.function.BiFunction;
@@ -20,8 +17,8 @@ public enum ConditionOperate {
 //    NOT_IN("not in"),
 //    IS_NULL(""),
     NOT_NULL(NotNullOperateDefinition::new),
-    AND(),
-    OR(),
+    AND(AndOperateDefinition::new),
+    OR(OrOperateDefinition::new),
 
     ;
 

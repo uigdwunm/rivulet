@@ -11,6 +11,7 @@ import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definition.query.main.*;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.query.condition.Condition;
+import zly.rivulet.sql.describer.query.condition.ConditionContainer;
 import zly.rivulet.sql.describer.query.desc.OrderBy;
 import zly.rivulet.sql.preparser.SQLAliasManager;
 import zly.rivulet.sql.preparser.SqlParamDefinitionManager;
@@ -71,9 +72,9 @@ public class SqlQueryDefinition implements FinalDefinition, QueryFromMeta, SQLSi
 
         this.subDefinitionList.add(selectDefinition);
         this.subDefinitionList.add(fromDefinition);
-        List<? extends Condition<?, ?>> whereItemList = metaDesc.getWhereItemList();
-        if (whereItemList != null) {
-            this.whereDefinition = new WhereDefinition(sqlPreParseHelper, whereItemList);
+        ConditionContainer<?, ?> whereConditionContainer = metaDesc.getWhereConditionContainer();
+        if (whereConditionContainer != null) {
+            this.whereDefinition = new WhereDefinition(sqlPreParseHelper, whereConditionContainer);
             this.subDefinitionList.add(this.whereDefinition);
         }
 

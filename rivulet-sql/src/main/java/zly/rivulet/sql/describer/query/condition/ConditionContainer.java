@@ -19,12 +19,22 @@ public abstract class ConditionContainer<F, C> implements Condition<F, C> {
         public AND(List<Condition<?, ?>> conditionElementList) {
             super(conditionElementList);
         }
+
+        @Override
+        public ConditionOperate getOperate() {
+            return ConditionOperate.AND;
+        }
     }
 
     public static class OR<F, C> extends ConditionContainer<F, C> {
 
         public OR(List<Condition<?, ?>> conditionElementList) {
             super(conditionElementList);
+        }
+
+        @Override
+        public ConditionOperate getOperate() {
+            return ConditionOperate.OR;
         }
     }
 }

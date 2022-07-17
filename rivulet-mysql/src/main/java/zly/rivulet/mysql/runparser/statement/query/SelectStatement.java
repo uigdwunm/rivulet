@@ -40,7 +40,6 @@ public class SelectStatement implements SqlStatement {
 
     }
 
-    @Override
     public Definition getOriginDefinition() {
         return selectDefinition;
     }

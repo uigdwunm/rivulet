@@ -2,7 +2,7 @@ package zly.rivulet.base.preparser.param;
 
 import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.definer.FieldMeta;
-import zly.rivulet.base.definition.param.ParamDefinitionSQL;
+import zly.rivulet.base.definition.param.ParamDefinition;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.describer.param.StandardParam;
 import zly.rivulet.base.describer.param.StaticParam;
@@ -28,9 +28,9 @@ import java.util.function.Function;
  **/
 public abstract class ParamDefinitionManager {
 
-    private final Map<ParamDefinitionSQL, Function<Object[], Object>> paramCreatorMap = new ConcurrentHashMap<>();
+    private final Map<ParamDefinition, Function<Object[], Object>> paramCreatorMap = new ConcurrentHashMap<>();
 
-    private final Map<ParamDefinitionSQL, Object> staticParamMap = new ConcurrentHashMap<>();
+    private final Map<ParamDefinition, Object> staticParamMap = new ConcurrentHashMap<>();
 
     private final Parameter[] parameters;
 
@@ -43,18 +43,18 @@ public abstract class ParamDefinitionManager {
 
     public ParamManager getParamManager(Object[] originParams) {
         // 静态的参数直接作为缓存传入
-        Map<ParamDefinitionSQL, Object> staticParamMap = new HashMap<>(this.staticParamMap);
+        Map<ParamDefinition, Object> staticParamMap = new HashMap<>(this.staticParamMap);
         return new ProxyParamManager(originParams, paramCreatorMap, staticParamMap);
     }
 
-    protected abstract ParamDefinitionSQL createParamDefinition(Param<?> paramDesc, FieldMeta fieldMeta);
+    protected abstract ParamDefinition createParamDefinition(Param<?> paramDesc, FieldMeta fieldMeta);
 
-    public ParamDefinitionSQL register(Param<?> paramDesc) {
+    public ParamDefinition register(Param<?> paramDesc) {
         return this.register(paramDesc, null);
     }
 
-    public ParamDefinitionSQL register(Param<?> paramDesc, FieldMeta fieldMeta) {
-        ParamDefinitionSQL paramDefinition = this.createParamDefinition(paramDesc, fieldMeta);
+    public ParamDefinition register(Param<?> paramDesc, FieldMeta fieldMeta) {
+        ParamDefinition paramDefinition = this.createParamDefinition(paramDesc, fieldMeta);
 
         if (paramDesc instanceof StaticParam) {
             StaticParam<?> staticParam = (StaticParam<?>) paramDesc;

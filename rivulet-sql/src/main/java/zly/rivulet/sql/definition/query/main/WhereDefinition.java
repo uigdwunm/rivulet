@@ -4,6 +4,7 @@ import zly.rivulet.base.definition.AbstractContainerDefinition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.sql.definition.query.operate.OperateDefinition;
 import zly.rivulet.sql.describer.query.condition.Condition;
+import zly.rivulet.sql.describer.query.condition.ConditionContainer;
 import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
 
 import java.util.ArrayList;
@@ -11,25 +12,25 @@ import java.util.List;
 
 public class WhereDefinition extends AbstractContainerDefinition {
 
-    private final ArrayList<OperateDefinition> operateDefinitionList = new ArrayList<>();
+    private final OperateDefinition operateDefinition;
 
-    private WhereDefinition(CheckCondition checkCondition) {
-        super(checkCondition, null);
+    private WhereDefinition(OperateDefinition operateDefinition) {
+        super(CheckCondition.IS_TRUE, null);
+        this.operateDefinition = operateDefinition;
     }
 
-    public WhereDefinition(SqlPreParseHelper sqlPreParseHelper, List<? extends Condition<?, ?>> whereItemList) {
+    public WhereDefinition(SqlPreParseHelper sqlPreParseHelper, ConditionContainer<?, ?> whereConditionContainer) {
         super(CheckCondition.IS_TRUE, sqlPreParseHelper.getSqlParamDefinitionManager());
+        this.operateDefinition = whereConditionContainer.getOperate().createDefinition(sqlPreParseHelper, whereConditionContainer);
+    }
 
-        List<OperateDefinition> operateDefinitionList = this.operateDefinitionList;
-        for (Condition<?, ?> item : whereItemList) {
-            operateDefinitionList.add(item.getOperate().createDefinition(sqlPreParseHelper, item));
-        }
+    public OperateDefinition getOperateDefinition() {
+        return operateDefinition;
     }
 
     @Override
     public WhereDefinition forAnalyze() {
-        WhereDefinition whereDefinition = new WhereDefinition(super.getCheckCondition());
-        return null;
+        return new WhereDefinition(operateDefinition.forAnalyze());
     }
 
 }

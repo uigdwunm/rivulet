@@ -4,11 +4,11 @@ import zly.rivulet.base.convertor.Convertor;
 import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.definer.FieldMeta;
 import zly.rivulet.base.definer.outerType.SelfType;
-import zly.rivulet.base.definition.param.ParamDefinitionSQL;
+import zly.rivulet.base.definition.param.ParamDefinition;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.sql.describer.param.SqlParamCheckType;
 
-public class SqlParamDefinitionSQL implements ParamDefinitionSQL {
+public class SQLParamDefinition implements ParamDefinition {
 
     private final Param<?> originDesc;
 
@@ -21,7 +21,7 @@ public class SqlParamDefinitionSQL implements ParamDefinitionSQL {
     // 对应的转换器，从参数转换成语句的string
     private final Convertor<?, ?> convertor;
 
-    public SqlParamDefinitionSQL(Param<?> paramDesc, FieldMeta fieldMeta, ConvertorManager convertorManager) {
+    public SQLParamDefinition(Param<?> paramDesc, FieldMeta fieldMeta, ConvertorManager convertorManager) {
         this.originDesc = paramDesc;
         if (fieldMeta == null) {
             this.convertor = convertorManager.get(paramDesc.getClazz(), SelfType.class);
@@ -51,9 +51,4 @@ public class SqlParamDefinitionSQL implements ParamDefinitionSQL {
         return this.originDesc;
     }
 
-    @Override
-    public ParamDefinitionSQL clone() {
-        // TODO 属性都是不可变的所以没有clone的必要
-        return this;
-    }
 }

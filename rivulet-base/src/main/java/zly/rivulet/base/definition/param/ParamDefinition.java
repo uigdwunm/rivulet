@@ -4,7 +4,7 @@ import zly.rivulet.base.convertor.Convertor;
 import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
 import zly.rivulet.base.describer.param.Param;
 
-public interface ParamDefinitionSQL extends SingleValueElementDefinition {
+public interface ParamDefinition extends SingleValueElementDefinition {
 
     Class<?> getClazz();
 
@@ -13,7 +13,7 @@ public interface ParamDefinitionSQL extends SingleValueElementDefinition {
     Param<?> getOriginDesc();
 
     @Override
-    default ParamDefinitionSQL forAnalyze() {
+    default ParamDefinition forAnalyze() {
         return this;
     }
 }

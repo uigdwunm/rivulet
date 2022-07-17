@@ -32,7 +32,6 @@ public class EqOperateStatement implements OperateStatement {
     public void formatGetStatement(FormatCollectHelper formatCollectHelper) {
     }
 
-    @Override
     public Definition getOriginDefinition() {
         return null;
     }

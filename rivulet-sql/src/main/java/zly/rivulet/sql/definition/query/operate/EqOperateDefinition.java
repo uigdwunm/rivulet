@@ -35,7 +35,7 @@ public class EqOperateDefinition extends OperateDefinition {
     }
 
     @Override
-    public Definition forAnalyze() {
+    public EqOperateDefinition forAnalyze() {
         return null;
     }
 }

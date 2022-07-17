@@ -33,7 +33,7 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
     /**
      * where查询子项
      **/
-    protected final ConditionContainer whereConditionContainer;
+    protected final ConditionContainer<?, ?> whereConditionContainer;
 
     /**
      * 分组字段的列表
@@ -65,7 +65,7 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
      **/
 //    protected final boolean isHaveNativeStatement;
 
-    public SqlQueryMetaDesc(Class<F> modelFrom, Class<S> selectModel, List<Mapping.Item<F, S, ?>> mappedItemList, ConditionContainer whereConditionContainer, List<FieldMapping<F, ?>> groupFieldList, List<Condition<F, ?>> havingItemList, List<OrderBy.Item<F, ?>> orderFieldList, Param<Integer> skit, Param<Integer> limit) {
+    public SqlQueryMetaDesc(Class<F> modelFrom, Class<S> selectModel, List<Mapping.Item<F, S, ?>> mappedItemList, ConditionContainer<?, ?> whereConditionContainer, List<FieldMapping<F, ?>> groupFieldList, List<Condition<F, ?>> havingItemList, List<OrderBy.Item<F, ?>> orderFieldList, Param<Integer> skit, Param<Integer> limit) {
         this.modelFrom = modelFrom;
         this.selectModel = selectModel;
         this.mappedItemList = mappedItemList;
@@ -89,7 +89,7 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
         return mappedItemList;
     }
 
-    public ConditionContainer getWhereConditionContainer() {
+    public ConditionContainer<?, ?> getWhereConditionContainer() {
         return whereConditionContainer;
     }
 

@@ -3,6 +3,7 @@ package zly.rivulet.sql.describer.join;
 import zly.rivulet.sql.definition.query.join.JoinType;
 import zly.rivulet.sql.definition.query.join.SQLJoinType;
 import zly.rivulet.sql.describer.query.condition.JoinCondition;
+import zly.rivulet.sql.describer.query.condition.JoinConditionContainer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,7 +60,7 @@ public class ComplexDescriber {
 
         private final JoinType joinType;
 
-        private final List<JoinCondition<?, ?>> conditionList = new ArrayList<>();
+        private JoinConditionContainer<?, ?> conditionContainer;
 
         public Relation(R modelRelation, JoinType joinType) {
             this.modelRelation = modelRelation;
@@ -67,15 +68,23 @@ public class ComplexDescriber {
         }
 
         public final void on(JoinCondition<?, ?>... conditions) {
-            conditionList.addAll(Arrays.asList(conditions));
+            this.onAnd(conditions);
+        }
+
+        public final void onAnd(JoinCondition<?, ?>... conditions) {
+            this.conditionContainer = new JoinConditionContainer.AND<>(Arrays.asList(conditions));
+        }
+
+        public final void onOr(JoinCondition<?, ?>... conditions) {
+            this.conditionContainer = new JoinConditionContainer.OR<>(Arrays.asList(conditions));
         }
 
         public R getModelRelation() {
             return modelRelation;
         }
 
-        public List<JoinCondition<?, ?>> getConditionList() {
-            return conditionList;
+        public JoinConditionContainer<?, ?> getConditionContainer() {
+            return conditionContainer;
         }
 
         public JoinType getJoinType() {

@@ -1,6 +1,6 @@
 package zly.rivulet.base.utils;
 
-import zly.rivulet.base.definition.param.ParamDefinitionSQL;
+import zly.rivulet.base.definition.param.ParamDefinition;
 
 import java.util.Arrays;
 import java.util.function.Function;
@@ -54,7 +54,7 @@ public class ArrayUtils {
         return arr.length;
     }
 
-    public static int length(ParamDefinitionSQL[] arr) {
+    public static int length(ParamDefinition[] arr) {
         if (arr == null) {
             return 0;
         }

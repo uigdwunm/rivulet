@@ -9,13 +9,11 @@ import java.util.Arrays;
 
 public interface JoinCondition<F, C> extends Condition<F, C> {
 
-    @SafeVarargs
-    static <F> JoinConditionContainer<F, ?> and(JoinCondition<F, ?>... items) {
+    static JoinConditionContainer<?, ?> and(JoinCondition<?, ?>... items) {
         return new JoinConditionContainer.AND<>(Arrays.asList(items));
     }
 
-    @SafeVarargs
-    static <F> JoinConditionContainer<F, ?> or(JoinCondition<F, ?>... items) {
+    static JoinConditionContainer<?, ?> or(JoinCondition<?, ?>... items) {
         return new JoinConditionContainer.OR<>(Arrays.asList(items));
     }
 

@@ -33,7 +33,7 @@ public class QueryBuilder<F, S> {
     /**
      * where查询子项
      **/
-    protected ConditionContainer whereConditionContainer;
+    protected ConditionContainer<F, ?> whereConditionContainer;
 
     /**
      * 分组字段的列表

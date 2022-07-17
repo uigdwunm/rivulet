@@ -64,7 +64,6 @@ public class MapStatement implements SingleValueElementStatement {
 
     }
 
-    @Override
     public Definition getOriginDefinition() {
         return null;
     }

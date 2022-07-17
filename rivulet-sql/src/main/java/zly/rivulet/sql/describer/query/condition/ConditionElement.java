@@ -49,7 +49,8 @@ public class ConditionElement<F, C> implements Condition<F, C>, JoinCondition<F,
         return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, ConditionOperate.EQ, rightElement);
     }
 
-//    public static <A extends SingleValueElementDesc<F, C>, F, C> ConditionElement<F, C> equalTo(A leftElement, Param<C> rightElement) {
-//        return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, ConditionOperate.EQ, rightElement);
-//    }
+    public static <A extends SingleValueElementDesc<F, C>, F, C> ConditionElement<F, C> equalTo(A leftElement, Param<C> rightElement) {
+        SingleValueElementDesc<F, C> rightElement1 = (SingleValueElementDesc<F, C>) rightElement;
+        return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, ConditionOperate.EQ, rightElement1);
+    }
 }
