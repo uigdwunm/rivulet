@@ -7,6 +7,7 @@ import zly.rivulet.base.definer.outerType.OriginOuterType;
 import zly.rivulet.base.exception.ModelDefineException;
 import zly.rivulet.base.utils.StringUtil;
 import zly.rivulet.base.utils.View;
+import zly.rivulet.mysql.convertor.MySQLSelfTypeConvertor;
 import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLBigInt;
 import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLInt;
 import zly.rivulet.mysql.definer.annotations.type.string.MySQLVarchar;
@@ -61,6 +62,8 @@ public class MySQLDefiner extends SqlDefiner {
 
     @Override
     protected void initTypeConvertor() {
+        MySQLSelfTypeConvertor.registerConvertors(super.convertorManager);
+
         annotation_TypeCreator_Map.put(MySQLInt.class, anno -> new MySQLInt.Type((MySQLInt) anno));
         MySQLInt.Type.registerConvertors(super.convertorManager);
 

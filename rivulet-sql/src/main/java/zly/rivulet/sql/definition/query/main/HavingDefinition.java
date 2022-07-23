@@ -10,7 +10,7 @@ import java.util.List;
 public class HavingDefinition extends AbstractDefinition {
 
     public HavingDefinition(SqlPreParseHelper sqlPreParseHelper, List<? extends Condition<?,?>> havingItemList) {
-        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getSqlParamDefinitionManager());
+        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamDefinitionManager());
     }
 
     @Override

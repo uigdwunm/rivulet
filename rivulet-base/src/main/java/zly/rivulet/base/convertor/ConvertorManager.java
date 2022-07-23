@@ -9,7 +9,6 @@ public class ConvertorManager {
 
     private final Map<String, Convertor<?, ?>> CONVERTER_MAP = new ConcurrentHashMap<>();
 
-
     public synchronized <T1, T2 extends OriginOuterType> void register(Convertor<T1, T2> convertor) {
         String key = getKey(convertor.getJavaType(), convertor.getOriginOuterType());
 

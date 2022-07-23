@@ -1,7 +1,7 @@
 package zly.rivulet.sql.definition.query;
 
 import zly.rivulet.base.definition.AbstractDefinition;
-import zly.rivulet.base.definition.FinalDefinition;
+import zly.rivulet.base.preparser.param.ParamDefinitionManager;
 import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.describer.field.FieldMapping;
@@ -47,7 +47,7 @@ public class SqlQueryDefinition implements SQLFinalDefinition, QueryFromMeta, SQ
 
     private SQLAliasManager aliasManager;
 
-    private SqlParamDefinitionManager paramDefinitionManager;
+    private ParamDefinitionManager paramDefinitionManager;
 
     private SQLAliasManager.AliasFlag aliasFlag;
 
@@ -107,7 +107,7 @@ public class SqlQueryDefinition implements SQLFinalDefinition, QueryFromMeta, SQ
         this.sqlAssigner = selectDefinition.getSqlAssigner();
 
         this.aliasManager = SQLAliasManager.create(sqlPreParseHelper.getConfigProperties(), queryProxyNode);
-        this.paramDefinitionManager = sqlPreParseHelper.getSqlParamDefinitionManager();
+        this.paramDefinitionManager = sqlPreParseHelper.getParamDefinitionManager();
         this.aliasFlag = queryProxyNode.getAliasFlag();
     }
 
@@ -192,7 +192,7 @@ public class SqlQueryDefinition implements SQLFinalDefinition, QueryFromMeta, SQ
     }
 
     @Override
-    public SqlParamDefinitionManager getParamDefinitionManager() {
+    public ParamDefinitionManager getParamDefinitionManager() {
         return paramDefinitionManager;
     }
 

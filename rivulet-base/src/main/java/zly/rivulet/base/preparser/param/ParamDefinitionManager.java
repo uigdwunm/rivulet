@@ -54,7 +54,7 @@ public abstract class ParamDefinitionManager {
         return this.register(paramDesc, null);
     }
 
-    public ParamDefinition register(Param<?> paramDesc, FieldMeta fieldMeta) {
+    private ParamDefinition register(Param<?> paramDesc, FieldMeta fieldMeta) {
         ParamDefinition paramDefinition = this.createParamDefinition(paramDesc, fieldMeta);
 
         if (paramDesc instanceof StaticParam) {

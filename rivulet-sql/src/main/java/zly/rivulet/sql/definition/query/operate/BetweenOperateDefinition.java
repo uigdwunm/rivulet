@@ -11,7 +11,7 @@ public class BetweenOperateDefinition extends OperateDefinition {
     }
 
     public BetweenOperateDefinition(SqlPreParseHelper sqlPreParseHelper, ConditionElement<?, ?> condition) {
-        super(condition.getCheckCondition(), sqlPreParseHelper.getSqlParamDefinitionManager());
+        super(condition.getCheckCondition(), sqlPreParseHelper.getParamDefinitionManager());
     }
 
     @Override

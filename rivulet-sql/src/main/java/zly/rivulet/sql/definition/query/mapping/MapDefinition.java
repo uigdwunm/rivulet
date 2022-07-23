@@ -4,6 +4,7 @@ import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
 import zly.rivulet.base.describer.field.SelectMapping;
 import zly.rivulet.base.describer.param.Param;
+import zly.rivulet.base.preparser.param.ParamDefinitionManager;
 import zly.rivulet.sql.definition.field.FieldDefinition;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
@@ -11,13 +12,10 @@ import zly.rivulet.sql.describer.function.MFunctionDesc;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.query.desc.Mapping;
 import zly.rivulet.sql.preparser.SQLAliasManager;
-import zly.rivulet.sql.preparser.SqlParamDefinitionManager;
 import zly.rivulet.sql.preparser.SqlPreParser;
 import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
 import zly.rivulet.sql.preparser.helper.node.FieldProxyNode;
 import zly.rivulet.sql.preparser.helper.node.QueryProxyNode;
-
-import java.lang.reflect.Method;
 
 public class MapDefinition implements SQLSingleValueElementDefinition {
 
@@ -55,8 +53,7 @@ public class MapDefinition implements SQLSingleValueElementDefinition {
         this.selectField = selectField;
         QueryProxyNode currNode = sqlPreParseHelper.getCurrNode();
         SqlPreParser sqlPreParser = sqlPreParseHelper.getSqlPreParser();
-        Method method = sqlPreParseHelper.getMethod();
-        SqlQueryDefinition sqlQueryDefinition = (SqlQueryDefinition) sqlPreParser.parse(sqlQueryMetaDesc, method);
+        SqlQueryDefinition sqlQueryDefinition = (SqlQueryDefinition) sqlPreParser.parse(sqlQueryMetaDesc, sqlPreParseHelper);
         QueryProxyNode subQueryNode = sqlPreParseHelper.getCurrNode();
         currNode.addSelectNode(subQueryNode, sqlQueryDefinition);
         // 这里替换回来
@@ -69,8 +66,8 @@ public class MapDefinition implements SQLSingleValueElementDefinition {
 
     public MapDefinition(SqlPreParseHelper sqlPreParseHelper, Param<?> paramDesc, SelectMapping<?, ?> selectField) {
         this.selectField = selectField;
-        SqlParamDefinitionManager sqlParamDefinitionManager = sqlPreParseHelper.getSqlParamDefinitionManager();
-        this.valueDefinition = sqlParamDefinitionManager.register(paramDesc);
+        ParamDefinitionManager paramDefinitionManager = sqlPreParseHelper.getParamDefinitionManager();
+        this.valueDefinition = paramDefinitionManager.register(paramDesc);
         this.referenceAlias = sqlPreParseHelper.getCurrNode().getAliasFlag();
         this.aliasFlag = SQLAliasManager.createFieldAlias();
     }

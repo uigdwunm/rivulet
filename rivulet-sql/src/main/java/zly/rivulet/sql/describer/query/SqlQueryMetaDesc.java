@@ -60,6 +60,8 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
      **/
     protected final Param<Integer> limit;
 
+    private String key;
+
     /**
      * TODO 是否包含原生语句
      **/
@@ -116,5 +118,15 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
     @Override
     public Class<?> getMainFrom() {
         return modelFrom;
+    }
+
+    @Override
+    public String getKey() {
+        return this.key;
+    }
+
+    @Override
+    public void setKey(String key) {
+        this.key = key;
     }
 }

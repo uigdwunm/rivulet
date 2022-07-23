@@ -25,7 +25,7 @@ public class FromDefinition extends AbstractDefinition {
     private List<JoinRelationDefinition> joinRelations;
 
     public FromDefinition(SqlPreParseHelper sqlPreParseHelper) {
-        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getSqlParamDefinitionManager());
+        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamDefinitionManager());
 
         QueryProxyNode proxyNode = sqlPreParseHelper.getCurrNode();
         Object proxyModel = proxyNode.getProxyModel();

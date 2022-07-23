@@ -13,6 +13,7 @@ import zly.rivulet.mysql.runparser.statement.ModelFromStatement;
 import zly.rivulet.mysql.runparser.statement.operate.AndOperateStatement;
 import zly.rivulet.mysql.runparser.statement.operate.EqOperateStatement;
 import zly.rivulet.mysql.runparser.statement.operate.OrOperateStatement;
+import zly.rivulet.mysql.runparser.statement.param.EmptyParamStatement;
 import zly.rivulet.mysql.runparser.statement.param.SQLParamStatement;
 import zly.rivulet.mysql.runparser.statement.query.*;
 import zly.rivulet.sql.definition.query.SQLFinalDefinition;
@@ -77,6 +78,7 @@ public class MysqlRunParser implements RuntimeParser {
     }
 
     private void registerStatement(SqlStatementFactory sqlStatementFactory) {
+        EmptyParamStatement.registerToFactory(sqlStatementFactory);
         SQLParamStatement.registerToFactory(sqlStatementFactory);
 
         MySqlQueryStatement.registerToFactory(sqlStatementFactory);

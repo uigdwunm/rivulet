@@ -1,12 +1,13 @@
 package zly.rivulet.sql.preparser;
 
 import zly.rivulet.base.convertor.ConvertorManager;
-import zly.rivulet.base.definer.annotations.RivuletQueryMapper;
 import zly.rivulet.base.definition.FinalDefinition;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.exception.DescDefineException;
 import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.preparser.PreParser;
+import zly.rivulet.base.preparser.param.ParamDefinitionManager;
+import zly.rivulet.base.warehouse.WarehouseManager;
 import zly.rivulet.sql.SqlRivuletProperties;
 import zly.rivulet.sql.definer.SqlDefiner;
 import zly.rivulet.sql.definition.query.HalfFinalDefinition;
@@ -26,12 +27,12 @@ public class SqlPreParser implements PreParser {
 
     private final SqlDefiner definer;
 
-    private final Map<String, WholeDesc> wholeDescMap;
+    private final WarehouseManager warehouseManager;
 
     private final Map<String, FinalDefinition> key_queryDefinition_map = new HashMap<>();
 
-    public SqlPreParser(Map<String, WholeDesc> wholeDescMap, SqlDefiner definer, SqlRivuletProperties configProperties, ConvertorManager convertorManager) {
-        this.wholeDescMap = wholeDescMap;
+    public SqlPreParser(WarehouseManager warehouseManager, SqlDefiner definer, SqlRivuletProperties configProperties, ConvertorManager convertorManager) {
+        this.warehouseManager = warehouseManager;
         this.configProperties = configProperties;
         this.convertorManager = convertorManager;
         this.definer = definer;
@@ -40,37 +41,38 @@ public class SqlPreParser implements PreParser {
 
     @Override
     public FinalDefinition parse(String key, Method method) {
-        WholeDesc wholeDesc = wholeDescMap.get(key);
+        WholeDesc wholeDesc = warehouseManager.getWholeDesc(key);
         if (wholeDesc == null) {
             throw DescDefineException.noMatchDescKey();
         }
 
-        return this.parse(wholeDesc, method);
+        SqlParamDefinitionManager sqlParamDefinitionManager = new SqlParamDefinitionManager(method.getParameters(), this.convertorManager);
+        SqlPreParseHelper sqlPreParseHelper = new SqlPreParseHelper(this, sqlParamDefinitionManager);
+        return this.parse(wholeDesc, sqlPreParseHelper);
+    }
+
+    @Override
+    public FinalDefinition parse(WholeDesc wholeDesc, ParamDefinitionManager paramDefinitionManager) {
+        SqlPreParseHelper sqlPreParseHelper = new SqlPreParseHelper(this, paramDefinitionManager);
+        return this.parse(wholeDesc, sqlPreParseHelper);
     }
 
     public FinalDefinition parse(String key, SqlPreParseHelper sqlPreParseHelper) {
-        WholeDesc wholeDesc = wholeDescMap.get(key);
+        WholeDesc wholeDesc = warehouseManager.getWholeDesc(key);
         if (wholeDesc == null) {
             throw DescDefineException.noMatchDescKey();
         }
         return this.parse(wholeDesc, sqlPreParseHelper);
     }
 
-    public FinalDefinition parse(WholeDesc wholeDesc, Method method) {
-        SqlPreParseHelper sqlPreParseHelper = new SqlPreParseHelper(this, method);
-        return this.parse(wholeDesc, sqlPreParseHelper);
-    }
-
-    private FinalDefinition parse(WholeDesc wholeDesc, SqlPreParseHelper sqlPreParseHelper) {
-        Method method = sqlPreParseHelper.getMethod();
+    public FinalDefinition parse(WholeDesc wholeDesc, SqlPreParseHelper sqlPreParseHelper) {
 
         if (wholeDesc instanceof SqlQueryMetaDesc) {
-            RivuletQueryMapper annotation = method.getAnnotation(RivuletQueryMapper.class);
             // 开始解析前先塞一个标识，用于解决循环嵌套子查询
-            key_queryDefinition_map.put(annotation.value(), HalfFinalDefinition.instance);
+            key_queryDefinition_map.put(wholeDesc.getKey(), HalfFinalDefinition.instance);
             // 查询方法
             SqlQueryDefinition sqlQueryDefinition = new SqlQueryDefinition(sqlPreParseHelper, wholeDesc);
-            key_queryDefinition_map.put(annotation.value(), sqlQueryDefinition);
+            key_queryDefinition_map.put(wholeDesc.getKey(), sqlQueryDefinition);
             return sqlQueryDefinition;
 //        } else if () {
 //            // 新增

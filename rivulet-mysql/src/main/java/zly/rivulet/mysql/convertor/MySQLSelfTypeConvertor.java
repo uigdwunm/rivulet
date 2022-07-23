@@ -2,22 +2,27 @@ package zly.rivulet.mysql.convertor;
 
 import zly.rivulet.base.convertor.Convertor;
 import zly.rivulet.base.convertor.ConvertorManager;
-import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.definer.outerType.SelfType;
+import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.mysql.util.MySQLConstant;
 
 import java.math.BigInteger;
 
-public class SelfTypeConvertors {
+public abstract class MySQLSelfTypeConvertor<T> extends Convertor<T, SelfType> {
+    private MySQLSelfTypeConvertor(Class<T> javaType) {
+        super(javaType, SelfType.class);
+    }
+
+    @Override
+    public T convertToJavaType(Object outerValue) {
+        throw UnbelievableException.unbelievable();
+    }
+
 
     public static void registerConvertors(ConvertorManager convertorManager) {
-        convertorManager.register(
-            new Convertor<String, SelfType>(String.class, SelfType.class) {
-                @Override
-                public String convertToJavaType(Object outerValue) {
-                    throw UnbelievableException.unbelievable();
-                }
 
+        convertorManager.register(
+            new MySQLSelfTypeConvertor<String>(String.class) {
                 @Override
                 public String convertToStatement(String innerValue) {
                     if (innerValue == null) {
@@ -27,14 +32,8 @@ public class SelfTypeConvertors {
                 }
             }
         );
-
         convertorManager.register(
-            new Convertor<Integer, SelfType>(Integer.class, SelfType.class) {
-                @Override
-                public Integer convertToJavaType(Object outerValue) {
-                    throw UnbelievableException.unbelievable();
-                }
-
+            new MySQLSelfTypeConvertor<Integer>(Integer.class) {
                 @Override
                 public String convertToStatement(Integer innerValue) {
                     if (innerValue == null) {
@@ -46,18 +45,27 @@ public class SelfTypeConvertors {
 
         );
         convertorManager.register(
-            new Convertor<BigInteger, SelfType>(BigInteger.class, SelfType.class) {
+            new MySQLSelfTypeConvertor<Long>(Long.class) {
                 @Override
-                public BigInteger convertToJavaType(Object outerValue) {
-                    throw UnbelievableException.unbelievable();
+                public String convertToStatement(Long innerValue) {
+                    if (innerValue == null) {
+                        return MySQLConstant.MYSQL_NULL;
+                    }
+                    return innerValue.toString();
                 }
+            }
 
+        );
+        convertorManager.register(
+            new MySQLSelfTypeConvertor<BigInteger>(BigInteger.class) {
                 @Override
                 public String convertToStatement(BigInteger innerValue) {
+                    if (innerValue == null) {
+                        return MySQLConstant.MYSQL_NULL;
+                    }
                     return innerValue.toString();
                 }
             }
         );
     }
-
 }

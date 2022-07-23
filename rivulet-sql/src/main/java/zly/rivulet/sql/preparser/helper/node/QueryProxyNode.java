@@ -28,12 +28,12 @@ import zly.rivulet.sql.preparser.SQLAliasManager;
 import zly.rivulet.sql.preparser.SqlPreParser;
 import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
 
+import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Type;
+import java.util.*;
 
 public class QueryProxyNode implements FromNode, SelectNode {
     ThreadLocal<SQLSingleValueElementDefinition> THREAD_LOCAL = new ThreadLocal<>();
@@ -202,18 +202,33 @@ public class QueryProxyNode implements FromNode, SelectNode {
             // 结果对象和from对象是同一个,那么可以直接返回fromModel对应的代理对象
             return;
         }
-        Object proxyVO = this.createProxyVO(subQueryDefinition);
-        subNode.proxyModel = proxyVO;
+        subNode.proxyModel = this.createProxyVO(subQueryDefinition);
 
         // 执行一遍vo的映射方法，生成vo字段名与映射definition的对应关系
         View<MapDefinition> subMappingDefinitionList = subQueryDefinition.getSelectDefinition().getMapDefinitionList();
-        for (MapDefinition mappingDefinition : subMappingDefinitionList) {
-            SelectMapping<Object, Object> selectField = (SelectMapping<Object, Object>) mappingDefinition.getSelectField();
-            // 代理方法内部会删掉
-            THREAD_LOCAL.set(mappingDefinition);
-            selectField.setMapping(proxyVO, null);
+        for (MapDefinition mapDefinition : subMappingDefinitionList) {
+            SelectMapping<Object, ?> selectField = (SelectMapping<Object, ?>) mapDefinition.getSelectField();
+            String fieldName = parseFieldName(selectField);
+            mappingDefinitionMap.put(fieldName, mapDefinition);
         }
 
+    }
+
+    private String parseFieldName(SelectMapping<Object, ?> selectField) {
+        try {
+            Method method = selectField.getClass().getDeclaredMethod("writeReplace");
+            method.setAccessible(Boolean.TRUE);
+            SerializedLambda lambda = (SerializedLambda) method.invoke(selectField);
+            String methodName = lambda.getImplMethodName();
+            char[] methodNameArr = methodName.toCharArray();
+            char[] fieldNameArr = new char[methodNameArr.length - 3];
+            methodNameArr[3] = (char) (methodNameArr[3] + 32);
+
+            System.arraycopy(methodNameArr, 3, fieldNameArr, 0, methodNameArr.length - 3);
+            return new String(fieldNameArr);
+        } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Object createProxyVO(SqlQueryDefinition subQueryDefinition) {
@@ -228,19 +243,6 @@ public class QueryProxyNode implements FromNode, SelectNode {
 
                 // 通过方法名解析出字段，获取fieldMeta
                 String methodName = method.getName();
-                if (!methodName.startsWith("set")) {
-                    char[] methodNameArr = methodName.toCharArray();
-                    char[] fieldNameArr = new char[methodNameArr.length - 3];
-                    methodNameArr[3] = (char) (methodNameArr[3] + 32);
-
-                    System.arraycopy(methodNameArr, 3, fieldNameArr, 0, methodNameArr.length - 3);
-                    String fieldName = new String(fieldNameArr);
-                    MapDefinition mapDefinition = (MapDefinition) THREAD_LOCAL.get();
-                    THREAD_LOCAL.remove();
-                    mappingDefinitionMap.put(fieldName, mapDefinition);
-                    // vo对象要解析set方法
-                    return null;
-                }
                 if (!methodName.startsWith("get")) {
                     // 只能解析get开头的方法，不解析is方法
                     return result;

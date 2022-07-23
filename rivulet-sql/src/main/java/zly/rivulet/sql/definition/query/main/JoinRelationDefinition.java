@@ -3,7 +3,6 @@ package zly.rivulet.sql.definition.query.main;
 import zly.rivulet.base.definition.AbstractDefinition;
 import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
-import zly.rivulet.sql.definer.meta.JoinQueryMeta;
 import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definition.query.join.JoinType;
 import zly.rivulet.sql.definition.query.operate.OperateDefinition;
@@ -25,7 +24,7 @@ public class JoinRelationDefinition extends AbstractDefinition {
     private JoinType joinType;
 
     public JoinRelationDefinition(SqlPreParseHelper sqlPreParseHelper, ComplexDescriber.Relation<?> desc) {
-        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getSqlParamDefinitionManager());
+        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamDefinitionManager());
         QueryProxyNode proxyNode = sqlPreParseHelper.getCurrNode();
         JoinConditionContainer<?, ?> conditionContainer = desc.getConditionContainer();
         OperateDefinition operateDefinition = conditionContainer.getOperate().createDefinition(sqlPreParseHelper, conditionContainer);

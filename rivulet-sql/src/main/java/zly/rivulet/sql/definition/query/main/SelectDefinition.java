@@ -46,7 +46,7 @@ public class SelectDefinition extends AbstractContainerDefinition {
 //    }
 
     public SelectDefinition(SqlPreParseHelper sqlPreParseHelper, FromDefinition fromDefinition, Class<?> selectModel, List<? extends Mapping.Item<?, ?, ?>> mappedItemList) {
-        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getSqlParamDefinitionManager());
+        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamDefinitionManager());
         this.selectModel = selectModel;
         if (mappedItemList == null || mappedItemList.isEmpty()) {
             // 比较select对象和from对象必须是同一个。

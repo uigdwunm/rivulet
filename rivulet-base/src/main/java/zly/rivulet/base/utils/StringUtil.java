@@ -2,6 +2,8 @@ package zly.rivulet.base.utils;
 
 public class StringUtil {
 
+    public static final String Empty = "";
+
     public static String capitalizeFirstChar(String str) {
         if (str == null || str.length() == 0) {
             throw new IllegalArgumentException("无法处理空字符串");

@@ -1,6 +1,5 @@
 package zly.rivulet.sql.definition.query.operate;
 
-import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
 import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.sql.describer.query.condition.Condition;
@@ -16,7 +15,7 @@ public class NotNullOperateDefinition extends OperateDefinition {
     }
 
     private NotNullOperateDefinition(SqlPreParseHelper sqlPreParseHelper, ConditionElement<?, ?> condition) {
-        super(condition.getCheckCondition(), sqlPreParseHelper.getSqlParamDefinitionManager());
+        super(condition.getCheckCondition(), sqlPreParseHelper.getParamDefinitionManager());
         SingleValueElementDesc<?, ?> elementDesc = condition.getLeftFieldMapped();
 
         this.elementDesc = sqlPreParseHelper.parse(elementDesc);

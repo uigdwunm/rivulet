@@ -1,5 +1,8 @@
 package zly.rivulet.mysql.example.model;
 
+import zly.rivulet.sql.definer.annotations.SqlTable;
+
+@SqlTable("t_city")
 public class CityDO {
 
     private String shortName;
