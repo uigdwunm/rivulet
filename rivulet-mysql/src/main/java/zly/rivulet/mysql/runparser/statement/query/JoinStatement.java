@@ -1,6 +1,7 @@
 package zly.rivulet.mysql.runparser.statement.query;
 
-import zly.rivulet.base.utils.FormatCollectHelper;
+import zly.rivulet.base.utils.FormatCollector;
+import zly.rivulet.base.utils.StatementCollector;
 import zly.rivulet.base.utils.StringUtil;
 import zly.rivulet.mysql.runparser.statement.QueryFromStatement;
 import zly.rivulet.mysql.runparser.statement.operate.OperateStatement;
@@ -18,6 +19,10 @@ public class JoinStatement implements SqlStatement {
     private final OperateStatement operateStatement;
 
     private final JoinType joinType;
+
+    private static final String AS = " AS ";
+
+    private static final String ON = " ON ";
 
     public JoinStatement(QueryFromStatement queryFrom, String alias, OperateStatement operateStatement, JoinType joinType) {
         this.queryFrom = queryFrom;
@@ -43,29 +48,36 @@ public class JoinStatement implements SqlStatement {
     }
 
     @Override
-    public String createStatement() {
-        StringBuilder sb = new StringBuilder()
-            .append(this.joinType.getPrefix())
-            .append(' ')
-            .append(this.queryFrom.createStatement());
+    public void collectStatement(StatementCollector collector) {
+        collector.append(this.joinType.getPrefix()).space();
+        this.queryFrom.collectStatement(collector);
         String alias = this.alias;
         if (StringUtil.isNotBlank(alias)) {
-            sb.append(" AS ").append(alias);
+            collector.append(AS).append(alias);
         }
         OperateStatement operateStatement = this.operateStatement;
         if (operateStatement != null) {
-            sb.append(" ON ").append(operateStatement.createStatement());
+            collector.append(ON);
+            operateStatement.collectStatement(collector);
         }
-        return null;
     }
 
     @Override
-    public void collectStatement(StringBuilder sqlCollector) {
-
-    }
-
-    @Override
-    public void formatGetStatement(FormatCollectHelper formatCollectHelper) {
+    public void formatGetStatement(FormatCollector collector) {
+        collector.append(this.joinType.getPrefix()).space();
+        this.queryFrom.formatGetStatement(collector);
+        String alias = this.alias;
+        if (StringUtil.isNotBlank(alias)) {
+            collector.append(AS).append(alias);
+        }
+        OperateStatement operateStatement = this.operateStatement;
+        if (operateStatement != null) {
+            collector.append(ON);
+            collector.line();
+            collector.tab();
+            operateStatement.formatGetStatement(collector);
+            collector.returnTab();
+        }
 
     }
 

@@ -1,6 +1,6 @@
 package zly.rivulet.mysql.runparser.statement.query;
 
-import zly.rivulet.base.utils.FormatCollectHelper;
+import zly.rivulet.base.utils.FormatCollector;
 import zly.rivulet.mysql.runparser.statement.operate.OperateStatement;
 import zly.rivulet.sql.definition.query.main.WhereDefinition;
 import zly.rivulet.sql.preparser.SQLAliasManager;
@@ -16,17 +16,17 @@ public class WhereStatement implements SqlStatement {
     }
 
     @Override
-    public String createStatement() {
-        return null;
-    }
-
-    @Override
     public void collectStatement(StringBuilder sqlCollector) {
+        sqlCollector.append("WHERE ");
+        this.operateStatement.collectStatement(sqlCollector);
 
     }
 
     @Override
-    public void formatGetStatement(FormatCollectHelper formatCollectHelper) {
+    public void formatGetStatement(FormatCollector formatCollector) {
+        formatCollector.append("WHERE ").line();
+        formatCollector.tab();
+        this.operateStatement.formatGetStatement(formatCollector);
     }
 
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {

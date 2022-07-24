@@ -1,6 +1,5 @@
 package zly.rivulet.mysql.runparser.statement;
 
-import zly.rivulet.base.utils.FormatCollectHelper;
 import zly.rivulet.sql.runparser.statement.SqlStatement;
 
 public interface QueryFromStatement extends SqlStatement {

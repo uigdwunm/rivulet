@@ -6,7 +6,6 @@ import zly.rivulet.base.utils.StringUtil;
 import zly.rivulet.sql.SqlRivuletProperties;
 import zly.rivulet.sql.definer.annotations.SqlQueryAlias;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
-import zly.rivulet.sql.exception.SQLDescDefineException;
 import zly.rivulet.sql.preparser.helper.node.FromNode;
 import zly.rivulet.sql.preparser.helper.node.ProxyNode;
 import zly.rivulet.sql.preparser.helper.node.QueryProxyNode;
@@ -66,7 +65,7 @@ public class SQLAliasManager {
                 create(allAliasSet, aliasToParentAlias, selectNode);
             }
 
-            for (QueryProxyNode whereNode : queryProxyNode.getWhereSubQueryList()) {
+            for (QueryProxyNode whereNode : queryProxyNode.getConditionSubQueryList()) {
                 allAliasSet.add(whereNode.getAliasFlag());
                 ProxyNode parentNode = whereNode.getParentNode();
                 if (parentNode != null) {
@@ -152,11 +151,11 @@ public class SQLAliasManager {
             return null;
         }
         // 找到最顶层的别名，因为每个子查询都有自己AliasManager，所有最顶层的一定是对应正确的
-        AliasFlag parent = aliasToParentAlias.get(aliasFlag);
-        while (parent != null) {
-            aliasFlag = parent;
-            parent = aliasToParentAlias.get(aliasFlag);
-        }
+//        AliasFlag parent = aliasToParentAlias.get(aliasFlag);
+//        while (parent != null) {
+//            aliasFlag = parent;
+//            parent = aliasToParentAlias.get(aliasFlag);
+//        }
         if (configProperties.isUseShortAlias()) {
             return shortAliasMap.get(aliasFlag);
         } else {

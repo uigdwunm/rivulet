@@ -1,9 +1,7 @@
 package zly.rivulet.mysql.runparser.statement.param;
 
-import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.base.describer.param.StaticParam;
 import zly.rivulet.base.preparser.param.EmptyParamDefinition;
-import zly.rivulet.base.utils.FormatCollectHelper;
+import zly.rivulet.base.utils.FormatCollector;
 import zly.rivulet.mysql.runparser.statement.SingleValueElementStatement;
 import zly.rivulet.sql.runparser.SqlStatementFactory;
 
@@ -20,7 +18,7 @@ public class EmptyParamStatement implements SingleValueElementStatement {
     }
 
     @Override
-    public void formatGetStatement(FormatCollectHelper formatCollectHelper) {
+    public void formatGetStatement(FormatCollector formatCollector) {
 
     }
 

@@ -60,7 +60,7 @@ public class MysqlRunParser implements RuntimeParser {
         SqlRunParseHelper sqlRunParseHelper = new SqlRunParseHelper(paramManager);
         SqlStatement rootStatement = sqlStatementFactory.getOrCreate(sqlFinalDefinition, sqlRunParseHelper);
 
-        return null;
+        return new MySQLFish(rootStatement);
     }
 
     public void initStatement(SQLFinalDefinition definition) {

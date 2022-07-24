@@ -31,7 +31,7 @@ public class FromDefinition extends AbstractDefinition {
         Object proxyModel = proxyNode.getProxyModel();
 
         if (proxyModel instanceof QueryComplexModel) {
-            // 是联表查询对象
+            // 是复杂查询对象
             QueryComplexModel queryComplexModel = (QueryComplexModel) proxyNode.getProxyModel();
             ComplexDescriber complexDescriber = queryComplexModel.register();
 

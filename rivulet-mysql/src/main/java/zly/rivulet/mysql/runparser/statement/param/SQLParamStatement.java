@@ -6,7 +6,7 @@ import zly.rivulet.base.describer.param.StaticParam;
 import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.preparser.param.ParamDefinitionManager;
 import zly.rivulet.base.runparser.param_manager.ParamManager;
-import zly.rivulet.base.utils.FormatCollectHelper;
+import zly.rivulet.base.utils.FormatCollector;
 import zly.rivulet.mysql.runparser.statement.SingleValueElementStatement;
 import zly.rivulet.sql.definition.param.SQLParamDefinition;
 import zly.rivulet.sql.describer.param.SqlParamCheckType;
@@ -34,23 +34,23 @@ public class SQLParamStatement implements SingleValueElementStatement {
     }
 
     @Override
-    public void formatGetStatement(FormatCollectHelper formatCollectHelper) {
+    public void formatGetStatement(FormatCollector formatCollector) {
         Param<?> originDesc = sqlParamDefinition.getOriginDesc();
         if (originDesc instanceof StandardParam) {
             StandardParam<?> standardParam = (StandardParam<?>) originDesc;
             SqlParamCheckType sqlParamCheckType = sqlParamDefinition.getSqlParamCheckType();
             switch (sqlParamCheckType) {
                 case NATURE:
-                    formatCollectHelper.append("#{");
+                    formatCollector.append("#{");
                     break;
                 case PLACEHOLDER:
-                    formatCollectHelper.append("${");
+                    formatCollector.append("${");
                     break;
             }
-            formatCollectHelper.append(standardParam.getPathKey()).append('}');
+            formatCollector.append(standardParam.getPathKey()).append('}');
         } else if (originDesc instanceof StaticParam) {
             // 写死的参数
-            formatCollectHelper.append(this.value);
+            formatCollector.append(this.value);
         } else {
             throw UnbelievableException.unknownType();
         }

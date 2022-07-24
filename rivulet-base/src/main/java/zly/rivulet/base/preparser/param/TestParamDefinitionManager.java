@@ -1,15 +1,14 @@
 package zly.rivulet.base.preparser.param;
 
-import zly.rivulet.base.convertor.Convertor;
 import zly.rivulet.base.definer.FieldMeta;
 import zly.rivulet.base.definition.param.ParamDefinition;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.runparser.param_manager.ParamManager;
 import zly.rivulet.base.utils.StringUtil;
 
-public class EmptyParamDefinitionManager extends ParamDefinitionManager {
+public class TestParamDefinitionManager extends ParamDefinitionManager {
 
-    public EmptyParamDefinitionManager() {
+    public TestParamDefinitionManager() {
         super(null, null);
     }
 

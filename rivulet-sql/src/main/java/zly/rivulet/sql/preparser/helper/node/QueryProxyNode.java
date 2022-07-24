@@ -4,6 +4,7 @@ import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import zly.rivulet.base.definition.FinalDefinition;
+import zly.rivulet.base.describer.field.JoinFieldMapping;
 import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.field.SelectMapping;
@@ -32,7 +33,6 @@ import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.*;
 
 public class QueryProxyNode implements FromNode, SelectNode {
@@ -60,7 +60,7 @@ public class QueryProxyNode implements FromNode, SelectNode {
     /**
      * where条件中如果出现子查询也记录到这里
      **/
-    private List<QueryProxyNode> whereSubQueryList = new ArrayList<>();
+    private List<QueryProxyNode> conditionSubQueryList = new ArrayList<>();
 
     /**
      * 当前节点所属的父节点,如果是根节点则为null
@@ -351,8 +351,8 @@ public class QueryProxyNode implements FromNode, SelectNode {
         return selectNodeList;
     }
 
-    public List<QueryProxyNode> getWhereSubQueryList() {
-        return whereSubQueryList;
+    public List<QueryProxyNode> getConditionSubQueryList() {
+        return conditionSubQueryList;
     }
 
     /**
@@ -374,12 +374,23 @@ public class QueryProxyNode implements FromNode, SelectNode {
         this.acceptSubQueryProxyModel(subQueryNode, subQueryDefinition, null, null);
     }
 
+
+    public void addConditionSubQueryNode(QueryProxyNode subQueryNode, SqlQueryDefinition subQueryDefinition) {
+        this.conditionSubQueryList.add(subQueryNode);
+        this.acceptSubQueryProxyModel(subQueryNode, subQueryDefinition, null, null);
+    }
+
     public Field getField(FromNode subFromNode) {
         return fromNode_field_map.get(subFromNode);
     }
 
     public SQLSingleValueElementDefinition parseField(FieldMapping<Object, Object> fieldMapping) {
         fieldMapping.getMapping(proxyModel);
+        return THREAD_LOCAL.get();
+    }
+
+    public SQLSingleValueElementDefinition parseField(JoinFieldMapping<Object> fieldMapping) {
+        fieldMapping.getMapping();
         return THREAD_LOCAL.get();
     }
 

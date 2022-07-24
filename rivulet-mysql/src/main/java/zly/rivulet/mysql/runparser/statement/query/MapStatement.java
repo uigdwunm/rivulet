@@ -1,7 +1,7 @@
 package zly.rivulet.mysql.runparser.statement.query;
 
 import zly.rivulet.base.definition.Definition;
-import zly.rivulet.base.utils.FormatCollectHelper;
+import zly.rivulet.base.utils.FormatCollector;
 import zly.rivulet.base.utils.StringUtil;
 import zly.rivulet.mysql.runparser.statement.SingleValueElementStatement;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
@@ -60,7 +60,7 @@ public class MapStatement implements SingleValueElementStatement {
     }
 
     @Override
-    public void formatGetStatement(FormatCollectHelper formatCollectHelper) {
+    public void formatGetStatement(FormatCollector formatCollector) {
 
     }
 

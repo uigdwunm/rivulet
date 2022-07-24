@@ -2,7 +2,7 @@ package zly.rivulet.mysql.runparser.statement;
 
 import zly.rivulet.base.definer.FieldMeta;
 import zly.rivulet.base.definition.Definition;
-import zly.rivulet.base.utils.FormatCollectHelper;
+import zly.rivulet.base.utils.FormatCollector;
 import zly.rivulet.base.utils.StringUtil;
 import zly.rivulet.sql.definition.field.FieldDefinition;
 import zly.rivulet.sql.preparser.SQLAliasManager;
@@ -38,11 +38,11 @@ public class FieldStatement implements SingleValueElementStatement {
     }
 
     @Override
-    public void formatGetStatement(FormatCollectHelper formatCollectHelper) {
+    public void formatGetStatement(FormatCollector formatCollector) {
         if (StringUtil.isBlank(referenceAlias)) {
-            formatCollectHelper.append(referenceAlias).append('.').append(fieldMeta.getOriginName());
+            formatCollector.append(referenceAlias).append('.').append(fieldMeta.getOriginName());
         } else {
-            formatCollectHelper.append(fieldMeta.getOriginName());
+            formatCollector.append(fieldMeta.getOriginName());
         }
 
     }

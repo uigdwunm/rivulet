@@ -1,11 +1,10 @@
 package zly.rivulet.mysql.runparser.statement.query;
 
 import zly.rivulet.base.runparser.param_manager.ParamManager;
-import zly.rivulet.base.utils.FormatCollectHelper;
+import zly.rivulet.base.utils.FormatCollector;
 import zly.rivulet.mysql.runparser.statement.QueryFromStatement;
 import zly.rivulet.mysql.runparser.statement.SingleValueElementStatement;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
-import zly.rivulet.sql.preparser.SQLAliasManager;
 import zly.rivulet.sql.runparser.SqlStatementFactory;
 import zly.rivulet.sql.runparser.statement.SqlStatement;
 
@@ -59,9 +58,9 @@ public class MySqlQueryStatement implements SingleValueElementStatement, QueryFr
     }
 
     @Override
-    public void formatGetStatement(FormatCollectHelper formatCollectHelper) {
+    public void formatGetStatement(FormatCollector formatCollector) {
         for (SqlStatement statement : subStatementList) {
-            statement.formatGetStatement(formatCollectHelper);
+            statement.formatGetStatement(formatCollector);
         }
     }
 

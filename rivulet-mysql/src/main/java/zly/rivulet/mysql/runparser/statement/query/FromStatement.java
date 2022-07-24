@@ -1,7 +1,9 @@
 package zly.rivulet.mysql.runparser.statement.query;
 
 import zly.rivulet.base.definition.Definition;
-import zly.rivulet.base.utils.FormatCollectHelper;
+import zly.rivulet.base.utils.CollectionUtils;
+import zly.rivulet.base.utils.FormatCollector;
+import zly.rivulet.base.utils.StatementCollector;
 import zly.rivulet.mysql.runparser.statement.QueryFromStatement;
 import zly.rivulet.sql.definition.query.main.FromDefinition;
 import zly.rivulet.sql.preparser.SQLAliasManager;
@@ -9,7 +11,6 @@ import zly.rivulet.sql.runparser.SqlStatementFactory;
 import zly.rivulet.sql.runparser.statement.SqlStatement;
 
 import java.util.List;
-import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 public class FromStatement implements SqlStatement {
@@ -22,6 +23,8 @@ public class FromStatement implements SqlStatement {
 
     private final List<JoinStatement> joinStatementList;
 
+    private static final String FROM = "FROM ";
+
     public FromStatement(FromDefinition definition, QueryFromStatement mainFrom, String mainFromAlias, List<JoinStatement> joinStatementList) {
         this.definition = definition;
         this.mainFrom = mainFrom;
@@ -30,23 +33,33 @@ public class FromStatement implements SqlStatement {
     }
 
     @Override
-    public String createStatement() {
-        String mainFrom = "FROM" + this.mainFrom.createStatement() + mainFromAlias;
-        StringJoiner joinJoiner = new StringJoiner(" ");
-        for (JoinStatement joinStatement : joinStatementList) {
-            joinJoiner.add(joinStatement.createStatement());
+    public void collectStatement(StatementCollector collector) {
+        collector.append(FROM);
+        this.mainFrom.collectStatement(collector);
+        collector.space().append(this.mainFromAlias);
+        collector.space();
+
+        if (CollectionUtils.isEmpty(this.joinStatementList)) {
+            return;
         }
-
-        return mainFrom + joinJoiner;
+        for (JoinStatement joinStatement : collector.createJoiner(" ", this.joinStatementList)) {
+            joinStatement.collectStatement(collector);
+        }
     }
 
     @Override
-    public void collectStatement(StringBuilder sqlCollector) {
+    public void formatGetStatement(FormatCollector collector) {
+        collector.append(FROM);
+        this.mainFrom.formatGetStatement(collector);
+        collector.space().append(this.mainFromAlias);
+        collector.line();
 
-    }
-
-    @Override
-    public void formatGetStatement(FormatCollectHelper formatCollectHelper) {
+        if (CollectionUtils.isEmpty(this.joinStatementList)) {
+            return;
+        }
+        for (JoinStatement joinStatement : collector.createLineJoiner(" ", this.joinStatementList)) {
+            joinStatement.formatGetStatement(collector);
+        }
 
     }
 

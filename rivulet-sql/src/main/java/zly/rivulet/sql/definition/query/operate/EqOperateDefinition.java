@@ -21,8 +21,8 @@ public class EqOperateDefinition extends OperateDefinition {
         SingleValueElementDesc<?, ?> leftFieldMapped = condition.getLeftFieldMapped();
         SingleValueElementDesc<?, ?> rightFieldMapped = condition.getRightFieldMappeds()[0];
 
-        this.leftElement = sqlPreParseHelper.parse(leftFieldMapped);
-        this.rightElement = sqlPreParseHelper.parse(rightFieldMapped);
+        this.leftElement = super.parse(sqlPreParseHelper, leftFieldMapped);
+        this.rightElement = super.parse(sqlPreParseHelper, rightFieldMapped);
     }
 
     public SingleValueElementDefinition getLeftElement() {

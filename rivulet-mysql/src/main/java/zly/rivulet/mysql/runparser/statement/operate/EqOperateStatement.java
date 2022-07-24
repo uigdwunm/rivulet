@@ -1,7 +1,7 @@
 package zly.rivulet.mysql.runparser.statement.operate;
 
 import zly.rivulet.base.definition.Definition;
-import zly.rivulet.base.utils.FormatCollectHelper;
+import zly.rivulet.base.utils.FormatCollector;
 import zly.rivulet.mysql.runparser.statement.SingleValueElementStatement;
 import zly.rivulet.sql.definition.query.operate.EqOperateDefinition;
 import zly.rivulet.sql.runparser.SqlStatementFactory;
@@ -29,7 +29,7 @@ public class EqOperateStatement implements OperateStatement {
     }
 
     @Override
-    public void formatGetStatement(FormatCollectHelper formatCollectHelper) {
+    public void formatGetStatement(FormatCollector formatCollector) {
     }
 
     public Definition getOriginDefinition() {

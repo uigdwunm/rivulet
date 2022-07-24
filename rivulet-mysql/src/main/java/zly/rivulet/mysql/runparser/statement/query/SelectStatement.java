@@ -1,7 +1,7 @@
 package zly.rivulet.mysql.runparser.statement.query;
 
 import zly.rivulet.base.definition.Definition;
-import zly.rivulet.base.utils.FormatCollectHelper;
+import zly.rivulet.base.utils.FormatCollector;
 import zly.rivulet.sql.definition.query.main.SelectDefinition;
 import zly.rivulet.sql.runparser.SqlStatementFactory;
 import zly.rivulet.sql.runparser.statement.SqlStatement;
@@ -36,7 +36,7 @@ public class SelectStatement implements SqlStatement {
     }
 
     @Override
-    public void formatGetStatement(FormatCollectHelper formatCollectHelper) {
+    public void formatGetStatement(FormatCollector formatCollector) {
 
     }
 
