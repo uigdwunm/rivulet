@@ -2,6 +2,7 @@ package zly.rivulet.mysql.runparser.statement.query;
 
 import zly.rivulet.base.runparser.param_manager.ParamManager;
 import zly.rivulet.base.utils.FormatCollector;
+import zly.rivulet.base.utils.StatementCollector;
 import zly.rivulet.mysql.runparser.statement.QueryFromStatement;
 import zly.rivulet.mysql.runparser.statement.SingleValueElementStatement;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
@@ -9,7 +10,6 @@ import zly.rivulet.sql.runparser.SqlStatementFactory;
 import zly.rivulet.sql.runparser.statement.SqlStatement;
 
 import java.util.List;
-import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 public class MySqlQueryStatement implements SingleValueElementStatement, QueryFromStatement {
@@ -22,12 +22,9 @@ public class MySqlQueryStatement implements SingleValueElementStatement, QueryFr
      **/
     private final List<SqlStatement> subStatementList;
 
-    private final String cache;
-
     private MySqlQueryStatement(SqlQueryDefinition definition, List<SqlStatement> subStatementList) {
         this.definition = definition;
         this.subStatementList = subStatementList;
-        this.cache = this.createStatement();
     }
 
     public SqlQueryDefinition getOriginDefinition() {
@@ -35,32 +32,23 @@ public class MySqlQueryStatement implements SingleValueElementStatement, QueryFr
     }
 
     @Override
-    public String createStatement() {
-
-        StringJoiner stringJoiner = new StringJoiner(" ");
-        for (SqlStatement statement : subStatementList) {
-            stringJoiner.add(statement.createStatement());
-        }
-
-        return stringJoiner.toString();
+    public void singleCollectStatement(StatementCollector collector) {
+        collector.leftBracket();
+        this.collectStatement(collector);
+        collector.rightBracket();
     }
 
     @Override
-    public void collectStatement(StringBuilder sqlCollector) {
-        if (this.cache != null) {
-            sqlCollector.append(' ').append(this.cache);
-            return;
-        }
-
-        for (SqlStatement statement : subStatementList) {
-            statement.collectStatement(sqlCollector);
+    public void collectStatement(StatementCollector collector) {
+        for (SqlStatement subStatement : collector.createJoiner(StatementCollector.SPACE, this.subStatementList)) {
+            subStatement.collectStatement(collector);
         }
     }
 
     @Override
-    public void formatGetStatement(FormatCollector formatCollector) {
-        for (SqlStatement statement : subStatementList) {
-            statement.formatGetStatement(formatCollector);
+    public void formatGetStatement(FormatCollector collector) {
+        for (SqlStatement subStatement : collector.createLineJoiner(StatementCollector.SPACE, this.subStatementList)) {
+            subStatement.formatGetStatement(collector);
         }
     }
 

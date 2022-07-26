@@ -2,6 +2,7 @@ package zly.rivulet.mysql.runparser.statement.operate;
 
 import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.utils.FormatCollector;
+import zly.rivulet.base.utils.StatementCollector;
 import zly.rivulet.mysql.runparser.statement.SingleValueElementStatement;
 import zly.rivulet.sql.definition.query.operate.EqOperateDefinition;
 import zly.rivulet.sql.runparser.SqlStatementFactory;
@@ -13,23 +14,26 @@ public class EqOperateStatement implements OperateStatement {
 
     private final SingleValueElementStatement rightValue;
 
+    private final static String EQ = "=";
+
     public EqOperateStatement(SingleValueElementStatement leftValue, SingleValueElementStatement rightValue) {
         this.leftValue = leftValue;
         this.rightValue = rightValue;
     }
 
     @Override
-    public String createStatement() {
-        return null;
+    public void collectStatement(StatementCollector collector) {
+        leftValue.singleCollectStatement(collector);
+        collector.append(EQ);
+        leftValue.singleCollectStatement(collector);
     }
 
     @Override
-    public void collectStatement(StringBuilder sqlCollector) {
-
-    }
-
-    @Override
-    public void formatGetStatement(FormatCollector formatCollector) {
+    public void formatGetStatement(FormatCollector collector) {
+        leftValue.formatGetStatement(collector);
+        collector.append(EQ);
+        rightValue.formatGetStatement(collector);
+        collector.line();
     }
 
     public Definition getOriginDefinition() {

@@ -14,6 +14,8 @@ public class StatementCollector {
 
     private int index = 0;
 
+    public static final String SPACE = " ";
+
     private static final char space = ' ';
 
     private static final char leftBracket = '(';

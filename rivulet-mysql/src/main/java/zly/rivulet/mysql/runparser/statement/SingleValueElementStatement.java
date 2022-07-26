@@ -1,16 +1,14 @@
 package zly.rivulet.mysql.runparser.statement;
 
 import zly.rivulet.base.utils.FormatCollector;
+import zly.rivulet.base.utils.StatementCollector;
 import zly.rivulet.sql.runparser.statement.SqlStatement;
 
 public interface SingleValueElementStatement extends SqlStatement {
 
-    default String singleCreateStatement() {
-        return createStatement();
-    }
 
-    default void singleCollectStatement(StringBuilder sqlCollector) {
-        collectStatement(sqlCollector);
+    default void singleCollectStatement(StatementCollector collector) {
+        collectStatement(collector);
     }
 
     /**
@@ -19,7 +17,7 @@ public interface SingleValueElementStatement extends SqlStatement {
      * @author zhaolaiyuan
      * Date 2022/1/23 14:18
      **/
-    default void singleFormatGetStatement(FormatCollector formatCollector) {
-        formatGetStatement(formatCollector);
+    default void singleFormatGetStatement(FormatCollector collector) {
+        formatGetStatement(collector);
     }
 }
