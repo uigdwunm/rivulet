@@ -3,6 +3,7 @@ package zly.rivulet.mysql.runparser.statement;
 import zly.rivulet.base.definer.FieldMeta;
 import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.utils.FormatCollector;
+import zly.rivulet.base.utils.StatementCollector;
 import zly.rivulet.base.utils.StringUtil;
 import zly.rivulet.sql.definition.field.FieldDefinition;
 import zly.rivulet.sql.preparser.SQLAliasManager;
@@ -14,41 +15,47 @@ public class FieldStatement implements SingleValueElementStatement {
 
     private final String referenceAlias;
 
+    private static final char POINT = '.';
+
     public FieldStatement(FieldMeta fieldMeta, String referenceAlias) {
         this.fieldMeta = fieldMeta;
         this.referenceAlias = referenceAlias;
     }
 
     @Override
-    public String createStatement() {
+    public void collectStatement(StatementCollector collector) {
         if (StringUtil.isBlank(referenceAlias)) {
-            return referenceAlias + '.' + fieldMeta.getOriginName();
+            collector.append(referenceAlias).append(POINT).append(fieldMeta.getOriginName());
         } else {
-            return fieldMeta.getOriginName();
-        }
-    }
-
-    @Override
-    public void collectStatement(StringBuilder sqlCollector) {
-        if (StringUtil.isBlank(referenceAlias)) {
-            sqlCollector.append(referenceAlias).append('.').append(fieldMeta.getOriginName());
-        } else {
-            sqlCollector.append(fieldMeta.getOriginName());
+            collector.append(fieldMeta.getOriginName());
         }
     }
 
     @Override
     public void formatGetStatement(FormatCollector formatCollector) {
         if (StringUtil.isBlank(referenceAlias)) {
-            formatCollector.append(referenceAlias).append('.').append(fieldMeta.getOriginName());
+            formatCollector.append(referenceAlias).append(POINT).append(fieldMeta.getOriginName());
         } else {
             formatCollector.append(fieldMeta.getOriginName());
         }
-
     }
 
-    public Definition getOriginDefinition() {
-        return null;
+    @Override
+    public void singleCollectStatement(StatementCollector collector) {
+        if (StringUtil.isNotBlank(referenceAlias)) {
+            collector.append(referenceAlias);
+        } else {
+            collector.append(fieldMeta.getOriginName());
+        }
+    }
+
+    @Override
+    public void singleFormatGetStatement(FormatCollector collector) {
+        if (StringUtil.isNotBlank(referenceAlias)) {
+            collector.append(referenceAlias);
+        } else {
+            collector.append(fieldMeta.getOriginName());
+        }
     }
 
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
