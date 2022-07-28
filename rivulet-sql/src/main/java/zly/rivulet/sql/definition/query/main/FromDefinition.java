@@ -46,6 +46,7 @@ public class FromDefinition extends AbstractDefinition {
             FromNode fromNode = proxyNode.getFromNodeList().get(0);
             ModelProxyNode modelProxyNode = (ModelProxyNode) fromNode;
             this.from = modelProxyNode.getModelMeta();
+            this.mainFromAliasFlag = fromNode.getAliasFlag();
             this.joinRelations = Collections.emptyList();
         }
     }

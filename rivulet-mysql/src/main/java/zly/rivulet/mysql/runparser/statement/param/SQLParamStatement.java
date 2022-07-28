@@ -7,6 +7,7 @@ import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.preparser.param.ParamDefinitionManager;
 import zly.rivulet.base.runparser.param_manager.ParamManager;
 import zly.rivulet.base.utils.FormatCollector;
+import zly.rivulet.base.utils.StatementCollector;
 import zly.rivulet.mysql.runparser.statement.SingleValueElementStatement;
 import zly.rivulet.sql.definition.param.SQLParamDefinition;
 import zly.rivulet.sql.describer.param.SqlParamCheckType;
@@ -24,13 +25,8 @@ public class SQLParamStatement implements SingleValueElementStatement {
     }
 
     @Override
-    public String createStatement() {
-        return value;
-    }
-
-    @Override
-    public void collectStatement(StringBuilder sqlCollector) {
-
+    public void collectStatement(StatementCollector collector) {
+        collector.append(value);
     }
 
     @Override

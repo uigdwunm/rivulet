@@ -2,23 +2,22 @@ package zly.rivulet.mysql.runparser.statement.param;
 
 import zly.rivulet.base.preparser.param.EmptyParamDefinition;
 import zly.rivulet.base.utils.FormatCollector;
+import zly.rivulet.base.utils.StatementCollector;
 import zly.rivulet.mysql.runparser.statement.SingleValueElementStatement;
 import zly.rivulet.sql.runparser.SqlStatementFactory;
 
 public class EmptyParamStatement implements SingleValueElementStatement {
 
+    private static final char questionMark = '?';
+
     @Override
-    public String createStatement() {
-        return null;
+    public void collectStatement(StatementCollector collector) {
+        collector.append(questionMark);
     }
 
     @Override
-    public void collectStatement(StringBuilder sqlCollector) {
-
-    }
-
-    @Override
-    public void formatGetStatement(FormatCollector formatCollector) {
+    public void formatGetStatement(FormatCollector collector) {
+        collector.append(questionMark);
 
     }
 

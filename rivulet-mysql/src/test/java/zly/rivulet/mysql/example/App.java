@@ -4,6 +4,7 @@ import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.runparser.Fish;
 import zly.rivulet.base.runparser.statement.Statement;
+import zly.rivulet.base.utils.FormatCollector;
 import zly.rivulet.base.warehouse.DefaultWarehouseManager;
 import zly.rivulet.mysql.MySQLRivuletManager;
 import zly.rivulet.mysql.MySQLRivuletProperties;
@@ -50,10 +51,11 @@ public class App {
                 ).build()
             );
         Statement statement = test.getStatement();
-        String statement1 = statement.createStatement();
-        System.out.println(statement1);
+        FormatCollector formatCollector = new FormatCollector();
+        statement.formatGetStatement(formatCollector);
+        System.out.println(formatCollector);
 
-        rivuletManager.test(userDescConfig.queryJoinUser());
+//        rivuletManager.test(userDescConfig.queryJoinUser());
 
     }
 

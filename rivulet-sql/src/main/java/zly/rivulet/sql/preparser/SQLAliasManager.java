@@ -91,20 +91,26 @@ public class SQLAliasManager {
             });
             if (isForce) {
                 this.aliasMap.put(aliasFlag, alias);
+            } else if (count == 0) {
+                this.aliasMap.put(aliasFlag, alias);
             } else {
-                String put = this.aliasMap.put(aliasFlag, alias + '_' + count);
+                this.aliasMap.put(aliasFlag, alias + '_' + count);
             }
             int tableCount = repeatAlias.size();
             String shortName;
             if (tableCount < 26) {
-                shortName = String.valueOf((char) (tableCount + 'a'));
+                shortName = String.valueOf((char) (tableCount - 1 + 'a'));
             } else {
                 // 最高支持一个查询里有 26*26 个表
                 int aa = tableCount / 26;
                 int bb = tableCount % 26;
                 shortName = "" + (char) aa + (char) bb;
             }
-            this.shortAliasMap.put(aliasFlag, shortName + '_' + count);
+            if (count == 0) {
+                this.shortAliasMap.put(aliasFlag, shortName);
+            } else {
+                this.shortAliasMap.put(aliasFlag, shortName + '_' + count);
+            }
         }
     }
 

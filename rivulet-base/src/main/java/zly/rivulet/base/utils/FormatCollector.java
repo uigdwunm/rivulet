@@ -143,4 +143,10 @@ public class FormatCollector {
             return iterator.next();
         }
     }
+
+    @Override
+    public String toString() {
+        this.line();
+        return allLine.toString();
+    }
 }

@@ -24,7 +24,7 @@ public class FieldStatement implements SingleValueElementStatement {
 
     @Override
     public void collectStatement(StatementCollector collector) {
-        if (StringUtil.isBlank(referenceAlias)) {
+        if (StringUtil.isNotBlank(referenceAlias)) {
             collector.append(referenceAlias).append(POINT).append(fieldMeta.getOriginName());
         } else {
             collector.append(fieldMeta.getOriginName());
@@ -33,28 +33,10 @@ public class FieldStatement implements SingleValueElementStatement {
 
     @Override
     public void formatGetStatement(FormatCollector formatCollector) {
-        if (StringUtil.isBlank(referenceAlias)) {
+        if (StringUtil.isNotBlank(referenceAlias)) {
             formatCollector.append(referenceAlias).append(POINT).append(fieldMeta.getOriginName());
         } else {
             formatCollector.append(fieldMeta.getOriginName());
-        }
-    }
-
-    @Override
-    public void singleCollectStatement(StatementCollector collector) {
-        if (StringUtil.isNotBlank(referenceAlias)) {
-            collector.append(referenceAlias);
-        } else {
-            collector.append(fieldMeta.getOriginName());
-        }
-    }
-
-    @Override
-    public void singleFormatGetStatement(FormatCollector collector) {
-        if (StringUtil.isNotBlank(referenceAlias)) {
-            collector.append(referenceAlias);
-        } else {
-            collector.append(fieldMeta.getOriginName());
         }
     }
 
