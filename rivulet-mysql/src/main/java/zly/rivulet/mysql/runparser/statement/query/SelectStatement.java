@@ -35,9 +35,12 @@ public class SelectStatement implements SqlStatement {
     @Override
     public void formatGetStatement(FormatCollector collector) {
         collector.append(SELECT);
+        collector.line();
+        collector.tab();
         for (MapStatement mapStatement : collector.createLineJoiner(COMMA, mapStatementList)) {
             mapStatement.formatGetStatement(collector);
         }
+        collector.returnTab();
     }
 
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {

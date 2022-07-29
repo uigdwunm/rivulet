@@ -5,6 +5,7 @@ import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.runparser.Fish;
 import zly.rivulet.base.runparser.statement.Statement;
 import zly.rivulet.base.utils.FormatCollector;
+import zly.rivulet.base.utils.StatementCollector;
 import zly.rivulet.base.warehouse.DefaultWarehouseManager;
 import zly.rivulet.mysql.MySQLRivuletManager;
 import zly.rivulet.mysql.MySQLRivuletProperties;
@@ -54,6 +55,10 @@ public class App {
         FormatCollector formatCollector = new FormatCollector();
         statement.formatGetStatement(formatCollector);
         System.out.println(formatCollector);
+
+        StatementCollector collector = new StatementCollector(1000);
+        statement.collectStatement(collector);
+        System.out.println(collector);
 
 //        rivuletManager.test(userDescConfig.queryJoinUser());
 

@@ -128,7 +128,15 @@ public class FormatCollector {
 
         @Override
         public boolean hasNext() {
-            return iterator.hasNext();
+            boolean hasNext = iterator.hasNext();
+            if (!hasNext) {
+                this.finish();
+            }
+            return hasNext;
+        }
+
+        public void finish() {
+            line();
         }
 
         @Override
@@ -146,7 +154,9 @@ public class FormatCollector {
 
     @Override
     public String toString() {
-        this.line();
+        if (currLine.length() > 0) {
+            this.line();
+        }
         return allLine.toString();
     }
 }

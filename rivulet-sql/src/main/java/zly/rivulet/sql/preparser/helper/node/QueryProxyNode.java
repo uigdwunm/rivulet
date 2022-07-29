@@ -386,12 +386,16 @@ public class QueryProxyNode implements FromNode, SelectNode {
 
     public SQLSingleValueElementDefinition parseField(FieldMapping<Object, Object> fieldMapping) {
         fieldMapping.getMapping(proxyModel);
-        return THREAD_LOCAL.get();
+        SQLSingleValueElementDefinition sqlSingleValueElementDefinition = THREAD_LOCAL.get();
+        THREAD_LOCAL.remove();
+        return sqlSingleValueElementDefinition;
     }
 
     public SQLSingleValueElementDefinition parseField(JoinFieldMapping<Object> fieldMapping) {
         fieldMapping.getMapping();
-        return THREAD_LOCAL.get();
+        SQLSingleValueElementDefinition sqlSingleValueElementDefinition = THREAD_LOCAL.get();
+        THREAD_LOCAL.remove();
+        return sqlSingleValueElementDefinition;
     }
 
     @Override

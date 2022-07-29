@@ -1,6 +1,7 @@
 package zly.rivulet.mysql.runparser.statement.operate;
 
 import zly.rivulet.base.definition.Definition;
+import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.FormatCollector;
 import zly.rivulet.base.utils.StatementCollector;
 import zly.rivulet.mysql.runparser.statement.SingleValueElementStatement;
@@ -31,15 +32,9 @@ public class EqOperateStatement implements OperateStatement {
     @Override
     public void formatGetStatement(FormatCollector collector) {
         leftValue.formatGetStatement(collector);
-        collector.append(EQ);
+        collector.append(Constant.SPACE_CHAR).append(EQ).append(Constant.SPACE_CHAR);
         rightValue.formatGetStatement(collector);
-        collector.line();
     }
-
-    public Definition getOriginDefinition() {
-        return null;
-    }
-
 
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
