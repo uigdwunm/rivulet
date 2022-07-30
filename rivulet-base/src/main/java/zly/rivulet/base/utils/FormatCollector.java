@@ -2,11 +2,12 @@ package zly.rivulet.base.utils;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.StringJoiner;
 
 public class FormatCollector {
 
-    private final StringJoiner allLine = new StringJoiner(System.lineSeparator());
+    private final LinkedList<StringBuilder> allLine = new LinkedList<>();
 
     private StringBuilder currLine = new StringBuilder();
 
@@ -21,12 +22,19 @@ public class FormatCollector {
 
     private static final char rightBracket = ')';
 
+    private boolean isFinished = false;
+
+    public FormatCollector() {
+        allLine.add(currLine);
+    }
+
     public void leftBracketLine() {
         currLine.append(leftBracket);
         this.line();
     }
 
     public void rightBracketLine() {
+        this.line();
         currLine.append(rightBracket);
         this.line();
     }
@@ -35,17 +43,16 @@ public class FormatCollector {
      * 换行
      **/
     public void line() {
-        StringBuilder line = new StringBuilder();
-        for (int i = 0; i < currLineTab; i++) {
-            line.append(TAB);
-        }
-        line.append(currLine);
-        allLine.add(line);
         currLine = new StringBuilder();
+        for (int i = 0; i < currLineTab; i++) {
+            currLine.append(TAB);
+        }
+        allLine.add(currLine);
     }
 
     public void tab() {
         currLineTab++;
+        currLine.append(TAB);
     }
 
     public void returnTab() {
@@ -87,8 +94,20 @@ public class FormatCollector {
         return this;
     }
 
-    public <T> JoinHelper<T> createLineJoiner(String connector, Collection<T> collection) {
-        return new JoinHelper<>(connector, collection.iterator());
+    public <T> JoinHelper<T> createBeforeLineConnectorJoiner(String beforeConnector, Collection<T> collection) {
+        return new JoinHelper<>(beforeConnector, Constant.EMPTY, collection.iterator());
+    }
+
+    public <T> JoinHelper<T> createAfterLineConnectorJoiner(String afterConnector, Collection<T> collection) {
+        return new JoinHelper<>(Constant.EMPTY, afterConnector, collection.iterator());
+    }
+
+    public <T> JoinHelper<T> createLineJoiner(String beforeConnector, String afterConnector, Collection<T> collection) {
+        return new JoinHelper<>(beforeConnector, afterConnector, collection.iterator());
+    }
+
+    public <T> JoinHelper<T> createLineJoiner(Collection<T> collection) {
+        return new JoinHelper<>(Constant.EMPTY, Constant.EMPTY, collection.iterator());
     }
 
     public FormatCollector space() {
@@ -100,16 +119,19 @@ public class FormatCollector {
 
         private final Iterator<T> iterator;
 
-        private final char[] connector;
+        private final char[] beforeLineConnector;
 
-        private JoinHelper(String connector, Iterator<T> iterator) {
-            this.connector = connector.toCharArray();
+        private final char[] afterLineConnector;
+
+        private JoinHelper(String beforeLineConnector, String afterLineConnector, Iterator<T> iterator) {
+            this.beforeLineConnector = beforeLineConnector.toCharArray();
+            this.afterLineConnector = afterLineConnector.toCharArray();
             this.iterator = iterator;
         }
 
         @Override
         public Iterator<T> iterator() {
-            return new JoinIterator<>(connector, iterator);
+            return new JoinIterator<>(beforeLineConnector, afterLineConnector, iterator);
         }
     }
 
@@ -117,26 +139,21 @@ public class FormatCollector {
 
         private final Iterator<T> iterator;
 
-        private final char[] connector;
+        private final char[] beforeLineConnector;
+
+        private final char[] afterLineConnector;
 
         private boolean isFirst = true;
 
-        private JoinIterator(char[] connector, Iterator<T> iterator) {
-            this.connector = connector;
+        private JoinIterator(char[] beforeLineConnector, char[] afterLineConnector, Iterator<T> iterator) {
+            this.beforeLineConnector = beforeLineConnector;
+            this.afterLineConnector = afterLineConnector;
             this.iterator = iterator;
         }
 
         @Override
         public boolean hasNext() {
-            boolean hasNext = iterator.hasNext();
-            if (!hasNext) {
-                this.finish();
-            }
-            return hasNext;
-        }
-
-        public void finish() {
-            line();
+            return iterator.hasNext();
         }
 
         @Override
@@ -145,17 +162,22 @@ public class FormatCollector {
                 // 第一次不加连接符
                 this.isFirst = false;
             } else {
+                append(beforeLineConnector);
                 line();
-                append(connector);
+                append(afterLineConnector);
             }
             return iterator.next();
         }
     }
 
+
     @Override
     public String toString() {
-        if (currLine.length() > 0) {
-            this.line();
+        StringJoiner allLine = new StringJoiner(System.lineSeparator());
+        for (StringBuilder line : this.allLine) {
+//            if (StringUtil.isNotBlank(line)) {
+                allLine.add(line);
+//            }
         }
         return allLine.toString();
     }

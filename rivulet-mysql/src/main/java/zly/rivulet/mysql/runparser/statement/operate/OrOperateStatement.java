@@ -36,7 +36,7 @@ public class OrOperateStatement implements OperateStatement {
 
     @Override
     public void formatGetStatement(FormatCollector collector) {
-        for (OperateStatement operateStatement : collector.createLineJoiner(FORMAT_OR_CONNECTOR, subOperateList)) {
+        for (OperateStatement operateStatement : collector.createAfterLineConnectorJoiner(FORMAT_OR_CONNECTOR, subOperateList)) {
             if (operateStatement instanceof AndOperateStatement || operateStatement instanceof OrOperateStatement) {
                 collector.leftBracketLine();
                 collector.tab();

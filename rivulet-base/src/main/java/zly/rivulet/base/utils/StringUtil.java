@@ -19,11 +19,11 @@ public class StringUtil {
         return new String(chars);
     }
 
-    public static boolean isNotBlank(String str) {
+    public static boolean isNotBlank(CharSequence str) {
         return !isBlank(str);
     }
 
-    public static boolean isBlank(String str) {
+    public static boolean isBlank(CharSequence str) {
         if (str == null) {
             return true;
         }

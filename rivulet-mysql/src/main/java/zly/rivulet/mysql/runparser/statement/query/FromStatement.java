@@ -58,7 +58,7 @@ public class FromStatement implements SqlStatement {
             return;
         }
         collector.line();
-        for (JoinStatement joinStatement : collector.createLineJoiner(Constant.EMPTY, this.joinStatementList)) {
+        for (JoinStatement joinStatement : collector.createLineJoiner(this.joinStatementList)) {
             joinStatement.formatGetStatement(collector);
         }
 

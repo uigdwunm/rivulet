@@ -37,7 +37,7 @@ public class SelectStatement implements SqlStatement {
         collector.append(SELECT);
         collector.line();
         collector.tab();
-        for (MapStatement mapStatement : collector.createLineJoiner(COMMA, mapStatementList)) {
+        for (MapStatement mapStatement : collector.createBeforeLineConnectorJoiner(COMMA, mapStatementList)) {
             mapStatement.formatGetStatement(collector);
         }
         collector.returnTab();

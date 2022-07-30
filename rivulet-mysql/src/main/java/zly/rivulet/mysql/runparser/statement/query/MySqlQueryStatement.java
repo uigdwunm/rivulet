@@ -48,7 +48,7 @@ public class MySqlQueryStatement implements SingleValueElementStatement, QueryFr
 
     @Override
     public void formatGetStatement(FormatCollector collector) {
-        for (SqlStatement subStatement : collector.createLineJoiner(Constant.EMPTY, this.subStatementList)) {
+        for (SqlStatement subStatement : collector.createLineJoiner(this.subStatementList)) {
             subStatement.formatGetStatement(collector);
         }
     }
