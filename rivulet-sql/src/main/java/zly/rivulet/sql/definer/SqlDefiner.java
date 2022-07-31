@@ -31,12 +31,18 @@ public abstract class SqlDefiner implements Definer {
             // 判断如果是代理对象，则拿到原class
             clazz = clazz.getSuperclass();
         }
+        // 先从缓存拿
         SQLModelMeta modelMeta = classModelMetaMap.get(clazz);
         if (modelMeta != null) {
             return modelMeta;
         }
+
+        // 缓存找不到再解析
         modelMeta = this.parse(clazz);
+
+        // 再存到缓存里
         this.classModelMetaMap.put(clazz, modelMeta);
+        // 返回
         return modelMeta;
     }
 

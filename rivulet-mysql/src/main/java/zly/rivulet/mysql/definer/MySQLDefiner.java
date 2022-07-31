@@ -14,7 +14,6 @@ import zly.rivulet.mysql.definer.annotations.type.string.MySQLVarchar;
 import zly.rivulet.sql.definer.SqlDefiner;
 import zly.rivulet.sql.definer.annotations.SqlColumn;
 import zly.rivulet.sql.definer.annotations.SqlTable;
-import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;

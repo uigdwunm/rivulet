@@ -3,14 +3,23 @@ package zly.rivulet.base.executor;
 import zly.rivulet.base.assigner.Assigner;
 import zly.rivulet.base.runparser.Fish;
 
+import java.util.stream.Stream;
+
 public interface Executor {
 
     /**
-     * Description 真正执行的方法，有可能返回值单值、Stream流
-     *
-     * @author zhaolaiyuan
-     * Date 2021/12/5 11:52
+     * 单个查询
      **/
-    Object execute(Fish fish, Assigner<?> assigner);
+    Object queryOne(Fish fish, Assigner<?> assigner);
+
+    /**
+     * 批量查询
+     **/
+    Stream<Object> queryList(Fish fish, Assigner<?> assigner);
+
+    /**
+     * 增删改
+     **/
+    int executeUpdate(Fish fish);
 
 }

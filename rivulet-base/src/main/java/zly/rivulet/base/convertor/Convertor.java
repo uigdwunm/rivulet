@@ -13,7 +13,7 @@ public abstract class Convertor<T, O extends OriginOuterType> {
     }
 
     /**
-     * Description 结果转化成java类型
+     * Description 查询结果转化成java类型
      *
      * @author zhaolaiyuan
      * Date 2021/10/30 10:21

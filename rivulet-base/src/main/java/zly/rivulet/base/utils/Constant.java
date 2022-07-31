@@ -9,4 +9,7 @@ public class Constant {
     public static final char SPACE_CHAR = ' ';
 
     public static final char POINT_CHAR = '.';
+
+
+    public static final char apostrophe = '\'';
 }

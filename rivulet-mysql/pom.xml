@@ -20,6 +20,13 @@
             <artifactId>rivulet-sql</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-    </dependencies>
 
+        <!-- for test -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>4.0.3</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 </project>

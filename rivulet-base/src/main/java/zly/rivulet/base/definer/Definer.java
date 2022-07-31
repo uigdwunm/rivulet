@@ -8,7 +8,6 @@ package zly.rivulet.base.definer;
  **/
 public interface Definer {
 
-
     ModelMeta createOrGetModelMeta(Class<?> clazz);
 
 }

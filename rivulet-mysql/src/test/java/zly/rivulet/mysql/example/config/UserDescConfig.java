@@ -4,7 +4,7 @@ import zly.rivulet.base.definer.annotations.RivuletDescConfig;
 import zly.rivulet.base.definer.annotations.RivuletQueryDesc;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.mysql.example.model.JoinQueryDO;
-import zly.rivulet.mysql.example.model.UserDO;
+import zly.rivulet.mysql.example.model.user.User;
 import zly.rivulet.mysql.example.vo.UserJoinVO;
 import zly.rivulet.mysql.example.vo.UserVO;
 import zly.rivulet.sql.describer.param.SqlParamCheckType;
@@ -17,18 +17,18 @@ import zly.rivulet.sql.describer.query.desc.Mapping;
 public class UserDescConfig {
 
     @RivuletQueryDesc("sdf")
-    public SqlQueryMetaDesc<UserDO, UserVO> queryUser() {
-        return QueryBuilder.query(UserDO.class, UserVO.class)
+    public SqlQueryMetaDesc<User, UserVO> queryUser() {
+        return QueryBuilder.query(User.class, UserVO.class)
             .select(
-                Mapping.of(UserVO::setId, UserDO::getId),
-                Mapping.of(UserVO::setName, UserDO::getName)
+                Mapping.of(UserVO::setId, User::getId),
+                Mapping.of(UserVO::setName, User::getName)
             )
             .where(
-                Condition.equalTo(UserDO::getId, Param.of(Long.class, "id", SqlParamCheckType.PLACEHOLDER)),
-                Condition.equalTo(UserDO::getName, UserDO::getCode),
+                Condition.equalTo(User::getId, Param.of(Long.class, "id", SqlParamCheckType.PLACEHOLDER)),
+                Condition.equalTo(User::getName, User::getCode),
                 Condition.or(
-                    Condition.equalTo(UserDO::getId, Param.of(Long.class, "id", SqlParamCheckType.PLACEHOLDER)),
-                    Condition.equalTo(UserDO::getName, UserDO::getCode)
+                    Condition.equalTo(User::getId, Param.of(Long.class, "id", SqlParamCheckType.PLACEHOLDER)),
+                    Condition.equalTo(User::getName, User::getCode)
                 )
             ).build();
     }

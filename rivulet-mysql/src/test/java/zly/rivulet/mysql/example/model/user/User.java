@@ -1,7 +1,8 @@
-package zly.rivulet.mysql.example.model;
+package zly.rivulet.mysql.example.model.user;
 
 import zly.rivulet.base.definer.annotations.Comment;
 import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLBigInt;
+import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLInt;
 import zly.rivulet.mysql.definer.annotations.type.string.MySQLVarchar;
 import zly.rivulet.mysql.example.enums.UserType;
 import zly.rivulet.sql.definer.annotations.SqlColumn;
@@ -11,7 +12,7 @@ import java.util.Date;
 
 // PropertyDescriptor
 @SqlTable("t_user")
-public class UserDO {
+public class User {
     @SqlColumn("id")
     @MySQLBigInt
     private long id;
@@ -26,9 +27,14 @@ public class UserDO {
     @MySQLVarchar(length = 32)
     private String code;
 
+    @SqlColumn
     @Comment("好朋友")
+    @MySQLBigInt
     private long friendId;
 
+    @SqlColumn
+    @Comment("年龄")
+    @MySQLInt
     private int age;
 
     private boolean isMale;
@@ -37,15 +43,18 @@ public class UserDO {
 
     private Date birthday;
 
+    @SqlColumn
+    @Comment("城市")
+    @MySQLInt
     private int cityCode;
 
     private int provinceCode;
 
 
-    public UserDO() {
+    public User() {
     }
 
-    public UserDO(long id, String name, String code, long friendId, int age, boolean isMale, UserType userType, Date birthday, int cityCode, int provinceCode) {
+    public User(long id, String name, String code, long friendId, int age, boolean isMale, UserType userType, Date birthday, int cityCode, int provinceCode) {
         this.id = id;
         this.name = name;
         this.code = code;

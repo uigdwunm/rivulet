@@ -1,16 +1,27 @@
-package zly.rivulet.mysql.example.model;
+package zly.rivulet.mysql.example.model.address;
 
+import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLInt;
+import zly.rivulet.mysql.definer.annotations.type.string.MySQLVarchar;
+import zly.rivulet.sql.definer.annotations.SqlColumn;
 import zly.rivulet.sql.definer.annotations.SqlTable;
 
 @SqlTable("t_city")
-public class CityDO {
+public class City {
 
+    @SqlColumn
+    @MySQLVarchar(length = 16)
     private String shortName;
 
+    @SqlColumn
+    @MySQLVarchar(length = 16)
     private String name;
 
+    @SqlColumn("code")
+    @MySQLInt
     private int code;
 
+    @SqlColumn
+    @MySQLInt
     private int provinceCode;
 
     public String getShortName() {

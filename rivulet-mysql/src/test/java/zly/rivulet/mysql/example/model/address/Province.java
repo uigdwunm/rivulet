@@ -1,4 +1,4 @@
-package zly.rivulet.mysql.example.model;
+package zly.rivulet.mysql.example.model.address;
 
 import zly.rivulet.base.definer.annotations.Comment;
 import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLInt;
@@ -8,7 +8,7 @@ import zly.rivulet.sql.definer.annotations.SqlTable;
 
 @SqlTable("t_province")
 @Comment("省份表")
-public class ProvinceDO {
+public class Province {
 
     @Comment("简称")
     @SqlColumn("shortName")

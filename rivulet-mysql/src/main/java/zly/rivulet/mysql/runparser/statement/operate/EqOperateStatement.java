@@ -26,7 +26,7 @@ public class EqOperateStatement implements OperateStatement {
     public void collectStatement(StatementCollector collector) {
         leftValue.singleCollectStatement(collector);
         collector.append(EQ);
-        leftValue.singleCollectStatement(collector);
+        rightValue.singleCollectStatement(collector);
     }
 
     @Override

@@ -20,6 +20,7 @@
             <artifactId>rivulet-base</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+
     </dependencies>
 
 

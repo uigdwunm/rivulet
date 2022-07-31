@@ -19,4 +19,8 @@ public class SQLModelDefineException extends RuntimeException {
     public static SQLModelDefineException needNoArgumentsConstructor() {
         return new SQLModelDefineException("必须有一个无参构造方法!");
     }
+
+    public static SQLModelDefineException noField() {
+        return new SQLModelDefineException("未定义对应的字段");
+    }
 }

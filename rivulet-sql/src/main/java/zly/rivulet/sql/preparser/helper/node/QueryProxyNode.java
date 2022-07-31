@@ -25,6 +25,7 @@ import zly.rivulet.sql.definition.query.main.SelectDefinition;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.exception.SQLDescDefineException;
+import zly.rivulet.sql.exception.SQLModelDefineException;
 import zly.rivulet.sql.preparser.SQLAliasManager;
 import zly.rivulet.sql.preparser.SqlPreParser;
 import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
@@ -291,6 +292,9 @@ public class QueryProxyNode implements FromNode, SelectNode {
                     String fieldName = new String(fieldNameArr);
 
                     SQLFieldMeta fieldMeta = modelMeta.getFieldMeta(fieldName);
+                    if (fieldMeta == null) {
+                        throw SQLModelDefineException.noField();
+                    }
 
                     THREAD_LOCAL.set(new FieldDefinition(modelAlias, modelMeta, fieldMeta));
                 }

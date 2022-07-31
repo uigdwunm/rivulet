@@ -50,7 +50,7 @@ public class JoinStatement implements SqlStatement {
     @Override
     public void collectStatement(StatementCollector collector) {
         collector.append(this.joinType.getPrefix()).space();
-        this.queryFrom.collectStatement(collector);
+        this.queryFrom.singleCollectStatement(collector);
         String alias = this.alias;
         if (StringUtil.isNotBlank(alias)) {
             collector.append(AS).append(alias);
@@ -65,7 +65,7 @@ public class JoinStatement implements SqlStatement {
     @Override
     public void formatGetStatement(FormatCollector collector) {
         collector.append(this.joinType.getPrefix()).space();
-        this.queryFrom.formatGetStatement(collector);
+        this.queryFrom.singleFormatGetStatement(collector);
         String alias = this.alias;
         if (StringUtil.isNotBlank(alias)) {
             collector.append(AS).append(alias);

@@ -13,7 +13,7 @@ import zly.rivulet.sql.runparser.statement.SqlStatement;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MySqlQueryStatement implements SingleValueElementStatement, QueryFromStatement {
+public class MySqlQueryStatement implements QueryFromStatement {
 
     private final SqlQueryDefinition definition;
 
@@ -37,6 +37,15 @@ public class MySqlQueryStatement implements SingleValueElementStatement, QueryFr
         collector.leftBracket();
         this.collectStatement(collector);
         collector.rightBracket();
+    }
+
+    @Override
+    public void singleFormatGetStatement(FormatCollector collector) {
+        collector.leftBracketLine();
+        collector.tab();
+        this.formatGetStatement(collector);
+        collector.rightBracketLine();
+        collector.returnTab();
     }
 
     @Override

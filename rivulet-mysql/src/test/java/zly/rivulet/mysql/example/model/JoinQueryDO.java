@@ -1,5 +1,8 @@
 package zly.rivulet.mysql.example.model;
 
+import zly.rivulet.mysql.example.model.address.City;
+import zly.rivulet.mysql.example.model.address.Province;
+import zly.rivulet.mysql.example.model.user.User;
 import zly.rivulet.mysql.example.vo.UserVO;
 import zly.rivulet.sql.definer.QueryComplexModel;
 import zly.rivulet.sql.definer.annotations.SQLModelJoin;
@@ -10,42 +13,42 @@ import zly.rivulet.sql.describer.query.condition.JoinCondition;
 public class JoinQueryDO implements QueryComplexModel {
 
     @SQLModelJoin
-    private UserDO userDO;
+    private User user;
 
     @SQLModelJoin
-    private CityDO cityDO;
+    private City city;
 
     @SQLModelJoin
-    private ProvinceDO provinceDO;
+    private Province province;
 
     @SQLSubJoin("sdf")
     private UserVO userFriend;
 
     @Override
     public ComplexDescriber register() {
-        ComplexDescriber complexDescriber = ComplexDescriber.from(userDO);
-        complexDescriber.leftJoin(cityDO).on(
-            JoinCondition.equalTo(cityDO::getCode, userDO::getCityCode),
+        ComplexDescriber complexDescriber = ComplexDescriber.from(user);
+        complexDescriber.leftJoin(city).on(
+            JoinCondition.equalTo(city::getCode, user::getCityCode),
             JoinCondition.or(
-                JoinCondition.equalTo(cityDO::getCode, userDO::getCityCode),
-                JoinCondition.equalTo(cityDO::getCode, userDO::getCityCode)
+                JoinCondition.equalTo(city::getCode, user::getCityCode),
+                JoinCondition.equalTo(city::getCode, user::getCityCode)
             )
         );
-        complexDescriber.leftJoin(provinceDO).on(JoinCondition.equalTo(cityDO::getProvinceCode, provinceDO::getCode));
-        complexDescriber.leftJoin(userFriend).on(JoinCondition.equalTo(userFriend::getId, userDO::getFriendId));
+        complexDescriber.leftJoin(province).on(JoinCondition.equalTo(city::getProvinceCode, province::getCode));
+        complexDescriber.leftJoin(userFriend).on(JoinCondition.equalTo(userFriend::getId, user::getFriendId));
 
         return complexDescriber;
     }
 
-    public UserDO getUserDO() {
-        return userDO;
+    public User getUserDO() {
+        return user;
     }
 
-    public CityDO getCityDO() {
-        return cityDO;
+    public City getCityDO() {
+        return city;
     }
 
-    public ProvinceDO getProvinceDO() {
-        return provinceDO;
+    public Province getProvinceDO() {
+        return province;
     }
 }
