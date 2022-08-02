@@ -34,7 +34,7 @@ public abstract class RivuletManager {
 
     private final WarehouseManager warehouseManager;
 
-    private final Map<Method, FinalDefinition> methodFinalDefinitionMap = new ConcurrentHashMap<>();
+    private final Map<Method, FinalDefinition> mapperMethod_FinalDefinition_Map = new ConcurrentHashMap<>();
 
     protected RivuletManager(RuntimeParser runtimeParser, Analyzer analyzer, Executor executor, RivuletProperties configProperties, ConvertorManager convertorManager, WarehouseManager warehouseManager, PreParser preParser) {
         this.runtimeParser = runtimeParser;
@@ -55,13 +55,14 @@ public abstract class RivuletManager {
      **/
 
     public void preParse(String key, Method method) {
+        warehouseManager.getAllMapperMethod();
         FinalDefinition finalDefinition = preParser.parse(key, method);
 
-        methodFinalDefinitionMap.put(method, finalDefinition);
+        mapperMethod_FinalDefinition_Map.put(method, finalDefinition);
     }
 
-    public Object exec(Method method, Object[] args) {
-        FinalDefinition finalDefinition = methodFinalDefinitionMap.get(method);
+    public Object exec(Method proxyMethod, Object[] args) {
+        FinalDefinition finalDefinition = mapperMethod_FinalDefinition_Map.get(proxyMethod);
         if (finalDefinition == null) {
             // 没有预先定义方法
             throw ParseException.undefinedMethod();

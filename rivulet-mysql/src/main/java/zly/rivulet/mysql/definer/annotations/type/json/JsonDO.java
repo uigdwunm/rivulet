@@ -1,4 +1,4 @@
-package zly.rivulet.mysql.definer.annotations.type.string;
+package zly.rivulet.mysql.definer.annotations.type.json;
 
 import zly.rivulet.base.convertor.Convertor;
 import zly.rivulet.mysql.convertor.SelfConvertor;

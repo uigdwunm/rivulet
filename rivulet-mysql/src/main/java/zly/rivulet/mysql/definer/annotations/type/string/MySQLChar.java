@@ -2,18 +2,13 @@ package zly.rivulet.mysql.definer.annotations.type.string;
 
 import zly.rivulet.base.convertor.Convertor;
 import zly.rivulet.base.convertor.ConvertorManager;
-import zly.rivulet.base.utils.Constant;
-import zly.rivulet.mysql.definer.outerType.VariableStringType;
+import zly.rivulet.mysql.definer.outerType.ExactStringType;
 
-/**
- * Description 可以对应String类型，也可以让模型继承{{@link JsonDO}}
- *
- * @author zhaolaiyuan
- * Date 2022/7/30 12:02
- **/
-public @interface MySQLJson {
+public @interface MySQLChar {
 
-    class Type extends VariableStringType {
+    int length();
+
+    class Type extends ExactStringType {
         public Type(MySQLVarchar mySQLInt) {
             super(mySQLInt.length());
         }
@@ -28,10 +23,9 @@ public @interface MySQLJson {
 
                 @Override
                 public String convertToStatement(String innerValue) {
-                    return Constant.apostrophe + innerValue + Constant.apostrophe;
+                    return "'" + innerValue + "'";
                 }
             });
         }
     }
-
 }

@@ -48,9 +48,8 @@ param情况较多，可为常量,查询模型字段映射,子查询
 1，测试方法完善下，可以自己传参数的那种。
 2，执行方法搞个出来，传入collection
 3，convertor转换json类型，就是自带convertor的那种，最好定义到base中
+4, 好好整下revuletManager，外层增删改就用这个。
+5，转换statement时的缓存还没用，校验也没用，字数统计也没用
 
 
 测试包
-1，definer
-2, describer
-3, 
