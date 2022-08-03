@@ -74,8 +74,8 @@ public class DefaultWarehouseManager implements WarehouseManager {
     }
 
     @Override
-    public Method getMapperMethod(String key) {
-        return this.key_mapper_map.get(key);
+    public Map<String, Method> getAllMapperMethod() {
+        return this.key_mapper_map;
     }
 
     @Override

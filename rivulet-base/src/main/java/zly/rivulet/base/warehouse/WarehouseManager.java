@@ -4,6 +4,7 @@ import zly.rivulet.base.RivuletManager;
 import zly.rivulet.base.describer.WholeDesc;
 
 import java.lang.reflect.Method;
+import java.util.Map;
 
 public interface WarehouseManager {
 
@@ -11,5 +12,5 @@ public interface WarehouseManager {
 
     WholeDesc getWholeDesc(String key);
 
-    Method getMapperMethod(String key);
+    Map<String, Method> getAllMapperMethod();
 }

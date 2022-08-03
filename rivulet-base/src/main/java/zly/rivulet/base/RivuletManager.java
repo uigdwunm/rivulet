@@ -44,6 +44,9 @@ public abstract class RivuletManager {
         this.convertorManager = convertorManager;
         this.warehouseManager = warehouseManager;
         this.preParser = preParser;
+
+        // 预解析
+        this.preParse();
     }
 
     /**
@@ -54,11 +57,14 @@ public abstract class RivuletManager {
      * Date 2022/3/20 10:15
      **/
 
-    public void preParse(String key, Method method) {
-        warehouseManager.getAllMapperMethod();
-        FinalDefinition finalDefinition = preParser.parse(key, method);
+    public void preParse() {
+        Map<String, Method> allMapperMethod = warehouseManager.getAllMapperMethod();
+        for (Map.Entry<String, Method> entry : allMapperMethod.entrySet()) {
+            String key = entry.getKey();
+            Method method = entry.getValue();
 
-        mapperMethod_FinalDefinition_Map.put(method, finalDefinition);
+            mapperMethod_FinalDefinition_Map.put(method, preParser.parse(key, method));
+        }
     }
 
     public Object exec(Method proxyMethod, Object[] args) {
@@ -73,10 +79,10 @@ public abstract class RivuletManager {
         Fish fish = runtimeParser.parse(finalDefinition, paramManager);
         fish = analyzer.runTimeAnalyze(fish);
 
-        return executor.execute(fish, finalDefinition.getAssigner());
+        return executor.queryOne(fish, finalDefinition.getAssigner());
     }
 
-    public Fish test(WholeDesc wholeDesc) {
+    public Fish exec(WholeDesc wholeDesc, Map<String, Object> params) {
         TestParamDefinitionManager testParamDefinitionManager = new TestParamDefinitionManager();
         FinalDefinition finalDefinition = preParser.parse(wholeDesc, testParamDefinitionManager);
 
