@@ -3,11 +3,9 @@ package zly.rivulet.base;
 import zly.rivulet.base.analyzer.Analyzer;
 import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.definition.FinalDefinition;
-import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.exception.ParseException;
 import zly.rivulet.base.executor.Executor;
 import zly.rivulet.base.preparser.PreParser;
-import zly.rivulet.base.preparser.param.TestParamDefinitionManager;
 import zly.rivulet.base.preparser.param.ParamDefinitionManager;
 import zly.rivulet.base.runparser.Fish;
 import zly.rivulet.base.runparser.RuntimeParser;
@@ -82,13 +80,13 @@ public abstract class RivuletManager {
         return executor.queryOne(fish, finalDefinition.getAssigner());
     }
 
-    public Fish exec(WholeDesc wholeDesc, Map<String, Object> params) {
-        TestParamDefinitionManager testParamDefinitionManager = new TestParamDefinitionManager();
-        FinalDefinition finalDefinition = preParser.parse(wholeDesc, testParamDefinitionManager);
-
-        ParamManager paramManager = testParamDefinitionManager.getParamManager(null);
-
-        return runtimeParser.parse(finalDefinition, paramManager);
-    }
+//    public Fish exec(WholeDesc wholeDesc, Map<String, Object> params) {
+////        TestParamDefinitionManager testParamDefinitionManager = new TestParamDefinitionManager();
+////        FinalDefinition finalDefinition = preParser.parse(wholeDesc, testParamDefinitionManager);
+////
+////        ParamManager paramManager = testParamDefinitionManager.getParamManager(null);
+//
+//        return runtimeParser.parse(finalDefinition, paramManager);
+//    }
 
 }
