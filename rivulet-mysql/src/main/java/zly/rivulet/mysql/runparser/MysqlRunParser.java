@@ -2,7 +2,6 @@ package zly.rivulet.mysql.runparser;
 
 import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.definition.FinalDefinition;
-import zly.rivulet.base.preparser.param.ParamDefinitionManager;
 import zly.rivulet.base.runparser.Fish;
 import zly.rivulet.base.runparser.RuntimeParser;
 import zly.rivulet.base.runparser.param_manager.ParamManager;
@@ -13,7 +12,6 @@ import zly.rivulet.mysql.runparser.statement.ModelFromStatement;
 import zly.rivulet.mysql.runparser.statement.operate.AndOperateStatement;
 import zly.rivulet.mysql.runparser.statement.operate.EqOperateStatement;
 import zly.rivulet.mysql.runparser.statement.operate.OrOperateStatement;
-import zly.rivulet.mysql.runparser.statement.param.EmptyParamStatement;
 import zly.rivulet.mysql.runparser.statement.param.SQLParamStatement;
 import zly.rivulet.mysql.runparser.statement.query.*;
 import zly.rivulet.sql.definition.query.SQLFinalDefinition;
@@ -70,15 +68,13 @@ public class MysqlRunParser implements RuntimeParser {
             return;
         }
         RelationSwitch rootSwitch = RelationSwitch.createRootSwitch();
-        ParamDefinitionManager paramDefinitionManager = definition.getParamDefinitionManager();
         SQLAliasManager aliasManager = definition.getAliasManager();
-        SqlRunParseInitHelper sqlRunParseInitHelper = new SqlRunParseInitHelper(paramDefinitionManager, aliasManager);
+        SqlRunParseInitHelper sqlRunParseInitHelper = new SqlRunParseInitHelper(aliasManager);
         sqlStatementFactory.init(definition, rootSwitch, sqlRunParseInitHelper);
         isInitRecord.put(definition, definition);
     }
 
     private void registerStatement(SqlStatementFactory sqlStatementFactory) {
-        EmptyParamStatement.registerToFactory(sqlStatementFactory);
         SQLParamStatement.registerToFactory(sqlStatementFactory);
 
         MySqlQueryStatement.registerToFactory(sqlStatementFactory);

@@ -43,7 +43,7 @@ public abstract class CheckCondition {
         int length = params.length;
         this.paramDefinitions = new ParamDefinition[length];
         for (int i = 0; i < length; i++) {
-            paramDefinitions[i] = paramDefinitionManager.register(params[i]);
+            paramDefinitions[i] = paramDefinitionManager.registerParam(params[i]);
         }
     }
 

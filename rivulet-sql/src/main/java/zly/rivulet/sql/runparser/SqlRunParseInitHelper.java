@@ -5,13 +5,9 @@ import zly.rivulet.sql.preparser.SQLAliasManager;
 
 public class SqlRunParseInitHelper {
 
-    private final ParamDefinitionManager paramDefinitionManager;
-
-
     private final SQLAliasManager aliasManager;
 
-    public SqlRunParseInitHelper(ParamDefinitionManager paramDefinitionManager, SQLAliasManager aliasManager) {
-        this.paramDefinitionManager = paramDefinitionManager;
+    public SqlRunParseInitHelper(SQLAliasManager aliasManager) {
         this.aliasManager = aliasManager;
     }
 
@@ -19,7 +15,4 @@ public class SqlRunParseInitHelper {
         return aliasManager;
     }
 
-    public ParamDefinitionManager getParamDefinitionManager() {
-        return paramDefinitionManager;
-    }
 }

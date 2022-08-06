@@ -1,12 +1,14 @@
 package zly.rivulet.base.runparser.param_manager;
 
-import zly.rivulet.base.convertor.Convertor;
 import zly.rivulet.base.definition.param.ParamDefinition;
+import zly.rivulet.base.describer.param.Param;
+import zly.rivulet.base.describer.param.StaticParam;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-public class ProxyParamManager implements ParamManager {
+public class LazyParamManager implements ParamManager {
     /**
      * Description 原始参数
      *
@@ -21,14 +23,13 @@ public class ProxyParamManager implements ParamManager {
      * @author zhaolaiyuan
      * Date 2022/1/23 12:16
      **/
-    private final Map<ParamDefinition, Object> cache;
+    private final Map<ParamDefinition, Object> cache = new HashMap<>();
 
     private final Map<ParamDefinition, Function<Object[], Object>> paramCreatorMap;
 
-    public ProxyParamManager(Object[] originParam, Map<ParamDefinition, Function<Object[], Object>> paramCreatorMap, Map<ParamDefinition, Object> staticParamMap) {
+    public LazyParamManager(Object[] originParam, Map<ParamDefinition, Function<Object[], Object>> paramCreatorMap) {
         this.originParam = originParam;
         this.paramCreatorMap = paramCreatorMap;
-        this.cache = staticParamMap;
     }
 
     @Override
@@ -37,18 +38,18 @@ public class ProxyParamManager implements ParamManager {
         if (param != null) {
             return param;
         }
+        Param<?> paramDesc = paramDefinition.getOriginDesc();
+        if (paramDesc instanceof StaticParam) {
+            StaticParam<?> staticParam = (StaticParam<?>) paramDesc;
+            param = staticParam.getValue();
+        } else {
+            Function<Object[], Object> creator = paramCreatorMap.get(paramDefinition);
+            param = creator.apply(this.originParam);
+        }
 
-        Function<Object[], Object> creator = paramCreatorMap.get(paramDefinition);
-        param = creator.apply(this.originParam);
         cache.put(paramDefinition, param);
 
         return param;
     }
 
-    @Override
-    public String getStatement(ParamDefinition paramDefinition) {
-        Object param = this.getParam(paramDefinition);
-        Convertor<Object, ?> convertor = (Convertor<Object, ?>) paramDefinition.getConvertor();
-        return convertor.convertToStatement(param);
-    }
 }

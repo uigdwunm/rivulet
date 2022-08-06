@@ -10,6 +10,5 @@ import zly.rivulet.base.runparser.statement.Statement;
  **/
 public interface Fish {
 
-
     Statement getStatement();
 }

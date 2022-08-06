@@ -42,7 +42,7 @@ public class MySQLExecutor implements Executor {
         // TODO
         MySQLFish mySQLFish = (MySQLFish) fish;
         SQLAssigner sqlAssigner = (SQLAssigner) assigner;
-        StatementCollector collector = new StatementCollector();
+        StatementCollector collector = new StatementCollector(mySQLFish.getLength());
         mySQLFish.getStatement().collectStatement(collector);
         try {
             Connection connection = dataSource.getConnection();
@@ -69,7 +69,7 @@ public class MySQLExecutor implements Executor {
     @Override
     public int executeUpdate(Fish fish) {
         MySQLFish mySQLFish = (MySQLFish) fish;
-        StatementCollector collector = new StatementCollector();
+        StatementCollector collector = new StatementCollector(mySQLFish.getLength());
         mySQLFish.getStatement().collectStatement(collector);
         try {
             Connection connection = dataSource.getConnection();

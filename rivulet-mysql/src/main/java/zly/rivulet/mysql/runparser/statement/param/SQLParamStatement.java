@@ -1,5 +1,6 @@
 package zly.rivulet.mysql.runparser.statement.param;
 
+import zly.rivulet.base.convertor.Convertor;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.describer.param.StandardParam;
 import zly.rivulet.base.describer.param.StaticParam;
@@ -59,8 +60,10 @@ public class SQLParamStatement implements SingleValueElementStatement {
                 SQLParamDefinition sqlParamDefinition = (SQLParamDefinition) definition;
                 Param<?> originDesc = sqlParamDefinition.getOriginDesc();
                 if (originDesc instanceof StaticParam) {
-                    ParamDefinitionManager paramDefinitionManager = initHelper.getParamDefinitionManager();
-                    String value = paramDefinitionManager.getStaticStatement(sqlParamDefinition);
+                    StaticParam<?> staticParam = (StaticParam<?>) originDesc;
+                    Convertor<Object, ?> convertor = (Convertor<Object, ?>) sqlParamDefinition.getConvertor();
+                    String value = convertor.convertToStatement(staticParam.getValue());
+
                     return new SQLParamStatement(sqlParamDefinition, value);
                 } else {
                     // 参数是可变的，标记唯一性不可用

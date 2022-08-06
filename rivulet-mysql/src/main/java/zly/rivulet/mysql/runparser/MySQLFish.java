@@ -8,9 +8,9 @@ import zly.rivulet.sql.runparser.SqlStatementFactory;
 public class MySQLFish implements Fish {
 
     private final Statement statement;
-//    // sql长度统计
-//    private int length;
-//
+    // sql长度统计
+    private int length;
+
 //    // statment工厂
 //    private final SqlStatementFactory statementFactory;
 //
@@ -23,5 +23,9 @@ public class MySQLFish implements Fish {
     @Override
     public Statement getStatement() {
         return this.statement;
+    }
+
+    public int getLength() {
+        return length;
     }
 }

@@ -40,7 +40,7 @@ public abstract class OperateDefinition extends AbstractDefinition {
             return sqlQueryDefinition;
         } else if (singleValueElementDesc instanceof Param) {
             ParamDefinitionManager paramDefinitionManager = sqlPreParseHelper.getParamDefinitionManager();
-            return paramDefinitionManager.register((Param<?>) singleValueElementDesc);
+            return paramDefinitionManager.registerParam((Param<?>) singleValueElementDesc);
 //        } else if (singleValueElementDesc instanceof Function) {
         }
         return null;

@@ -14,7 +14,7 @@ public class LimitDefinition extends AbstractDefinition {
     public LimitDefinition(SqlPreParseHelper sqlPreParseHelper, Param<Integer> limit) {
         super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamDefinitionManager());
         ParamDefinitionManager paramDefinitionManager = sqlPreParseHelper.getParamDefinitionManager();
-        this.limit = paramDefinitionManager.register(limit);
+        this.limit = paramDefinitionManager.registerParam(limit);
     }
 
     @Override

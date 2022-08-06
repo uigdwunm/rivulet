@@ -35,6 +35,7 @@ public class SQLParamDefinition implements ParamDefinition {
         }
         this.clazz = paramDesc.getClazz();
 
+
     }
 
     public Class<?> getClazz() {

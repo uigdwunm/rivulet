@@ -40,20 +40,19 @@ public class SqlPreParser implements PreParser {
 
 
     @Override
-    public FinalDefinition parse(String key, Method method) {
+    public FinalDefinition parse(String key) {
         WholeDesc wholeDesc = warehouseManager.getWholeDesc(key);
         if (wholeDesc == null) {
             throw DescDefineException.noMatchDescKey();
         }
 
-        SqlParamDefinitionManager sqlParamDefinitionManager = new SqlParamDefinitionManager(method.getParameters(), this.convertorManager);
-        SqlPreParseHelper sqlPreParseHelper = new SqlPreParseHelper(this, sqlParamDefinitionManager);
+        SqlPreParseHelper sqlPreParseHelper = new SqlPreParseHelper(this);
         return this.parse(wholeDesc, sqlPreParseHelper);
     }
 
     @Override
-    public FinalDefinition parse(WholeDesc wholeDesc, ParamDefinitionManager paramDefinitionManager) {
-        SqlPreParseHelper sqlPreParseHelper = new SqlPreParseHelper(this, paramDefinitionManager);
+    public FinalDefinition parse(WholeDesc wholeDesc) {
+        SqlPreParseHelper sqlPreParseHelper = new SqlPreParseHelper(this);
         return this.parse(wholeDesc, sqlPreParseHelper);
     }
 

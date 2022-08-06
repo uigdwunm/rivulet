@@ -14,7 +14,7 @@ public interface PreParser {
      * @author zhaolaiyuan
      * Date 2021/12/5 12:06
      **/
-    FinalDefinition parse(String key, Method method);
+    FinalDefinition parse(String key);
 
-    FinalDefinition parse(WholeDesc wholeDesc, ParamDefinitionManager ParamDefinitionManager);
+    FinalDefinition parse(WholeDesc wholeDesc);
 }

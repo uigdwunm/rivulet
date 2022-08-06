@@ -44,7 +44,7 @@ public abstract class RivuletManager {
         this.preParser = preParser;
 
         // 预解析
-        this.preParse();
+        this.preParseAll();
     }
 
     /**
@@ -55,13 +55,18 @@ public abstract class RivuletManager {
      * Date 2022/3/20 10:15
      **/
 
-    public void preParse() {
+    public void preParseAll() {
         Map<String, Method> allMapperMethod = warehouseManager.getAllMapperMethod();
         for (Map.Entry<String, Method> entry : allMapperMethod.entrySet()) {
             String key = entry.getKey();
             Method method = entry.getValue();
 
-            mapperMethod_FinalDefinition_Map.put(method, preParser.parse(key, method));
+            // 解析definition
+            FinalDefinition finalDefinition = preParser.parse(key);
+            ParamDefinitionManager paramDefinitionManager = finalDefinition.getParamDefinitionManager();
+            paramDefinitionManager.registerMethod(method);
+
+            mapperMethod_FinalDefinition_Map.put(method, finalDefinition);
         }
     }
 
@@ -72,7 +77,7 @@ public abstract class RivuletManager {
             throw ParseException.undefinedMethod();
         }
         ParamDefinitionManager paramDefinitionManager = finalDefinition.getParamDefinitionManager();
-        ParamManager paramManager = paramDefinitionManager.getParamManager(args);
+        ParamManager paramManager = paramDefinitionManager.getParamManager(proxyMethod, args);
 
         Fish fish = runtimeParser.parse(finalDefinition, paramManager);
         fish = analyzer.runTimeAnalyze(fish);
