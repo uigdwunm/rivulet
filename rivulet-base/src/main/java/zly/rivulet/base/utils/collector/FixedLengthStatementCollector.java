@@ -1,15 +1,8 @@
-package zly.rivulet.base.utils;
+package zly.rivulet.base.utils.collector;
 
-import java.util.Collection;
-import java.util.Iterator;
+import zly.rivulet.base.utils.Constant;
 
-/**
- * Description 定长的语句收集器
- *
- * @author zhaolaiyuan
- * Date 2022/7/24 11:10
- **/
-public class StatementCollector {
+public class FixedLengthStatementCollector implements StatementCollector {
     private final char[] value;
 
     private int index = 0;
@@ -18,47 +11,57 @@ public class StatementCollector {
 
     private static final char rightBracket = ')';
 
-    public StatementCollector(int length) {
+    public FixedLengthStatementCollector(int length) {
         this.value = new char[length];
     }
 
+    @Override
     public StatementCollector leftBracket() {
         return this.append(leftBracket);
     }
 
+    @Override
     public StatementCollector rightBracket() {
         return this.append(rightBracket);
     }
 
+    @Override
     public StatementCollector space() {
-        return this.append(Constant.SPACE_CHAR);
+        return this.append(Constant.SPACE);
     }
 
+    @Override
     public StatementCollector append(Object o) {
         return this.append(o.toString());
     }
 
+    @Override
     public StatementCollector append(float f) {
         return this.append(Float.toString(f));
     }
 
+    @Override
     public StatementCollector append(double d) {
         return this.append(Double.toString(d));
     }
 
-    public StatementCollector append(Long l) {
+    @Override
+    public StatementCollector append(long l) {
         return this.append(Long.toString(l));
     }
 
+    @Override
     public StatementCollector append(int i) {
         return this.append(Integer.toString(i));
     }
 
+    @Override
     public StatementCollector append(char c) {
         value[index++] = c;
         return this;
     }
 
+    @Override
     public StatementCollector append(boolean b) {
         if (b) {
             value[index++] = 't';
@@ -75,6 +78,7 @@ public class StatementCollector {
         return this;
     }
 
+    @Override
     public StatementCollector append(char[] chars) {
         int length = chars.length;
         System.arraycopy(chars, 0, value, index, length);
@@ -82,6 +86,7 @@ public class StatementCollector {
         return this;
     }
 
+    @Override
     public StatementCollector append(String str) {
         int length = str.length();
         str.getChars(0, length, value, index);
@@ -89,59 +94,10 @@ public class StatementCollector {
         return this;
     }
 
-    public <T> JoinHelper<T> createJoiner(String connector, Collection<T> collection) {
-        return new JoinHelper<>(connector, collection.iterator());
-    }
 
     @Override
     public String toString() {
         return new String(this.value);
     }
 
-    public class JoinHelper<T> implements Iterable<T> {
-
-        private final Iterator<T> iterator;
-
-        private final char[] connector;
-
-        private JoinHelper(String connector, Iterator<T> iterator) {
-            this.connector = connector.toCharArray();
-            this.iterator = iterator;
-        }
-
-        @Override
-        public Iterator<T> iterator() {
-            return new JoinIterator<>(connector, iterator);
-        }
-    }
-
-    private class JoinIterator<T> implements Iterator<T> {
-
-        private final Iterator<T> iterator;
-
-        private final char[] connector;
-
-        private boolean isFirst = true;
-
-        private JoinIterator(char[] connector, Iterator<T> iterator) {
-            this.connector = connector;
-            this.iterator = iterator;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return iterator.hasNext();
-        }
-
-        @Override
-        public T next() {
-            if (isFirst) {
-                // 第一次不加连接符
-                this.isFirst = false;
-            } else {
-                append(connector);
-            }
-            return iterator.next();
-        }
-    }
 }

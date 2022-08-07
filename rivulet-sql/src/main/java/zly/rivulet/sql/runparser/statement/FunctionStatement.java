@@ -1,8 +1,7 @@
 package zly.rivulet.sql.runparser.statement;
 
-import zly.rivulet.base.runparser.statement.Statement;
-import zly.rivulet.base.utils.FormatCollector;
-import zly.rivulet.base.utils.StatementCollector;
+import zly.rivulet.base.assembly_line.statement.Statement;
+import zly.rivulet.base.utils.collector.StatementCollector;
 
 public class FunctionStatement implements Statement {
 
@@ -12,11 +11,6 @@ public class FunctionStatement implements Statement {
 
     @Override
     public void collectStatement(StatementCollector collector) {
-
-    }
-
-    @Override
-    public void formatGetStatement(FormatCollector formatCollector) {
 
     }
 }

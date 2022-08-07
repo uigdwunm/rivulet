@@ -1,17 +1,12 @@
 package zly.rivulet.mysql.runparser.statement.param;
 
+import zly.rivulet.base.assembly_line.param_manager.ParamManager;
 import zly.rivulet.base.convertor.Convertor;
 import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.base.describer.param.StandardParam;
 import zly.rivulet.base.describer.param.StaticParam;
-import zly.rivulet.base.exception.UnbelievableException;
-import zly.rivulet.base.preparser.param.ParamDefinitionManager;
-import zly.rivulet.base.runparser.param_manager.ParamManager;
-import zly.rivulet.base.utils.FormatCollector;
-import zly.rivulet.base.utils.StatementCollector;
+import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.runparser.statement.SingleValueElementStatement;
 import zly.rivulet.sql.definition.param.SQLParamDefinition;
-import zly.rivulet.sql.describer.param.SqlParamCheckType;
 import zly.rivulet.sql.runparser.SqlStatementFactory;
 
 public class SQLParamStatement implements SingleValueElementStatement {
@@ -28,29 +23,6 @@ public class SQLParamStatement implements SingleValueElementStatement {
     @Override
     public void collectStatement(StatementCollector collector) {
         collector.append(value);
-    }
-
-    @Override
-    public void formatGetStatement(FormatCollector formatCollector) {
-        Param<?> originDesc = sqlParamDefinition.getOriginDesc();
-        if (originDesc instanceof StandardParam) {
-            StandardParam<?> standardParam = (StandardParam<?>) originDesc;
-            SqlParamCheckType sqlParamCheckType = sqlParamDefinition.getSqlParamCheckType();
-            switch (sqlParamCheckType) {
-                case NATURE:
-                    formatCollector.append("#{");
-                    break;
-                case PLACEHOLDER:
-                    formatCollector.append("${");
-                    break;
-            }
-            formatCollector.append(standardParam.getPathKey()).append('}');
-        } else if (originDesc instanceof StaticParam) {
-            // 写死的参数
-            formatCollector.append(this.value);
-        } else {
-            throw UnbelievableException.unknownType();
-        }
     }
 
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {

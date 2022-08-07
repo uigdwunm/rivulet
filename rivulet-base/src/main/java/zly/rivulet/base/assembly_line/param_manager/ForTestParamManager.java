@@ -1,18 +1,23 @@
-package zly.rivulet.base.runparser.param_manager;
+package zly.rivulet.base.assembly_line.param_manager;
 
 import zly.rivulet.base.definition.param.ParamDefinition;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.describer.param.StandardParam;
 import zly.rivulet.base.describer.param.StaticParam;
 import zly.rivulet.base.exception.UnbelievableException;
+import zly.rivulet.base.utils.StupidMap;
 
 import java.util.Map;
 
-public class SimpleParamManager implements ParamManager {
+public class ForTestParamManager implements ParamManager {
 
-    public final Map<String, Object> keyValue;
+    private final Map<String, String> keyValue;
 
-    public SimpleParamManager(Map<String, Object> keyValue) {
+    public ForTestParamManager() {
+        this(StupidMap.create(k -> "${" + k + "}"));
+    }
+
+    public ForTestParamManager(Map<String, String> keyValue) {
         this.keyValue = keyValue;
     }
 
@@ -29,5 +34,10 @@ public class SimpleParamManager implements ParamManager {
         } else {
             throw UnbelievableException.unknownType();
         }
+    }
+
+    @Override
+    public String getStatement(ParamDefinition paramDefinition) {
+        return (String) this.getParam(paramDefinition);
     }
 }

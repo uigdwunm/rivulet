@@ -2,7 +2,7 @@ package zly.rivulet.base.definition;
 
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.preparser.param.ParamDefinitionManager;
-import zly.rivulet.base.runparser.param_manager.ParamManager;
+import zly.rivulet.base.assembly_line.param_manager.ParamManager;
 
 /**
  * Description 所有普通节点（非组节点）可以继承的抽象Definition类

@@ -1,21 +1,19 @@
 package zly.rivulet.sql.preparser;
 
 import zly.rivulet.base.convertor.ConvertorManager;
-import zly.rivulet.base.definition.FinalDefinition;
+import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.exception.DescDefineException;
 import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.preparser.PreParser;
-import zly.rivulet.base.preparser.param.ParamDefinitionManager;
 import zly.rivulet.base.warehouse.WarehouseManager;
 import zly.rivulet.sql.SqlRivuletProperties;
 import zly.rivulet.sql.definer.SqlDefiner;
-import zly.rivulet.sql.definition.query.HalfFinalDefinition;
+import zly.rivulet.sql.definition.query.HalfBlueprint;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +27,7 @@ public class SqlPreParser implements PreParser {
 
     private final WarehouseManager warehouseManager;
 
-    private final Map<String, FinalDefinition> key_queryDefinition_map = new HashMap<>();
+    private final Map<String, Blueprint> key_queryDefinition_map = new HashMap<>();
 
     public SqlPreParser(WarehouseManager warehouseManager, SqlDefiner definer, SqlRivuletProperties configProperties, ConvertorManager convertorManager) {
         this.warehouseManager = warehouseManager;
@@ -40,7 +38,7 @@ public class SqlPreParser implements PreParser {
 
 
     @Override
-    public FinalDefinition parse(String key) {
+    public Blueprint parse(String key) {
         WholeDesc wholeDesc = warehouseManager.getWholeDesc(key);
         if (wholeDesc == null) {
             throw DescDefineException.noMatchDescKey();
@@ -51,12 +49,12 @@ public class SqlPreParser implements PreParser {
     }
 
     @Override
-    public FinalDefinition parse(WholeDesc wholeDesc) {
+    public Blueprint parse(WholeDesc wholeDesc) {
         SqlPreParseHelper sqlPreParseHelper = new SqlPreParseHelper(this);
         return this.parse(wholeDesc, sqlPreParseHelper);
     }
 
-    public FinalDefinition parse(String key, SqlPreParseHelper sqlPreParseHelper) {
+    public Blueprint parse(String key, SqlPreParseHelper sqlPreParseHelper) {
         WholeDesc wholeDesc = warehouseManager.getWholeDesc(key);
         if (wholeDesc == null) {
             throw DescDefineException.noMatchDescKey();
@@ -64,11 +62,11 @@ public class SqlPreParser implements PreParser {
         return this.parse(wholeDesc, sqlPreParseHelper);
     }
 
-    public FinalDefinition parse(WholeDesc wholeDesc, SqlPreParseHelper sqlPreParseHelper) {
+    public Blueprint parse(WholeDesc wholeDesc, SqlPreParseHelper sqlPreParseHelper) {
 
         if (wholeDesc instanceof SqlQueryMetaDesc) {
             // 开始解析前先塞一个标识，用于解决循环嵌套子查询
-            key_queryDefinition_map.put(wholeDesc.getKey(), HalfFinalDefinition.instance);
+            key_queryDefinition_map.put(wholeDesc.getKey(), HalfBlueprint.instance);
             // 查询方法
             SqlQueryDefinition sqlQueryDefinition = new SqlQueryDefinition(sqlPreParseHelper, wholeDesc);
             key_queryDefinition_map.put(wholeDesc.getKey(), sqlQueryDefinition);

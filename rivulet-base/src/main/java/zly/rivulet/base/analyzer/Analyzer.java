@@ -1,11 +1,11 @@
 package zly.rivulet.base.analyzer;
 
-import zly.rivulet.base.definition.FinalDefinition;
-import zly.rivulet.base.runparser.Fish;
+import zly.rivulet.base.definition.Blueprint;
+import zly.rivulet.base.assembly_line.Fish;
 
 public interface Analyzer {
 
     Fish runTimeAnalyze(Fish statement);
 
-    FinalDefinition preAnalyze(FinalDefinition rock);
+    Blueprint preAnalyze(Blueprint rock);
 }

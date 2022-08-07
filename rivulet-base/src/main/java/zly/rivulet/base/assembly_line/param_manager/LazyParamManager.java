@@ -1,4 +1,4 @@
-package zly.rivulet.base.runparser.param_manager;
+package zly.rivulet.base.assembly_line.param_manager;
 
 import zly.rivulet.base.definition.param.ParamDefinition;
 import zly.rivulet.base.describer.param.Param;

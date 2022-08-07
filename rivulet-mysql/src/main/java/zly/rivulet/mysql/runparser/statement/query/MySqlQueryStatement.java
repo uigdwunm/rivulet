@@ -1,11 +1,9 @@
 package zly.rivulet.mysql.runparser.statement.query;
 
-import zly.rivulet.base.runparser.param_manager.ParamManager;
+import zly.rivulet.base.assembly_line.param_manager.ParamManager;
 import zly.rivulet.base.utils.Constant;
-import zly.rivulet.base.utils.FormatCollector;
-import zly.rivulet.base.utils.StatementCollector;
+import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.runparser.statement.QueryFromStatement;
-import zly.rivulet.mysql.runparser.statement.SingleValueElementStatement;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.runparser.SqlStatementFactory;
 import zly.rivulet.sql.runparser.statement.SqlStatement;
@@ -40,25 +38,9 @@ public class MySqlQueryStatement implements QueryFromStatement {
     }
 
     @Override
-    public void singleFormatGetStatement(FormatCollector collector) {
-        collector.leftBracketLine();
-        collector.tab();
-        this.formatGetStatement(collector);
-        collector.rightBracketLine();
-        collector.returnTab();
-    }
-
-    @Override
     public void collectStatement(StatementCollector collector) {
         for (SqlStatement subStatement : collector.createJoiner(Constant.SPACE, this.subStatementList)) {
             subStatement.collectStatement(collector);
-        }
-    }
-
-    @Override
-    public void formatGetStatement(FormatCollector collector) {
-        for (SqlStatement subStatement : collector.createLineJoiner(this.subStatementList)) {
-            subStatement.formatGetStatement(collector);
         }
     }
 

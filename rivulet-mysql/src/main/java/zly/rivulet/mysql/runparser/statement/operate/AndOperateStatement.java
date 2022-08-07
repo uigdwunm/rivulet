@@ -1,21 +1,18 @@
 package zly.rivulet.mysql.runparser.statement.operate;
 
-import zly.rivulet.base.utils.FormatCollector;
-import zly.rivulet.base.utils.StatementCollector;
+import zly.rivulet.base.assembly_line.param_manager.ParamManager;
+import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.sql.definition.query.operate.AndOperateDefinition;
 import zly.rivulet.sql.runparser.SqlStatementFactory;
 
 import java.util.List;
-import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 public class AndOperateStatement implements OperateStatement {
 
     private final List<OperateStatement> subOperateList;
 
-    private static final String AND_CONNECTOR = " AND ";
-
-    private static final String FORMAT_AND_CONNECTOR = "AND ";
+    public static final String AND_CONNECTOR = "AND ";
 
     public AndOperateStatement(List<OperateStatement> subOperateList) {
         this.subOperateList = subOperateList;
@@ -32,27 +29,9 @@ public class AndOperateStatement implements OperateStatement {
             } else {
                 operateStatement.collectStatement(collector);
             }
+            collector.space();
         }
 
-    }
-
-    @Override
-    public void formatGetStatement(FormatCollector collector) {
-        for (OperateStatement operateStatement : collector.createAfterLineConnectorJoiner(FORMAT_AND_CONNECTOR, subOperateList)) {
-            if (operateStatement instanceof AndOperateStatement || operateStatement instanceof OrOperateStatement) {
-                collector.leftBracketLine();
-                collector.tab();
-                operateStatement.formatGetStatement(collector);
-                collector.returnTab();
-                collector.rightBracketLine();
-            } else {
-                operateStatement.formatGetStatement(collector);
-            }
-        }
-    }
-
-    public List<OperateStatement> getSubOperateList() {
-        return subOperateList;
     }
 
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
@@ -67,7 +46,9 @@ public class AndOperateStatement implements OperateStatement {
             },
             (definition, helper) -> {
                 AndOperateDefinition andOperateDefinition = (AndOperateDefinition) definition;
+                ParamManager paramManager = helper.getParamManager();
                 List<OperateStatement> operateStatementList = andOperateDefinition.getOperateDefinitionList().stream()
+                    .filter(subOperation -> subOperation.check(paramManager))
                     .map(subOperation -> (OperateStatement) sqlStatementFactory.getOrCreate(subOperation, helper))
                     .collect(Collectors.toList());
                 return new AndOperateStatement(operateStatementList);

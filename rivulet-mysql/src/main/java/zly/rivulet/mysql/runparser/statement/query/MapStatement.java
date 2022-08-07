@@ -1,8 +1,8 @@
 package zly.rivulet.mysql.runparser.statement.query;
 
-import zly.rivulet.base.utils.FormatCollector;
-import zly.rivulet.base.utils.StatementCollector;
+import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.StringUtil;
+import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.runparser.statement.SingleValueElementStatement;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
 import zly.rivulet.sql.preparser.SQLAliasManager;
@@ -29,9 +29,7 @@ public class MapStatement implements SingleValueElementStatement {
      **/
     private final String referenceAlias;
 
-    private static final char POINT = '.';
-
-    private static final String AS = " AS ";
+    public static final String AS = "AS ";
 
     public MapStatement(SingleValueElementStatement value, String alias, String referenceAlias) {
         this.value = value;
@@ -41,12 +39,7 @@ public class MapStatement implements SingleValueElementStatement {
 
     @Override
     public void singleCollectStatement(StatementCollector collector) {
-        collector.append(referenceAlias).append(POINT).append(this.alias);
-    }
-
-    @Override
-    public void singleFormatGetStatement(FormatCollector collector) {
-        collector.append(referenceAlias).append(POINT).append(this.alias);
+        collector.append(referenceAlias).append(Constant.POINT_CHAR).append(this.alias);
     }
 
     @Override
@@ -55,33 +48,15 @@ public class MapStatement implements SingleValueElementStatement {
             collector.leftBracket();
             value.singleCollectStatement(collector);
             collector.rightBracket();
-            collector.append(AS);
+            collector.space().append(AS);
             collector.append(this.alias);
         } else if (StringUtil.isNotBlank(this.referenceAlias)) {
             value.singleCollectStatement(collector);
-            collector.append(AS);
+            collector.space().append(AS);
             collector.append(this.alias);
         } else {
             value.singleCollectStatement(collector);
         }
-    }
-
-    @Override
-    public void formatGetStatement(FormatCollector collector) {
-        if (value instanceof MySqlQueryStatement) {
-            collector.leftBracketLine();
-            value.singleFormatGetStatement(collector);
-            collector.rightBracketLine();
-            collector.append(AS);
-            collector.append(this.alias);
-        } else if (StringUtil.isNotBlank(this.referenceAlias)) {
-            value.singleFormatGetStatement(collector);
-            collector.append(AS);
-            collector.append(this.alias);
-        } else {
-            value.singleFormatGetStatement(collector);
-        }
-
     }
 
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {

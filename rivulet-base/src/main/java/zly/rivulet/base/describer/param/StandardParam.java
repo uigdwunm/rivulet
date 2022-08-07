@@ -13,4 +13,11 @@ public class StandardParam<T> extends Param<T> {
     public String getPathKey() {
         return pathKey;
     }
+
+    @Override
+    public String toString() {
+        return "StandardParam{" +
+            "pathKey='" + pathKey + '\'' +
+            '}';
+    }
 }

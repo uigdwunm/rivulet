@@ -1,10 +1,8 @@
 package zly.rivulet.mysql.runparser.statement;
 
 import zly.rivulet.base.definer.FieldMeta;
-import zly.rivulet.base.definition.Definition;
-import zly.rivulet.base.utils.FormatCollector;
-import zly.rivulet.base.utils.StatementCollector;
 import zly.rivulet.base.utils.StringUtil;
+import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.sql.definition.field.FieldDefinition;
 import zly.rivulet.sql.preparser.SQLAliasManager;
 import zly.rivulet.sql.runparser.SqlStatementFactory;
@@ -28,15 +26,6 @@ public class FieldStatement implements SingleValueElementStatement {
             collector.append(referenceAlias).append(POINT).append(fieldMeta.getOriginName());
         } else {
             collector.append(fieldMeta.getOriginName());
-        }
-    }
-
-    @Override
-    public void formatGetStatement(FormatCollector formatCollector) {
-        if (StringUtil.isNotBlank(referenceAlias)) {
-            formatCollector.append(referenceAlias).append(POINT).append(fieldMeta.getOriginName());
-        } else {
-            formatCollector.append(fieldMeta.getOriginName());
         }
     }
 

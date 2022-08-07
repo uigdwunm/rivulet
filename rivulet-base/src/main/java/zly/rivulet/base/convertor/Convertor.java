@@ -28,6 +28,10 @@ public abstract class Convertor<T, O extends OriginOuterType> {
      **/
     public abstract String convertToStatement(T innerValue);
 
+    public boolean checkJavaType(Object innerValue) {
+        return javaType.isAssignableFrom(innerValue.getClass());
+    }
+
     public final Class<T> getJavaType() {
         return javaType;
     }

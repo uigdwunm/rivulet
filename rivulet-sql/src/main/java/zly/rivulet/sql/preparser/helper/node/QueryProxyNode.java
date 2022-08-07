@@ -3,7 +3,7 @@ package zly.rivulet.sql.preparser.helper.node;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
-import zly.rivulet.base.definition.FinalDefinition;
+import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.describer.field.JoinFieldMapping;
 import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
 import zly.rivulet.base.describer.field.FieldMapping;
@@ -153,8 +153,8 @@ public class QueryProxyNode implements FromNode, SelectNode {
             } else {
                 // 保留当前的外层node节点
                 QueryProxyNode currNode = sqlPreParseHelper.getCurrNode();
-                FinalDefinition finalDefinition = sqlPreParser.parse(sqlSubJoin.value(), sqlPreParseHelper);
-                SqlQueryDefinition subQueryDefinition = (SqlQueryDefinition) finalDefinition;
+                Blueprint blueprint = sqlPreParser.parse(sqlSubJoin.value(), sqlPreParseHelper);
+                SqlQueryDefinition subQueryDefinition = (SqlQueryDefinition) blueprint;
                 // 上面的解析过程会把curr替换成子查询对应的node
                 QueryProxyNode subNode = sqlPreParseHelper.getCurrNode();
                 subNode.sqlQueryDefinition = subQueryDefinition;

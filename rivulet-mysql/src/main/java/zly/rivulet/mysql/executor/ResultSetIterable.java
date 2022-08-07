@@ -5,8 +5,6 @@ import zly.rivulet.sql.assigner.SQLAssigner;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class ResultSetIterable<T> implements Iterable<T> {
 
@@ -20,7 +18,7 @@ public class ResultSetIterable<T> implements Iterable<T> {
      * @author zhaolaiyuan
      * Date 2022/8/1 8:22
      **/
-    private final Consumer<T> finishCallBack;
+    private final Runnable finishCallBack;
 
     public ResultSetIterable(ResultSet resultSet, SQLAssigner assigner) {
         this.resultSet = resultSet;
@@ -28,7 +26,7 @@ public class ResultSetIterable<T> implements Iterable<T> {
         this.finishCallBack = null;
     }
 
-    public ResultSetIterable(ResultSet resultSet, SQLAssigner assigner, Consumer<T> finishCallBack) {
+    public ResultSetIterable(ResultSet resultSet, SQLAssigner assigner, Runnable finishCallBack) {
         this.resultSet = resultSet;
         this.assigner = assigner;
         this.finishCallBack = finishCallBack;
@@ -41,14 +39,13 @@ public class ResultSetIterable<T> implements Iterable<T> {
 
         return new Iterator<T>() {
 
-            private boolean isFinished = false;
-
             @Override
             public boolean hasNext() {
                 try {
                     boolean next = resultSet.next();
                     if (!next) {
-                        isFinished = true;
+                        // 结束回调
+                        finishCallBack.run();
                     }
                     return next;
                 } catch (SQLException e) {
@@ -58,10 +55,7 @@ public class ResultSetIterable<T> implements Iterable<T> {
 
             @Override
             public T next() {
-                T next = (T) assigner.assign(resultSet);
-                // 结束回调
-                finishCallBack.accept(next);
-                return next;
+                return  (T) assigner.assign(resultSet);
             }
         };
     }

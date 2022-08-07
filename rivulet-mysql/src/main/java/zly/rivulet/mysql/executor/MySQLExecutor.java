@@ -1,9 +1,10 @@
 package zly.rivulet.mysql.executor;
 
+import zly.rivulet.base.assembly_line.Fish;
 import zly.rivulet.base.assigner.Assigner;
 import zly.rivulet.base.executor.Executor;
-import zly.rivulet.base.runparser.Fish;
-import zly.rivulet.base.utils.StatementCollector;
+import zly.rivulet.base.utils.collector.FixedLengthStatementCollector;
+import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.runparser.MySQLFish;
 import zly.rivulet.sql.assigner.SQLAssigner;
 
@@ -24,7 +25,7 @@ public class MySQLExecutor implements Executor {
     public Object queryOne(Fish fish, Assigner<?> assigner) {
         MySQLFish mySQLFish = (MySQLFish) fish;
         SQLAssigner sqlAssigner = (SQLAssigner) assigner;
-        StatementCollector collector = new StatementCollector(1000);
+        StatementCollector collector = new FixedLengthStatementCollector(mySQLFish.getLength());
         mySQLFish.getStatement().collectStatement(collector);
         try {
             Connection connection = dataSource.getConnection();
@@ -42,7 +43,7 @@ public class MySQLExecutor implements Executor {
         // TODO
         MySQLFish mySQLFish = (MySQLFish) fish;
         SQLAssigner sqlAssigner = (SQLAssigner) assigner;
-        StatementCollector collector = new StatementCollector(mySQLFish.getLength());
+        StatementCollector collector = new FixedLengthStatementCollector(mySQLFish.getLength());
         mySQLFish.getStatement().collectStatement(collector);
         try {
             Connection connection = dataSource.getConnection();
@@ -51,7 +52,7 @@ public class MySQLExecutor implements Executor {
             ResultSetIterable<Object> iterable = new ResultSetIterable<>(
                 resultSet,
                 sqlAssigner,
-                last -> {
+                () -> {
                     try {
                         // 结束回调时回收资源
                         resultSet.close();
@@ -69,7 +70,7 @@ public class MySQLExecutor implements Executor {
     @Override
     public int executeUpdate(Fish fish) {
         MySQLFish mySQLFish = (MySQLFish) fish;
-        StatementCollector collector = new StatementCollector(mySQLFish.getLength());
+        StatementCollector collector = new FixedLengthStatementCollector(mySQLFish.getLength());
         mySQLFish.getStatement().collectStatement(collector);
         try {
             Connection connection = dataSource.getConnection();

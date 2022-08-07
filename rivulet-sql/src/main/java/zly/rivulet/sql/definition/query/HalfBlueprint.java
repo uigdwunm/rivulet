@@ -2,7 +2,6 @@ package zly.rivulet.sql.definition.query;
 
 import zly.rivulet.base.assigner.Assigner;
 import zly.rivulet.base.definition.Definition;
-import zly.rivulet.base.definition.FinalDefinition;
 import zly.rivulet.base.preparser.param.ParamDefinitionManager;
 import zly.rivulet.sql.preparser.SQLAliasManager;
 
@@ -13,9 +12,9 @@ import zly.rivulet.sql.preparser.SQLAliasManager;
  * @author zhaolaiyuan
  * Date 2022/5/21 10:56
  **/
-public class HalfFinalDefinition implements SQLFinalDefinition {
+public class HalfBlueprint implements SQLBlueprint {
 
-    public static final HalfFinalDefinition instance = new HalfFinalDefinition();
+    public static final HalfBlueprint instance = new HalfBlueprint();
 
     @Override
     public Definition forAnalyze() {
@@ -32,7 +31,7 @@ public class HalfFinalDefinition implements SQLFinalDefinition {
         return null;
     }
 
-    private HalfFinalDefinition() {}
+    private HalfBlueprint() {}
 
     @Override
     public SQLAliasManager getAliasManager() {

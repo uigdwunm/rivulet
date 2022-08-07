@@ -1,7 +1,6 @@
 package zly.rivulet.mysql.runparser.statement.operate;
 
-import zly.rivulet.base.utils.FormatCollector;
-import zly.rivulet.base.utils.StatementCollector;
+import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.sql.definition.query.operate.OrOperateDefinition;
 import zly.rivulet.sql.runparser.SqlStatementFactory;
 
@@ -12,9 +11,7 @@ public class OrOperateStatement implements OperateStatement {
 
     private final List<OperateStatement> subOperateList;
 
-    private static final String OR_CONNECTOR = " OR ";
-
-    private static final String FORMAT_OR_CONNECTOR = "OR ";
+    public static final String OR_CONNECTOR = "OR ";
 
     public OrOperateStatement(List<OperateStatement> subOperateList) {
         this.subOperateList = subOperateList;
@@ -30,27 +27,9 @@ public class OrOperateStatement implements OperateStatement {
             } else {
                 operateStatement.collectStatement(collector);
             }
+            collector.space();
         }
 
-    }
-
-    @Override
-    public void formatGetStatement(FormatCollector collector) {
-        for (OperateStatement operateStatement : collector.createAfterLineConnectorJoiner(FORMAT_OR_CONNECTOR, subOperateList)) {
-            if (operateStatement instanceof AndOperateStatement || operateStatement instanceof OrOperateStatement) {
-                collector.leftBracketLine();
-                collector.tab();
-                operateStatement.formatGetStatement(collector);
-                collector.returnTab();
-                collector.rightBracketLine();
-            } else {
-                operateStatement.formatGetStatement(collector);
-            }
-        }
-    }
-
-    public List<OperateStatement> getSubOperateList() {
-        return subOperateList;
     }
 
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {

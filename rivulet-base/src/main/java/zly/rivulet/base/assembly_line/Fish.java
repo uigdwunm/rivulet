@@ -1,6 +1,6 @@
-package zly.rivulet.base.runparser;
+package zly.rivulet.base.assembly_line;
 
-import zly.rivulet.base.runparser.statement.Statement;
+import zly.rivulet.base.assembly_line.statement.Statement;
 
 /**
  * Description Statement汇总的一个对象，会有额外信息，我起不出名字了

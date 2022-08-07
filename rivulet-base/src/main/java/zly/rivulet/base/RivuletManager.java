@@ -1,15 +1,18 @@
 package zly.rivulet.base;
 
 import zly.rivulet.base.analyzer.Analyzer;
+import zly.rivulet.base.assembly_line.AssemblyLine;
+import zly.rivulet.base.assembly_line.Fish;
+import zly.rivulet.base.assembly_line.param_manager.ForTestParamManager;
+import zly.rivulet.base.assembly_line.param_manager.ParamManager;
+import zly.rivulet.base.assembly_line.param_manager.SimpleParamManager;
 import zly.rivulet.base.convertor.ConvertorManager;
-import zly.rivulet.base.definition.FinalDefinition;
+import zly.rivulet.base.definition.Blueprint;
+import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.exception.ParseException;
 import zly.rivulet.base.executor.Executor;
 import zly.rivulet.base.preparser.PreParser;
 import zly.rivulet.base.preparser.param.ParamDefinitionManager;
-import zly.rivulet.base.runparser.Fish;
-import zly.rivulet.base.runparser.RuntimeParser;
-import zly.rivulet.base.runparser.param_manager.ParamManager;
 import zly.rivulet.base.warehouse.WarehouseManager;
 
 import java.lang.reflect.Method;
@@ -20,7 +23,7 @@ public abstract class RivuletManager {
 
     private final PreParser preParser;
 
-    private final RuntimeParser runtimeParser;
+    private final AssemblyLine assemblyLine;
 
     private final Analyzer analyzer;
 
@@ -32,10 +35,10 @@ public abstract class RivuletManager {
 
     private final WarehouseManager warehouseManager;
 
-    private final Map<Method, FinalDefinition> mapperMethod_FinalDefinition_Map = new ConcurrentHashMap<>();
+    private final Map<Method, Blueprint> mapperMethod_FinalDefinition_Map = new ConcurrentHashMap<>();
 
-    protected RivuletManager(RuntimeParser runtimeParser, Analyzer analyzer, Executor executor, RivuletProperties configProperties, ConvertorManager convertorManager, WarehouseManager warehouseManager, PreParser preParser) {
-        this.runtimeParser = runtimeParser;
+    protected RivuletManager(AssemblyLine assemblyLine, Analyzer analyzer, Executor executor, RivuletProperties configProperties, ConvertorManager convertorManager, WarehouseManager warehouseManager, PreParser preParser) {
+        this.assemblyLine = assemblyLine;
         this.analyzer = analyzer;
         this.executor = executor;
         this.configProperties = configProperties;
@@ -62,36 +65,39 @@ public abstract class RivuletManager {
             Method method = entry.getValue();
 
             // 解析definition
-            FinalDefinition finalDefinition = preParser.parse(key);
-            ParamDefinitionManager paramDefinitionManager = finalDefinition.getParamDefinitionManager();
+            Blueprint blueprint = preParser.parse(key);
+            ParamDefinitionManager paramDefinitionManager = blueprint.getParamDefinitionManager();
             paramDefinitionManager.registerMethod(method);
 
-            mapperMethod_FinalDefinition_Map.put(method, finalDefinition);
+            mapperMethod_FinalDefinition_Map.put(method, blueprint);
         }
     }
 
     public Object exec(Method proxyMethod, Object[] args) {
-        FinalDefinition finalDefinition = mapperMethod_FinalDefinition_Map.get(proxyMethod);
-        if (finalDefinition == null) {
+        Blueprint blueprint = mapperMethod_FinalDefinition_Map.get(proxyMethod);
+        if (blueprint == null) {
             // 没有预先定义方法
             throw ParseException.undefinedMethod();
         }
-        ParamDefinitionManager paramDefinitionManager = finalDefinition.getParamDefinitionManager();
+        ParamDefinitionManager paramDefinitionManager = blueprint.getParamDefinitionManager();
         ParamManager paramManager = paramDefinitionManager.getParamManager(proxyMethod, args);
 
-        Fish fish = runtimeParser.parse(finalDefinition, paramManager);
+        Fish fish = assemblyLine.generate(blueprint, paramManager);
         fish = analyzer.runTimeAnalyze(fish);
 
-        return executor.queryOne(fish, finalDefinition.getAssigner());
+        return executor.queryOne(fish, blueprint.getAssigner());
     }
 
-//    public Fish exec(WholeDesc wholeDesc, Map<String, Object> params) {
-////        TestParamDefinitionManager testParamDefinitionManager = new TestParamDefinitionManager();
-////        FinalDefinition finalDefinition = preParser.parse(wholeDesc, testParamDefinitionManager);
-////
-////        ParamManager paramManager = testParamDefinitionManager.getParamManager(null);
-//
-//        return runtimeParser.parse(finalDefinition, paramManager);
-//    }
+    public Fish exec(WholeDesc wholeDesc, Map<String, Object> params) {
+        Blueprint blueprint = preParser.parse(wholeDesc);
 
+        SimpleParamManager simpleParamManager = new SimpleParamManager(params);
+        return assemblyLine.generate(blueprint, simpleParamManager);
+    }
+
+    public Fish test(WholeDesc wholeDesc) {
+        Blueprint blueprint = preParser.parse(wholeDesc);
+
+        return assemblyLine.generate(blueprint, new ForTestParamManager());
+    }
 }

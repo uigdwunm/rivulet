@@ -1,9 +1,7 @@
 package zly.rivulet.mysql.runparser;
 
-import zly.rivulet.base.runparser.Fish;
-import zly.rivulet.base.runparser.param_manager.ParamManager;
-import zly.rivulet.base.runparser.statement.Statement;
-import zly.rivulet.sql.runparser.SqlStatementFactory;
+import zly.rivulet.base.assembly_line.Fish;
+import zly.rivulet.base.assembly_line.statement.Statement;
 
 public class MySQLFish implements Fish {
 

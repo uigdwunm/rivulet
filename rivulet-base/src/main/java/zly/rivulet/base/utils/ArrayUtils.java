@@ -3,6 +3,9 @@ package zly.rivulet.base.utils;
 import zly.rivulet.base.definition.param.ParamDefinition;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Function;
 
 public class ArrayUtils {
@@ -59,5 +62,11 @@ public class ArrayUtils {
             return 0;
         }
         return arr.length;
+    }
+
+    public static <T> Set<T> asSet(T ... elements) {
+        HashSet<T> set = new HashSet<>(elements.length);
+        Collections.addAll(set, elements);
+        return set;
     }
 }

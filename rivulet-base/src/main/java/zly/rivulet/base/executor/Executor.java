@@ -1,7 +1,7 @@
 package zly.rivulet.base.executor;
 
 import zly.rivulet.base.assigner.Assigner;
-import zly.rivulet.base.runparser.Fish;
+import zly.rivulet.base.assembly_line.Fish;
 
 import java.util.stream.Stream;
 

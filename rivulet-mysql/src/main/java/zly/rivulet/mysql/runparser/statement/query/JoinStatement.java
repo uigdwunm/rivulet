@@ -1,8 +1,7 @@
 package zly.rivulet.mysql.runparser.statement.query;
 
-import zly.rivulet.base.utils.FormatCollector;
-import zly.rivulet.base.utils.StatementCollector;
 import zly.rivulet.base.utils.StringUtil;
+import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.runparser.statement.QueryFromStatement;
 import zly.rivulet.mysql.runparser.statement.operate.OperateStatement;
 import zly.rivulet.sql.definition.query.join.JoinType;
@@ -60,25 +59,6 @@ public class JoinStatement implements SqlStatement {
             collector.append(ON);
             operateStatement.collectStatement(collector);
         }
-    }
-
-    @Override
-    public void formatGetStatement(FormatCollector collector) {
-        collector.append(this.joinType.getPrefix()).space();
-        this.queryFrom.singleFormatGetStatement(collector);
-        String alias = this.alias;
-        if (StringUtil.isNotBlank(alias)) {
-            collector.append(AS).append(alias);
-        }
-        OperateStatement operateStatement = this.operateStatement;
-        if (operateStatement != null) {
-            collector.append(ON);
-            collector.line();
-            collector.tab();
-            operateStatement.formatGetStatement(collector);
-            collector.returnTab();
-        }
-
     }
 
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {

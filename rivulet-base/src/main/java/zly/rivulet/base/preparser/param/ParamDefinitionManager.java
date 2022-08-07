@@ -8,9 +8,9 @@ import zly.rivulet.base.describer.param.StandardParam;
 import zly.rivulet.base.describer.param.StaticParam;
 import zly.rivulet.base.exception.ParamDefineException;
 import zly.rivulet.base.exception.UnbelievableException;
-import zly.rivulet.base.runparser.param_manager.LazyParamManager;
-import zly.rivulet.base.runparser.param_manager.ParamManager;
-import zly.rivulet.base.runparser.param_manager.SimpleParamManager;
+import zly.rivulet.base.assembly_line.param_manager.LazyParamManager;
+import zly.rivulet.base.assembly_line.param_manager.ParamManager;
+import zly.rivulet.base.assembly_line.param_manager.SimpleParamManager;
 import zly.rivulet.base.utils.ArrayUtils;
 import zly.rivulet.base.utils.StringUtil;
 

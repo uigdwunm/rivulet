@@ -1,7 +1,6 @@
 package zly.rivulet.mysql.runparser.statement;
 
-import zly.rivulet.base.utils.FormatCollector;
-import zly.rivulet.base.utils.StatementCollector;
+import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.definer.MySQLModelMeta;
 import zly.rivulet.sql.runparser.SqlStatementFactory;
 
@@ -19,11 +18,6 @@ public class ModelFromStatement implements QueryFromStatement {
     @Override
     public void collectStatement(StatementCollector collector) {
         collector.append(tableName);
-    }
-
-    @Override
-    public void formatGetStatement(FormatCollector formatCollector) {
-        formatCollector.append(tableName);
     }
 
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {

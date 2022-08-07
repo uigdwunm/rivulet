@@ -1,5 +1,7 @@
 package zly.rivulet.base.exception;
 
+import zly.rivulet.base.definition.param.ParamDefinition;
+
 public class ParseException extends RuntimeException {
 
     private ParseException(String msg) {
@@ -20,5 +22,9 @@ public class ParseException extends RuntimeException {
 
     public static ParseException newStatementFail(Throwable e) {
         return new ParseException("实例化statement失败", e);
+    }
+
+    public static ParseException errorParamType(ParamDefinition paramDefinition, Object param) {
+        return new ParseException(String.format("错误的参数类型, paramDefinition=%s, param=%s", paramDefinition.getOriginDesc(), param));
     }
 }

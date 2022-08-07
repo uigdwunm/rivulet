@@ -1,6 +1,6 @@
 package zly.rivulet.sql.runparser;
 
-import zly.rivulet.base.runparser.param_manager.ParamManager;
+import zly.rivulet.base.assembly_line.param_manager.ParamManager;
 import zly.rivulet.sql.preparser.SQLAliasManager;
 
 public class SqlRunParseHelper {
@@ -9,10 +9,11 @@ public class SqlRunParseHelper {
 
     private final ParamManager paramManager;
 
-    private SQLAliasManager aliasManager;
+    private final SQLAliasManager aliasManager;
 
-    public SqlRunParseHelper(ParamManager paramManager) {
+    public SqlRunParseHelper(ParamManager paramManager, SQLAliasManager aliasManager) {
         this.paramManager = paramManager;
+        this.aliasManager = aliasManager;
     }
 
     public int getLength() {
@@ -29,9 +30,5 @@ public class SqlRunParseHelper {
 
     public SQLAliasManager getAliasManager() {
         return aliasManager;
-    }
-
-    public void setAliasManager(SQLAliasManager aliasManager) {
-        this.aliasManager = aliasManager;
     }
 }

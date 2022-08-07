@@ -1,10 +1,7 @@
 package zly.rivulet.mysql.runparser.statement.query;
 
-import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.utils.CollectionUtils;
-import zly.rivulet.base.utils.Constant;
-import zly.rivulet.base.utils.FormatCollector;
-import zly.rivulet.base.utils.StatementCollector;
+import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.runparser.statement.QueryFromStatement;
 import zly.rivulet.sql.definition.query.main.FromDefinition;
 import zly.rivulet.sql.preparser.SQLAliasManager;
@@ -46,22 +43,6 @@ public class FromStatement implements SqlStatement {
         for (JoinStatement joinStatement : collector.createJoiner(" ", this.joinStatementList)) {
             joinStatement.collectStatement(collector);
         }
-    }
-
-    @Override
-    public void formatGetStatement(FormatCollector collector) {
-        collector.append(FROM);
-        this.mainFrom.formatGetStatement(collector);
-        collector.space().append(this.mainFromAlias);
-
-        if (CollectionUtils.isEmpty(this.joinStatementList)) {
-            return;
-        }
-        collector.line();
-        for (JoinStatement joinStatement : collector.createLineJoiner(this.joinStatementList)) {
-            joinStatement.formatGetStatement(collector);
-        }
-
     }
 
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {

@@ -14,14 +14,13 @@ import zly.rivulet.sql.describer.query.condition.Condition;
 import zly.rivulet.sql.describer.query.condition.ConditionContainer;
 import zly.rivulet.sql.describer.query.desc.OrderBy;
 import zly.rivulet.sql.preparser.SQLAliasManager;
-import zly.rivulet.sql.preparser.SqlParamDefinitionManager;
 import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
 import zly.rivulet.sql.preparser.helper.node.QueryProxyNode;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SqlQueryDefinition implements SQLFinalDefinition, QueryFromMeta, SQLSingleValueElementDefinition {
+public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingleValueElementDefinition {
 
     private final SqlQueryMetaDesc<?, ?> metaDesc;
 
