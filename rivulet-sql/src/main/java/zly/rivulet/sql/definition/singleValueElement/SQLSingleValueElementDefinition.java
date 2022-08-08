@@ -1,7 +1,6 @@
 package zly.rivulet.sql.definition.singleValueElement;
 
 import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
-import zly.rivulet.sql.preparser.SQLAliasManager;
 
 /**
  * Description 单值元素的定义

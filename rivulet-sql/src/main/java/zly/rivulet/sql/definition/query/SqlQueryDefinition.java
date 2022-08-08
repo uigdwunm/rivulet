@@ -1,7 +1,7 @@
 package zly.rivulet.sql.definition.query;
 
 import zly.rivulet.base.definition.AbstractDefinition;
-import zly.rivulet.base.preparser.param.ParamDefinitionManager;
+import zly.rivulet.base.parser.param.ParamDefinitionManager;
 import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.describer.field.FieldMapping;
@@ -13,9 +13,9 @@ import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.query.condition.Condition;
 import zly.rivulet.sql.describer.query.condition.ConditionContainer;
 import zly.rivulet.sql.describer.query.desc.OrderBy;
-import zly.rivulet.sql.preparser.SQLAliasManager;
-import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
-import zly.rivulet.sql.preparser.helper.node.QueryProxyNode;
+import zly.rivulet.sql.parser.SQLAliasManager;
+import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
+import zly.rivulet.sql.parser.node.QueryProxyNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +54,7 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
         this.metaDesc = metaDesc;
     }
 
-    public SqlQueryDefinition(SqlPreParseHelper sqlPreParseHelper, WholeDesc wholeDesc) {
+    public SqlQueryDefinition(SqlParserPortableToolbox sqlPreParseHelper, WholeDesc wholeDesc) {
         SqlQueryMetaDesc<?, ?> metaDesc = (SqlQueryMetaDesc<?, ?>) wholeDesc;
         QueryProxyNode queryProxyNode = new QueryProxyNode(sqlPreParseHelper, metaDesc);
         sqlPreParseHelper.setCurrNode(queryProxyNode);

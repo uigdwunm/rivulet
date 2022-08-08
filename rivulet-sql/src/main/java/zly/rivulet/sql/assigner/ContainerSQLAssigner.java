@@ -2,10 +2,10 @@ package zly.rivulet.sql.assigner;
 
 import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.utils.View;
-import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
-import zly.rivulet.sql.preparser.helper.node.FromNode;
-import zly.rivulet.sql.preparser.helper.node.ModelProxyNode;
-import zly.rivulet.sql.preparser.helper.node.QueryProxyNode;
+import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
+import zly.rivulet.sql.parser.node.FromNode;
+import zly.rivulet.sql.parser.node.ModelProxyNode;
+import zly.rivulet.sql.parser.node.QueryProxyNode;
 
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
@@ -19,7 +19,7 @@ public class ContainerSQLAssigner extends SQLAssigner {
     private int size = 0;
 
     public ContainerSQLAssigner(
-        SqlPreParseHelper sqlPreParseHelper,
+        SqlParserPortableToolbox sqlPreParseHelper,
         QueryProxyNode queryProxyNode,
         int indexStart
     ) {

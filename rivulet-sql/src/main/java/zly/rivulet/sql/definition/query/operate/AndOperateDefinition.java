@@ -5,7 +5,7 @@ import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.sql.describer.query.condition.Condition;
 import zly.rivulet.sql.describer.query.condition.ConditionContainer;
 import zly.rivulet.sql.describer.query.condition.JoinConditionContainer;
-import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
+import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ public class AndOperateDefinition extends OperateDefinition {
 
     private final ArrayList<OperateDefinition> operateDefinitionList = new ArrayList<>();
 
-    public AndOperateDefinition(SqlPreParseHelper sqlPreParseHelper, Condition<?, ?> condition) {
+    public AndOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
         super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamDefinitionManager());
         List<OperateDefinition> operateDefinitionList = this.operateDefinitionList;
 

@@ -4,7 +4,7 @@ import zly.rivulet.base.definition.AbstractContainerDefinition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.sql.definition.query.operate.OperateDefinition;
 import zly.rivulet.sql.describer.query.condition.ConditionContainer;
-import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
+import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 public class WhereDefinition extends AbstractContainerDefinition {
 
@@ -15,7 +15,7 @@ public class WhereDefinition extends AbstractContainerDefinition {
         this.operateDefinition = operateDefinition;
     }
 
-    public WhereDefinition(SqlPreParseHelper sqlPreParseHelper, ConditionContainer<?, ?> whereConditionContainer) {
+    public WhereDefinition(SqlParserPortableToolbox sqlPreParseHelper, ConditionContainer<?, ?> whereConditionContainer) {
         super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamDefinitionManager());
         this.operateDefinition = whereConditionContainer.getOperate().createDefinition(sqlPreParseHelper, whereConditionContainer);
     }

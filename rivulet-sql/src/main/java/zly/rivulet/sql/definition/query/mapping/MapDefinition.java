@@ -4,18 +4,18 @@ import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
 import zly.rivulet.base.describer.field.SelectMapping;
 import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.base.preparser.param.ParamDefinitionManager;
+import zly.rivulet.base.parser.param.ParamDefinitionManager;
 import zly.rivulet.sql.definition.field.FieldDefinition;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
 import zly.rivulet.sql.describer.function.MFunctionDesc;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.query.desc.Mapping;
-import zly.rivulet.sql.preparser.SQLAliasManager;
-import zly.rivulet.sql.preparser.SqlPreParser;
-import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
-import zly.rivulet.sql.preparser.helper.node.FieldProxyNode;
-import zly.rivulet.sql.preparser.helper.node.QueryProxyNode;
+import zly.rivulet.sql.parser.SQLAliasManager;
+import zly.rivulet.sql.parser.SqlPreParser;
+import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
+import zly.rivulet.sql.parser.node.FieldProxyNode;
+import zly.rivulet.sql.parser.node.QueryProxyNode;
 
 public class MapDefinition implements SQLSingleValueElementDefinition {
 
@@ -39,7 +39,7 @@ public class MapDefinition implements SQLSingleValueElementDefinition {
         this.aliasFlag = aliasFlag;
     }
 
-    public MapDefinition(SqlPreParseHelper sqlPreParseHelper, Mapping.Item<?, ?, ?> item, FieldDefinition fieldDefinition) {
+    public MapDefinition(SqlParserPortableToolbox sqlPreParseHelper, Mapping.Item<?, ?, ?> item, FieldDefinition fieldDefinition) {
         this.valueDefinition = fieldDefinition;
         this.selectField = item.getSelectField();
         QueryProxyNode currNode = sqlPreParseHelper.getCurrNode();
@@ -49,7 +49,7 @@ public class MapDefinition implements SQLSingleValueElementDefinition {
         this.aliasFlag = aliasFlag;
     }
 
-    public MapDefinition(SqlPreParseHelper sqlPreParseHelper, SqlQueryMetaDesc<?, ?> sqlQueryMetaDesc, SelectMapping<?, ?> selectField) {
+    public MapDefinition(SqlParserPortableToolbox sqlPreParseHelper, SqlQueryMetaDesc<?, ?> sqlQueryMetaDesc, SelectMapping<?, ?> selectField) {
         this.selectField = selectField;
         QueryProxyNode currNode = sqlPreParseHelper.getCurrNode();
         SqlPreParser sqlPreParser = sqlPreParseHelper.getSqlPreParser();
@@ -64,7 +64,7 @@ public class MapDefinition implements SQLSingleValueElementDefinition {
         this.aliasFlag = subQueryNode.getAliasFlag();
     }
 
-    public MapDefinition(SqlPreParseHelper sqlPreParseHelper, Param<?> paramDesc, SelectMapping<?, ?> selectField) {
+    public MapDefinition(SqlParserPortableToolbox sqlPreParseHelper, Param<?> paramDesc, SelectMapping<?, ?> selectField) {
         this.selectField = selectField;
         ParamDefinitionManager paramDefinitionManager = sqlPreParseHelper.getParamDefinitionManager();
         this.valueDefinition = paramDefinitionManager.registerParam(paramDesc);
@@ -72,7 +72,7 @@ public class MapDefinition implements SQLSingleValueElementDefinition {
         this.aliasFlag = SQLAliasManager.createFieldAlias();
     }
 
-    public MapDefinition(SqlPreParseHelper sqlPreParseHelper, MFunctionDesc<?, ?> functionDesc, SelectMapping<?, ?> selectField) {
+    public MapDefinition(SqlParserPortableToolbox sqlPreParseHelper, MFunctionDesc<?, ?> functionDesc, SelectMapping<?, ?> selectField) {
         // TODO
         this.selectField = selectField;
         this.valueDefinition = null;

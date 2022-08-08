@@ -6,10 +6,10 @@ import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.field.FieldDefinition;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
-import zly.rivulet.sql.preparser.SQLAliasManager;
-import zly.rivulet.sql.preparser.helper.node.FieldProxyNode;
-import zly.rivulet.sql.preparser.helper.node.ModelProxyNode;
-import zly.rivulet.sql.preparser.helper.node.QueryProxyNode;
+import zly.rivulet.sql.parser.SQLAliasManager;
+import zly.rivulet.sql.parser.node.FieldProxyNode;
+import zly.rivulet.sql.parser.node.ModelProxyNode;
+import zly.rivulet.sql.parser.node.QueryProxyNode;
 
 import java.lang.reflect.Field;
 import java.sql.ResultSet;

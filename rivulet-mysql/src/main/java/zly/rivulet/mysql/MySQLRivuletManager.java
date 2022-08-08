@@ -4,8 +4,8 @@ import zly.rivulet.base.RivuletManager;
 import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.warehouse.WarehouseManager;
 import zly.rivulet.mysql.definer.MySQLDefiner;
-import zly.rivulet.mysql.runparser.MysqlAssemblyLine;
-import zly.rivulet.sql.preparser.SqlPreParser;
+import zly.rivulet.mysql.assembly_line.MysqlAssemblyLine;
+import zly.rivulet.sql.parser.SqlPreParser;
 
 public class MySQLRivuletManager extends RivuletManager {
 

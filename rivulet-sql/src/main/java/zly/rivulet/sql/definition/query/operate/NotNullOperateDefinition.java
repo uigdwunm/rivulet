@@ -4,17 +4,17 @@ import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefiniti
 import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.sql.describer.query.condition.Condition;
 import zly.rivulet.sql.describer.query.condition.ConditionElement;
-import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
+import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 public class NotNullOperateDefinition extends OperateDefinition {
 
     private SingleValueElementDefinition elementDesc;
 
-    public NotNullOperateDefinition(SqlPreParseHelper sqlPreParseHelper, Condition<?, ?> condition) {
+    public NotNullOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
         this(sqlPreParseHelper, (ConditionElement<?, ?>) condition);
     }
 
-    private NotNullOperateDefinition(SqlPreParseHelper sqlPreParseHelper, ConditionElement<?, ?> condition) {
+    private NotNullOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, ConditionElement<?, ?> condition) {
         super(condition.getCheckCondition(), sqlPreParseHelper.getParamDefinitionManager());
         SingleValueElementDesc<?, ?> elementDesc = condition.getLeftFieldMapped();
 

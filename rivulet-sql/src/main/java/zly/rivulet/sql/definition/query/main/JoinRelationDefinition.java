@@ -8,10 +8,10 @@ import zly.rivulet.sql.definition.query.join.JoinType;
 import zly.rivulet.sql.definition.query.operate.OperateDefinition;
 import zly.rivulet.sql.describer.join.ComplexDescriber;
 import zly.rivulet.sql.describer.query.condition.JoinConditionContainer;
-import zly.rivulet.sql.preparser.SQLAliasManager;
-import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
-import zly.rivulet.sql.preparser.helper.node.FromNode;
-import zly.rivulet.sql.preparser.helper.node.QueryProxyNode;
+import zly.rivulet.sql.parser.SQLAliasManager;
+import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
+import zly.rivulet.sql.parser.node.FromNode;
+import zly.rivulet.sql.parser.node.QueryProxyNode;
 
 public class JoinRelationDefinition extends AbstractDefinition {
 
@@ -23,7 +23,7 @@ public class JoinRelationDefinition extends AbstractDefinition {
 
     private JoinType joinType;
 
-    public JoinRelationDefinition(SqlPreParseHelper sqlPreParseHelper, ComplexDescriber.Relation<?> desc) {
+    public JoinRelationDefinition(SqlParserPortableToolbox sqlPreParseHelper, ComplexDescriber.Relation<?> desc) {
         super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamDefinitionManager());
         QueryProxyNode proxyNode = sqlPreParseHelper.getCurrNode();
         JoinConditionContainer<?, ?> conditionContainer = desc.getConditionContainer();

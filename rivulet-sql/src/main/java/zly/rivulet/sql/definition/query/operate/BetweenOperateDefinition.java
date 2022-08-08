@@ -2,15 +2,15 @@ package zly.rivulet.sql.definition.query.operate;
 
 import zly.rivulet.sql.describer.query.condition.Condition;
 import zly.rivulet.sql.describer.query.condition.ConditionElement;
-import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
+import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 public class BetweenOperateDefinition extends OperateDefinition {
 
-    public BetweenOperateDefinition(SqlPreParseHelper sqlPreParseHelper, Condition<?, ?> condition) {
+    public BetweenOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
         this(sqlPreParseHelper, (ConditionElement<?, ?>) condition);
     }
 
-    public BetweenOperateDefinition(SqlPreParseHelper sqlPreParseHelper, ConditionElement<?, ?> condition) {
+    public BetweenOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, ConditionElement<?, ?> condition) {
         super(condition.getCheckCondition(), sqlPreParseHelper.getParamDefinitionManager());
     }
 

@@ -1,7 +1,7 @@
 package zly.rivulet.base.definition;
 
 import zly.rivulet.base.assigner.Assigner;
-import zly.rivulet.base.preparser.param.ParamDefinitionManager;
+import zly.rivulet.base.parser.param.ParamDefinitionManager;
 
 /**
  * Description 完全信息的Definition，设计图

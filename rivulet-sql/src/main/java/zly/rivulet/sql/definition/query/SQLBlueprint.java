@@ -1,7 +1,7 @@
 package zly.rivulet.sql.definition.query;
 
 import zly.rivulet.base.definition.Blueprint;
-import zly.rivulet.sql.preparser.SQLAliasManager;
+import zly.rivulet.sql.parser.SQLAliasManager;
 
 public interface SQLBlueprint extends Blueprint {
 

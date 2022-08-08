@@ -7,11 +7,11 @@ import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.describer.join.ComplexDescriber;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
-import zly.rivulet.sql.preparser.SQLAliasManager;
-import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
-import zly.rivulet.sql.preparser.helper.node.FromNode;
-import zly.rivulet.sql.preparser.helper.node.ModelProxyNode;
-import zly.rivulet.sql.preparser.helper.node.QueryProxyNode;
+import zly.rivulet.sql.parser.SQLAliasManager;
+import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
+import zly.rivulet.sql.parser.node.FromNode;
+import zly.rivulet.sql.parser.node.ModelProxyNode;
+import zly.rivulet.sql.parser.node.QueryProxyNode;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,7 +24,7 @@ public class FromDefinition extends AbstractDefinition {
 
     private List<JoinRelationDefinition> joinRelations;
 
-    public FromDefinition(SqlPreParseHelper sqlPreParseHelper) {
+    public FromDefinition(SqlParserPortableToolbox sqlPreParseHelper) {
         super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamDefinitionManager());
 
         QueryProxyNode proxyNode = sqlPreParseHelper.getCurrNode();

@@ -2,8 +2,8 @@ package zly.rivulet.sql.definition.query;
 
 import zly.rivulet.base.assigner.Assigner;
 import zly.rivulet.base.definition.Definition;
-import zly.rivulet.base.preparser.param.ParamDefinitionManager;
-import zly.rivulet.sql.preparser.SQLAliasManager;
+import zly.rivulet.base.parser.param.ParamDefinitionManager;
+import zly.rivulet.sql.parser.SQLAliasManager;
 
 /**
  * Description 标识一个未完成的Definition

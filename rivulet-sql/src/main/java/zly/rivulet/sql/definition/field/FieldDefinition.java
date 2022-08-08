@@ -4,7 +4,7 @@ import zly.rivulet.base.definer.FieldMeta;
 import zly.rivulet.base.definer.ModelMeta;
 import zly.rivulet.base.definition.Definition;
 import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
-import zly.rivulet.sql.preparser.SQLAliasManager;
+import zly.rivulet.sql.parser.SQLAliasManager;
 
 public class FieldDefinition implements SQLSingleValueElementDefinition {
 

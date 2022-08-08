@@ -18,8 +18,8 @@ import zly.rivulet.sql.describer.function.MFunctionDesc;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.query.desc.Mapping;
 import zly.rivulet.sql.exception.SQLDescDefineException;
-import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
-import zly.rivulet.sql.preparser.helper.node.QueryProxyNode;
+import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
+import zly.rivulet.sql.parser.node.QueryProxyNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +45,7 @@ public class SelectDefinition extends AbstractContainerDefinition {
 //        super(CheckCondition.IS_TRUE);
 //    }
 
-    public SelectDefinition(SqlPreParseHelper sqlPreParseHelper, FromDefinition fromDefinition, Class<?> selectModel, List<? extends Mapping.Item<?, ?, ?>> mappedItemList) {
+    public SelectDefinition(SqlParserPortableToolbox sqlPreParseHelper, FromDefinition fromDefinition, Class<?> selectModel, List<? extends Mapping.Item<?, ?, ?>> mappedItemList) {
         super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamDefinitionManager());
         this.selectModel = selectModel;
         if (mappedItemList == null || mappedItemList.isEmpty()) {
@@ -73,7 +73,7 @@ public class SelectDefinition extends AbstractContainerDefinition {
         }
     }
 
-    private MapDefinition createMappingDefinition(SqlPreParseHelper sqlPreParseHelper, Mapping.Item<?, ?, ?> item) {
+    private MapDefinition createMappingDefinition(SqlParserPortableToolbox sqlPreParseHelper, Mapping.Item<?, ?, ?> item) {
         SingleValueElementDesc<?, ?> desc = item.getDesc();
         if (desc instanceof FieldMapping) {
             QueryProxyNode currNode = sqlPreParseHelper.getCurrNode();

@@ -7,12 +7,12 @@ import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.field.JoinFieldMapping;
 import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.base.preparser.param.ParamDefinitionManager;
+import zly.rivulet.base.parser.param.ParamDefinitionManager;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
-import zly.rivulet.sql.preparser.SqlPreParser;
-import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
-import zly.rivulet.sql.preparser.helper.node.QueryProxyNode;
+import zly.rivulet.sql.parser.SqlPreParser;
+import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
+import zly.rivulet.sql.parser.node.QueryProxyNode;
 
 public abstract class OperateDefinition extends AbstractDefinition {
     protected OperateDefinition(CheckCondition checkCondition, ParamDefinitionManager paramDefinitionManager) {
@@ -22,7 +22,7 @@ public abstract class OperateDefinition extends AbstractDefinition {
     @Override
     public abstract OperateDefinition forAnalyze();
 
-    protected SingleValueElementDefinition parse(SqlPreParseHelper sqlPreParseHelper, SingleValueElementDesc<?, ?> singleValueElementDesc) {
+    protected SingleValueElementDefinition parse(SqlParserPortableToolbox sqlPreParseHelper, SingleValueElementDesc<?, ?> singleValueElementDesc) {
         QueryProxyNode currNode = sqlPreParseHelper.getCurrNode();
         if (singleValueElementDesc instanceof FieldMapping) {
             FieldMapping<Object, Object> fieldMapping = (FieldMapping<Object, Object>) singleValueElementDesc;

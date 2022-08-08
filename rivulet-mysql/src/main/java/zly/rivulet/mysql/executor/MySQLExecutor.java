@@ -5,7 +5,7 @@ import zly.rivulet.base.assigner.Assigner;
 import zly.rivulet.base.executor.Executor;
 import zly.rivulet.base.utils.collector.FixedLengthStatementCollector;
 import zly.rivulet.base.utils.collector.StatementCollector;
-import zly.rivulet.mysql.runparser.MySQLFish;
+import zly.rivulet.mysql.assembly_line.MySQLFish;
 import zly.rivulet.sql.assigner.SQLAssigner;
 
 import javax.sql.DataSource;

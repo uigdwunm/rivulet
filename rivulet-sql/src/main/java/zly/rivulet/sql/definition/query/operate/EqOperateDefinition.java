@@ -4,7 +4,7 @@ import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefiniti
 import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.sql.describer.query.condition.Condition;
 import zly.rivulet.sql.describer.query.condition.ConditionElement;
-import zly.rivulet.sql.preparser.helper.SqlPreParseHelper;
+import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 public class EqOperateDefinition extends OperateDefinition {
 
@@ -12,11 +12,11 @@ public class EqOperateDefinition extends OperateDefinition {
 
     private SingleValueElementDefinition rightElement;
 
-    public EqOperateDefinition(SqlPreParseHelper sqlPreParseHelper, Condition<?, ?> condition) {
+    public EqOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
         this(sqlPreParseHelper, (ConditionElement<?, ?>) condition);
     }
 
-    public EqOperateDefinition(SqlPreParseHelper sqlPreParseHelper, ConditionElement<?, ?> condition) {
+    public EqOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, ConditionElement<?, ?> condition) {
         super(condition.getCheckCondition(), sqlPreParseHelper.getParamDefinitionManager());
         SingleValueElementDesc<?, ?> leftFieldMapped = condition.getLeftFieldMapped();
         SingleValueElementDesc<?, ?> rightFieldMapped = condition.getRightFieldMappeds()[0];
