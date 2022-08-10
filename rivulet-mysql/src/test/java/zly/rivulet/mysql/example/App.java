@@ -32,7 +32,8 @@ public class App {
         MySQLRivuletManager rivuletManager = new MySQLRivuletManager(
             new MySQLRivuletProperties(),
             new ConvertorManager(),
-            defaultWarehouseManager
+            defaultWarehouseManager,
+            null
         );
 
 

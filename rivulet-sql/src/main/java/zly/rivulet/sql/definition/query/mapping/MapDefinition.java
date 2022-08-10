@@ -12,7 +12,7 @@ import zly.rivulet.sql.describer.function.MFunctionDesc;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.query.desc.Mapping;
 import zly.rivulet.sql.parser.SQLAliasManager;
-import zly.rivulet.sql.parser.SqlPreParser;
+import zly.rivulet.sql.parser.SqlParser;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 import zly.rivulet.sql.parser.node.FieldProxyNode;
 import zly.rivulet.sql.parser.node.QueryProxyNode;
@@ -52,7 +52,7 @@ public class MapDefinition implements SQLSingleValueElementDefinition {
     public MapDefinition(SqlParserPortableToolbox sqlPreParseHelper, SqlQueryMetaDesc<?, ?> sqlQueryMetaDesc, SelectMapping<?, ?> selectField) {
         this.selectField = selectField;
         QueryProxyNode currNode = sqlPreParseHelper.getCurrNode();
-        SqlPreParser sqlPreParser = sqlPreParseHelper.getSqlPreParser();
+        SqlParser sqlPreParser = sqlPreParseHelper.getSqlPreParser();
         SqlQueryDefinition sqlQueryDefinition = (SqlQueryDefinition) sqlPreParser.parse(sqlQueryMetaDesc, sqlPreParseHelper);
         QueryProxyNode subQueryNode = sqlPreParseHelper.getCurrNode();
         currNode.addSelectNode(subQueryNode, sqlQueryDefinition);

@@ -3,7 +3,7 @@ package zly.rivulet.base.parser;
 import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.describer.WholeDesc;
 
-public interface PreParser {
+public interface Parser {
 
     /**
      * Description 预解析，传入自定义的描述语句，和绑定的方法

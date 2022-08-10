@@ -27,7 +27,7 @@ import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.exception.SQLDescDefineException;
 import zly.rivulet.sql.exception.SQLModelDefineException;
 import zly.rivulet.sql.parser.SQLAliasManager;
-import zly.rivulet.sql.parser.SqlPreParser;
+import zly.rivulet.sql.parser.SqlParser;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 import java.lang.invoke.SerializedLambda;
@@ -118,7 +118,7 @@ public class QueryProxyNode implements FromNode, SelectNode {
     }
 
     public void registerComplexProxyModel(Class<?> clazz) {
-        SqlPreParser sqlPreParser = sqlPreParseHelper.getSqlPreParser();
+        SqlParser sqlPreParser = sqlPreParseHelper.getSqlPreParser();
         SqlDefiner sqlDefiner = sqlPreParser.getSqlDefiner();
         Object o = this.proxyDONewInstance(clazz);
         // 每个字段注入代理对象

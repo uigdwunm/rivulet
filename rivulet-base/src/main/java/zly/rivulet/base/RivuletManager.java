@@ -11,7 +11,7 @@ import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.exception.ParseException;
 import zly.rivulet.base.executor.Executor;
-import zly.rivulet.base.parser.PreParser;
+import zly.rivulet.base.parser.Parser;
 import zly.rivulet.base.parser.param.ParamDefinitionManager;
 import zly.rivulet.base.warehouse.WarehouseManager;
 
@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class RivuletManager {
 
-    private final PreParser preParser;
+    private final Parser parser;
 
     private final AssemblyLine assemblyLine;
 
@@ -37,17 +37,20 @@ public abstract class RivuletManager {
 
     private final Map<Method, Blueprint> mapperMethod_FinalDefinition_Map = new ConcurrentHashMap<>();
 
-    protected RivuletManager(AssemblyLine assemblyLine, Analyzer analyzer, Executor executor, RivuletProperties configProperties, ConvertorManager convertorManager, WarehouseManager warehouseManager, PreParser preParser) {
+    protected RivuletManager(AssemblyLine assemblyLine, Analyzer analyzer, Executor executor, RivuletProperties configProperties, ConvertorManager convertorManager, WarehouseManager warehouseManager, Parser parser) {
         this.assemblyLine = assemblyLine;
         this.analyzer = analyzer;
         this.executor = executor;
         this.configProperties = configProperties;
         this.convertorManager = convertorManager;
         this.warehouseManager = warehouseManager;
-        this.preParser = preParser;
+        this.parser = parser;
 
-        // 预解析
+        // 解析
         this.preParseAll();
+
+        // 预热
+        this.warmUpAll();
     }
 
     /**
@@ -65,11 +68,25 @@ public abstract class RivuletManager {
             Method method = entry.getValue();
 
             // 解析definition
-            Blueprint blueprint = preParser.parse(key);
+            Blueprint blueprint = parser.parse(key);
             ParamDefinitionManager paramDefinitionManager = blueprint.getParamDefinitionManager();
+            // 参数绑定方法
             paramDefinitionManager.registerMethod(method);
 
             mapperMethod_FinalDefinition_Map.put(method, blueprint);
+        }
+    }
+
+    /**
+     * Description 为所有设计图预热
+     * 只会在启动时执行一次
+     *
+     * @author zhaolaiyuan
+     * Date 2022/8/9 8:32
+     **/
+    public void warmUpAll() {
+        for (Blueprint blueprint : mapperMethod_FinalDefinition_Map.values()) {
+            assemblyLine.warmUp(blueprint);
         }
     }
 
@@ -85,18 +102,25 @@ public abstract class RivuletManager {
         Fish fish = assemblyLine.generate(blueprint, paramManager);
         fish = analyzer.runTimeAnalyze(fish);
 
-        return executor.queryOne(fish, blueprint.getAssigner());
+        return executor.query(fish, blueprint.getAssigner());
     }
 
     public Fish exec(WholeDesc wholeDesc, Map<String, Object> params) {
-        Blueprint blueprint = preParser.parse(wholeDesc);
+        Blueprint blueprint = parser.parse(wholeDesc);
 
         SimpleParamManager simpleParamManager = new SimpleParamManager(params);
         return assemblyLine.generate(blueprint, simpleParamManager);
     }
 
+    public Object exec(Blueprint blueprint, ParamManager paramManager) {
+        Fish fish = assemblyLine.generate(blueprint, paramManager);
+        fish = analyzer.runTimeAnalyze(fish);
+
+        return executor.queryList(fish, blueprint.getAssigner());
+    }
+
     public Fish test(WholeDesc wholeDesc) {
-        Blueprint blueprint = preParser.parse(wholeDesc);
+        Blueprint blueprint = parser.parse(wholeDesc);
 
         return assemblyLine.generate(blueprint, new ForTestParamManager());
     }

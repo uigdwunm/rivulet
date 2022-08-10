@@ -4,12 +4,12 @@ import zly.rivulet.base.parser.toolbox.ParserPortableToolbox;
 import zly.rivulet.base.parser.param.ParamDefinitionManager;
 import zly.rivulet.sql.SqlRivuletProperties;
 import zly.rivulet.sql.parser.SqlParamDefinitionManager;
-import zly.rivulet.sql.parser.SqlPreParser;
+import zly.rivulet.sql.parser.SqlParser;
 import zly.rivulet.sql.parser.node.QueryProxyNode;
 
 public class SqlParserPortableToolbox implements ParserPortableToolbox {
 
-    private final SqlPreParser sqlPreParser;
+    private final SqlParser sqlPreParser;
 
     private final ParamDefinitionManager paramDefinitionManager;
 
@@ -17,13 +17,13 @@ public class SqlParserPortableToolbox implements ParserPortableToolbox {
 
     private final SqlRivuletProperties configProperties;
 
-    public SqlParserPortableToolbox(SqlPreParser sqlPreParser) {
+    public SqlParserPortableToolbox(SqlParser sqlPreParser) {
         this.sqlPreParser = sqlPreParser;
         this.paramDefinitionManager = new SqlParamDefinitionManager(sqlPreParser.getConvertorManager());
         this.configProperties = sqlPreParser.getConfigProperties();
     }
 
-    public SqlPreParser getSqlPreParser() {
+    public SqlParser getSqlPreParser() {
         return sqlPreParser;
     }
 

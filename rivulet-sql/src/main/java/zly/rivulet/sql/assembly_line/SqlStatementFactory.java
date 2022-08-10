@@ -2,8 +2,8 @@ package zly.rivulet.sql.assembly_line;
 
 import zly.rivulet.base.utils.RelationSwitch;
 import zly.rivulet.sql.assembly_line.statement.SqlStatement;
-import zly.rivulet.sql.assembly_line.toolbox.SqlAssemblyLinePortableToolbox;
-import zly.rivulet.sql.assembly_line.toolbox.SqlAssemblyLineWarmUpToolbox;
+import zly.rivulet.sql.assembly_line.toolbox.AssemblyLinePortableToolbox;
+import zly.rivulet.sql.assembly_line.toolbox.WarmUpToolbox;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,16 +29,16 @@ public class SqlStatementFactory {
         DEFINITION_RUN_CREATOR_MAP.put(clazz, statementRunCreator);
     }
 
-    public SqlStatement getOrCreate(Object definition, SqlAssemblyLinePortableToolbox sqlAssemblyLinePortableToolbox) {
+    public SqlStatement getOrCreate(Object definition, AssemblyLinePortableToolbox assemblyLinePortableToolbox) {
         SqlStatement statement = statementCache.get(definition);
         if (statement == null) {
             StatementRunCreator statementRunCreator = DEFINITION_RUN_CREATOR_MAP.get(definition.getClass());
-            statement = statementRunCreator.create(definition, sqlAssemblyLinePortableToolbox);
+            statement = statementRunCreator.create(definition, assemblyLinePortableToolbox);
         }
         return statement;
     }
 
-    public SqlStatement init(Object definition, RelationSwitch soleFlag, SqlAssemblyLineWarmUpToolbox initHelper) {
+    public SqlStatement init(Object definition, RelationSwitch soleFlag, WarmUpToolbox initHelper) {
         StatementInitCreator statementInitCreator = DEFINITION_INIT_CREATOR_MAP.get(definition.getClass());
         SqlStatement sqlStatement = statementInitCreator.create(definition, soleFlag, initHelper);
         if (soleFlag.isEnable()) {
@@ -52,11 +52,11 @@ public class SqlStatementFactory {
 
     @FunctionalInterface
     public interface StatementInitCreator {
-        SqlStatement create(Object definition, RelationSwitch soleFlag, SqlAssemblyLineWarmUpToolbox helper);
+        SqlStatement create(Object definition, RelationSwitch soleFlag, WarmUpToolbox helper);
     }
 
     @FunctionalInterface
     public interface StatementRunCreator {
-        SqlStatement create(Object definition, SqlAssemblyLinePortableToolbox helper);
+        SqlStatement create(Object definition, AssemblyLinePortableToolbox helper);
     }
 }

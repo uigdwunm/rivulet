@@ -1,11 +1,12 @@
 package zly.rivulet.sql.parser;
 
+import zly.rivulet.base.analyzer.Analyzer;
 import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.exception.DescDefineException;
 import zly.rivulet.base.exception.UnbelievableException;
-import zly.rivulet.base.parser.PreParser;
+import zly.rivulet.base.parser.Parser;
 import zly.rivulet.base.warehouse.WarehouseManager;
 import zly.rivulet.sql.SqlRivuletProperties;
 import zly.rivulet.sql.definer.SqlDefiner;
@@ -17,7 +18,7 @@ import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SqlPreParser implements PreParser {
+public class SqlParser implements Parser {
 
     private final SqlRivuletProperties configProperties;
 
@@ -29,8 +30,11 @@ public class SqlPreParser implements PreParser {
 
     private final Map<String, Blueprint> key_queryDefinition_map = new HashMap<>();
 
-    public SqlPreParser(WarehouseManager warehouseManager, SqlDefiner definer, SqlRivuletProperties configProperties, ConvertorManager convertorManager) {
+    private final Analyzer analyzer;
+
+    public SqlParser(WarehouseManager warehouseManager, SqlDefiner definer, Analyzer analyzer, SqlRivuletProperties configProperties, ConvertorManager convertorManager) {
         this.warehouseManager = warehouseManager;
+        this.analyzer = analyzer;
         this.configProperties = configProperties;
         this.convertorManager = convertorManager;
         this.definer = definer;

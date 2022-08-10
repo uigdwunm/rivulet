@@ -1,12 +1,13 @@
 package zly.rivulet.sql.assembly_line.toolbox;
 
+import zly.rivulet.base.utils.PortableToolbox;
 import zly.rivulet.sql.parser.SQLAliasManager;
 
-public class SqlAssemblyLineWarmUpToolbox {
+public class WarmUpToolbox implements PortableToolbox {
 
     private final SQLAliasManager aliasManager;
 
-    public SqlAssemblyLineWarmUpToolbox(SQLAliasManager aliasManager) {
+    public WarmUpToolbox(SQLAliasManager aliasManager) {
         this.aliasManager = aliasManager;
     }
 

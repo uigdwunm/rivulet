@@ -10,7 +10,7 @@ import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.parser.param.ParamDefinitionManager;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
-import zly.rivulet.sql.parser.SqlPreParser;
+import zly.rivulet.sql.parser.SqlParser;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 import zly.rivulet.sql.parser.node.QueryProxyNode;
 
@@ -31,7 +31,7 @@ public abstract class OperateDefinition extends AbstractDefinition {
             JoinFieldMapping<Object> joinFieldMapping = (JoinFieldMapping<Object>) singleValueElementDesc;
             return currNode.parseField(joinFieldMapping);
         } else if (singleValueElementDesc instanceof SqlQueryMetaDesc) {
-            SqlPreParser sqlPreParser = sqlPreParseHelper.getSqlPreParser();
+            SqlParser sqlPreParser = sqlPreParseHelper.getSqlPreParser();
             SqlQueryDefinition sqlQueryDefinition = (SqlQueryDefinition) sqlPreParser.parse((SqlQueryMetaDesc<?, ?>) singleValueElementDesc, sqlPreParseHelper);
             QueryProxyNode subQueryNode = sqlPreParseHelper.getCurrNode();
             currNode.addConditionSubQueryNode(subQueryNode, sqlQueryDefinition);

@@ -1,9 +1,10 @@
 package zly.rivulet.sql.assembly_line.toolbox;
 
 import zly.rivulet.base.assembly_line.param_manager.ParamManager;
+import zly.rivulet.base.utils.PortableToolbox;
 import zly.rivulet.sql.parser.SQLAliasManager;
 
-public class SqlAssemblyLinePortableToolbox {
+public class AssemblyLinePortableToolbox implements PortableToolbox {
     // sql长度统计
     private int length;
 
@@ -11,7 +12,7 @@ public class SqlAssemblyLinePortableToolbox {
 
     private final SQLAliasManager aliasManager;
 
-    public SqlAssemblyLinePortableToolbox(ParamManager paramManager, SQLAliasManager aliasManager) {
+    public AssemblyLinePortableToolbox(ParamManager paramManager, SQLAliasManager aliasManager) {
         this.paramManager = paramManager;
         this.aliasManager = aliasManager;
     }
