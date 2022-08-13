@@ -2,8 +2,8 @@ package zly.rivulet.mysql.example;
 
 import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.base.assembly_line.Fish;
-import zly.rivulet.base.assembly_line.statement.Statement;
+import zly.rivulet.base.generator.Fish;
+import zly.rivulet.base.generator.statement.Statement;
 import zly.rivulet.base.utils.collector.FixedLengthStatementCollector;
 import zly.rivulet.mysql.util.FormatStatementCollector;
 import zly.rivulet.base.utils.collector.StatementCollector;

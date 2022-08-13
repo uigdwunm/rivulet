@@ -1,6 +1,5 @@
 package zly.rivulet.sql.parser;
 
-import zly.rivulet.base.analyzer.Analyzer;
 import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.describer.WholeDesc;
@@ -30,11 +29,8 @@ public class SqlParser implements Parser {
 
     private final Map<String, Blueprint> key_queryDefinition_map = new HashMap<>();
 
-    private final Analyzer analyzer;
-
-    public SqlParser(WarehouseManager warehouseManager, SqlDefiner definer, Analyzer analyzer, SqlRivuletProperties configProperties, ConvertorManager convertorManager) {
+    public SqlParser(WarehouseManager warehouseManager, SqlDefiner definer, SqlRivuletProperties configProperties, ConvertorManager convertorManager) {
         this.warehouseManager = warehouseManager;
-        this.analyzer = analyzer;
         this.configProperties = configProperties;
         this.convertorManager = convertorManager;
         this.definer = definer;

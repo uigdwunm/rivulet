@@ -1,7 +1,7 @@
 package zly.rivulet.base.executor;
 
 import zly.rivulet.base.assigner.Assigner;
-import zly.rivulet.base.assembly_line.Fish;
+import zly.rivulet.base.generator.Fish;
 
 import java.util.stream.Stream;
 
@@ -20,6 +20,6 @@ public interface Executor {
     /**
      * 增删改
      **/
-    int executeUpdate(Fish fish);
+    Object executeUpdate(Fish fish);
 
 }

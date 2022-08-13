@@ -1,18 +1,18 @@
 package zly.rivulet.base;
 
-import zly.rivulet.base.analyzer.Analyzer;
-import zly.rivulet.base.assembly_line.AssemblyLine;
-import zly.rivulet.base.assembly_line.Fish;
-import zly.rivulet.base.assembly_line.param_manager.ForTestParamManager;
-import zly.rivulet.base.assembly_line.param_manager.ParamManager;
-import zly.rivulet.base.assembly_line.param_manager.SimpleParamManager;
 import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.exception.ParseException;
 import zly.rivulet.base.executor.Executor;
+import zly.rivulet.base.generator.Fish;
+import zly.rivulet.base.generator.Generator;
+import zly.rivulet.base.generator.param_manager.ForTestParamManager;
+import zly.rivulet.base.generator.param_manager.ParamManager;
+import zly.rivulet.base.generator.param_manager.SimpleParamManager;
 import zly.rivulet.base.parser.Parser;
 import zly.rivulet.base.parser.param.ParamDefinitionManager;
+import zly.rivulet.base.pipeline.RunningPipeline;
 import zly.rivulet.base.warehouse.WarehouseManager;
 
 import java.lang.reflect.Method;
@@ -23,11 +23,9 @@ public abstract class RivuletManager {
 
     private final Parser parser;
 
-    private final AssemblyLine assemblyLine;
+    private final Generator generator;
 
-    private final Analyzer analyzer;
-
-    private final Executor executor;
+    private final RunningPipeline runningPipeline;
 
     protected final RivuletProperties configProperties;
 
@@ -37,14 +35,13 @@ public abstract class RivuletManager {
 
     private final Map<Method, Blueprint> mapperMethod_FinalDefinition_Map = new ConcurrentHashMap<>();
 
-    protected RivuletManager(AssemblyLine assemblyLine, Analyzer analyzer, Executor executor, RivuletProperties configProperties, ConvertorManager convertorManager, WarehouseManager warehouseManager, Parser parser) {
-        this.assemblyLine = assemblyLine;
-        this.analyzer = analyzer;
-        this.executor = executor;
+    protected RivuletManager(Parser parser, Generator generator, Executor executor, RivuletProperties configProperties, ConvertorManager convertorManager, WarehouseManager warehouseManager) {
+        this.parser = parser;
+        this.generator = generator;
+        this.runningPipeline = new RunningPipeline(generator, executor);
         this.configProperties = configProperties;
         this.convertorManager = convertorManager;
         this.warehouseManager = warehouseManager;
-        this.parser = parser;
 
         // 解析
         this.preParseAll();
@@ -86,7 +83,7 @@ public abstract class RivuletManager {
      **/
     public void warmUpAll() {
         for (Blueprint blueprint : mapperMethod_FinalDefinition_Map.values()) {
-            assemblyLine.warmUp(blueprint);
+            runningPipeline.warmUp(blueprint);
         }
     }
 
@@ -99,29 +96,19 @@ public abstract class RivuletManager {
         ParamDefinitionManager paramDefinitionManager = blueprint.getParamDefinitionManager();
         ParamManager paramManager = paramDefinitionManager.getParamManager(proxyMethod, args);
 
-        Fish fish = assemblyLine.generate(blueprint, paramManager);
-        fish = analyzer.runTimeAnalyze(fish);
-
-        return executor.query(fish, blueprint.getAssigner());
+        return runningPipeline.go(blueprint, paramManager, proxyMethod.getReturnType());
     }
 
-    public Fish exec(WholeDesc wholeDesc, Map<String, Object> params) {
+    public <T> T exec(WholeDesc wholeDesc, Map<String, Object> params, Class<T> returnType) {
         Blueprint blueprint = parser.parse(wholeDesc);
 
         SimpleParamManager simpleParamManager = new SimpleParamManager(params);
-        return assemblyLine.generate(blueprint, simpleParamManager);
-    }
-
-    public Object exec(Blueprint blueprint, ParamManager paramManager) {
-        Fish fish = assemblyLine.generate(blueprint, paramManager);
-        fish = analyzer.runTimeAnalyze(fish);
-
-        return executor.queryList(fish, blueprint.getAssigner());
+        return (T) runningPipeline.go(blueprint, simpleParamManager, returnType);
     }
 
     public Fish test(WholeDesc wholeDesc) {
         Blueprint blueprint = parser.parse(wholeDesc);
 
-        return assemblyLine.generate(blueprint, new ForTestParamManager());
+        return generator.generate(blueprint, new ForTestParamManager());
     }
 }

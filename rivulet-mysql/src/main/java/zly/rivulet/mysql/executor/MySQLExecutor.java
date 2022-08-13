@@ -1,11 +1,11 @@
 package zly.rivulet.mysql.executor;
 
-import zly.rivulet.base.assembly_line.Fish;
+import zly.rivulet.base.generator.Fish;
 import zly.rivulet.base.assigner.Assigner;
 import zly.rivulet.base.executor.Executor;
 import zly.rivulet.base.utils.collector.FixedLengthStatementCollector;
 import zly.rivulet.base.utils.collector.StatementCollector;
-import zly.rivulet.mysql.assembly_line.MySQLFish;
+import zly.rivulet.mysql.generator.MySQLFish;
 import zly.rivulet.sql.assigner.SQLAssigner;
 
 import javax.sql.DataSource;
@@ -68,7 +68,7 @@ public class MySQLExecutor implements Executor {
     }
 
     @Override
-    public int executeUpdate(Fish fish) {
+    public Object executeUpdate(Fish fish) {
         MySQLFish mySQLFish = (MySQLFish) fish;
         StatementCollector collector = new FixedLengthStatementCollector(mySQLFish.getLength());
         mySQLFish.getStatement().collectStatement(collector);

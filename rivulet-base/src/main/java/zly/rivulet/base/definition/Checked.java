@@ -1,6 +1,6 @@
 package zly.rivulet.base.definition;
 
-import zly.rivulet.base.assembly_line.param_manager.ParamManager;
+import zly.rivulet.base.generator.param_manager.ParamManager;
 
 public interface Checked {
 

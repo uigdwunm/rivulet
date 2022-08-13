@@ -3,8 +3,8 @@ package zly.rivulet.mysql.util;
 import zly.rivulet.base.utils.ArrayUtils;
 import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.collector.StatementCollector;
-import zly.rivulet.mysql.assembly_line.statement.operate.AndOperateStatement;
-import zly.rivulet.mysql.assembly_line.statement.operate.OrOperateStatement;
+import zly.rivulet.mysql.generator.statement.operate.AndOperateStatement;
+import zly.rivulet.mysql.generator.statement.operate.OrOperateStatement;
 import zly.rivulet.sql.definition.query.join.SQLJoinType;
 
 import java.util.*;

@@ -4,7 +4,7 @@ package zly.rivulet.base.definition.checkCondition;
 import zly.rivulet.base.definition.param.ParamDefinition;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.parser.param.ParamDefinitionManager;
-import zly.rivulet.base.assembly_line.param_manager.ParamManager;
+import zly.rivulet.base.generator.param_manager.ParamManager;
 import zly.rivulet.base.utils.StringUtil;
 
 import java.lang.reflect.Array;
