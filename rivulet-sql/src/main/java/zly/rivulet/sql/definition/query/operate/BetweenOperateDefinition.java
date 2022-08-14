@@ -1,7 +1,7 @@
 package zly.rivulet.sql.definition.query.operate;
 
-import zly.rivulet.sql.describer.query.condition.Condition;
-import zly.rivulet.sql.describer.query.condition.ConditionElement;
+import zly.rivulet.sql.describer.condition.Condition;
+import zly.rivulet.sql.describer.condition.ConditionElement;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 public class BetweenOperateDefinition extends OperateDefinition {

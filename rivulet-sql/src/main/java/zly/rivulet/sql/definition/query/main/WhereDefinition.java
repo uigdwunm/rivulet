@@ -3,7 +3,7 @@ package zly.rivulet.sql.definition.query.main;
 import zly.rivulet.base.definition.AbstractContainerDefinition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.sql.definition.query.operate.OperateDefinition;
-import zly.rivulet.sql.describer.query.condition.ConditionContainer;
+import zly.rivulet.sql.describer.condition.ConditionContainer;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 public class WhereDefinition extends AbstractContainerDefinition {

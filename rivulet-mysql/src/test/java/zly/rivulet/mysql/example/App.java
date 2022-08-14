@@ -17,7 +17,7 @@ import zly.rivulet.mysql.example.vo.UserJoinVO;
 import zly.rivulet.mysql.example.vo.UserVO;
 import zly.rivulet.sql.describer.param.SqlParamCheckType;
 import zly.rivulet.sql.describer.query.QueryBuilder;
-import zly.rivulet.sql.describer.query.condition.Condition;
+import zly.rivulet.sql.describer.condition.Condition;
 import zly.rivulet.sql.describer.query.desc.Mapping;
 
 import java.util.Date;

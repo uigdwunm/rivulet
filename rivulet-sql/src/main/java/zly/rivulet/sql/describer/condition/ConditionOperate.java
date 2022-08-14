@@ -1,4 +1,4 @@
-package zly.rivulet.sql.describer.query.condition;
+package zly.rivulet.sql.describer.condition;
 
 import zly.rivulet.sql.definition.query.operate.*;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;

@@ -1,6 +1,6 @@
 package zly.rivulet.sql.assigner;
 
-import zly.rivulet.base.describer.field.SelectMapping;
+import zly.rivulet.base.describer.field.SetMapping;
 import zly.rivulet.base.utils.View;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
@@ -22,17 +22,17 @@ public class ModelSQLAssigner extends SQLAssigner {
     /**
      * 每个字段的赋值器
      **/
-    private final View<SelectMapping<Object, Object>> fieldAssignerList;
+    private final View<SetMapping<Object, Object>> fieldAssignerList;
 
     public ModelSQLAssigner(ModelProxyNode modelProxyNode, int indexStart) {
         super(modelProxyNode.getFromModelClass(), indexStart);
         SQLModelMeta modelMeta = modelProxyNode.getModelMeta();
         QueryProxyNode parentNode = modelProxyNode.getParentNode();
-        List<SelectMapping<Object, Object>> fieldAssignerList = new ArrayList<>();
+        List<SetMapping<Object, Object>> fieldAssignerList = new ArrayList<>();
         for (SQLFieldMeta sqlFieldMeta : modelMeta.getFieldMetaList()) {
             Field field = sqlFieldMeta.getField();
             field.setAccessible(true);
-            SelectMapping<Object, Object> assigner = (outerContainer, o) -> {
+            SetMapping<Object, Object> assigner = (outerContainer, o) -> {
                 try {
                     field.set(outerContainer, o);
                 } catch (IllegalAccessException e) {
@@ -48,9 +48,9 @@ public class ModelSQLAssigner extends SQLAssigner {
         this.fieldAssignerList = View.create(fieldAssignerList);
     }
 
-    public ModelSQLAssigner(Class<?> selectModel, List<SelectMapping<Object, Object>> selectMappingList) {
+    public ModelSQLAssigner(Class<?> selectModel, List<SetMapping<Object, Object>> setMappingList) {
         super(selectModel, 0);
-        this.fieldAssignerList = View.create(selectMappingList);
+        this.fieldAssignerList = View.create(setMappingList);
     }
 
     @Override
@@ -58,9 +58,9 @@ public class ModelSQLAssigner extends SQLAssigner {
         Object o = super.buildContainer();
         int size = fieldAssignerList.size();
         for (int i = 0; i < size; i++) {
-            SelectMapping<Object, Object> selectMapping = fieldAssignerList.get(i);
+            SetMapping<Object, Object> setMapping = fieldAssignerList.get(i);
             try {
-                selectMapping.setMapping(o, resultSet.getObject(super.indexStart + i + 1));
+                setMapping.setMapping(o, resultSet.getObject(super.indexStart + i + 1));
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }

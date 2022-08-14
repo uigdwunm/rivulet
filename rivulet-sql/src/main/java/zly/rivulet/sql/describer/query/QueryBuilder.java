@@ -3,8 +3,8 @@ package zly.rivulet.sql.describer.query;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.sql.describer.query.builder.SelectBuilder;
-import zly.rivulet.sql.describer.query.condition.Condition;
-import zly.rivulet.sql.describer.query.condition.ConditionContainer;
+import zly.rivulet.sql.describer.condition.Condition;
+import zly.rivulet.sql.describer.condition.ConditionContainer;
 import zly.rivulet.sql.describer.query.desc.Mapping;
 import zly.rivulet.sql.describer.query.desc.OrderBy;
 
@@ -28,7 +28,7 @@ public class QueryBuilder<F, S> {
     /**
      * 映射的查询列表，
      **/
-    protected List<Mapping.Item<F, S, ?>> mappedItemList;
+    protected List<Mapping<F, S, ?>> mappedItemList;
 
     /**
      * where查询子项

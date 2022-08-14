@@ -13,13 +13,8 @@ public class SelectBuilder<F, S> extends WhereBuilder<F, S> {
         super.selectModel = select;
     }
 
-    public final WhereBuilder<F, S> nameMapped() {
-        super.mappedItemList = Collections.emptyList();
-        return this;
-    }
-
     @SafeVarargs
-    public final WhereBuilder<F, S> select(Mapping.Item<F, S, ?> ... items) {
+    public final WhereBuilder<F, S> select(Mapping<F, S, ?> ... items) {
         super.mappedItemList = Arrays.asList(items);
         return this;
     }

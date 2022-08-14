@@ -7,7 +7,7 @@ import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.describer.field.JoinFieldMapping;
 import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
 import zly.rivulet.base.describer.field.FieldMapping;
-import zly.rivulet.base.describer.field.SelectMapping;
+import zly.rivulet.base.describer.field.SetMapping;
 import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.utils.View;
 import zly.rivulet.sql.definer.QueryComplexModel;
@@ -208,14 +208,14 @@ public class QueryProxyNode implements FromNode, SelectNode {
         // 执行一遍vo的映射方法，生成vo字段名与映射definition的对应关系
         View<MapDefinition> subMappingDefinitionList = subQueryDefinition.getSelectDefinition().getMapDefinitionList();
         for (MapDefinition mapDefinition : subMappingDefinitionList) {
-            SelectMapping<Object, ?> selectField = (SelectMapping<Object, ?>) mapDefinition.getSelectField();
+            SetMapping<Object, ?> selectField = (SetMapping<Object, ?>) mapDefinition.getSelectField();
             String fieldName = parseFieldName(selectField);
             mappingDefinitionMap.put(fieldName, mapDefinition);
         }
 
     }
 
-    private String parseFieldName(SelectMapping<Object, ?> selectField) {
+    private String parseFieldName(SetMapping<Object, ?> selectField) {
         try {
             Method method = selectField.getClass().getDeclaredMethod("writeReplace");
             method.setAccessible(Boolean.TRUE);

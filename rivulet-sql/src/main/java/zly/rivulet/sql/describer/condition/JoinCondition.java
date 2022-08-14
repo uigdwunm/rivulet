@@ -1,4 +1,4 @@
-package zly.rivulet.sql.describer.query.condition;
+package zly.rivulet.sql.describer.condition;
 
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.describer.SingleValueElementDesc;

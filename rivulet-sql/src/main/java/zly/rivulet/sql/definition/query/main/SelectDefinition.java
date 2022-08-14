@@ -5,7 +5,7 @@ import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
 import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.base.describer.field.FieldMapping;
-import zly.rivulet.base.describer.field.SelectMapping;
+import zly.rivulet.base.describer.field.SetMapping;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.utils.View;
@@ -45,7 +45,7 @@ public class SelectDefinition extends AbstractContainerDefinition {
 //        super(CheckCondition.IS_TRUE);
 //    }
 
-    public SelectDefinition(SqlParserPortableToolbox sqlPreParseHelper, FromDefinition fromDefinition, Class<?> selectModel, List<? extends Mapping.Item<?, ?, ?>> mappedItemList) {
+    public SelectDefinition(SqlParserPortableToolbox sqlPreParseHelper, FromDefinition fromDefinition, Class<?> selectModel, List<? extends Mapping<?, ?, ?>> mappedItemList) {
         super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamDefinitionManager());
         this.selectModel = selectModel;
         if (mappedItemList == null || mappedItemList.isEmpty()) {
@@ -60,20 +60,20 @@ public class SelectDefinition extends AbstractContainerDefinition {
             this.mappingDefinitionList = View.create(currNode.getMapDefinitionList());
         } else {
             List<MapDefinition> mapDefinitions = new ArrayList<>();
-            List<SelectMapping<Object, Object>> selectMappingList = new ArrayList<>();
+            List<SetMapping<Object, Object>> setMappingList = new ArrayList<>();
             // 结果对象是新的vo
             // 这里可能有子查询的情况
-            for (Mapping.Item<?, ?, ?> item : mappedItemList) {
+            for (Mapping<?, ?, ?> item : mappedItemList) {
                 MapDefinition mapDefinition = this.createMappingDefinition(sqlPreParseHelper, item);
                 mapDefinitions.add(mapDefinition);
-                selectMappingList.add((SelectMapping<Object, Object>) item.getSelectField());
+                setMappingList.add((SetMapping<Object, Object>) item.getMappingField());
             }
-            sqlAssigner = new ModelSQLAssigner(selectModel, selectMappingList);
+            sqlAssigner = new ModelSQLAssigner(selectModel, setMappingList);
             this.mappingDefinitionList = View.create(mapDefinitions);
         }
     }
 
-    private MapDefinition createMappingDefinition(SqlParserPortableToolbox sqlPreParseHelper, Mapping.Item<?, ?, ?> item) {
+    private MapDefinition createMappingDefinition(SqlParserPortableToolbox sqlPreParseHelper, Mapping<?, ?, ?> item) {
         SingleValueElementDesc<?, ?> desc = item.getDesc();
         if (desc instanceof FieldMapping) {
             QueryProxyNode currNode = sqlPreParseHelper.getCurrNode();
@@ -87,13 +87,13 @@ public class SelectDefinition extends AbstractContainerDefinition {
             }
         } else if (desc instanceof SqlQueryMetaDesc) {
             SqlQueryMetaDesc<?, ?> sqlQueryMetaDesc = (SqlQueryMetaDesc<?, ?>) desc;
-            return new MapDefinition(sqlPreParseHelper, sqlQueryMetaDesc, item.getSelectField());
+            return new MapDefinition(sqlPreParseHelper, sqlQueryMetaDesc, item.getMappingField());
         } else if (desc instanceof Param) {
             Param<?> param = (Param<?>) desc;
-            return new MapDefinition(sqlPreParseHelper, param, item.getSelectField());
+            return new MapDefinition(sqlPreParseHelper, param, item.getMappingField());
         } else if (desc instanceof MFunctionDesc) {
             MFunctionDesc<?, ?> functionDesc = (MFunctionDesc<?, ?>) desc;
-            return new MapDefinition(sqlPreParseHelper, functionDesc, item.getSelectField());
+            return new MapDefinition(sqlPreParseHelper, functionDesc, item.getMappingField());
         }
         throw UnbelievableException.unknownType();
     }

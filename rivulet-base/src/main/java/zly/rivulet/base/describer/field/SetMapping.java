@@ -11,7 +11,7 @@ import java.io.Serializable;
  * Date 2022/1/3 14:07
  **/
 @FunctionalInterface
-public interface SelectMapping<S, F> extends Serializable {
+public interface SetMapping<S, F> extends Serializable {
 
     void setMapping(S s, F f);
 

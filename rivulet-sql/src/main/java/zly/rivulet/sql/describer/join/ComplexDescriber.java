@@ -2,8 +2,8 @@ package zly.rivulet.sql.describer.join;
 
 import zly.rivulet.sql.definition.query.join.JoinType;
 import zly.rivulet.sql.definition.query.join.SQLJoinType;
-import zly.rivulet.sql.describer.query.condition.JoinCondition;
-import zly.rivulet.sql.describer.query.condition.JoinConditionContainer;
+import zly.rivulet.sql.describer.condition.JoinCondition;
+import zly.rivulet.sql.describer.condition.JoinConditionContainer;
 
 import java.util.ArrayList;
 import java.util.Arrays;

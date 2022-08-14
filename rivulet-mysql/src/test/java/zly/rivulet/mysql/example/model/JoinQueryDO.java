@@ -8,7 +8,7 @@ import zly.rivulet.sql.definer.QueryComplexModel;
 import zly.rivulet.sql.definer.annotations.SQLModelJoin;
 import zly.rivulet.sql.definer.annotations.SQLSubJoin;
 import zly.rivulet.sql.describer.join.ComplexDescriber;
-import zly.rivulet.sql.describer.query.condition.JoinCondition;
+import zly.rivulet.sql.describer.condition.JoinCondition;
 
 public class JoinQueryDO implements QueryComplexModel {
 

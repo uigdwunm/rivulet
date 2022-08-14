@@ -1,7 +1,7 @@
 package zly.rivulet.sql.assigner;
 
 import zly.rivulet.base.assigner.Assigner;
-import zly.rivulet.base.describer.field.SelectMapping;
+import zly.rivulet.base.describer.field.SetMapping;
 import zly.rivulet.sql.exception.SQLModelDefineException;
 
 import java.lang.reflect.Constructor;
@@ -13,7 +13,7 @@ public abstract class SQLAssigner implements Assigner<ResultSet> {
     /**
      * 把自己塞到父对象的assigner
      **/
-    private SelectMapping<Object, Object> assigner;
+    private SetMapping<Object, Object> assigner;
 
     /**
      * 创建当前容器的
@@ -61,7 +61,7 @@ public abstract class SQLAssigner implements Assigner<ResultSet> {
 
     public abstract int size();
 
-    public void setAssigner(SelectMapping<Object, Object> assigner) {
+    public void setAssigner(SetMapping<Object, Object> assigner) {
         this.assigner = assigner;
     }
 }

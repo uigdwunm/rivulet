@@ -2,9 +2,9 @@ package zly.rivulet.sql.definition.query.operate;
 
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.exception.UnbelievableException;
-import zly.rivulet.sql.describer.query.condition.Condition;
-import zly.rivulet.sql.describer.query.condition.ConditionContainer;
-import zly.rivulet.sql.describer.query.condition.JoinConditionContainer;
+import zly.rivulet.sql.describer.condition.Condition;
+import zly.rivulet.sql.describer.condition.ConditionContainer;
+import zly.rivulet.sql.describer.condition.JoinConditionContainer;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 import java.util.ArrayList;

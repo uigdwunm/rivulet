@@ -12,6 +12,7 @@ import zly.rivulet.sql.definer.SqlDefiner;
 import zly.rivulet.sql.definition.query.HalfBlueprint;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
+import zly.rivulet.sql.describer.update.SqlUpdateMetaDesc;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 import java.util.HashMap;
@@ -73,8 +74,11 @@ public class SqlParser implements Parser {
             return sqlQueryDefinition;
 //        } else if () {
 //            // 新增
-//        } else if () {
-//            // 修改
+        } else if (wholeDesc instanceof SqlUpdateMetaDesc) {
+            // 修改
+
+            return ;
+
 //        } else if () {
 //            // 删除
 
