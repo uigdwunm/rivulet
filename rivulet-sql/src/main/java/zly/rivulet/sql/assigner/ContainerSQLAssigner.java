@@ -2,6 +2,7 @@ package zly.rivulet.sql.assigner;
 
 import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.utils.View;
+import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 import zly.rivulet.sql.parser.node.FromNode;
 import zly.rivulet.sql.parser.node.ModelProxyNode;
@@ -30,12 +31,15 @@ public class ContainerSQLAssigner extends SQLAssigner {
         for (FromNode subFromNode : queryProxyNode.getFromNodeList()) {
             SQLAssigner sqlAssigner;
             if (subFromNode instanceof ModelProxyNode) {
+                // from 是表
                 ModelProxyNode modelProxyNode = (ModelProxyNode) subFromNode;
                 sqlAssigner = new ModelSQLAssigner(modelProxyNode, indexStart);
             } else if (subFromNode instanceof QueryProxyNode) {
+                // from 是子查询
                 QueryProxyNode subQueryProxyNode = (QueryProxyNode) subFromNode;
-                if (subQueryProxyNode.getFromModelClass().equals(subQueryProxyNode.getSelectModelClass())) {
-                    sqlAssigner = subQueryProxyNode.getSqlQueryDefinition().getAssigner();
+                SqlQueryDefinition sqlQueryDefinition = subQueryProxyNode.getSqlQueryDefinition();
+                if (subQueryProxyNode.getFromModelClass().equals(sqlQueryDefinition.getSelectDefinition().getSelectModel())) {
+                    sqlAssigner = sqlQueryDefinition.getSelectDefinition().get.getAssigner();
                 } else {
                     sqlAssigner = new ContainerSQLAssigner(sqlPreParseHelper, subQueryProxyNode, indexStart);
                 }

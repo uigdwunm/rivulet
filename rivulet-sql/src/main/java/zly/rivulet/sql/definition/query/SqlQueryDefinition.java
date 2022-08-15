@@ -56,7 +56,7 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
 
     public SqlQueryDefinition(SqlParserPortableToolbox sqlPreParseHelper, WholeDesc wholeDesc) {
         SqlQueryMetaDesc<?, ?> metaDesc = (SqlQueryMetaDesc<?, ?>) wholeDesc;
-        QueryProxyNode queryProxyNode = new QueryProxyNode(sqlPreParseHelper, metaDesc);
+        QueryProxyNode queryProxyNode = new QueryProxyNode(sqlPreParseHelper, metaDesc.getMainFrom());
         sqlPreParseHelper.setCurrNode(queryProxyNode);
 
         // 解析赋值

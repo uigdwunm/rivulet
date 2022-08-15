@@ -88,11 +88,6 @@ public class QueryProxyNode implements FromNode, SelectNode {
      **/
     private SqlQueryDefinition sqlQueryDefinition;
 
-    /**
-     * 结果对象class
-     **/
-    private final Class<?> selectModelClass;
-
     private final List<MapDefinition> mapDefinitionList = new ArrayList<>();
 
     /**
@@ -100,10 +95,8 @@ public class QueryProxyNode implements FromNode, SelectNode {
      **/
     private final Map<String, MapDefinition> mappingDefinitionMap = new HashMap<>();
 
-    public QueryProxyNode(SqlParserPortableToolbox sqlPreParseHelper, SqlQueryMetaDesc<?, ?> metaDesc) {
-        Class<?> mainFrom = metaDesc.getMainFrom();
+    public QueryProxyNode(SqlParserPortableToolbox sqlPreParseHelper, Class<?> mainFrom) {
         this.fromModelClass = mainFrom;
-        this.selectModelClass = metaDesc.getSelectModel();
         this.sqlPreParseHelper = sqlPreParseHelper;
         if (QueryComplexModel.class.isAssignableFrom(mainFrom)) {
             this.registerComplexProxyModel(mainFrom);
@@ -336,10 +329,6 @@ public class QueryProxyNode implements FromNode, SelectNode {
     @Override
     public Class<?> getFromModelClass() {
         return fromModelClass;
-    }
-
-    public Class<?> getSelectModelClass() {
-        return selectModelClass;
     }
 
     @Override

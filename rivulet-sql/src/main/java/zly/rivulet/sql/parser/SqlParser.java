@@ -11,6 +11,7 @@ import zly.rivulet.sql.SqlRivuletProperties;
 import zly.rivulet.sql.definer.SqlDefiner;
 import zly.rivulet.sql.definition.query.HalfBlueprint;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
+import zly.rivulet.sql.definition.update.SqlUpdateDefinition;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.update.SqlUpdateMetaDesc;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
@@ -76,6 +77,7 @@ public class SqlParser implements Parser {
 //            // 新增
         } else if (wholeDesc instanceof SqlUpdateMetaDesc) {
             // 修改
+            new SqlUpdateDefinition(sqlPreParseHelper, wholeDesc);
 
             return ;
 
