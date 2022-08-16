@@ -54,17 +54,17 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
         this.metaDesc = metaDesc;
     }
 
-    public SqlQueryDefinition(SqlParserPortableToolbox sqlPreParseHelper, WholeDesc wholeDesc) {
+    public SqlQueryDefinition(SqlParserPortableToolbox toolbox, WholeDesc wholeDesc) {
         SqlQueryMetaDesc<?, ?> metaDesc = (SqlQueryMetaDesc<?, ?>) wholeDesc;
-        QueryProxyNode queryProxyNode = new QueryProxyNode(sqlPreParseHelper, metaDesc.getMainFrom());
-        sqlPreParseHelper.setCurrNode(queryProxyNode);
+        QueryProxyNode queryProxyNode = new QueryProxyNode(toolbox, metaDesc.getMainFrom());
+        toolbox.setCurrNode(queryProxyNode);
 
         // 解析赋值
         this.metaDesc = metaDesc;
-        this.fromDefinition = new FromDefinition(sqlPreParseHelper);
+        this.fromDefinition = new FromDefinition(toolbox);
         this.selectDefinition = new SelectDefinition(
-            sqlPreParseHelper,
-            this.fromDefinition,
+            toolbox,
+            this.fromDefinition.getFromMode(),
             metaDesc.getSelectModel(),
             metaDesc.getMappedItemList()
         );
@@ -73,40 +73,40 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
         this.subDefinitionList.add(fromDefinition);
         ConditionContainer<?, ?> whereConditionContainer = metaDesc.getWhereConditionContainer();
         if (whereConditionContainer != null) {
-            this.whereDefinition = new WhereDefinition(sqlPreParseHelper, whereConditionContainer);
+            this.whereDefinition = new WhereDefinition(toolbox, whereConditionContainer);
             this.subDefinitionList.add(this.whereDefinition);
         }
 
         List<? extends FieldMapping<?, ?>> groupFieldList = metaDesc.getGroupFieldList();
         if (groupFieldList != null) {
-            this.groupDefinition = new GroupDefinition(sqlPreParseHelper, groupFieldList);
+            this.groupDefinition = new GroupDefinition(toolbox, groupFieldList);
             this.subDefinitionList.add(this.groupDefinition);
         }
         List<? extends Condition<?, ?>> havingItemList = metaDesc.getHavingItemList();
         if (havingItemList != null) {
-            this.havingDefinition = new HavingDefinition(sqlPreParseHelper, havingItemList);
+            this.havingDefinition = new HavingDefinition(toolbox, havingItemList);
             this.subDefinitionList.add(this.havingDefinition);
         }
         List<? extends OrderBy.Item<?, ?>> orderFieldList = metaDesc.getOrderFieldList();
         if (orderFieldList != null) {
-            this.orderByDefinition = new OrderByDefinition(sqlPreParseHelper, orderFieldList);
+            this.orderByDefinition = new OrderByDefinition(toolbox, orderFieldList);
             this.subDefinitionList.add(this.orderByDefinition);
         }
         Param<Integer> skit = metaDesc.getSkit();
         if (skit != null) {
-            this.skit = new SkitDefinition(sqlPreParseHelper, skit);
+            this.skit = new SkitDefinition(toolbox, skit);
             this.subDefinitionList.add(this.skit);
         }
         Param<Integer> limit = metaDesc.getLimit();
         if (limit != null) {
-            this.limit = new LimitDefinition(sqlPreParseHelper, limit);
+            this.limit = new LimitDefinition(toolbox, limit);
             this.subDefinitionList.add(this.limit);
         }
 
         this.sqlAssigner = selectDefinition.getSqlAssigner();
 
-        this.aliasManager = SQLAliasManager.create(sqlPreParseHelper.getConfigProperties(), queryProxyNode);
-        this.paramDefinitionManager = sqlPreParseHelper.getParamDefinitionManager();
+        this.aliasManager = SQLAliasManager.create(toolbox.getConfigProperties(), queryProxyNode);
+        this.paramDefinitionManager = toolbox.getParamDefinitionManager();
         this.aliasFlag = queryProxyNode.getAliasFlag();
     }
 

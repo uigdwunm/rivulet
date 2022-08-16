@@ -45,12 +45,12 @@ public class SelectDefinition extends AbstractContainerDefinition {
 //        super(CheckCondition.IS_TRUE);
 //    }
 
-    public SelectDefinition(SqlParserPortableToolbox sqlPreParseHelper, FromDefinition fromDefinition, Class<?> selectModel, List<? extends Mapping<?, ?, ?>> mappedItemList) {
+    public SelectDefinition(SqlParserPortableToolbox sqlPreParseHelper, Class<?> fromModel, Class<?> selectModel, List<? extends Mapping<?, ?, ?>> mappedItemList) {
         super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamDefinitionManager());
         this.selectModel = selectModel;
         if (mappedItemList == null || mappedItemList.isEmpty()) {
             // 比较select对象和from对象必须是同一个。
-            if (!selectModel.equals(fromDefinition.getFromMode())) {
+            if (!selectModel.equals(fromModel)) {
                 throw SQLDescDefineException.selectAndFromNoMatch();
             }
             // 结果对象就是查询对象

@@ -4,9 +4,8 @@ import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import zly.rivulet.base.definition.Blueprint;
-import zly.rivulet.base.describer.field.JoinFieldMapping;
-import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
 import zly.rivulet.base.describer.field.FieldMapping;
+import zly.rivulet.base.describer.field.JoinFieldMapping;
 import zly.rivulet.base.describer.field.SetMapping;
 import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.utils.View;
@@ -23,18 +22,19 @@ import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.definition.query.main.FromDefinition;
 import zly.rivulet.sql.definition.query.main.SelectDefinition;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
-import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
+import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
 import zly.rivulet.sql.exception.SQLDescDefineException;
 import zly.rivulet.sql.exception.SQLModelDefineException;
 import zly.rivulet.sql.parser.SQLAliasManager;
 import zly.rivulet.sql.parser.SqlParser;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
-import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class QueryProxyNode implements FromNode, SelectNode {
     ThreadLocal<SQLSingleValueElementDefinition> THREAD_LOCAL = new ThreadLocal<>();
@@ -76,7 +76,7 @@ public class QueryProxyNode implements FromNode, SelectNode {
 
     private final Class<?> fromModelClass;
 
-    private final SqlParserPortableToolbox sqlPreParseHelper;
+    private final SqlParserPortableToolbox toolbox;
 
     /**
      * 当前节点的别名flag
@@ -95,13 +95,13 @@ public class QueryProxyNode implements FromNode, SelectNode {
      **/
     private final Map<String, MapDefinition> mappingDefinitionMap = new HashMap<>();
 
-    public QueryProxyNode(SqlParserPortableToolbox sqlPreParseHelper, Class<?> mainFrom) {
+    public QueryProxyNode(SqlParserPortableToolbox toolbox, Class<?> mainFrom) {
         this.fromModelClass = mainFrom;
-        this.sqlPreParseHelper = sqlPreParseHelper;
+        this.toolbox = toolbox;
         if (QueryComplexModel.class.isAssignableFrom(mainFrom)) {
             this.registerComplexProxyModel(mainFrom);
         } else {
-            SqlDefiner sqlDefiner = sqlPreParseHelper.getSqlPreParser().getSqlDefiner();
+            SqlDefiner sqlDefiner = toolbox.getSqlPreParser().getSqlDefiner();
             SQLModelMeta modelMeta = sqlDefiner.createOrGetModelMeta(mainFrom);
             SQLAliasManager.AliasFlag modelAlias = SQLAliasManager.createModelAlias(modelMeta.getTableName(), modelMeta);
             // 生成from代理节点
@@ -111,7 +111,7 @@ public class QueryProxyNode implements FromNode, SelectNode {
     }
 
     public void registerComplexProxyModel(Class<?> clazz) {
-        SqlParser sqlPreParser = sqlPreParseHelper.getSqlPreParser();
+        SqlParser sqlPreParser = toolbox.getSqlPreParser();
         SqlDefiner sqlDefiner = sqlPreParser.getSqlDefiner();
         Object o = this.proxyDONewInstance(clazz);
         // 每个字段注入代理对象
@@ -145,16 +145,16 @@ public class QueryProxyNode implements FromNode, SelectNode {
 //            } else if (sqlSubJoin != null) {
             } else {
                 // 保留当前的外层node节点
-                QueryProxyNode currNode = sqlPreParseHelper.getCurrNode();
-                Blueprint blueprint = sqlPreParser.parse(sqlSubJoin.value(), sqlPreParseHelper);
+                QueryProxyNode currNode = toolbox.getCurrNode();
+                Blueprint blueprint = sqlPreParser.parse(sqlSubJoin.value(), toolbox);
                 SqlQueryDefinition subQueryDefinition = (SqlQueryDefinition) blueprint;
                 // 上面的解析过程会把curr替换成子查询对应的node
-                QueryProxyNode subNode = sqlPreParseHelper.getCurrNode();
+                QueryProxyNode subNode = toolbox.getCurrNode();
                 subNode.sqlQueryDefinition = subQueryDefinition;
 
                 this.acceptSubQueryProxyModel(subNode, subQueryDefinition, sqlQueryAlias, field.getName());
                 // 这里替换回来
-                sqlPreParseHelper.setCurrNode(currNode);
+                toolbox.setCurrNode(currNode);
 
                 // 子查询解析的node就是from节点
                 fromNode = subNode;
@@ -209,20 +209,13 @@ public class QueryProxyNode implements FromNode, SelectNode {
     }
 
     private String parseFieldName(SetMapping<Object, ?> selectField) {
-        try {
-            Method method = selectField.getClass().getDeclaredMethod("writeReplace");
-            method.setAccessible(Boolean.TRUE);
-            SerializedLambda lambda = (SerializedLambda) method.invoke(selectField);
-            String methodName = lambda.getImplMethodName();
-            char[] methodNameArr = methodName.toCharArray();
-            char[] fieldNameArr = new char[methodNameArr.length - 3];
-            methodNameArr[3] = (char) (methodNameArr[3] + 32);
+        String methodName = selectField.parseExecuteMethodName();
+        char[] methodNameArr = methodName.toCharArray();
+        char[] fieldNameArr = new char[methodNameArr.length - 3];
+        methodNameArr[3] = (char) (methodNameArr[3] + 32);
 
-            System.arraycopy(methodNameArr, 3, fieldNameArr, 0, methodNameArr.length - 3);
-            return new String(fieldNameArr);
-        } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        System.arraycopy(methodNameArr, 3, fieldNameArr, 0, methodNameArr.length - 3);
+        return new String(fieldNameArr);
     }
 
     public Object createProxyVO(SqlQueryDefinition subQueryDefinition) {

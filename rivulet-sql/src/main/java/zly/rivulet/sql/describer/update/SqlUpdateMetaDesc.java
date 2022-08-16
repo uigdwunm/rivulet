@@ -14,7 +14,7 @@ public class SqlUpdateMetaDesc<T> implements WholeDesc {
     private final Class<T> model;
 
     /**
-     * 映射的查询列表，
+     * set赋值列表
      **/
     private final List<Mapping<T, T, ?>> mappedItemList;
 

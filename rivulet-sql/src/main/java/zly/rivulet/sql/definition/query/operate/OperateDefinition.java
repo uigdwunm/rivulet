@@ -7,6 +7,7 @@ import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.field.JoinFieldMapping;
 import zly.rivulet.base.describer.param.Param;
+import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.parser.param.ParamDefinitionManager;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
@@ -43,6 +44,6 @@ public abstract class OperateDefinition extends AbstractDefinition {
             return paramDefinitionManager.registerParam((Param<?>) singleValueElementDesc);
 //        } else if (singleValueElementDesc instanceof Function) {
         }
-        return null;
+        throw UnbelievableException.unknownType();
     }
 }
