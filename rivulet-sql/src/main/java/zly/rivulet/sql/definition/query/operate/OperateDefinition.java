@@ -23,8 +23,8 @@ public abstract class OperateDefinition extends AbstractDefinition {
     @Override
     public abstract OperateDefinition forAnalyze();
 
-    protected SingleValueElementDefinition parse(SqlParserPortableToolbox sqlPreParseHelper, SingleValueElementDesc<?, ?> singleValueElementDesc) {
-        QueryProxyNode currNode = sqlPreParseHelper.getCurrNode();
+    protected SingleValueElementDefinition parse(SqlParserPortableToolbox toolbox, SingleValueElementDesc<?, ?> singleValueElementDesc) {
+        QueryProxyNode currNode = toolbox.getCurrNode();
         if (singleValueElementDesc instanceof FieldMapping) {
             FieldMapping<Object, Object> fieldMapping = (FieldMapping<Object, Object>) singleValueElementDesc;
             return currNode.parseField(fieldMapping);
@@ -32,15 +32,15 @@ public abstract class OperateDefinition extends AbstractDefinition {
             JoinFieldMapping<Object> joinFieldMapping = (JoinFieldMapping<Object>) singleValueElementDesc;
             return currNode.parseField(joinFieldMapping);
         } else if (singleValueElementDesc instanceof SqlQueryMetaDesc) {
-            SqlParser sqlPreParser = sqlPreParseHelper.getSqlPreParser();
-            SqlQueryDefinition sqlQueryDefinition = (SqlQueryDefinition) sqlPreParser.parse((SqlQueryMetaDesc<?, ?>) singleValueElementDesc, sqlPreParseHelper);
-            QueryProxyNode subQueryNode = sqlPreParseHelper.getCurrNode();
+            SqlParser sqlPreParser = toolbox.getSqlPreParser();
+            SqlQueryDefinition sqlQueryDefinition = (SqlQueryDefinition) sqlPreParser.parse((SqlQueryMetaDesc<?, ?>) singleValueElementDesc, toolbox);
+            QueryProxyNode subQueryNode = toolbox.getCurrNode();
             currNode.addConditionSubQueryNode(subQueryNode, sqlQueryDefinition);
             // 这里替换回来
-            sqlPreParseHelper.setCurrNode(currNode);
+            toolbox.setCurrNode(currNode);
             return sqlQueryDefinition;
         } else if (singleValueElementDesc instanceof Param) {
-            ParamDefinitionManager paramDefinitionManager = sqlPreParseHelper.getParamDefinitionManager();
+            ParamDefinitionManager paramDefinitionManager = toolbox.getParamDefinitionManager();
             return paramDefinitionManager.registerParam((Param<?>) singleValueElementDesc);
 //        } else if (singleValueElementDesc instanceof Function) {
         }

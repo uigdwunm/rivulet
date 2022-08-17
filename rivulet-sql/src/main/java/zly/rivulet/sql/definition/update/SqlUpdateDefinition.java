@@ -17,7 +17,7 @@ import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SqlUpdateDefinition  implements SQLBlueprint {
+public class SqlUpdateDefinition implements SQLBlueprint {
     private final SqlUpdateMetaDesc<?> metaDesc;
 
     private FromDefinition fromDefinition;
@@ -27,6 +27,10 @@ public class SqlUpdateDefinition  implements SQLBlueprint {
     private WhereDefinition whereDefinition;
 
     private final List<AbstractDefinition> subDefinitionList = new ArrayList<>();
+
+    private SQLAliasManager aliasManager;
+
+    private ParamDefinitionManager paramDefinitionManager;
 
     public SqlUpdateDefinition(SqlParserPortableToolbox toolbox, WholeDesc wholeDesc) {
         SqlUpdateMetaDesc<?> metaDesc = (SqlUpdateMetaDesc<?>) wholeDesc;
@@ -47,6 +51,8 @@ public class SqlUpdateDefinition  implements SQLBlueprint {
             this.subDefinitionList.add(this.whereDefinition);
         }
 
+        this.aliasManager = SQLAliasManager.create(toolbox.getConfigProperties(), queryProxyNode);
+        this.paramDefinitionManager = toolbox.getParamDefinitionManager();
 
     }
 

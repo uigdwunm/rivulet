@@ -34,8 +34,4 @@ public abstract class AbstractDefinition implements Definition, Checked {
         return checkCondition.checkCondition(paramManager);
     }
 
-    protected CheckCondition getCheckCondition() {
-        return this.checkCondition;
-    }
-
 }
