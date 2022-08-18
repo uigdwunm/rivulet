@@ -24,7 +24,7 @@ public class MapDefinition implements SQLSingleValueElementDefinition {
     private final SingleValueElementDefinition valueDefinition;
 
     /**
-     * 引用别名，就是当前select字段的引用表别名，有可能为空，比如子查询
+     * 引用别名，就是当前select字段的引用表别名
      **/
     private final SQLAliasManager.AliasFlag referenceAlias;
 

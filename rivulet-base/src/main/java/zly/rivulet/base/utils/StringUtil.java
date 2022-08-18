@@ -57,4 +57,30 @@ public class StringUtil {
     public static String defaultIfBlank(String value, String defaultValue) {
         return isBlank(value) ? defaultValue : value;
     }
+
+    public static boolean checkGetterMethodName(String getterMethodName) {
+        return getterMethodName.startsWith("get");
+    }
+
+    public static String parseGetterMethodNameToFieldName(String getterMethodName) {
+        char[] methodNameArr = getterMethodName.toCharArray();
+        char[] fieldNameArr = new char[methodNameArr.length - 3];
+        methodNameArr[3] = (char) (methodNameArr[3] + 32);
+
+        System.arraycopy(methodNameArr, 3, fieldNameArr, 0, methodNameArr.length - 3);
+        return new String(fieldNameArr);
+    }
+
+    public static boolean checkSetterMethodName(String getterMethodName) {
+        return getterMethodName.startsWith("set");
+    }
+
+    public static String parseSetterMethodNameToFieldName(String setterMethodName) {
+        char[] methodNameArr = setterMethodName.toCharArray();
+        char[] fieldNameArr = new char[methodNameArr.length - 3];
+        methodNameArr[3] = (char) (methodNameArr[3] + 32);
+
+        System.arraycopy(methodNameArr, 3, fieldNameArr, 0, methodNameArr.length - 3);
+        return new String(fieldNameArr);
+    }
 }

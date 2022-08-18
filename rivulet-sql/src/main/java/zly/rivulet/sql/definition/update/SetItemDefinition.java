@@ -9,7 +9,10 @@ import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.field.JoinFieldMapping;
 import zly.rivulet.base.describer.field.SetMapping;
 import zly.rivulet.base.describer.param.Param;
+import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.parser.param.ParamDefinitionManager;
+import zly.rivulet.base.utils.StringUtil;
+import zly.rivulet.sql.definer.SqlDefiner;
 import zly.rivulet.sql.definition.field.FieldDefinition;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
@@ -33,12 +36,14 @@ public class SetItemDefinition extends AbstractDefinition {
     public SetItemDefinition(SqlParserPortableToolbox toolbox, Mapping<?, ?, ?> mapping) {
         super(CheckCondition.IS_TRUE, toolbox.getParamDefinitionManager());
         SetMapping<?, ?> mappingField = mapping.getMappingField();
-        QueryProxyNode currNode = toolbox.getCurrNode();
-        currNode.parseField(mappingField)
+        String setterMethodName = mappingField.parseExecuteMethodName();
+        String fieldName = StringUtil.parseSetterMethodNameToFieldName(setterMethodName);
+        SqlDefiner sqlDefiner = toolbox.getSqlPreParser().getSqlDefiner();
+        new FieldDefinition()
 
         this.valueDefinition = this.parse(toolbox, mapping.getDesc());
-
     }
+
 
     protected SingleValueElementDefinition parse(SqlParserPortableToolbox toolbox, SingleValueElementDesc<?, ?> singleValueElementDesc) {
         QueryProxyNode currNode = toolbox.getCurrNode();

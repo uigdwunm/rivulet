@@ -8,6 +8,7 @@ import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.field.JoinFieldMapping;
 import zly.rivulet.base.describer.field.SetMapping;
 import zly.rivulet.base.exception.UnbelievableException;
+import zly.rivulet.base.utils.StringUtil;
 import zly.rivulet.base.utils.View;
 import zly.rivulet.sql.definer.QueryComplexModel;
 import zly.rivulet.sql.definer.SqlDefiner;
@@ -262,7 +263,7 @@ public class QueryProxyNode implements FromNode, SelectNode {
 
                 // 通过方法名解析出字段，获取fieldMeta
                 String methodName = method.getName();
-                if (!methodName.startsWith("get")) {
+                if (!StringUtil.checkGetterMethodName(methodName)) {
                     // 只能解析get开头的方法
                     return result;
                 }
@@ -270,19 +271,8 @@ public class QueryProxyNode implements FromNode, SelectNode {
 
                 SQLSingleValueElementDefinition SQLSingleValueElementDefinition = THREAD_LOCAL.get();
                 if (SQLSingleValueElementDefinition == null) {
-                    char[] methodNameArr = methodName.toCharArray();
-                    char[] fieldNameArr = new char[methodNameArr.length - 3];
-                    methodNameArr[3] = (char) (methodNameArr[3] + 32);
-
-                    System.arraycopy(methodNameArr, 3, fieldNameArr, 0, methodNameArr.length - 3);
-                    String fieldName = new String(fieldNameArr);
-
-                    SQLFieldMeta fieldMeta = modelMeta.getFieldMeta(fieldName);
-                    if (fieldMeta == null) {
-                        throw SQLModelDefineException.noField();
-                    }
-
-                    THREAD_LOCAL.set(new FieldDefinition(modelAlias, modelMeta, fieldMeta));
+                    String fieldName = StringUtil.parseGetterMethodNameToFieldName(methodName);
+                    THREAD_LOCAL.set(new FieldDefinition(modelAlias, modelMeta, fieldName));
                 }
                 return result;
             }

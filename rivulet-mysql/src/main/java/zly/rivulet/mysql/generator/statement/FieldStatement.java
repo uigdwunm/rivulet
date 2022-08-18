@@ -36,14 +36,14 @@ public class FieldStatement implements SingleValueElementStatement {
                 FieldDefinition fieldDefinition = (FieldDefinition) definition;
                 // 解析这个查询类型时必须把别名管理器换成相应的，防止多层子查询别名混乱
                 SQLAliasManager aliasManager = initHelper.getAliasManager();
-                String referenceAlias = aliasManager.getAlias(fieldDefinition.getReferenceAlias());
+                String referenceAlias = aliasManager.getAlias(fieldDefinition.getModelAlias());
                 return new FieldStatement(fieldDefinition.getFieldMeta(), referenceAlias);
             },
             (definition, helper) -> {
                 FieldDefinition fieldDefinition = (FieldDefinition) definition;
                 // 解析这个查询类型时必须把别名管理器换成相应的，防止多层子查询别名混乱
                 SQLAliasManager aliasManager = helper.getAliasManager();
-                String referenceAlias = aliasManager.getAlias(fieldDefinition.getReferenceAlias());
+                String referenceAlias = aliasManager.getAlias(fieldDefinition.getModelAlias());
                 return new FieldStatement(fieldDefinition.getFieldMeta(), referenceAlias);
             }
         );
