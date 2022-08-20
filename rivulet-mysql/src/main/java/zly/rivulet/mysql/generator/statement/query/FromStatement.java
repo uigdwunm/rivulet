@@ -2,7 +2,6 @@ package zly.rivulet.mysql.generator.statement.query;
 
 import zly.rivulet.base.utils.CollectionUtils;
 import zly.rivulet.base.utils.collector.StatementCollector;
-import zly.rivulet.mysql.generator.statement.QueryFromStatement;
 import zly.rivulet.sql.definition.query.main.FromDefinition;
 import zly.rivulet.sql.parser.SQLAliasManager;
 import zly.rivulet.sql.generator.SqlStatementFactory;

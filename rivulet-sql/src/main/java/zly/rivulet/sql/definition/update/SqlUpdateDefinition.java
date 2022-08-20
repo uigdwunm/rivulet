@@ -5,11 +5,14 @@ import zly.rivulet.base.definition.AbstractDefinition;
 import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.parser.param.ParamDefinitionManager;
+import zly.rivulet.base.utils.ClassUtils;
+import zly.rivulet.sql.definer.QueryComplexModel;
 import zly.rivulet.sql.definition.query.SQLBlueprint;
 import zly.rivulet.sql.definition.query.main.FromDefinition;
 import zly.rivulet.sql.definition.query.main.WhereDefinition;
 import zly.rivulet.sql.describer.condition.ConditionContainer;
 import zly.rivulet.sql.describer.update.SqlUpdateMetaDesc;
+import zly.rivulet.sql.exception.SQLDescDefineException;
 import zly.rivulet.sql.parser.SQLAliasManager;
 import zly.rivulet.sql.parser.node.QueryProxyNode;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
@@ -26,29 +29,29 @@ public class SqlUpdateDefinition implements SQLBlueprint {
 
     private WhereDefinition whereDefinition;
 
-    private final List<AbstractDefinition> subDefinitionList = new ArrayList<>();
-
     private SQLAliasManager aliasManager;
 
     private ParamDefinitionManager paramDefinitionManager;
 
     public SqlUpdateDefinition(SqlParserPortableToolbox toolbox, WholeDesc wholeDesc) {
         SqlUpdateMetaDesc<?> metaDesc = (SqlUpdateMetaDesc<?>) wholeDesc;
-        QueryProxyNode queryProxyNode = new QueryProxyNode(toolbox, metaDesc.getMainFrom());
+        Class<?> mainFrom = metaDesc.getMainFrom();
+        if (ClassUtils.isExtend(QueryComplexModel.class, mainFrom)) {
+            // 仅支持单表更新
+            throw SQLDescDefineException.unSupportMultiModelUpdate();
+        }
+        QueryProxyNode queryProxyNode = new QueryProxyNode(toolbox, mainFrom);
         toolbox.setCurrNode(queryProxyNode);
 
         this.metaDesc = metaDesc;
 
         this.fromDefinition = new FromDefinition(toolbox);
-        this.setDefinition = new SetDefinition(toolbox, metaDesc.getMappedItemList());
 
-        this.subDefinitionList.add(this.fromDefinition);
-        this.subDefinitionList.add(this.setDefinition);
+        this.setDefinition = new SetDefinition(toolbox, metaDesc.getMappedItemList());
 
         ConditionContainer<?, ?> whereConditionContainer = metaDesc.getWhereConditionContainer();
         if (whereConditionContainer != null) {
             this.whereDefinition = new WhereDefinition(toolbox, whereConditionContainer);
-            this.subDefinitionList.add(this.whereDefinition);
         }
 
         this.aliasManager = SQLAliasManager.create(toolbox.getConfigProperties(), queryProxyNode);
@@ -63,7 +66,7 @@ public class SqlUpdateDefinition implements SQLBlueprint {
 
     @Override
     public ParamDefinitionManager getParamDefinitionManager() {
-        return null;
+        return this.paramDefinitionManager;
     }
 
     @Override
@@ -73,6 +76,22 @@ public class SqlUpdateDefinition implements SQLBlueprint {
 
     @Override
     public SQLAliasManager getAliasManager() {
-        return null;
+        return this.aliasManager;
+    }
+
+    public SqlUpdateMetaDesc<?> getMetaDesc() {
+        return metaDesc;
+    }
+
+    public FromDefinition getFromDefinition() {
+        return fromDefinition;
+    }
+
+    public SetDefinition getSetDefinition() {
+        return setDefinition;
+    }
+
+    public WhereDefinition getWhereDefinition() {
+        return whereDefinition;
     }
 }

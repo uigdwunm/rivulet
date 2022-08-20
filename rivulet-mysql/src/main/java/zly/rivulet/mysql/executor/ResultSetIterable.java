@@ -1,6 +1,6 @@
 package zly.rivulet.mysql.executor;
 
-import zly.rivulet.sql.assigner.SQLAssigner;
+import zly.rivulet.sql.assigner.SQLQueryResultAssigner;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,7 +10,7 @@ public class ResultSetIterable<T> implements Iterable<T> {
 
     private final ResultSet resultSet;
 
-    private final SQLAssigner assigner;
+    private final SQLQueryResultAssigner assigner;
 
     /**
      * Description 结束回调
@@ -20,13 +20,13 @@ public class ResultSetIterable<T> implements Iterable<T> {
      **/
     private final Runnable finishCallBack;
 
-    public ResultSetIterable(ResultSet resultSet, SQLAssigner assigner) {
+    public ResultSetIterable(ResultSet resultSet, SQLQueryResultAssigner assigner) {
         this.resultSet = resultSet;
         this.assigner = assigner;
         this.finishCallBack = null;
     }
 
-    public ResultSetIterable(ResultSet resultSet, SQLAssigner assigner, Runnable finishCallBack) {
+    public ResultSetIterable(ResultSet resultSet, SQLQueryResultAssigner assigner, Runnable finishCallBack) {
         this.resultSet = resultSet;
         this.assigner = assigner;
         this.finishCallBack = finishCallBack;

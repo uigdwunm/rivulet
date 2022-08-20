@@ -5,6 +5,7 @@ import zly.rivulet.base.executor.Executor;
 import zly.rivulet.base.generator.Fish;
 import zly.rivulet.base.generator.Generator;
 import zly.rivulet.base.generator.param_manager.ParamManager;
+import zly.rivulet.base.utils.ClassUtils;
 
 import java.util.Collection;
 
@@ -94,7 +95,7 @@ public class RunningPipeline {
         @Override
         public Object handle(Blueprint blueprint, Fish fish, Class<?> returnType) {
             // 是查询方法
-            if (Collection.class.isAssignableFrom(returnType)) {
+            if (ClassUtils.isExtend(Collection.class, returnType)) {
                 // 返回值是集合
                 return executor.queryList(fish, blueprint.getAssigner());
             } else {

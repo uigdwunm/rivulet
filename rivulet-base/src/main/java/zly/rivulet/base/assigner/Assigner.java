@@ -4,6 +4,4 @@ public interface Assigner<T> {
 
     Object assign(T results);
 
-    Object buildContainer();
-
 }

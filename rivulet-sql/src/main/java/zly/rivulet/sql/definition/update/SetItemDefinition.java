@@ -13,12 +13,14 @@ import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.parser.param.ParamDefinitionManager;
 import zly.rivulet.base.utils.StringUtil;
 import zly.rivulet.sql.definer.SqlDefiner;
+import zly.rivulet.sql.definer.meta.SQLFieldMeta;
+import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.field.FieldDefinition;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.query.desc.Mapping;
-import zly.rivulet.sql.parser.SQLAliasManager;
 import zly.rivulet.sql.parser.SqlParser;
+import zly.rivulet.sql.parser.node.FromNode;
 import zly.rivulet.sql.parser.node.QueryProxyNode;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
@@ -28,24 +30,36 @@ public class SetItemDefinition extends AbstractDefinition {
 
     private final FieldDefinition fieldDefinition;
 
-    /**
-     * 引用别名，就是当前select字段的引用表别名，有可能为空，比如子查询
-     **/
-    private final SQLAliasManager.AliasFlag referenceAlias;
-
     public SetItemDefinition(SqlParserPortableToolbox toolbox, Mapping<?, ?, ?> mapping) {
         super(CheckCondition.IS_TRUE, toolbox.getParamDefinitionManager());
+
+        this.valueDefinition = this.parseSingleValue(toolbox, mapping.getDesc());
+
+        QueryProxyNode currNode = toolbox.getCurrNode();
+        // 更新模型仅支持单个 model，所以直接取第一个
+        FromNode fromNode = currNode.getFromNodeList().get(0);
+        SQLModelMeta modelMeta = this.getModelMeta(toolbox);
+        SQLFieldMeta fieldMeta = getFieldName(modelMeta, mapping);
+        this.fieldDefinition = new FieldDefinition(fromNode.getAliasFlag(), modelMeta, fieldMeta);
+    }
+
+    private SQLModelMeta getModelMeta(SqlParserPortableToolbox toolbox) {
+        QueryProxyNode currNode = toolbox.getCurrNode();
+        SqlDefiner sqlDefiner = toolbox.getSqlPreParser().getSqlDefiner();
+        Class<?> fromModelClass = currNode.getFromModelClass();
+        return sqlDefiner.createOrGetModelMeta(fromModelClass);
+    }
+
+    private SQLFieldMeta getFieldName(SQLModelMeta modelMeta, Mapping<?, ?, ?> mapping) {
         SetMapping<?, ?> mappingField = mapping.getMappingField();
         String setterMethodName = mappingField.parseExecuteMethodName();
         String fieldName = StringUtil.parseSetterMethodNameToFieldName(setterMethodName);
-        SqlDefiner sqlDefiner = toolbox.getSqlPreParser().getSqlDefiner();
-        new FieldDefinition()
+        return modelMeta.getFieldMeta(fieldName);
 
-        this.valueDefinition = this.parse(toolbox, mapping.getDesc());
     }
 
 
-    protected SingleValueElementDefinition parse(SqlParserPortableToolbox toolbox, SingleValueElementDesc<?, ?> singleValueElementDesc) {
+    protected SingleValueElementDefinition parseSingleValue(SqlParserPortableToolbox toolbox, SingleValueElementDesc<?, ?> singleValueElementDesc) {
         QueryProxyNode currNode = toolbox.getCurrNode();
         if (singleValueElementDesc instanceof FieldMapping) {
             FieldMapping<Object, Object> fieldMapping = (FieldMapping<Object, Object>) singleValueElementDesc;

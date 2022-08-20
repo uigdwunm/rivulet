@@ -6,7 +6,7 @@ import zly.rivulet.base.executor.Executor;
 import zly.rivulet.base.utils.collector.FixedLengthStatementCollector;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.MySQLFish;
-import zly.rivulet.sql.assigner.SQLAssigner;
+import zly.rivulet.sql.assigner.SQLQueryResultAssigner;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -24,7 +24,7 @@ public class MySQLExecutor implements Executor {
     @Override
     public Object queryOne(Fish fish, Assigner<?> assigner) {
         MySQLFish mySQLFish = (MySQLFish) fish;
-        SQLAssigner sqlAssigner = (SQLAssigner) assigner;
+        SQLQueryResultAssigner sqlQueryResultAssigner = (SQLQueryResultAssigner) assigner;
         StatementCollector collector = new FixedLengthStatementCollector(mySQLFish.getLength());
         mySQLFish.getStatement().collectStatement(collector);
         try {
@@ -32,7 +32,7 @@ public class MySQLExecutor implements Executor {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(collector.toString());
             resultSet.next();
-            return sqlAssigner.assign(resultSet);
+            return sqlQueryResultAssigner.assign(resultSet);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -42,7 +42,7 @@ public class MySQLExecutor implements Executor {
     public Stream<Object> queryList(Fish fish, Assigner<?> assigner) {
         // TODO
         MySQLFish mySQLFish = (MySQLFish) fish;
-        SQLAssigner sqlAssigner = (SQLAssigner) assigner;
+        SQLQueryResultAssigner sqlQueryResultAssigner = (SQLQueryResultAssigner) assigner;
         StatementCollector collector = new FixedLengthStatementCollector(mySQLFish.getLength());
         mySQLFish.getStatement().collectStatement(collector);
         try {
@@ -51,7 +51,7 @@ public class MySQLExecutor implements Executor {
             ResultSet resultSet = preparedStatement.executeQuery(collector.toString());
             ResultSetIterable<Object> iterable = new ResultSetIterable<>(
                 resultSet,
-                sqlAssigner,
+                sqlQueryResultAssigner,
                 () -> {
                     try {
                         // 结束回调时回收资源

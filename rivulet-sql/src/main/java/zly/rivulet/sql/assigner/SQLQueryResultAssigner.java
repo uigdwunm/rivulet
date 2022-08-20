@@ -9,7 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.util.function.Supplier;
 
-public abstract class SQLAssigner implements Assigner<ResultSet> {
+public abstract class SQLQueryResultAssigner implements Assigner<ResultSet> {
     /**
      * 把自己塞到父对象的assigner
      **/
@@ -25,7 +25,7 @@ public abstract class SQLAssigner implements Assigner<ResultSet> {
      **/
     protected final int indexStart;
 
-    protected SQLAssigner(Class<?> modelClass, int indexStart) {
+    protected SQLQueryResultAssigner(Class<?> modelClass, int indexStart) {
         this.containerCreator = this.buildContainerCreator(modelClass);
         this.indexStart = indexStart;
     }
@@ -47,7 +47,7 @@ public abstract class SQLAssigner implements Assigner<ResultSet> {
         }
     }
 
-    public Object buildContainer() {
+    Object buildContainer() {
         return containerCreator.get();
     }
 

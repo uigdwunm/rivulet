@@ -27,4 +27,8 @@ public class SQLDescDefineException extends RuntimeException {
     public static SQLDescDefineException selectAndFromNoMatch() {
         return new SQLDescDefineException("select对象和from对象不匹配，无法自动映射查询结果");
     }
+
+    public static SQLDescDefineException unSupportMultiModelUpdate() {
+        return new SQLDescDefineException("更新操作仅支持单个模型");
+    }
 }

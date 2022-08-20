@@ -17,14 +17,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModelSQLAssigner extends SQLAssigner {
+public class ModelSQLQueryResultAssigner extends SQLQueryResultAssigner {
 
     /**
      * 每个字段的赋值器
      **/
     private final View<SetMapping<Object, Object>> fieldAssignerList;
 
-    public ModelSQLAssigner(ModelProxyNode modelProxyNode, int indexStart) {
+    public ModelSQLQueryResultAssigner(ModelProxyNode modelProxyNode, int indexStart) {
         super(modelProxyNode.getFromModelClass(), indexStart);
         SQLModelMeta modelMeta = modelProxyNode.getModelMeta();
         QueryProxyNode parentNode = modelProxyNode.getParentNode();
@@ -48,7 +48,7 @@ public class ModelSQLAssigner extends SQLAssigner {
         this.fieldAssignerList = View.create(fieldAssignerList);
     }
 
-    public ModelSQLAssigner(Class<?> selectModel, List<SetMapping<Object, Object>> setMappingList) {
+    public ModelSQLQueryResultAssigner(Class<?> selectModel, List<SetMapping<Object, Object>> setMappingList) {
         super(selectModel, 0);
         this.fieldAssignerList = View.create(setMappingList);
     }
