@@ -34,7 +34,7 @@ public interface StatementCollector {
 
     StatementCollector append(String str);
 
-    default <T> Iterable<T> createJoiner(String connector, Collection<T> collection) {
+    default <T> Iterable<T> createJoiner(String connector, Iterable<T> collection) {
         return new JoinHelper<>(connector, collection.iterator(), this);
     }
 

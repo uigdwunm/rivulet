@@ -13,4 +13,6 @@ public interface Parser {
     Blueprint parse(String key);
 
     Blueprint parse(WholeDesc wholeDesc);
+
+    void parseByMeta(Class<?> metaClass);
 }

@@ -1,5 +1,6 @@
 package zly.rivulet.mysql.generator.statement.operate;
 
+import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.statement.SingleValueElementStatement;
 import zly.rivulet.sql.definition.query.operate.EqOperateDefinition;
@@ -12,8 +13,6 @@ public class EqOperateStatement implements OperateStatement {
 
     private final SingleValueElementStatement rightValue;
 
-    private final static String EQ = "=";
-
     public EqOperateStatement(SingleValueElementStatement leftValue, SingleValueElementStatement rightValue) {
         this.leftValue = leftValue;
         this.rightValue = rightValue;
@@ -22,7 +21,7 @@ public class EqOperateStatement implements OperateStatement {
     @Override
     public void collectStatement(StatementCollector collector) {
         leftValue.singleCollectStatement(collector);
-        collector.append(EQ);
+        collector.append(Constant.EQ);
         rightValue.singleCollectStatement(collector);
     }
 

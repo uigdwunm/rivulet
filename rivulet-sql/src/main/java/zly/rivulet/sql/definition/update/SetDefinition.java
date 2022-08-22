@@ -27,4 +27,8 @@ public class SetDefinition extends AbstractContainerDefinition {
     public Definition forAnalyze() {
         return null;
     }
+
+    public View<SetItemDefinition> getSetItemDefinitionView() {
+        return setItemDefinitionView;
+    }
 }

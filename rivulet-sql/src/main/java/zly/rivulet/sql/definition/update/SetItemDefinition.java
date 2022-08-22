@@ -87,4 +87,12 @@ public class SetItemDefinition extends AbstractDefinition {
     public Definition forAnalyze() {
         return null;
     }
+
+    public SingleValueElementDefinition getValueDefinition() {
+        return valueDefinition;
+    }
+
+    public FieldDefinition getFieldDefinition() {
+        return fieldDefinition;
+    }
 }

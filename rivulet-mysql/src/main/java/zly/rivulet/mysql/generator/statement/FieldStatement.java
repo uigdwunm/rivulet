@@ -1,6 +1,7 @@
 package zly.rivulet.mysql.generator.statement;
 
 import zly.rivulet.base.definer.FieldMeta;
+import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.StringUtil;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.sql.definition.field.FieldDefinition;
@@ -13,8 +14,6 @@ public class FieldStatement implements SingleValueElementStatement {
 
     private final String referenceAlias;
 
-    private static final char POINT = '.';
-
     public FieldStatement(FieldMeta fieldMeta, String referenceAlias) {
         this.fieldMeta = fieldMeta;
         this.referenceAlias = referenceAlias;
@@ -23,7 +22,7 @@ public class FieldStatement implements SingleValueElementStatement {
     @Override
     public void collectStatement(StatementCollector collector) {
         if (StringUtil.isNotBlank(referenceAlias)) {
-            collector.append(referenceAlias).append(POINT).append(fieldMeta.getOriginName());
+            collector.append(referenceAlias).append(Constant.POINT_CHAR).append(fieldMeta.getOriginName());
         } else {
             collector.append(fieldMeta.getOriginName());
         }

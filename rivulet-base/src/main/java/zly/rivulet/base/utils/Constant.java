@@ -17,4 +17,7 @@ public class Constant {
     public static final char LEFT_BRACKET = '(';
 
     public static final char RIGHT_BRACKET = ')';
+
+    public static final String AS = "AS ";
+    public static final char EQ = '=';
 }

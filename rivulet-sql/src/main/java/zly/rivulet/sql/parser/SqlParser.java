@@ -56,6 +56,11 @@ public class SqlParser implements Parser {
         return this.parse(wholeDesc, sqlPreParseHelper);
     }
 
+    @Override
+    public void parseByMeta(Class<?> metaClass) {
+
+    }
+
     public Blueprint parse(String key, SqlParserPortableToolbox sqlPreParseHelper) {
         WholeDesc wholeDesc = warehouseManager.getWholeDesc(key);
         if (wholeDesc == null) {
@@ -65,21 +70,18 @@ public class SqlParser implements Parser {
     }
 
     public Blueprint parse(WholeDesc wholeDesc, SqlParserPortableToolbox sqlPreParseHelper) {
+        // 开始解析前先塞一个标识，用于解决循环嵌套子查询
+        key_queryDefinition_map.put(wholeDesc.getKey(), HalfBlueprint.instance);
 
+        Blueprint blueprint;
         if (wholeDesc instanceof SqlQueryMetaDesc) {
-            // 开始解析前先塞一个标识，用于解决循环嵌套子查询
-            key_queryDefinition_map.put(wholeDesc.getKey(), HalfBlueprint.instance);
             // 查询方法
-            SqlQueryDefinition sqlQueryDefinition = new SqlQueryDefinition(sqlPreParseHelper, wholeDesc);
-            key_queryDefinition_map.put(wholeDesc.getKey(), sqlQueryDefinition);
-            return sqlQueryDefinition;
+            blueprint = new SqlQueryDefinition(sqlPreParseHelper, wholeDesc);
 //        } else if () {
 //            // 新增
         } else if (wholeDesc instanceof SqlUpdateMetaDesc) {
             // 修改
-            new SqlUpdateDefinition(sqlPreParseHelper, wholeDesc);
-
-            return ;
+            blueprint = new SqlUpdateDefinition(sqlPreParseHelper, wholeDesc);
 
 //        } else if () {
 //            // 删除
@@ -87,6 +89,9 @@ public class SqlParser implements Parser {
         } else {
             throw UnbelievableException.unknownType();
         }
+
+        key_queryDefinition_map.put(wholeDesc.getKey(), blueprint);
+        return blueprint;
     }
 
     public SqlRivuletProperties getConfigProperties() {

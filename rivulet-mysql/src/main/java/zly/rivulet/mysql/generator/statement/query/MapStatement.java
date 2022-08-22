@@ -29,8 +29,6 @@ public class MapStatement implements SingleValueElementStatement {
      **/
     private final String referenceAlias;
 
-    public static final String AS = "AS ";
-
     public MapStatement(SingleValueElementStatement value, String alias, String referenceAlias) {
         this.value = value;
         this.alias = alias;
@@ -48,11 +46,11 @@ public class MapStatement implements SingleValueElementStatement {
             collector.leftBracket();
             value.singleCollectStatement(collector);
             collector.rightBracket();
-            collector.space().append(AS);
+            collector.space().append(Constant.AS);
             collector.append(this.alias);
         } else if (StringUtil.isNotBlank(this.referenceAlias)) {
             value.singleCollectStatement(collector);
-            collector.space().append(AS);
+            collector.space().append(Constant.AS);
             collector.append(this.alias);
         } else {
             value.singleCollectStatement(collector);

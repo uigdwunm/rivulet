@@ -106,6 +106,20 @@ public abstract class RivuletManager {
         return (T) runningPipeline.go(blueprint, simpleParamManager, returnType);
     }
 
+    public Object insert(Object obj) {
+        Class<?> clazz = obj.getClass();
+        Blueprint blueprint = parser.parse("insert_" + clazz.getName());
+        if (blueprint == null) {
+            parser.parseByMeta(clazz);
+            blueprint = parser.parse("insert_" + clazz.getName());
+        }
+        ParamDefinitionManager paramDefinitionManager = blueprint.getParamDefinitionManager();
+        ParamManager paramManager = paramDefinitionManager.getParamManager(proxyMethod, args);
+
+        runningPipeline.go(blueprint, paramManager, )
+
+    }
+
     public Fish test(WholeDesc wholeDesc) {
         Blueprint blueprint = parser.parse(wholeDesc);
 

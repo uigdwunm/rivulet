@@ -172,7 +172,7 @@ public class FormatStatementCollector implements StatementCollector {
     }
 
     @Override
-    public <T> JoinHelper<T> createJoiner(String connector, Collection<T> collection) {
+    public <T> JoinHelper<T> createJoiner(String connector, Iterable<T> collection) {
         return new JoinHelper<>(connector, collection.iterator());
     }
 
