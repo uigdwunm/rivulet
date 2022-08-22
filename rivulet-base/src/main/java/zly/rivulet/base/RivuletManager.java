@@ -114,7 +114,7 @@ public abstract class RivuletManager {
             blueprint = parser.parse("insert_" + clazz.getName());
         }
         ParamDefinitionManager paramDefinitionManager = blueprint.getParamDefinitionManager();
-        ParamManager paramManager = paramDefinitionManager.getParamManager(proxyMethod, args);
+        ParamManager paramManager = ;
 
         runningPipeline.go(blueprint, paramManager, )
 
