@@ -1,7 +1,7 @@
 package zly.rivulet.base.definition;
 
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
-import zly.rivulet.base.parser.param.ParamDefinitionManager;
+import zly.rivulet.base.parser.ParamReceiptManager;
 
 public abstract class AbstractContainerDefinition extends AbstractDefinition {
 
@@ -10,8 +10,8 @@ public abstract class AbstractContainerDefinition extends AbstractDefinition {
      **/
     private boolean needSort;
 
-    protected AbstractContainerDefinition(CheckCondition checkCondition, ParamDefinitionManager paramDefinitionManager) {
-        super(checkCondition, paramDefinitionManager);
+    protected AbstractContainerDefinition(CheckCondition checkCondition, ParamReceiptManager paramReceiptManager) {
+        super(checkCondition, paramReceiptManager);
     }
 
 }

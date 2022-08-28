@@ -1,6 +1,6 @@
 package zly.rivulet.base.utils;
 
-import zly.rivulet.base.definition.param.ParamDefinition;
+import zly.rivulet.base.definition.param.ParamReceipt;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -57,7 +57,7 @@ public class ArrayUtils {
         return arr.length;
     }
 
-    public static int length(ParamDefinition[] arr) {
+    public static int length(ParamReceipt[] arr) {
         if (arr == null) {
             return 0;
         }

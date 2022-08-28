@@ -1,6 +1,6 @@
 package zly.rivulet.base.generator.param_manager;
 
-import zly.rivulet.base.definition.param.ParamDefinition;
+import zly.rivulet.base.definition.param.ParamReceipt;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.describer.param.StandardParam;
 import zly.rivulet.base.describer.param.StaticParam;
@@ -22,8 +22,8 @@ public class ForTestParamManager implements ParamManager {
     }
 
     @Override
-    public Object getParam(ParamDefinition paramDefinition) {
-        Param<?> paramDesc = paramDefinition.getOriginDesc();
+    public Object getParam(ParamReceipt paramReceipt) {
+        Param<?> paramDesc = paramReceipt.getOriginDesc();
 
         if (paramDesc instanceof StaticParam) {
             StaticParam<?> staticParam = (StaticParam<?>) paramDesc;
@@ -37,7 +37,7 @@ public class ForTestParamManager implements ParamManager {
     }
 
     @Override
-    public String getStatement(ParamDefinition paramDefinition) {
-        return (String) this.getParam(paramDefinition);
+    public String getStatement(ParamReceipt paramReceipt) {
+        return (String) this.getParam(paramReceipt);
     }
 }

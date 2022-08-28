@@ -8,7 +8,7 @@ import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.field.JoinFieldMapping;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.exception.UnbelievableException;
-import zly.rivulet.base.parser.param.ParamDefinitionManager;
+import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.parser.SqlParser;
@@ -16,8 +16,8 @@ import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 import zly.rivulet.sql.parser.node.QueryProxyNode;
 
 public abstract class OperateDefinition extends AbstractDefinition {
-    protected OperateDefinition(CheckCondition checkCondition, ParamDefinitionManager paramDefinitionManager) {
-        super(checkCondition, paramDefinitionManager);
+    protected OperateDefinition(CheckCondition checkCondition, ParamReceiptManager paramReceiptManager) {
+        super(checkCondition, paramReceiptManager);
     }
 
     @Override
@@ -40,8 +40,8 @@ public abstract class OperateDefinition extends AbstractDefinition {
             toolbox.setCurrNode(currNode);
             return sqlQueryDefinition;
         } else if (singleValueElementDesc instanceof Param) {
-            ParamDefinitionManager paramDefinitionManager = toolbox.getParamDefinitionManager();
-            return paramDefinitionManager.registerParam((Param<?>) singleValueElementDesc);
+            ParamReceiptManager paramReceiptManager = toolbox.getParamDefinitionManager();
+            return paramReceiptManager.registerParam((Param<?>) singleValueElementDesc);
 //        } else if (singleValueElementDesc instanceof Function) {
         }
         throw UnbelievableException.unknownType();

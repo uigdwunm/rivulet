@@ -10,7 +10,7 @@ import zly.rivulet.base.describer.field.JoinFieldMapping;
 import zly.rivulet.base.describer.field.SetMapping;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.exception.UnbelievableException;
-import zly.rivulet.base.parser.param.ParamDefinitionManager;
+import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.base.utils.StringUtil;
 import zly.rivulet.sql.definer.SqlDefiner;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
@@ -76,8 +76,8 @@ public class SetItemDefinition extends AbstractDefinition {
             toolbox.setCurrNode(currNode);
             return sqlQueryDefinition;
         } else if (singleValueElementDesc instanceof Param) {
-            ParamDefinitionManager paramDefinitionManager = toolbox.getParamDefinitionManager();
-            return paramDefinitionManager.registerParam((Param<?>) singleValueElementDesc);
+            ParamReceiptManager paramReceiptManager = toolbox.getParamDefinitionManager();
+            return paramReceiptManager.registerParam((Param<?>) singleValueElementDesc);
 //        } else if (singleValueElementDesc instanceof Function) {
         }
         throw UnbelievableException.unknownType();

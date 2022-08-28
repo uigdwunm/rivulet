@@ -1,9 +1,9 @@
 package zly.rivulet.sql.parser.toolbox;
 
 import zly.rivulet.base.parser.toolbox.ParserPortableToolbox;
-import zly.rivulet.base.parser.param.ParamDefinitionManager;
+import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.sql.SqlRivuletProperties;
-import zly.rivulet.sql.parser.SqlParamDefinitionManager;
+import zly.rivulet.sql.parser.SqlParamReceiptManager;
 import zly.rivulet.sql.parser.SqlParser;
 import zly.rivulet.sql.parser.node.QueryProxyNode;
 
@@ -11,7 +11,7 @@ public class SqlParserPortableToolbox implements ParserPortableToolbox {
 
     private final SqlParser sqlPreParser;
 
-    private final ParamDefinitionManager paramDefinitionManager;
+    private final ParamReceiptManager paramReceiptManager;
 
     private QueryProxyNode currNode;
 
@@ -19,7 +19,7 @@ public class SqlParserPortableToolbox implements ParserPortableToolbox {
 
     public SqlParserPortableToolbox(SqlParser sqlPreParser) {
         this.sqlPreParser = sqlPreParser;
-        this.paramDefinitionManager = new SqlParamDefinitionManager(sqlPreParser.getConvertorManager());
+        this.paramReceiptManager = new SqlParamReceiptManager(sqlPreParser.getConvertorManager());
         this.configProperties = sqlPreParser.getConfigProperties();
     }
 
@@ -27,8 +27,8 @@ public class SqlParserPortableToolbox implements ParserPortableToolbox {
         return sqlPreParser;
     }
 
-    public ParamDefinitionManager getParamDefinitionManager() {
-        return paramDefinitionManager;
+    public ParamReceiptManager getParamDefinitionManager() {
+        return paramReceiptManager;
     }
 
     public QueryProxyNode getCurrNode() {

@@ -1,7 +1,7 @@
 package zly.rivulet.sql.definition.query;
 
 import zly.rivulet.base.definition.AbstractDefinition;
-import zly.rivulet.base.parser.param.ParamDefinitionManager;
+import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.describer.field.FieldMapping;
@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingleValueElementDefinition {
+
+    private final String key;
 
     private final SqlQueryMetaDesc<?, ?> metaDesc;
 
@@ -46,16 +48,18 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
 
     private SQLAliasManager aliasManager;
 
-    private ParamDefinitionManager paramDefinitionManager;
+    private ParamReceiptManager paramReceiptManager;
 
     private SQLAliasManager.AliasFlag aliasFlag;
 
     private SqlQueryDefinition(SqlQueryMetaDesc<?, ?> metaDesc) {
+        this.key = metaDesc.getKey();
         this.metaDesc = metaDesc;
     }
 
     public SqlQueryDefinition(SqlParserPortableToolbox toolbox, WholeDesc wholeDesc) {
         SqlQueryMetaDesc<?, ?> metaDesc = (SqlQueryMetaDesc<?, ?>) wholeDesc;
+        this.key = metaDesc.getKey();
         QueryProxyNode queryProxyNode = new QueryProxyNode(toolbox, metaDesc.getMainFrom());
         toolbox.setCurrNode(queryProxyNode);
 
@@ -106,7 +110,7 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
         this.sqlQueryResultAssigner = selectDefinition.getSqlAssigner();
 
         this.aliasManager = SQLAliasManager.create(toolbox.getConfigProperties(), queryProxyNode);
-        this.paramDefinitionManager = toolbox.getParamDefinitionManager();
+        this.paramReceiptManager = toolbox.getParamDefinitionManager();
         this.aliasFlag = queryProxyNode.getAliasFlag();
     }
 
@@ -186,13 +190,18 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
     }
 
     @Override
+    public String getKey() {
+        return this.key;
+    }
+
+    @Override
     public SQLQueryResultAssigner getAssigner() {
         return this.sqlQueryResultAssigner;
     }
 
     @Override
-    public ParamDefinitionManager getParamDefinitionManager() {
-        return paramDefinitionManager;
+    public ParamReceiptManager getParamReceiptManager() {
+        return paramReceiptManager;
     }
 
     public SQLAliasManager.AliasFlag getAliasFlag() {

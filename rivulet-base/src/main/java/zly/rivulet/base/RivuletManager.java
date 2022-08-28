@@ -11,7 +11,7 @@ import zly.rivulet.base.generator.param_manager.ForTestParamManager;
 import zly.rivulet.base.generator.param_manager.ParamManager;
 import zly.rivulet.base.generator.param_manager.SimpleParamManager;
 import zly.rivulet.base.parser.Parser;
-import zly.rivulet.base.parser.param.ParamDefinitionManager;
+import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.base.pipeline.RunningPipeline;
 import zly.rivulet.base.warehouse.WarehouseManager;
 
@@ -66,9 +66,9 @@ public abstract class RivuletManager {
 
             // 解析definition
             Blueprint blueprint = parser.parse(key);
-            ParamDefinitionManager paramDefinitionManager = blueprint.getParamDefinitionManager();
+            ParamReceiptManager paramReceiptManager = blueprint.getParamReceiptManager();
             // 参数绑定方法
-            paramDefinitionManager.registerMethod(method);
+            paramReceiptManager.registerMethod(method);
 
             mapperMethod_FinalDefinition_Map.put(method, blueprint);
         }
@@ -93,8 +93,8 @@ public abstract class RivuletManager {
             // 没有预先定义方法
             throw ParseException.undefinedMethod();
         }
-        ParamDefinitionManager paramDefinitionManager = blueprint.getParamDefinitionManager();
-        ParamManager paramManager = paramDefinitionManager.getParamManager(proxyMethod, args);
+        ParamReceiptManager paramReceiptManager = blueprint.getParamReceiptManager();
+        ParamManager paramManager = paramReceiptManager.getParamManager(proxyMethod, args);
 
         return runningPipeline.go(blueprint, paramManager, proxyMethod.getReturnType());
     }
@@ -113,7 +113,7 @@ public abstract class RivuletManager {
             parser.parseByMeta(clazz);
             blueprint = parser.parse("insert_" + clazz.getName());
         }
-        ParamDefinitionManager paramDefinitionManager = blueprint.getParamDefinitionManager();
+        ParamReceiptManager paramReceiptManager = blueprint.getParamReceiptManager();
         ParamManager paramManager = ;
 
         runningPipeline.go(blueprint, paramManager, )

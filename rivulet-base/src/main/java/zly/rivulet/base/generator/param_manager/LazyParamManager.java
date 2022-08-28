@@ -1,6 +1,6 @@
 package zly.rivulet.base.generator.param_manager;
 
-import zly.rivulet.base.definition.param.ParamDefinition;
+import zly.rivulet.base.definition.param.ParamReceipt;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.describer.param.StaticParam;
 
@@ -23,31 +23,31 @@ public class LazyParamManager implements ParamManager {
      * @author zhaolaiyuan
      * Date 2022/1/23 12:16
      **/
-    private final Map<ParamDefinition, Object> cache = new HashMap<>();
+    private final Map<ParamReceipt, Object> cache = new HashMap<>();
 
-    private final Map<ParamDefinition, Function<Object[], Object>> paramCreatorMap;
+    private final Map<ParamReceipt, Function<Object[], Object>> paramCreatorMap;
 
-    public LazyParamManager(Object[] originParam, Map<ParamDefinition, Function<Object[], Object>> paramCreatorMap) {
+    public LazyParamManager(Object[] originParam, Map<ParamReceipt, Function<Object[], Object>> paramCreatorMap) {
         this.originParam = originParam;
         this.paramCreatorMap = paramCreatorMap;
     }
 
     @Override
-    public Object getParam(ParamDefinition paramDefinition) {
-        Object param = cache.get(paramDefinition);
+    public Object getParam(ParamReceipt paramReceipt) {
+        Object param = cache.get(paramReceipt);
         if (param != null) {
             return param;
         }
-        Param<?> paramDesc = paramDefinition.getOriginDesc();
+        Param<?> paramDesc = paramReceipt.getOriginDesc();
         if (paramDesc instanceof StaticParam) {
             StaticParam<?> staticParam = (StaticParam<?>) paramDesc;
             param = staticParam.getValue();
         } else {
-            Function<Object[], Object> creator = paramCreatorMap.get(paramDefinition);
+            Function<Object[], Object> creator = paramCreatorMap.get(paramReceipt);
             param = creator.apply(this.originParam);
         }
 
-        cache.put(paramDefinition, param);
+        cache.put(paramReceipt, param);
 
         return param;
     }

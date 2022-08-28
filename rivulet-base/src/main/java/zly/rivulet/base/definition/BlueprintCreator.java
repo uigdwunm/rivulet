@@ -3,7 +3,7 @@ package zly.rivulet.base.definition;
 import zly.rivulet.base.parser.toolbox.ParserPortableToolbox;
 
 @FunctionalInterface
-public interface FinalDefinitionCreator<P extends ParserPortableToolbox, R extends Blueprint> {
+public interface BlueprintCreator<P extends ParserPortableToolbox, R extends Blueprint> {
 
     R create(P preParser);
 }

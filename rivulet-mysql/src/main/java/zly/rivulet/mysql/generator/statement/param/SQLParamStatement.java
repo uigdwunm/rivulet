@@ -6,16 +6,16 @@ import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.describer.param.StaticParam;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.statement.SingleValueElementStatement;
-import zly.rivulet.sql.definition.param.SQLParamDefinition;
+import zly.rivulet.sql.definition.param.SQLParamReceipt;
 import zly.rivulet.sql.generator.SqlStatementFactory;
 
 public class SQLParamStatement implements SingleValueElementStatement {
 
-    private final SQLParamDefinition sqlParamDefinition;
+    private final SQLParamReceipt sqlParamDefinition;
 
     private final String value;
 
-    public SQLParamStatement(SQLParamDefinition sqlParamDefinition, String value) {
+    public SQLParamStatement(SQLParamReceipt sqlParamDefinition, String value) {
         this.sqlParamDefinition = sqlParamDefinition;
         this.value = value;
     }
@@ -27,9 +27,9 @@ public class SQLParamStatement implements SingleValueElementStatement {
 
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
-            SQLParamDefinition.class,
+            SQLParamReceipt.class,
             (definition, soleFlag, initHelper) -> {
-                SQLParamDefinition sqlParamDefinition = (SQLParamDefinition) definition;
+                SQLParamReceipt sqlParamDefinition = (SQLParamReceipt) definition;
                 Param<?> originDesc = sqlParamDefinition.getOriginDesc();
                 if (originDesc instanceof StaticParam) {
                     StaticParam<?> staticParam = (StaticParam<?>) originDesc;
@@ -44,7 +44,7 @@ public class SQLParamStatement implements SingleValueElementStatement {
                 }
             },
             (definition, helper) -> {
-                SQLParamDefinition sqlParamDefinition = (SQLParamDefinition) definition;
+                SQLParamReceipt sqlParamDefinition = (SQLParamReceipt) definition;
                 ParamManager paramManager = helper.getParamManager();
                 String value = paramManager.getStatement(sqlParamDefinition);
                 return new SQLParamStatement(sqlParamDefinition, value);

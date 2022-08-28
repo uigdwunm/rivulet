@@ -4,7 +4,7 @@ import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
 import zly.rivulet.base.describer.field.SetMapping;
 import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.base.parser.param.ParamDefinitionManager;
+import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.sql.definition.field.FieldDefinition;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
@@ -66,8 +66,8 @@ public class MapDefinition implements SQLSingleValueElementDefinition {
 
     public MapDefinition(SqlParserPortableToolbox sqlPreParseHelper, Param<?> paramDesc, SetMapping<?, ?> selectField) {
         this.selectField = selectField;
-        ParamDefinitionManager paramDefinitionManager = sqlPreParseHelper.getParamDefinitionManager();
-        this.valueDefinition = paramDefinitionManager.registerParam(paramDesc);
+        ParamReceiptManager paramReceiptManager = sqlPreParseHelper.getParamDefinitionManager();
+        this.valueDefinition = paramReceiptManager.registerParam(paramDesc);
         this.referenceAlias = sqlPreParseHelper.getCurrNode().getAliasFlag();
         this.aliasFlag = SQLAliasManager.createFieldAlias();
     }

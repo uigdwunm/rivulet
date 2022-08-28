@@ -2,18 +2,18 @@ package zly.rivulet.sql.definition.query.main;
 
 import zly.rivulet.base.definition.AbstractDefinition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
-import zly.rivulet.base.definition.param.ParamDefinition;
+import zly.rivulet.base.definition.param.ParamReceipt;
 import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.base.parser.param.ParamDefinitionManager;
+import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 public class LimitDefinition extends AbstractDefinition {
-    private final ParamDefinition limit;
+    private final ParamReceipt limit;
 
     public LimitDefinition(SqlParserPortableToolbox sqlPreParseHelper, Param<Integer> limit) {
         super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamDefinitionManager());
-        ParamDefinitionManager paramDefinitionManager = sqlPreParseHelper.getParamDefinitionManager();
-        this.limit = paramDefinitionManager.registerParam(limit);
+        ParamReceiptManager paramReceiptManager = sqlPreParseHelper.getParamDefinitionManager();
+        this.limit = paramReceiptManager.registerParam(limit);
     }
 
     @Override

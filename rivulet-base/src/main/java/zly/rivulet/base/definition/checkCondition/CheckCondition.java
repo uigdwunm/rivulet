@@ -1,9 +1,9 @@
 package zly.rivulet.base.definition.checkCondition;
 
 
-import zly.rivulet.base.definition.param.ParamDefinition;
+import zly.rivulet.base.definition.param.ParamReceipt;
 import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.base.parser.param.ParamDefinitionManager;
+import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.base.generator.param_manager.ParamManager;
 import zly.rivulet.base.utils.StringUtil;
 
@@ -19,16 +19,16 @@ public abstract class CheckCondition {
     protected Param<?>[] params;
 
     // 解析后的参数
-    private ParamDefinition[] paramDefinitions;
+    private ParamReceipt[] paramReceipts;
 
     public boolean checkCondition(ParamManager paramManager) {
-        if (paramDefinitions == null) {
+        if (paramReceipts == null) {
             return check();
         }
-        int length = this.paramDefinitions.length;
+        int length = this.paramReceipts.length;
         Object[] paramValues = new Object[length];
         for (int i = 0; i < length; i++) {
-            paramValues[i] = paramManager.getParam(paramDefinitions[i]);
+            paramValues[i] = paramManager.getParam(paramReceipts[i]);
         }
 
         return check(paramValues);
@@ -36,14 +36,14 @@ public abstract class CheckCondition {
 
     protected abstract boolean check(Object ... paramValues);
 
-    public void registerParam(ParamDefinitionManager paramDefinitionManager) {
+    public void registerParam(ParamReceiptManager paramReceiptManager) {
         if (params == null) {
             return;
         }
         int length = params.length;
-        this.paramDefinitions = new ParamDefinition[length];
+        this.paramReceipts = new ParamReceipt[length];
         for (int i = 0; i < length; i++) {
-            paramDefinitions[i] = paramDefinitionManager.registerParam(params[i]);
+            paramReceipts[i] = paramReceiptManager.registerParam(params[i]);
         }
     }
 

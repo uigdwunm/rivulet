@@ -2,7 +2,7 @@ package zly.rivulet.sql.definition.query;
 
 import zly.rivulet.base.assigner.Assigner;
 import zly.rivulet.base.definition.Definition;
-import zly.rivulet.base.parser.param.ParamDefinitionManager;
+import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.sql.parser.SQLAliasManager;
 
 /**
@@ -27,7 +27,7 @@ public class HalfBlueprint implements SQLBlueprint {
     }
 
     @Override
-    public ParamDefinitionManager getParamDefinitionManager() {
+    public ParamReceiptManager getParamReceiptManager() {
         return null;
     }
 

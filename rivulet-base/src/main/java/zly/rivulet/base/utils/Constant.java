@@ -2,6 +2,8 @@ package zly.rivulet.base.utils;
 
 public class Constant {
 
+    public static final char UNDERSCORE = '_';
+
     public static final String EMPTY = "";
 
     public static final String SPACE = " ";
