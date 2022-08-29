@@ -2,15 +2,9 @@ package zly.rivulet.base.definition.param;
 
 import zly.rivulet.base.convertor.Convertor;
 
-public class StaticParamReceipt implements ParamReceipt {
+public class PathKeyParamReceipt implements ParamReceipt {
 
-    /**
-     * Description 参数值
-     *
-     * @author zhaolaiyuan
-     * Date 2022/8/29 8:16
-     **/
-    private final Object paramValue;
+    private final String pathKey;
 
     /**
      * Description 参数类型
@@ -28,14 +22,10 @@ public class StaticParamReceipt implements ParamReceipt {
      **/
     private final Convertor<?, ?> convertor;
 
-    public StaticParamReceipt(Object paramValue, Convertor<?, ?> convertor) {
-        this.paramValue = paramValue;
-        this.type = paramValue.getClass();
+    public PathKeyParamReceipt(String pathKey, Class<?> type, Convertor<?, ?> convertor) {
+        this.pathKey = pathKey;
+        this.type = type;
         this.convertor = convertor;
-    }
-
-    public Object getParamValue() {
-        return this.paramValue;
     }
 
     @Override
@@ -46,5 +36,9 @@ public class StaticParamReceipt implements ParamReceipt {
     @Override
     public Convertor<?, ?> getConvertor() {
         return this.convertor;
+    }
+
+    public String getPathKey() {
+        return pathKey;
     }
 }

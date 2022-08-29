@@ -1,6 +1,8 @@
 package zly.rivulet.base.definition;
 
 import zly.rivulet.base.definition.param.ParamReceipt;
+import zly.rivulet.base.definition.param.PathKeyParamReceipt;
+import zly.rivulet.base.definition.param.StaticParamReceipt;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.describer.param.StandardParam;
 import zly.rivulet.base.describer.param.StaticParam;
@@ -29,6 +31,9 @@ public class ParamManagerCreator {
 
     public void registerProxyMethod(Blueprint blueprint, Method method) {
         ParamReceiptManager paramReceiptManager = blueprint.getParamReceiptManager();
+        Function<Object[], ParamManager> paramManagerCreator = this.createParamManagerCreator(method, paramReceiptManager.getAllParamReceiptList());
+        String proxyMethodKey = this.getProxyMethodKey(blueprint, method);
+        this.proxyMethodAndKey_paramManagerCreator_map.put(proxyMethodKey, paramManagerCreator);
     }
 
     public ParamManager getByProxyMethod(Blueprint blueprint, Method method, Object[] params) {
@@ -52,14 +57,15 @@ public class ParamManagerCreator {
         } else {
             Map<ParamReceipt, Function<Object[], Object>> paramCreatorMap = new HashMap<>(allParamReceiptList.size());
             for (ParamReceipt paramReceipt : allParamReceiptList) {
-                Param<?> paramDesc = paramReceipt.getOriginDesc();
-
-                if (paramDesc instanceof StaticParam) {
+                if (paramReceipt instanceof StaticParamReceipt) {
                     continue;
+                } else if (paramReceipt instanceof PathKeyParamReceipt) {
+                    PathKeyParamReceipt pathKeyParamReceipt = (PathKeyParamReceipt) paramReceipt;
+                    Function<Object[], Object> paramCreator = this.createParamCreator(pathKeyParamReceipt.getPathKey(), parameters);
+                    paramCreatorMap.put(paramReceipt, paramCreator);
+                } else {
+                    throw UnbelievableException.unknownType();
                 }
-                StandardParam<?> standardParam = (StandardParam<?>) paramDesc;
-                Function<Object[], Object> paramCreator = this.createParamCreator(standardParam.getPathKey(), parameters);
-                paramCreatorMap.put(paramReceipt, paramCreator);
             }
 
             return originParams -> new LazyParamManager(originParams, paramCreatorMap);

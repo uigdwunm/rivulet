@@ -1,28 +1,18 @@
 package zly.rivulet.base.parser;
 
+import zly.rivulet.base.convertor.Convertor;
 import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.definer.FieldMeta;
+import zly.rivulet.base.definer.outerType.SelfType;
 import zly.rivulet.base.definition.param.ParamReceipt;
+import zly.rivulet.base.definition.param.StaticParamReceipt;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.describer.param.StandardParam;
 import zly.rivulet.base.describer.param.StaticParam;
-import zly.rivulet.base.exception.ParamDefineException;
 import zly.rivulet.base.exception.UnbelievableException;
-import zly.rivulet.base.generator.param_manager.LazyParamManager;
-import zly.rivulet.base.generator.param_manager.ParamManager;
-import zly.rivulet.base.generator.param_manager.SimpleParamManager;
-import zly.rivulet.base.utils.ArrayUtils;
-import zly.rivulet.base.utils.StringUtil;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
 
 /**
  * Description 对应每个查询方法都有一个
@@ -41,17 +31,33 @@ public abstract class ParamReceiptManager {
     }
 
     public ParamReceipt registerParam(Param<?> paramDesc) {
-        return this.registerParam(paramDesc, null);
+        Convertor<?, ?> convertor = convertorManager.get(paramDesc.getParamType(), SelfType.class);
+        return this.registerParam(paramDesc, convertor);
     }
 
     public ParamReceipt registerParam(Param<?> paramDesc, FieldMeta fieldMeta) {
-        ParamReceipt paramReceipt = this.createParamDefinition(paramDesc, fieldMeta);
-
-        this.allParamReceiptList.add(paramReceipt);
-        return paramReceipt;
+        // 类型转换器
+        Convertor<?, ?> convertor = convertorManager.get(paramDesc.getParamType(), fieldMeta.getOriginOuterType());
+        return this.registerParam(paramDesc, convertor);
     }
 
-    protected abstract ParamReceipt createParamDefinition(Param<?> paramDesc, FieldMeta fieldMeta);
+    private ParamReceipt registerParam(Param<?> paramDesc, Convertor<?, ?> convertor) {
+        ParamReceipt paramReceipt;
+        if (paramDesc instanceof StaticParam) {
+            StaticParam<?> staticParam = (StaticParam<?>) paramDesc;
+            paramReceipt = new StaticParamReceipt(staticParam.getValue(), convertor);
+        } else if (paramDesc instanceof StandardParam) {
+            StandardParam<?> standardParam = (StandardParam<?>) paramDesc;
+            paramReceipt = this.createParamDefinition(standardParam, convertor);
+        } else {
+            throw UnbelievableException.unknownType();
+        }
+        this.allParamReceiptList.add(paramReceipt);
+        return paramReceipt;
+
+    }
+
+    protected abstract ParamReceipt createParamDefinition(StandardParam<?> paramDesc, Convertor<?, ?> convertor);
 
     public List<ParamReceipt> getAllParamReceiptList() {
         return allParamReceiptList;

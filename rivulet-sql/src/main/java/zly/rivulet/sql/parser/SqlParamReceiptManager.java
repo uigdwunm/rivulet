@@ -1,9 +1,11 @@
 package zly.rivulet.sql.parser;
 
+import zly.rivulet.base.convertor.Convertor;
 import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.definer.FieldMeta;
 import zly.rivulet.base.definition.param.ParamReceipt;
 import zly.rivulet.base.describer.param.Param;
+import zly.rivulet.base.describer.param.StandardParam;
 import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.sql.definition.param.SQLParamReceipt;
 
@@ -14,7 +16,7 @@ public class SqlParamReceiptManager extends ParamReceiptManager {
     }
 
     @Override
-    protected ParamReceipt createParamDefinition(Param<?> paramDesc, FieldMeta fieldMeta) {
-        return new SQLParamReceipt(paramDesc, fieldMeta, super.convertorManager);
+    protected ParamReceipt createParamDefinition(StandardParam<?> paramDesc, Convertor<?, ?> convertor) {
+        return new SQLParamReceipt(paramDesc, convertor);
     }
 }

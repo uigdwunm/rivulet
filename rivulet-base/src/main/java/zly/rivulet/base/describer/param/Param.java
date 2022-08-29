@@ -12,24 +12,24 @@ import zly.rivulet.base.describer.SingleValueElementDesc;
  **/
 public abstract class Param<C> implements SingleValueElementDesc<C, C> {
 
-    private final Class<C> clazz;
+    private final Class<C> paramType;
 
     /**
      * 参数检查方式，可以为空，后面取默认值
      **/
     private final ParamCheckType paramCheckType;
 
-    protected Param(Class<C> clazz, ParamCheckType paramCheckType) {
-        this.clazz = clazz;
+    protected Param(Class<C> paramType, ParamCheckType paramCheckType) {
+        this.paramType = paramType;
         this.paramCheckType = paramCheckType;
     }
 
-    protected Param(Class<C> clazz) {
-        this(clazz, null);
+    protected Param(Class<C> paramType) {
+        this(paramType, null);
     }
 
-    public Class<C> getClazz() {
-        return clazz;
+    public Class<C> getParamType() {
+        return paramType;
     }
 
     public ParamCheckType getParamCheckType() {
