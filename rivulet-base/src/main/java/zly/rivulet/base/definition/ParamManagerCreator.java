@@ -3,9 +3,6 @@ package zly.rivulet.base.definition;
 import zly.rivulet.base.definition.param.ParamReceipt;
 import zly.rivulet.base.definition.param.PathKeyParamReceipt;
 import zly.rivulet.base.definition.param.StaticParamReceipt;
-import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.base.describer.param.StandardParam;
-import zly.rivulet.base.describer.param.StaticParam;
 import zly.rivulet.base.exception.ParamDefineException;
 import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.generator.param_manager.LazyParamManager;
@@ -98,7 +95,7 @@ public class ParamManagerCreator {
         Field[] fieldPaths = new Field[pathLength - 1];
 
         try {
-            initParam(split, fieldPaths, 1, parameters[index].getType());
+            parseParam(split, fieldPaths, 1, parameters[index].getType());
         } catch (NoSuchFieldException e) {
             // 属性名匹配不到
             throw ParamDefineException.pathIllegal(paramPath);
@@ -110,14 +107,14 @@ public class ParamManagerCreator {
         };
     }
 
-    private void initParam(String[] paramName, Field[] fields, int i, Class<?> clazz) throws NoSuchFieldException {
+    private void parseParam(String[] paramName, Field[] fields, int i, Class<?> clazz) throws NoSuchFieldException {
         if (paramName.length == i) {
             return;
         }
         Field field = clazz.getDeclaredField(paramName[i]);
         fields[i - 1] = field;
         field.setAccessible(true);
-        initParam(paramName, fields, i + 1, field.getType());
+        parseParam(paramName, fields, i + 1, field.getType());
     }
 
     private Object getParam(Field[] fields, int i, Object obj) {
