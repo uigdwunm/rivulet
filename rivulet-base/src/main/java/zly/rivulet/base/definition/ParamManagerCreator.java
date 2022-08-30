@@ -26,6 +26,42 @@ public class ParamManagerCreator {
 
     public final Map<String, Function<Object[], ParamManager>> proxyMethodAndKey_paramManagerCreator_map = new ConcurrentHashMap<>();
 
+    public final Map<Class<?>, Function<Object[], ParamManager>> modelType_paramManagerCreator_map = new ConcurrentHashMap<>();
+
+    public void registerInsertMethod(Blueprint blueprint, Method method) {
+        Object modelObj = blueprint.get;
+        String insUpdDelMethodKey = this.getInsUpdDelMethodKey(method, modelObj);
+        this.createParamManagerCreator(originParams);
+
+        this.insUpdDelKey_paramManagerCreator_map.put(insUpdDelMethodKey, );
+    }
+
+    private String getInsUpdDelMethodKey(Method method, Object modelObj) {
+        return modelObj.getClass().getName();
+    }
+
+    private Function<Object, ParamManager> createParamManagerCreator(Object[] originParams) {
+        if (parameters.length == 1 && Map.class.isAssignableFrom(parameters[0].getType())) {
+            // 参数只有一个并且是map类型
+            return originParams -> new SimpleParamManager((Map<String, Object>) originParams[0]);
+        } else {
+            Map<ParamReceipt, Function<Object[], Object>> paramCreatorMap = new HashMap<>(allParamReceiptList.size());
+            for (ParamReceipt paramReceipt : allParamReceiptList) {
+                if (paramReceipt instanceof StaticParamReceipt) {
+                    continue;
+                } else if (paramReceipt instanceof PathKeyParamReceipt) {
+                    PathKeyParamReceipt pathKeyParamReceipt = (PathKeyParamReceipt) paramReceipt;
+                    Function<Object[], Object> paramCreator = this.createParamCreator(pathKeyParamReceipt.getPathKey(), parameters);
+                    paramCreatorMap.put(paramReceipt, paramCreator);
+                } else {
+                    throw UnbelievableException.unknownType();
+                }
+            }
+
+            return originParams -> new LazyParamManager(originParams, paramCreatorMap);
+        }
+    }
+
     public void registerProxyMethod(Blueprint blueprint, Method method) {
         ParamReceiptManager paramReceiptManager = blueprint.getParamReceiptManager();
         Function<Object[], ParamManager> paramManagerCreator = this.createParamManagerCreator(method, paramReceiptManager.getAllParamReceiptList());
