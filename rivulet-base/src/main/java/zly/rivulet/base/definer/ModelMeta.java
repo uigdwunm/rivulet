@@ -1,5 +1,7 @@
 package zly.rivulet.base.definer;
 
+import zly.rivulet.base.utils.View;
+
 public interface ModelMeta {
 
     Class<?> getModelClass();
@@ -11,4 +13,6 @@ public interface ModelMeta {
      * Date 2022/3/13 12:00
      **/
     Object getProxy();
+
+    View<FieldMeta> getFieldMetaList();
 }

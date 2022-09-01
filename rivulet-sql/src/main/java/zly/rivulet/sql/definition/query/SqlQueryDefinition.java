@@ -1,5 +1,6 @@
 package zly.rivulet.sql.definition.query;
 
+import zly.rivulet.base.definer.ModelMeta;
 import zly.rivulet.base.definition.AbstractDefinition;
 import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;

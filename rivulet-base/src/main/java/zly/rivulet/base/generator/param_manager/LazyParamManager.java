@@ -1,8 +1,11 @@
 package zly.rivulet.base.generator.param_manager;
 
 import zly.rivulet.base.definition.param.ParamReceipt;
+import zly.rivulet.base.definition.param.PathKeyParamReceipt;
+import zly.rivulet.base.definition.param.StaticParamReceipt;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.describer.param.StaticParam;
+import zly.rivulet.base.exception.UnbelievableException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,33 +26,34 @@ public class LazyParamManager implements ParamManager {
      * @author zhaolaiyuan
      * Date 2022/1/23 12:16
      **/
-    private final Map<ParamReceipt, Object> cache = new HashMap<>();
+    private final Map<String, Object> cache = new HashMap<>();
 
-    private final Map<ParamReceipt, Function<Object[], Object>> paramCreatorMap;
+    private final Map<String, Function<Object[], Object>> paramCreatorMap;
 
-    public LazyParamManager(Object[] originParam, Map<ParamReceipt, Function<Object[], Object>> paramCreatorMap) {
+    public LazyParamManager(Object[] originParam, Map<String, Function<Object[], Object>> paramCreatorMap) {
         this.originParam = originParam;
         this.paramCreatorMap = paramCreatorMap;
     }
 
     @Override
     public Object getParam(ParamReceipt paramReceipt) {
-        Object param = cache.get(paramReceipt);
-        if (param != null) {
-            return param;
-        }
-        Param<?> paramDesc = paramReceipt.getOriginDesc();
-        if (paramDesc instanceof StaticParam) {
-            StaticParam<?> staticParam = (StaticParam<?>) paramDesc;
-            param = staticParam.getValue();
-        } else {
-            Function<Object[], Object> creator = paramCreatorMap.get(paramReceipt);
+        if (paramReceipt instanceof PathKeyParamReceipt) {
+            PathKeyParamReceipt pathKeyParamReceipt = (PathKeyParamReceipt) paramReceipt;
+            String pathKey = pathKeyParamReceipt.getPathKey();
+            Object param = cache.get(pathKey);
+            if (param != null) {
+                return param;
+            }
+            Function<Object[], Object> creator = paramCreatorMap.get(pathKey);
             param = creator.apply(this.originParam);
+            cache.put(pathKey, param);
+            return param;
+        } else if (paramReceipt instanceof StaticParamReceipt) {
+            StaticParamReceipt staticParamReceipt = (StaticParamReceipt) paramReceipt;
+            return staticParamReceipt.getParamValue();
+        } else {
+            throw UnbelievableException.unknownType();
         }
-
-        cache.put(paramReceipt, param);
-
-        return param;
     }
 
 }

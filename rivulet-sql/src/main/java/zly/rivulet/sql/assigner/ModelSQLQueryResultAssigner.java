@@ -1,5 +1,6 @@
 package zly.rivulet.sql.assigner;
 
+import zly.rivulet.base.definer.FieldMeta;
 import zly.rivulet.base.describer.field.SetMapping;
 import zly.rivulet.base.utils.View;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
@@ -29,7 +30,7 @@ public class ModelSQLQueryResultAssigner extends SQLQueryResultAssigner {
         SQLModelMeta modelMeta = modelProxyNode.getModelMeta();
         QueryProxyNode parentNode = modelProxyNode.getParentNode();
         List<SetMapping<Object, Object>> fieldAssignerList = new ArrayList<>();
-        for (SQLFieldMeta sqlFieldMeta : modelMeta.getFieldMetaList()) {
+        for (FieldMeta sqlFieldMeta : modelMeta.getFieldMetaList()) {
             Field field = sqlFieldMeta.getField();
             field.setAccessible(true);
             SetMapping<Object, Object> assigner = (outerContainer, o) -> {

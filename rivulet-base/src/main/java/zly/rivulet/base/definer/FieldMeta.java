@@ -7,6 +7,8 @@ import java.lang.reflect.Field;
 public interface FieldMeta {
     OriginOuterType getOriginOuterType();
 
+    String getFieldName();
+
     String getOriginName();
 
     Field getField();

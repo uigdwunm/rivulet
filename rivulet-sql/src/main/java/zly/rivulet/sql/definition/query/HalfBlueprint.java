@@ -1,6 +1,7 @@
 package zly.rivulet.sql.definition.query;
 
 import zly.rivulet.base.assigner.Assigner;
+import zly.rivulet.base.definer.ModelMeta;
 import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.sql.parser.SQLAliasManager;
@@ -18,6 +19,16 @@ public class HalfBlueprint implements SQLBlueprint {
 
     @Override
     public Definition forAnalyze() {
+        return null;
+    }
+
+    @Override
+    public String getKey() {
+        return null;
+    }
+
+    @Override
+    public ModelMeta getMainFromModelMeta() {
         return null;
     }
 

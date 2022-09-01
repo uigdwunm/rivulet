@@ -29,8 +29,12 @@ public final class MySQLFieldMeta extends SQLFieldMeta {
         this.comment = comment;
         this.defaultValue = defaultValue;
         this.field = field;
+
+        // 字段权限放开，方便操作
+        field.setAccessible(true);
     }
 
+    @Override
     public String getFieldName() {
         return fieldName;
     }

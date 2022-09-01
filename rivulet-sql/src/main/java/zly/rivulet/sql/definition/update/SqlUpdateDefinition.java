@@ -56,6 +56,11 @@ public class SqlUpdateDefinition implements SQLBlueprint {
     }
 
     @Override
+    public String getKey() {
+        return this.metaDesc.getKey();
+    }
+
+    @Override
     public Assigner<?> getAssigner() {
         return null;
     }

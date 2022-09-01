@@ -1,11 +1,10 @@
 package zly.rivulet.mysql.definer;
 
+import zly.rivulet.base.definer.FieldMeta;
 import zly.rivulet.base.utils.View;
-import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class MySQLModelMeta extends SQLModelMeta {
@@ -38,7 +37,7 @@ public class MySQLModelMeta extends SQLModelMeta {
         return tableName;
     }
 
-    public View<SQLFieldMeta> getFieldMetaList() {
+    public View<FieldMeta> getFieldMetaList() {
         return (View) fieldMetaList;
     }
 
