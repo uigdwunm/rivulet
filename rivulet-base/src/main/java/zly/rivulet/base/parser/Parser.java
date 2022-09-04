@@ -1,5 +1,7 @@
 package zly.rivulet.base.parser;
 
+import zly.rivulet.base.definer.Definer;
+import zly.rivulet.base.definer.ModelMeta;
 import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.describer.WholeDesc;
 
@@ -10,9 +12,17 @@ public interface Parser {
      * @author zhaolaiyuan
      * Date 2021/12/5 12:06
      **/
-    Blueprint parse(String key);
+    Blueprint parseByKey(String key);
 
-    Blueprint parse(WholeDesc wholeDesc);
+    Blueprint parseByDesc(WholeDesc wholeDesc);
 
-    void parseByMeta(Class<?> metaClass);
+    Blueprint parseInsertByMeta(ModelMeta modelMeta);
+
+    Blueprint parseUpdateByMeta(ModelMeta modelMeta);
+
+    Blueprint parseDeleteByMeta(ModelMeta modelMeta);
+
+    Blueprint parseSelectByMeta(ModelMeta modelMeta);
+
+    Definer getDefiner();
 }

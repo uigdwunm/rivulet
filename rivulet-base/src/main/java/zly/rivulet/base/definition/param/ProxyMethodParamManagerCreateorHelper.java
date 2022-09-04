@@ -2,9 +2,9 @@ package zly.rivulet.base.definition.param;
 
 import zly.rivulet.base.exception.ParamDefineException;
 import zly.rivulet.base.exception.UnbelievableException;
-import zly.rivulet.base.generator.param_manager.LazyParamManager;
-import zly.rivulet.base.generator.param_manager.ParamManager;
-import zly.rivulet.base.generator.param_manager.SimpleParamManager;
+import zly.rivulet.base.generator.param_manager.for_proxy_method.LazyParamManager;
+import zly.rivulet.base.generator.param_manager.for_proxy_method.ProxyMethodParamManager;
+import zly.rivulet.base.generator.param_manager.for_proxy_method.SimpleParamManager;
 import zly.rivulet.base.utils.ArrayUtils;
 import zly.rivulet.base.utils.StringUtil;
 
@@ -18,7 +18,7 @@ import java.util.function.Function;
 
 public class ProxyMethodParamManagerCreateorHelper {
 
-    public static Function<Object[], ParamManager> createParamManagerCreator(Method method, List<ParamReceipt> allParamReceiptList) {
+    public static Function<Object[], ProxyMethodParamManager> createParamManagerCreator(Method method, List<ParamReceipt> allParamReceiptList) {
         Parameter[] parameters = method.getParameters();
         if (parameters.length == 1 && Map.class.isAssignableFrom(parameters[0].getType())) {
             // 参数只有一个并且是map类型
@@ -38,6 +38,7 @@ public class ProxyMethodParamManagerCreateorHelper {
                 }
             }
 
+            // TODO 这里批量获取参数的情况怎么办,要换个manager
             return originParams -> new LazyParamManager(originParams, paramCreatorMap);
         }
     }

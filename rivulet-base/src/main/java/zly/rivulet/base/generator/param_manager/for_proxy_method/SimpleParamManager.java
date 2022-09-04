@@ -1,23 +1,19 @@
-package zly.rivulet.base.generator.param_manager;
+package zly.rivulet.base.generator.param_manager.for_proxy_method;
 
 import zly.rivulet.base.definition.param.ParamReceipt;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.describer.param.StandardParam;
 import zly.rivulet.base.describer.param.StaticParam;
 import zly.rivulet.base.exception.UnbelievableException;
-import zly.rivulet.base.utils.StupidMap;
+import zly.rivulet.base.generator.param_manager.ParamManager;
 
 import java.util.Map;
 
-public class ForTestParamManager implements ParamManager {
+public class SimpleParamManager implements ProxyMethodParamManager {
 
-    private final Map<String, String> keyValue;
+    private final Map<String, Object> keyValue;
 
-    public ForTestParamManager() {
-        this(StupidMap.create(k -> "${" + k + "}"));
-    }
-
-    public ForTestParamManager(Map<String, String> keyValue) {
+    public SimpleParamManager(Map<String, Object> keyValue) {
         this.keyValue = keyValue;
     }
 
@@ -34,10 +30,5 @@ public class ForTestParamManager implements ParamManager {
         } else {
             throw UnbelievableException.unknownType();
         }
-    }
-
-    @Override
-    public String getStatement(ParamReceipt paramReceipt) {
-        return (String) this.getParam(paramReceipt);
     }
 }

@@ -16,7 +16,6 @@ import zly.rivulet.sql.definer.annotations.SQLModelJoin;
 import zly.rivulet.sql.definer.annotations.SQLSubJoin;
 import zly.rivulet.sql.definer.annotations.SqlQueryAlias;
 import zly.rivulet.sql.definer.meta.QueryFromMeta;
-import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.field.FieldDefinition;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
@@ -25,7 +24,6 @@ import zly.rivulet.sql.definition.query.main.SelectDefinition;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
 import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
 import zly.rivulet.sql.exception.SQLDescDefineException;
-import zly.rivulet.sql.exception.SQLModelDefineException;
 import zly.rivulet.sql.parser.SQLAliasManager;
 import zly.rivulet.sql.parser.SqlParser;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
@@ -147,7 +145,7 @@ public class QueryProxyNode implements FromNode, SelectNode {
             } else {
                 // 保留当前的外层node节点
                 QueryProxyNode currNode = toolbox.getCurrNode();
-                Blueprint blueprint = sqlPreParser.parse(sqlSubJoin.value(), toolbox);
+                Blueprint blueprint = sqlPreParser.parseByKey(sqlSubJoin.value(), toolbox);
                 SqlQueryDefinition subQueryDefinition = (SqlQueryDefinition) blueprint;
                 // 上面的解析过程会把curr替换成子查询对应的node
                 QueryProxyNode subNode = toolbox.getCurrNode();

@@ -69,7 +69,7 @@ public class SetItemDefinition extends AbstractDefinition {
             return currNode.parseField(joinFieldMapping);
         } else if (singleValueElementDesc instanceof SqlQueryMetaDesc) {
             SqlParser sqlPreParser = toolbox.getSqlPreParser();
-            SqlQueryDefinition sqlQueryDefinition = (SqlQueryDefinition) sqlPreParser.parse((SqlQueryMetaDesc<?, ?>) singleValueElementDesc, toolbox);
+            SqlQueryDefinition sqlQueryDefinition = (SqlQueryDefinition) sqlPreParser.parseByKey((SqlQueryMetaDesc<?, ?>) singleValueElementDesc, toolbox);
             QueryProxyNode subQueryNode = toolbox.getCurrNode();
             currNode.addConditionSubQueryNode(subQueryNode, sqlQueryDefinition);
             // 这里替换回来

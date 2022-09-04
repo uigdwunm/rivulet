@@ -1,17 +1,19 @@
 package zly.rivulet.base;
 
 import zly.rivulet.base.convertor.ConvertorManager;
+import zly.rivulet.base.definer.Definer;
+import zly.rivulet.base.definer.ModelMeta;
 import zly.rivulet.base.definition.Blueprint;
+import zly.rivulet.base.definition.param.ParamManagerCreator;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.exception.ParseException;
 import zly.rivulet.base.executor.Executor;
 import zly.rivulet.base.generator.Fish;
 import zly.rivulet.base.generator.Generator;
-import zly.rivulet.base.generator.param_manager.ForTestParamManager;
+import zly.rivulet.base.generator.param_manager.for_proxy_method.ForTestParamManager;
 import zly.rivulet.base.generator.param_manager.ParamManager;
-import zly.rivulet.base.generator.param_manager.SimpleParamManager;
+import zly.rivulet.base.generator.param_manager.for_proxy_method.SimpleParamManager;
 import zly.rivulet.base.parser.Parser;
-import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.base.pipeline.RunningPipeline;
 import zly.rivulet.base.warehouse.WarehouseManager;
 
@@ -23,6 +25,8 @@ public abstract class RivuletManager {
 
     private final Parser parser;
 
+    private final Definer definer;
+
     private final Generator generator;
 
     private final RunningPipeline runningPipeline;
@@ -33,15 +37,19 @@ public abstract class RivuletManager {
 
     private final WarehouseManager warehouseManager;
 
+    private final ParamManagerCreator paramManagerCreator;
+
     private final Map<Method, Blueprint> mapperMethod_FinalDefinition_Map = new ConcurrentHashMap<>();
 
     protected RivuletManager(Parser parser, Generator generator, Executor executor, RivuletProperties configProperties, ConvertorManager convertorManager, WarehouseManager warehouseManager) {
         this.parser = parser;
+        this.definer = parser.getDefiner();
         this.generator = generator;
         this.runningPipeline = new RunningPipeline(generator, executor);
         this.configProperties = configProperties;
         this.convertorManager = convertorManager;
         this.warehouseManager = warehouseManager;
+        this.paramManagerCreator = new ParamManagerCreator();
 
         // 解析
         this.preParseAll();
@@ -65,10 +73,9 @@ public abstract class RivuletManager {
             Method method = entry.getValue();
 
             // 解析definition
-            Blueprint blueprint = parser.parse(key);
-            ParamReceiptManager paramReceiptManager = blueprint.getParamReceiptManager();
+            Blueprint blueprint = parser.parseByKey(key);
             // 参数绑定方法
-            paramReceiptManager.registerMethod(method);
+            paramManagerCreator.registerProxyMethod(blueprint, method);
 
             mapperMethod_FinalDefinition_Map.put(method, blueprint);
         }
@@ -93,14 +100,13 @@ public abstract class RivuletManager {
             // 没有预先定义方法
             throw ParseException.undefinedMethod();
         }
-        ParamReceiptManager paramReceiptManager = blueprint.getParamReceiptManager();
-        ParamManager paramManager = paramReceiptManager.getParamManager(proxyMethod, args);
+        ParamManager paramManager = paramManagerCreator.getByProxyMethod(blueprint, proxyMethod, args);
 
         return runningPipeline.go(blueprint, paramManager, proxyMethod.getReturnType());
     }
 
     public <T> T exec(WholeDesc wholeDesc, Map<String, Object> params, Class<T> returnType) {
-        Blueprint blueprint = parser.parse(wholeDesc);
+        Blueprint blueprint = parser.parseByKey(wholeDesc);
 
         SimpleParamManager simpleParamManager = new SimpleParamManager(params);
         return (T) runningPipeline.go(blueprint, simpleParamManager, returnType);
@@ -108,20 +114,17 @@ public abstract class RivuletManager {
 
     public Object insert(Object obj) {
         Class<?> clazz = obj.getClass();
-        Blueprint blueprint = parser.parse("insert_" + clazz.getName());
-        if (blueprint == null) {
-            parser.parseByMeta(clazz);
-            blueprint = parser.parse("insert_" + clazz.getName());
-        }
-        ParamReceiptManager paramReceiptManager = blueprint.getParamReceiptManager();
-        ParamManager paramManager = ;
+        ModelMeta modelMeta = definer.createOrGetModelMeta(clazz);
+        Blueprint blueprint = parser.parseInsertByMeta(modelMeta);
 
-        runningPipeline.go(blueprint, paramManager, )
+        ParamManager paramManager = paramManagerCreator.getByModelMeta(modelMeta, new Object[]{obj});
+
+        runningPipeline.go(blueprint, paramManager, clazz);
 
     }
 
     public Fish test(WholeDesc wholeDesc) {
-        Blueprint blueprint = parser.parse(wholeDesc);
+        Blueprint blueprint = parser.parseByKey(wholeDesc);
 
         return generator.generate(blueprint, new ForTestParamManager());
     }

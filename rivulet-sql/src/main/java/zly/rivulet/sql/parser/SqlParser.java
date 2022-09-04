@@ -1,6 +1,8 @@
 package zly.rivulet.sql.parser;
 
 import zly.rivulet.base.convertor.ConvertorManager;
+import zly.rivulet.base.definer.Definer;
+import zly.rivulet.base.definer.ModelMeta;
 import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.exception.DescDefineException;
@@ -40,36 +42,56 @@ public class SqlParser implements Parser {
 
 
     @Override
-    public Blueprint parse(String key) {
+    public Blueprint parseByKey(String key) {
         WholeDesc wholeDesc = warehouseManager.getWholeDesc(key);
         if (wholeDesc == null) {
             throw DescDefineException.noMatchDescKey();
         }
 
         SqlParserPortableToolbox sqlPreParseHelper = new SqlParserPortableToolbox(this);
-        return this.parse(wholeDesc, sqlPreParseHelper);
+        return this.parseByKey(wholeDesc, sqlPreParseHelper);
     }
 
     @Override
-    public Blueprint parse(WholeDesc wholeDesc) {
+    public Blueprint parseByDesc(WholeDesc wholeDesc) {
         SqlParserPortableToolbox sqlPreParseHelper = new SqlParserPortableToolbox(this);
-        return this.parse(wholeDesc, sqlPreParseHelper);
+        return this.parseByKey(wholeDesc, sqlPreParseHelper);
     }
 
     @Override
-    public void parseByMeta(Class<?> metaClass) {
-
+    public Blueprint parseInsertByMeta(ModelMeta modelMeta) {
+        return null;
     }
 
-    public Blueprint parse(String key, SqlParserPortableToolbox sqlPreParseHelper) {
+    @Override
+    public Blueprint parseUpdateByMeta(ModelMeta modelMeta) {
+        return null;
+    }
+
+    @Override
+    public Blueprint parseDeleteByMeta(ModelMeta modelMeta) {
+        return null;
+    }
+
+    @Override
+    public Blueprint parseSelectByMeta(ModelMeta modelMeta) {
+        return null;
+    }
+
+    @Override
+    public Definer getDefiner() {
+        return this.definer;
+    }
+
+    public Blueprint parseByKey(String key, SqlParserPortableToolbox sqlPreParseHelper) {
         WholeDesc wholeDesc = warehouseManager.getWholeDesc(key);
         if (wholeDesc == null) {
             throw DescDefineException.noMatchDescKey();
         }
-        return this.parse(wholeDesc, sqlPreParseHelper);
+        return this.parseByKey(wholeDesc, sqlPreParseHelper);
     }
 
-    public Blueprint parse(WholeDesc wholeDesc, SqlParserPortableToolbox sqlPreParseHelper) {
+    public Blueprint parseByKey(WholeDesc wholeDesc, SqlParserPortableToolbox sqlPreParseHelper) {
         // 开始解析前先塞一个标识，用于解决循环嵌套子查询
         key_queryDefinition_map.put(wholeDesc.getKey(), HalfBlueprint.instance);
 

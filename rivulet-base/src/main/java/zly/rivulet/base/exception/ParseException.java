@@ -27,4 +27,8 @@ public class ParseException extends RuntimeException {
     public static ParseException errorParamType(ParamReceipt paramReceipt, Object param) {
         return new ParseException(String.format("错误的参数类型, paramDefinition=%s, param=%s", paramReceipt.getOriginDesc(), param));
     }
+
+    public static ParseException failParseParam() {
+        return new ParseException("无法解析参数");
+    }
 }

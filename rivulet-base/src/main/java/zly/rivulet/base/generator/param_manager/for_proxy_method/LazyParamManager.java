@@ -1,17 +1,16 @@
-package zly.rivulet.base.generator.param_manager;
+package zly.rivulet.base.generator.param_manager.for_proxy_method;
 
 import zly.rivulet.base.definition.param.ParamReceipt;
 import zly.rivulet.base.definition.param.PathKeyParamReceipt;
 import zly.rivulet.base.definition.param.StaticParamReceipt;
-import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.base.describer.param.StaticParam;
 import zly.rivulet.base.exception.UnbelievableException;
+import zly.rivulet.base.generator.param_manager.ParamManager;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-public class LazyParamManager implements ParamManager {
+public class LazyParamManager implements ProxyMethodParamManager {
     /**
      * Description 原始参数
      *
