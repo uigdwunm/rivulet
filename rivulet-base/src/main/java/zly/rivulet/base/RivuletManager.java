@@ -106,7 +106,7 @@ public abstract class RivuletManager {
     }
 
     public <T> T exec(WholeDesc wholeDesc, Map<String, Object> params, Class<T> returnType) {
-        Blueprint blueprint = parser.parseByKey(wholeDesc);
+        Blueprint blueprint = parser.parseByDesc(wholeDesc);
 
         SimpleParamManager simpleParamManager = new SimpleParamManager(params);
         return (T) runningPipeline.go(blueprint, simpleParamManager, returnType);
@@ -119,12 +119,11 @@ public abstract class RivuletManager {
 
         ParamManager paramManager = paramManagerCreator.getByModelMeta(modelMeta, new Object[]{obj});
 
-        runningPipeline.go(blueprint, paramManager, clazz);
-
+        return runningPipeline.go(blueprint, paramManager, clazz);
     }
 
     public Fish test(WholeDesc wholeDesc) {
-        Blueprint blueprint = parser.parseByKey(wholeDesc);
+        Blueprint blueprint = parser.parseByDesc(wholeDesc);
 
         return generator.generate(blueprint, new ForTestParamManager());
     }
