@@ -21,6 +21,7 @@ public class ParamManagerCreator {
 
     public void registerModelMeta(ModelMeta modelMeta) {
         Function<Object[], ModelMetaParamManager> paramManagerCreator = ModelMetaParamManagerCreatorHelper.createParamManagerCreator(modelMeta);
+        // TODO 遗留任务，尽量保证只有批量的才会使用新的ParamManager
 
         this.modelType_paramManagerCreator_map.put(modelMeta.getModelClass(), paramManagerCreator);
     }
