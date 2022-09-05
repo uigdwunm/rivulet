@@ -30,17 +30,11 @@ public class RunningPipeline {
     }
 
     public void warmUp(Blueprint definition) {
-        this.generator.warmUp(definition);
+        generator.warmUp(definition);
     }
 
     public Object go(Blueprint blueprint, ParamManager paramManager, Class<?> returnType) {
         return beforeGenerateNode.handle(blueprint, paramManager, returnType);
-    }
-
-    public Object execute(Blueprint blueprint, Fish fish, Class<?> returnType) {
-        Object result = beforeExecuteNode.handle(blueprint, fish, returnType);
-
-        return afterExecuteNode.handle(fish, returnType, result);
     }
 
     public void addBeforeGenerateNode(BeforeGenerateNode beforeGenerateNode) {
@@ -58,40 +52,18 @@ public class RunningPipeline {
         this.afterExecuteNode = afterExecuteNode;
     }
 
-    public abstract static class BeforeGenerateNode {
-        protected BeforeGenerateNode next;
 
-        public Object handle(Blueprint blueprint, ParamManager paramManager, Class<?> returnType) {
-            return next.handle(blueprint, paramManager, returnType);
-        }
-
-        private void setNext(BeforeGenerateNode next) {
-            this.next = next;
-        }
-    }
-
-    private class FinalGenerateNode extends BeforeGenerateNode {
+    private final class FinalGenerateNode extends BeforeGenerateNode {
 
         @Override
         public Object handle(Blueprint blueprint, ParamManager paramManager, Class<?> returnType) {
             Fish fish = generator.generate(blueprint, paramManager);
-            return execute(blueprint, fish, returnType);
+            Object result = beforeExecuteNode.handle(blueprint, fish, returnType);
+            return afterExecuteNode.handle(fish, returnType, result);
         }
     }
 
-    public abstract static class BeforeExecuteNode {
-        protected BeforeExecuteNode next;
-
-        public Object handle(Blueprint blueprint, Fish fish, Class<?> returnType) {
-            return next.handle(blueprint, fish, returnType);
-        }
-
-        private void setNext(BeforeExecuteNode next) {
-            this.next = next;
-        }
-    }
-
-    public class DistributeExecuteNode extends BeforeExecuteNode {
+    private final class DistributeExecuteNode extends BeforeExecuteNode {
         @Override
         public Object handle(Blueprint blueprint, Fish fish, Class<?> returnType) {
             // 是查询方法
@@ -101,22 +73,13 @@ public class RunningPipeline {
             } else {
                 return executor.queryOne(fish, blueprint.getAssigner());
             }
+
+            // TODO 判断是batch类型的fish，批量插入、批量更新,不在这里判断，在mysql的executor中判断，只是先写在这里
+            // TODO 事物也是executor中的概念，暂时不考虑在前面的流程中控制
         }
     }
 
-    public abstract static class AfterExecuteNode {
-        protected AfterExecuteNode next;
-
-        public Object handle(Fish fish, Class<?> returnType, Object result) {
-            return next.handle(fish, returnType, result);
-        }
-
-        private void setNext(AfterExecuteNode next) {
-            this.next = next;
-        }
-    }
-
-    private class FinalExecuteNode extends AfterExecuteNode {
+    private final class FinalExecuteNode extends AfterExecuteNode {
 
         @Override
         public Object handle(Fish fish, Class<?> returnType, Object result) {
