@@ -53,7 +53,7 @@ public class MapDefinition implements SQLSingleValueElementDefinition {
         this.selectField = selectField;
         QueryProxyNode currNode = sqlPreParseHelper.getCurrNode();
         SqlParser sqlPreParser = sqlPreParseHelper.getSqlPreParser();
-        SqlQueryDefinition sqlQueryDefinition = (SqlQueryDefinition) sqlPreParser.parseByKey(sqlQueryMetaDesc, sqlPreParseHelper);
+        SqlQueryDefinition sqlQueryDefinition = (SqlQueryDefinition) sqlPreParser.parseByDesc(sqlQueryMetaDesc, sqlPreParseHelper);
         QueryProxyNode subQueryNode = sqlPreParseHelper.getCurrNode();
         currNode.addSelectNode(subQueryNode, sqlQueryDefinition);
         // 这里替换回来

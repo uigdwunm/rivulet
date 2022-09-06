@@ -45,7 +45,7 @@ public class SetItemDefinition extends AbstractDefinition {
 
     private SQLModelMeta getModelMeta(SqlParserPortableToolbox toolbox) {
         QueryProxyNode currNode = toolbox.getCurrNode();
-        SqlDefiner sqlDefiner = toolbox.getSqlPreParser().getSqlDefiner();
+        SqlDefiner sqlDefiner = (SqlDefiner) toolbox.getSqlPreParser().getDefiner();
         Class<?> fromModelClass = currNode.getFromModelClass();
         return sqlDefiner.createOrGetModelMeta(fromModelClass);
     }
@@ -69,7 +69,7 @@ public class SetItemDefinition extends AbstractDefinition {
             return currNode.parseField(joinFieldMapping);
         } else if (singleValueElementDesc instanceof SqlQueryMetaDesc) {
             SqlParser sqlPreParser = toolbox.getSqlPreParser();
-            SqlQueryDefinition sqlQueryDefinition = (SqlQueryDefinition) sqlPreParser.parseByKey((SqlQueryMetaDesc<?, ?>) singleValueElementDesc, toolbox);
+            SqlQueryDefinition sqlQueryDefinition = (SqlQueryDefinition) sqlPreParser.parseByDesc((SqlQueryMetaDesc<?, ?>) singleValueElementDesc, toolbox);
             QueryProxyNode subQueryNode = toolbox.getCurrNode();
             currNode.addConditionSubQueryNode(subQueryNode, sqlQueryDefinition);
             // 这里替换回来

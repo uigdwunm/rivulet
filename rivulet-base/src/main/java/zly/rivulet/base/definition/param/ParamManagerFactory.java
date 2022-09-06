@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
-public class ParamManagerCreator {
+public class ParamManagerFactory {
 
     public final Map<String, Function<Object[], ProxyMethodParamManager>> proxyMethodAndKey_paramManagerCreator_map = new ConcurrentHashMap<>();
 
