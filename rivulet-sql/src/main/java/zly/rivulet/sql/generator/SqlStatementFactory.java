@@ -2,7 +2,7 @@ package zly.rivulet.sql.generator;
 
 import zly.rivulet.base.utils.RelationSwitch;
 import zly.rivulet.sql.generator.statement.SqlStatement;
-import zly.rivulet.sql.generator.toolbox.AssemblyLinePortableToolbox;
+import zly.rivulet.sql.generator.toolbox.GenerateToolbox;
 import zly.rivulet.sql.generator.toolbox.WarmUpToolbox;
 
 import java.util.Map;
@@ -29,11 +29,11 @@ public class SqlStatementFactory {
         DEFINITION_RUN_CREATOR_MAP.put(clazz, statementRunCreator);
     }
 
-    public SqlStatement getOrCreate(Object definition, AssemblyLinePortableToolbox assemblyLinePortableToolbox) {
+    public SqlStatement getOrCreate(Object definition, GenerateToolbox generateToolbox) {
         SqlStatement statement = statementCache.get(definition);
         if (statement == null) {
             StatementRunCreator statementRunCreator = DEFINITION_RUN_CREATOR_MAP.get(definition.getClass());
-            statement = statementRunCreator.create(definition, assemblyLinePortableToolbox);
+            statement = statementRunCreator.create(definition, generateToolbox);
         }
         return statement;
     }
@@ -57,6 +57,6 @@ public class SqlStatementFactory {
 
     @FunctionalInterface
     public interface StatementRunCreator {
-        SqlStatement create(Object definition, AssemblyLinePortableToolbox helper);
+        SqlStatement create(Object definition, GenerateToolbox helper);
     }
 }

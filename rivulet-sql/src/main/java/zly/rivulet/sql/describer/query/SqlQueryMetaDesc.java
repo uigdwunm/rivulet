@@ -1,5 +1,6 @@
 package zly.rivulet.sql.describer.query;
 
+import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.describer.field.FieldMapping;
@@ -128,5 +129,10 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
     @Override
     public void setKey(String key) {
         this.key = key;
+    }
+
+    @Override
+    public RivuletFlag getFlag() {
+        return RivuletFlag.QUERY;
     }
 }

@@ -3,10 +3,12 @@ package zly.rivulet.mysql.executor;
 import zly.rivulet.base.generator.Fish;
 import zly.rivulet.base.assigner.Assigner;
 import zly.rivulet.base.executor.Executor;
+import zly.rivulet.base.pipeline.toolbox.PipelineToolbox;
 import zly.rivulet.base.utils.collector.FixedLengthStatementCollector;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.MySQLFish;
 import zly.rivulet.sql.assigner.SQLQueryResultAssigner;
+import zly.rivulet.sql.pipeline.ResultSetIterable;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -22,7 +24,7 @@ public class MySQLExecutor implements Executor {
     }
 
     @Override
-    public Object queryOne(Fish fish, Assigner<?> assigner) {
+    public Object queryOne(Fish fish, Assigner<?> assigner, PipelineToolbox pipelineToolbox) {
         MySQLFish mySQLFish = (MySQLFish) fish;
         SQLQueryResultAssigner sqlQueryResultAssigner = (SQLQueryResultAssigner) assigner;
         StatementCollector collector = new FixedLengthStatementCollector(mySQLFish.getLength());
@@ -39,7 +41,7 @@ public class MySQLExecutor implements Executor {
     }
 
     @Override
-    public Stream<Object> queryList(Fish fish, Assigner<?> assigner) {
+    public Stream<Object> queryList(Fish fish, Assigner<?> assigner, PipelineToolbox pipelineToolbox) {
         // TODO
         MySQLFish mySQLFish = (MySQLFish) fish;
         SQLQueryResultAssigner sqlQueryResultAssigner = (SQLQueryResultAssigner) assigner;
@@ -68,7 +70,7 @@ public class MySQLExecutor implements Executor {
     }
 
     @Override
-    public Object executeUpdate(Fish fish) {
+    public Object executeUpdate(Fish fish, PipelineToolbox pipelineToolbox) {
         MySQLFish mySQLFish = (MySQLFish) fish;
         StatementCollector collector = new FixedLengthStatementCollector(mySQLFish.getLength());
         mySQLFish.getStatement().collectStatement(collector);

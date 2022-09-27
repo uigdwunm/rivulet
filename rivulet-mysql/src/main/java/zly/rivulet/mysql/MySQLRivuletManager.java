@@ -1,16 +1,15 @@
 package zly.rivulet.mysql;
 
-import zly.rivulet.base.RivuletManager;
 import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.warehouse.WarehouseManager;
-import zly.rivulet.mysql.generator.MysqlGenerator;
 import zly.rivulet.mysql.definer.MySQLDefiner;
-import zly.rivulet.mysql.executor.MySQLExecutor;
+import zly.rivulet.mysql.generator.MysqlGenerator;
+import zly.rivulet.sql.SQLRivuletManager;
 import zly.rivulet.sql.parser.SqlParser;
 
 import javax.sql.DataSource;
 
-public class MySQLRivuletManager extends RivuletManager {
+public class MySQLRivuletManager extends SQLRivuletManager {
 
     public MySQLRivuletManager(
         MySQLRivuletProperties configProperties,
@@ -29,10 +28,10 @@ public class MySQLRivuletManager extends RivuletManager {
                 configProperties,
                 convertorManager
             ),
-            new MySQLExecutor(dataSource),
             configProperties,
             convertorManager,
-            warehouseManager
+            warehouseManager,
+            dataSource
         );
     }
 

@@ -15,43 +15,58 @@ import zly.rivulet.base.generator.param_manager.ParamManager;
 import zly.rivulet.base.generator.param_manager.for_proxy_method.SimpleParamManager;
 import zly.rivulet.base.parser.Parser;
 import zly.rivulet.base.pipeline.RunningPipeline;
+import zly.rivulet.base.utils.CollectionInstanceCreator;
+import zly.rivulet.base.utils.collector.FixedLengthStatementCollector;
+import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.base.warehouse.WarehouseManager;
 
 import java.lang.reflect.Method;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class RivuletManager {
+public abstract class RivuletManager implements DefaultOperation {
 
-    private final Parser parser;
+    protected final Parser parser;
 
-    private final Definer definer;
+    protected final Definer definer;
 
-    private final Generator generator;
+    protected final Generator generator;
 
-    private final RunningPipeline runningPipeline;
+    protected final RunningPipeline runningPipeline;
 
     protected final RivuletProperties configProperties;
 
     protected final ConvertorManager convertorManager;
 
-    private final WarehouseManager warehouseManager;
+    protected final WarehouseManager warehouseManager;
 
-    private final ParamManagerFactory paramManagerFactory;
+    protected final ParamManagerFactory paramManagerFactory;
 
-    private final Map<Method, Blueprint> mapperMethod_FinalDefinition_Map = new ConcurrentHashMap<>();
+    // 集合类型容器创建器
+    protected final CollectionInstanceCreator collectionInstanceCreator;
 
-    protected RivuletManager(Parser parser, Generator generator, Executor executor, RivuletProperties configProperties, ConvertorManager convertorManager, WarehouseManager warehouseManager) {
+    protected final Map<Method, Blueprint> mapperMethod_FinalDefinition_Map = new ConcurrentHashMap<>();
+
+    protected RivuletManager(
+        Parser parser,
+        Generator generator,
+        RivuletProperties configProperties,
+        ConvertorManager convertorManager,
+        WarehouseManager warehouseManager
+    ) {
         this.parser = parser;
         this.definer = parser.getDefiner();
         this.generator = generator;
-        this.runningPipeline = new RunningPipeline(generator, executor);
+        this.runningPipeline = new RunningPipeline(generator);
         this.configProperties = configProperties;
         this.convertorManager = convertorManager;
         this.warehouseManager = warehouseManager;
         this.paramManagerFactory = new ParamManagerFactory();
+        this.collectionInstanceCreator = new CollectionInstanceCreator();
 
         // 解析
         this.preParseAll();
@@ -92,92 +107,11 @@ public abstract class RivuletManager {
      **/
     public void warmUpAll() {
         for (Blueprint blueprint : mapperMethod_FinalDefinition_Map.values()) {
-            runningPipeline.warmUp(blueprint);
+            generator.warmUp(blueprint);
         }
     }
 
-    /**
-     * Description 用于代理方法中调用的执行
-     *
-     * @author zhaolaiyuan
-     * Date 2022/9/6 8:46
-     **/
-    public Object exec(Method proxyMethod, Object[] args) {
-        Blueprint blueprint = mapperMethod_FinalDefinition_Map.get(proxyMethod);
-        if (blueprint == null) {
-            // 没有预先定义方法
-            throw ParseException.undefinedMethod();
-        }
-        ParamManager paramManager = paramManagerFactory.getByProxyMethod(blueprint, proxyMethod, args);
-
-        return runningPipeline.go(blueprint, paramManager, proxyMethod.getReturnType());
-    }
-
-    /**
-     * Description 用于手动传desc和参数param，执行
-     *
-     * @author zhaolaiyuan
-     * Date 2022/9/6 8:46
-     **/
-    public <T> T exec(WholeDesc wholeDesc, Map<String, Object> params, Class<T> returnType) {
-        // 解析方法
-        Blueprint blueprint = parser.parseByDesc(wholeDesc);
-
-        SimpleParamManager simpleParamManager = new SimpleParamManager(params);
-        return (T) runningPipeline.go(blueprint, simpleParamManager, returnType);
-    }
-
-    public <T> T insertOne(T obj) {
-        Class<?> clazz = obj.getClass();
-        ModelMeta modelMeta = definer.createOrGetModelMeta(clazz);
-        Blueprint blueprint = parser.parseInsertByMeta(modelMeta);
-
-        ParamManager paramManager = paramManagerFactory.getByModelMeta(modelMeta, new Object[]{obj});
-
-        return (T) runningPipeline.go(blueprint, paramManager, clazz);
-    }
-
-    public <T> List<T> insertAll(Collection<T> batchModel) {
-//        Class<?> clazz = obj.getClass();
-//        ModelMeta modelMeta = definer.createOrGetModelMeta(clazz);
-//        Blueprint blueprint = parser.parseInsertByMeta(modelMeta);
-//
-//        ParamManager paramManager = paramManagerFactory.getByModelMeta(modelMeta, new Object[]{obj});
-//
-//        return runningPipeline.go(blueprint, paramManager, clazz);
-    }
-
-    public <T> T updateOne(T obj) {
-
-    }
-
-    public <T> List<T> updateAll(Collection<T> obj) {
-
-    }
-
-    public <T, I> T queryById(I id, Class<T> modelClass) {
-
-    }
-
-    public <T, I> T queryByIds(Collection<I> ids, Class<T> modelClass) {
-
-    }
-
-    public <T> T queryAll(Class<T> modelClass) {
-
-    }
-
-    public <T, I> T deleteById(I id, Class<T> modelClass) {
-
-    }
-
-    public <T, I> T deleteByIds(Collection<I> ids, Class<T> modelClass) {
-
-    }
-
-    public <T> T deleteAll(Class<T> modelClass) {
-
-    }
+    public abstract Object exec(Method proxyMethod, Object[] args);
 
     public Fish testParse(WholeDesc wholeDesc) {
         Blueprint blueprint = parser.parseByDesc(wholeDesc);

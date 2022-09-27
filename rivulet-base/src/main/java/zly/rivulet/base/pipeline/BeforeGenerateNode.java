@@ -3,14 +3,15 @@ package zly.rivulet.base.pipeline;
 
 import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.generator.param_manager.ParamManager;
+import zly.rivulet.base.pipeline.toolbox.PipelineToolbox;
 
 public abstract class BeforeGenerateNode {
     BeforeGenerateNode next;
 
-    public abstract Object handle(Blueprint blueprint, ParamManager paramManager, Class<?> returnType);
+    public abstract Object handle(Blueprint blueprint, ParamManager paramManager, RunningPipeline.Executor executor);
 
-    protected Object nextHandle(Blueprint blueprint, ParamManager paramManager, Class<?> returnType) {
-        return next.handle(blueprint, paramManager, returnType);
+    protected Object nextHandle(Blueprint blueprint, ParamManager paramManager, PipelineToolbox pipelineToolbox) {
+        return next.handle(blueprint, paramManager, pipelineToolbox);
     }
 
     void setNext(BeforeGenerateNode next) {

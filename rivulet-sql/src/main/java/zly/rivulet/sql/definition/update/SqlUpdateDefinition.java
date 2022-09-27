@@ -1,6 +1,7 @@
 package zly.rivulet.sql.definition.update;
 
 import zly.rivulet.base.assigner.Assigner;
+import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.parser.ParamReceiptManager;
@@ -58,6 +59,11 @@ public class SqlUpdateDefinition implements SQLBlueprint {
     @Override
     public String getKey() {
         return this.metaDesc.getKey();
+    }
+
+    @Override
+    public RivuletFlag getFlag() {
+        return metaDesc.getFlag();
     }
 
     @Override

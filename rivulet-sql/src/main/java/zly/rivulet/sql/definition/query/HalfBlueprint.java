@@ -2,6 +2,7 @@ package zly.rivulet.sql.definition.query;
 
 import zly.rivulet.base.assigner.Assigner;
 import zly.rivulet.base.definer.ModelMeta;
+import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.parser.ParamReceiptManager;
@@ -29,6 +30,11 @@ public class HalfBlueprint implements SQLBlueprint {
 
     @Override
     public String getKey() {
+        return null;
+    }
+
+    @Override
+    public RivuletFlag getFlag() {
         return null;
     }
 

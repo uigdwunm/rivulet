@@ -1,5 +1,6 @@
 package zly.rivulet.sql.describer.update;
 
+import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.sql.describer.condition.ConditionContainer;
 import zly.rivulet.sql.describer.query.desc.Mapping;
@@ -45,6 +46,11 @@ public class SqlUpdateMetaDesc<T> implements WholeDesc {
     @Override
     public void setKey(String key) {
         this.key = key;
+    }
+
+    @Override
+    public RivuletFlag getFlag() {
+        return RivuletFlag.UPDATE;
     }
 
     public Class<T> getModel() {

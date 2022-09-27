@@ -1,6 +1,7 @@
 package zly.rivulet.base.definition;
 
 import zly.rivulet.base.assigner.Assigner;
+import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.parser.ParamReceiptManager;
 
 /**
@@ -11,6 +12,8 @@ import zly.rivulet.base.parser.ParamReceiptManager;
  **/
 public interface Blueprint extends Definition {
     String getKey();
+
+    RivuletFlag getFlag();
 
     Assigner<?> getAssigner();
 

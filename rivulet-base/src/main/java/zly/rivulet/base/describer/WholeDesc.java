@@ -1,5 +1,7 @@
 package zly.rivulet.base.describer;
 
+import zly.rivulet.base.definer.enums.RivuletFlag;
+
 public interface WholeDesc extends Desc {
 
     Class<?> getMainFrom();
@@ -7,4 +9,6 @@ public interface WholeDesc extends Desc {
     String getKey();
 
     void setKey(String key);
+
+    RivuletFlag getFlag();
 }

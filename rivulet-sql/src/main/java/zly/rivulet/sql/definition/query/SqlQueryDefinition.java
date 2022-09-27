@@ -1,6 +1,7 @@
 package zly.rivulet.sql.definition.query;
 
 import zly.rivulet.base.definer.ModelMeta;
+import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.definition.AbstractDefinition;
 import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
@@ -193,6 +194,11 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
     @Override
     public String getKey() {
         return this.key;
+    }
+
+    @Override
+    public RivuletFlag getFlag() {
+        return metaDesc.getFlag();
     }
 
     @Override

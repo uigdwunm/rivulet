@@ -1,7 +1,7 @@
 package zly.rivulet.mysql.example.config;
 
 import zly.rivulet.base.definer.annotations.RivuletDescConfig;
-import zly.rivulet.base.definer.annotations.RivuletQueryDesc;
+import zly.rivulet.base.definer.annotations.RivuletDesc;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.mysql.example.model.JoinQueryDO;
 import zly.rivulet.mysql.example.model.user.User;
@@ -16,7 +16,7 @@ import zly.rivulet.sql.describer.query.desc.Mapping;
 @RivuletDescConfig
 public class UserDescConfig {
 
-    @RivuletQueryDesc("sdf")
+    @RivuletDesc("sdf")
     public SqlQueryMetaDesc<User, UserVO> queryUser() {
         return QueryBuilder.query(User.class, UserVO.class)
             .select(
@@ -33,7 +33,7 @@ public class UserDescConfig {
             ).build();
     }
 
-    @RivuletQueryDesc("")
+    @RivuletDesc("")
     public SqlQueryMetaDesc<JoinQueryDO, UserJoinVO> queryJoinUser() {
         return QueryBuilder.query(JoinQueryDO.class, UserJoinVO.class)
             .select(

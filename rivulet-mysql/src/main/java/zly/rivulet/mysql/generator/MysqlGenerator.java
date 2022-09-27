@@ -16,7 +16,7 @@ import zly.rivulet.mysql.generator.statement.param.SQLParamStatement;
 import zly.rivulet.mysql.generator.statement.query.*;
 import zly.rivulet.sql.definition.query.SQLBlueprint;
 import zly.rivulet.sql.parser.SQLAliasManager;
-import zly.rivulet.sql.generator.toolbox.AssemblyLinePortableToolbox;
+import zly.rivulet.sql.generator.toolbox.GenerateToolbox;
 import zly.rivulet.sql.generator.toolbox.WarmUpToolbox;
 import zly.rivulet.sql.generator.SqlStatementFactory;
 import zly.rivulet.sql.generator.statement.SqlStatement;
@@ -37,7 +37,7 @@ public class MysqlGenerator implements Generator {
      * key是设计图，value是流水线过程中用到的工具箱，
      * 如果没查到说明没有初始化过
      **/
-    private final Map<Blueprint, Function<ParamManager, AssemblyLinePortableToolbox>> toolboxCreatorMap = new ConcurrentHashMap<>();
+    private final Map<Blueprint, Function<ParamManager, GenerateToolbox>> toolboxCreatorMap = new ConcurrentHashMap<>();
 
     public MysqlGenerator(MySQLRivuletProperties configProperties, ConvertorManager convertorManager) {
         this.sqlStatementFactory = new SqlStatementFactory();
@@ -54,23 +54,23 @@ public class MysqlGenerator implements Generator {
         }
         SQLBlueprint sqlBlueprint = (SQLBlueprint) blueprint;
 
-        Function<ParamManager, AssemblyLinePortableToolbox> toolboxCreator = this.warmUpAndToolbox(sqlBlueprint);
+        Function<ParamManager, GenerateToolbox> toolboxCreator = this.warmUpAndToolbox(sqlBlueprint);
         toolboxCreatorMap.put(sqlBlueprint, toolboxCreator);
     }
 
-    private Function<ParamManager, AssemblyLinePortableToolbox> warmUpAndToolbox(SQLBlueprint sqlBlueprint) {
+    private Function<ParamManager, GenerateToolbox> warmUpAndToolbox(SQLBlueprint sqlBlueprint) {
         RelationSwitch rootSwitch = RelationSwitch.createRootSwitch();
         SQLAliasManager aliasManager = sqlBlueprint.getAliasManager();
         WarmUpToolbox warmUpToolbox = new WarmUpToolbox(aliasManager);
         sqlStatementFactory.init(sqlBlueprint, rootSwitch, warmUpToolbox);
-        return paramManager -> new AssemblyLinePortableToolbox(paramManager, sqlBlueprint.getAliasManager());
+        return paramManager -> new GenerateToolbox(paramManager, sqlBlueprint.getAliasManager());
     }
 
     @Override
     public Fish generate(Blueprint blueprint, ParamManager paramManager) {
         SQLBlueprint sqlBlueprint = (SQLBlueprint) blueprint;
 
-        Function<ParamManager, AssemblyLinePortableToolbox> toolboxCreator = toolboxCreatorMap.get(blueprint);
+        Function<ParamManager, GenerateToolbox> toolboxCreator = toolboxCreatorMap.get(blueprint);
         if (toolboxCreator == null) {
             // 没有初始化过，先初始化
             toolboxCreator = this.warmUpAndToolbox(sqlBlueprint);
@@ -80,9 +80,9 @@ public class MysqlGenerator implements Generator {
         // 有查询条件的父级不能缓存
         // 有排序的容器不能缓存
 
-        AssemblyLinePortableToolbox toolbox = toolboxCreator.apply(paramManager);
+        GenerateToolbox toolbox = toolboxCreator.apply(paramManager);
         SqlStatement rootStatement = sqlStatementFactory.getOrCreate(sqlBlueprint, toolbox);
-        return new MySQLFish(blueprint, rootStatement);
+        return new MySQLFish(sqlBlueprint, rootStatement);
     }
 
     private void registerStatement(SqlStatementFactory sqlStatementFactory) {

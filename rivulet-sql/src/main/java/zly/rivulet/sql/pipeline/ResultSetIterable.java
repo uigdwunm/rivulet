@@ -1,4 +1,4 @@
-package zly.rivulet.mysql.executor;
+package zly.rivulet.sql.pipeline;
 
 import zly.rivulet.sql.assigner.SQLQueryResultAssigner;
 

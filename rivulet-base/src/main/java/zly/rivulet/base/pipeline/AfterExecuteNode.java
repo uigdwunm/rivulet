@@ -6,11 +6,11 @@ import zly.rivulet.base.generator.Fish;
 public abstract class AfterExecuteNode {
     AfterExecuteNode next;
 
-    public abstract Object handle(Fish fish, Class<?> returnType, Object result);
+    public abstract Object handle(Fish fish, Object result, PipelineToolbox pipelineToolbox);
 
 
-    protected Object nextHandle(Fish fish, Class<?> returnType, Object result) {
-        return next.handle(fish, returnType, result);
+    protected Object nextHandle(Fish fish, Object result, PipelineToolbox pipelineToolbox) {
+        return next.handle(fish, result, pipelineToolbox);
     }
 
     void setNext(AfterExecuteNode next) {

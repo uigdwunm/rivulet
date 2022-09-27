@@ -5,7 +5,7 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import zly.rivulet.base.RivuletManager;
 import zly.rivulet.base.definer.annotations.RivuletDescConfig;
-import zly.rivulet.base.definer.annotations.RivuletQueryDesc;
+import zly.rivulet.base.definer.annotations.RivuletDesc;
 import zly.rivulet.base.definer.annotations.RivuletQueryMapper;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.utils.LoadUtil;
@@ -46,10 +46,10 @@ public class DefaultWarehouseManager implements WarehouseManager {
             try {
                 Object o = clazz.newInstance();
                 for (Method method : clazz.getMethods()) {
-                    RivuletQueryDesc rivuletQueryDesc = method.getAnnotation(RivuletQueryDesc.class);
-                    if (rivuletQueryDesc != null) {
+                    RivuletDesc rivuletDesc = method.getAnnotation(RivuletDesc.class);
+                    if (rivuletDesc != null) {
                         // 是配置类
-                        String key = rivuletQueryDesc.value();
+                        String key = rivuletDesc.value();
                         WholeDesc wholeDesc = (WholeDesc) method.invoke(o);
                         wholeDesc.setKey(key);
                         key_wholeDesc_map.put(key, wholeDesc);
