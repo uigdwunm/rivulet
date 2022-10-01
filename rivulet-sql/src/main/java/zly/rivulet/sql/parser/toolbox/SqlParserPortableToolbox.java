@@ -17,10 +17,16 @@ public class SqlParserPortableToolbox implements ParserPortableToolbox {
 
     private final SqlRivuletProperties configProperties;
 
+    private int subQueryCount = 0;
+
     public SqlParserPortableToolbox(SqlParser sqlPreParser) {
         this.sqlPreParser = sqlPreParser;
         this.paramReceiptManager = new SqlParamReceiptManager(sqlPreParser.getConvertorManager());
         this.configProperties = sqlPreParser.getConfigProperties();
+    }
+
+    public int incrSubQuery() {
+        return ++this.subQueryCount;
     }
 
     public SqlParser getSqlPreParser() {

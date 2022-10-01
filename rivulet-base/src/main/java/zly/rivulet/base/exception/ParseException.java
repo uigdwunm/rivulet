@@ -31,4 +31,11 @@ public class ParseException extends RuntimeException {
     public static ParseException failParseParam() {
         return new ParseException("无法解析参数");
     }
+
+    /**
+     * 解析有问题，无法执行
+     **/
+    public static ParseException execError(String s) {
+        return new ParseException(s);
+    }
 }

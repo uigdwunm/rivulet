@@ -3,6 +3,7 @@ package zly.rivulet.sql.parser;
 import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.definer.Definer;
 import zly.rivulet.base.definer.ModelMeta;
+import zly.rivulet.base.definer.annotations.RivuletDesc;
 import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.exception.DescDefineException;
@@ -76,22 +77,42 @@ public class SqlParser implements Parser {
     }
 
     public Blueprint parseByDesc(WholeDesc wholeDesc, SqlParserPortableToolbox sqlPreParseHelper) {
-        Blueprint blueprint = key_queryDefinition_map.get(wholeDesc.getKey());
+        // 先检查最大子查询次数
+        int subQueryMax = configProperties.getSubQueryMax();
+        if (sqlPreParseHelper.incrSubQuery() > subQueryMax) {
+            throw DescDefineException.moreSubQuery(subQueryMax);
+        }
+        RivuletDesc rivuletDesc = wholeDesc.getAnnotation();
+        if (rivuletDesc == null) {
+            // 不存在注解，说明不是预定义好的，不走缓存，直接解析
+            return this.innerParseByDesc(wholeDesc, sqlPreParseHelper);
+        }
+        // 先从缓存查
+        Blueprint blueprint = key_queryDefinition_map.get(rivuletDesc.value());
         if (HalfBlueprint.isHalf(blueprint)) {
             // 循环嵌套子查询
             throw SQLDescDefineException.subQueryLoopNesting();
         }
         // 开始解析前先塞一个标识，用于解决循环嵌套子查询
-        key_queryDefinition_map.put(wholeDesc.getKey(), HalfBlueprint.instance);
+        key_queryDefinition_map.put(rivuletDesc.value(), HalfBlueprint.instance);
 
+        // 解析
+        blueprint = this.innerParseByDesc(wholeDesc, sqlPreParseHelper);
+
+        // 存到缓存
+        key_queryDefinition_map.put(rivuletDesc.value(), blueprint);
+        return blueprint;
+    }
+
+    private Blueprint innerParseByDesc(WholeDesc wholeDesc, SqlParserPortableToolbox sqlPreParseHelper) {
         if (wholeDesc instanceof SqlQueryMetaDesc) {
             // 查询方法
-            blueprint = new SqlQueryDefinition(sqlPreParseHelper, wholeDesc);
+            return new SqlQueryDefinition(sqlPreParseHelper, wholeDesc);
 //        } else if () {
 //            // 新增
         } else if (wholeDesc instanceof SqlUpdateMetaDesc) {
             // 修改
-            blueprint = new SqlUpdateDefinition(sqlPreParseHelper, wholeDesc);
+            return new SqlUpdateDefinition(sqlPreParseHelper, wholeDesc);
 
 //        } else if () {
 //            // 删除
@@ -99,9 +120,6 @@ public class SqlParser implements Parser {
         } else {
             throw UnbelievableException.unknownType();
         }
-
-        key_queryDefinition_map.put(wholeDesc.getKey(), blueprint);
-        return blueprint;
     }
 
 

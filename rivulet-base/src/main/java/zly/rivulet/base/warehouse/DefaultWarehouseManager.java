@@ -4,9 +4,9 @@ import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import zly.rivulet.base.RivuletManager;
-import zly.rivulet.base.definer.annotations.RivuletDescConfig;
 import zly.rivulet.base.definer.annotations.RivuletDesc;
-import zly.rivulet.base.definer.annotations.RivuletQueryMapper;
+import zly.rivulet.base.definer.annotations.RivuletDescConfig;
+import zly.rivulet.base.definer.annotations.RivuletMapper;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.utils.LoadUtil;
 
@@ -51,7 +51,7 @@ public class DefaultWarehouseManager implements WarehouseManager {
                         // 是配置类
                         String key = rivuletDesc.value();
                         WholeDesc wholeDesc = (WholeDesc) method.invoke(o);
-                        wholeDesc.setKey(key);
+                        wholeDesc.setAnnotation(rivuletDesc);
                         key_wholeDesc_map.put(key, wholeDesc);
                     }
                 }
@@ -60,7 +60,7 @@ public class DefaultWarehouseManager implements WarehouseManager {
             }
         } else {
             for (Method method : clazz.getMethods()) {
-                RivuletQueryMapper rivuletQueryMapper = method.getAnnotation(RivuletQueryMapper.class);
+                RivuletMapper rivuletQueryMapper = method.getAnnotation(RivuletMapper.class);
                 if (rivuletQueryMapper != null) {
                     key_mapper_map.put(rivuletQueryMapper.value(), method);
                 }
@@ -91,8 +91,8 @@ public class DefaultWarehouseManager implements WarehouseManager {
             @Override
             public Object intercept(Object o, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
                 // 执行
-                RivuletQueryMapper rivuletQueryMapper = method.getAnnotation(RivuletQueryMapper.class);
-                if (rivuletQueryMapper != null) {
+                RivuletMapper rivuletMapper = method.getAnnotation(RivuletMapper.class);
+                if (rivuletMapper != null) {
                     return rivuletManager.exec(method, args);
                 } else {
                     return methodProxy.invokeSuper(o, args);

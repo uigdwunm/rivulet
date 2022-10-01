@@ -1,5 +1,6 @@
 package zly.rivulet.sql.describer.update;
 
+import zly.rivulet.base.definer.annotations.RivuletDesc;
 import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.sql.describer.condition.ConditionContainer;
@@ -25,7 +26,7 @@ public class SqlUpdateMetaDesc<T> implements WholeDesc {
      **/
     private final ConditionContainer<T, ?> whereConditionContainer;
 
-    private String key;
+    protected RivuletDesc anno;
 
     public SqlUpdateMetaDesc(Class<T> model, List<Mapping<T, T, ?>> mappedItemList, ConditionContainer<T, ?> whereConditionContainer) {
         this.model = model;
@@ -39,13 +40,13 @@ public class SqlUpdateMetaDesc<T> implements WholeDesc {
     }
 
     @Override
-    public String getKey() {
-        return key;
+    public RivuletDesc getAnnotation() {
+        return anno;
     }
 
     @Override
-    public void setKey(String key) {
-        this.key = key;
+    public void setAnnotation(RivuletDesc anno) {
+        this.anno = anno;
     }
 
     @Override

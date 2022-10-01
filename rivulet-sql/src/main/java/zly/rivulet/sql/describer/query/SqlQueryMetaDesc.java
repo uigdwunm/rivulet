@@ -1,5 +1,6 @@
 package zly.rivulet.sql.describer.query;
 
+import zly.rivulet.base.definer.annotations.RivuletDesc;
 import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.base.describer.WholeDesc;
@@ -61,7 +62,7 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
      **/
     protected final Param<Integer> limit;
 
-    private String key;
+    protected RivuletDesc anno;
 
     /**
      * TODO 是否包含原生语句
@@ -122,13 +123,13 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
     }
 
     @Override
-    public String getKey() {
-        return this.key;
+    public RivuletDesc getAnnotation() {
+        return this.anno;
     }
 
     @Override
-    public void setKey(String key) {
-        this.key = key;
+    public void setAnnotation(RivuletDesc anno) {
+        this.anno = anno;
     }
 
     @Override
