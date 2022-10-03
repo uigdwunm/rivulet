@@ -5,6 +5,7 @@ import zly.rivulet.base.definition.param.ParamReceipt;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.base.generator.param_manager.ParamManager;
+import zly.rivulet.base.utils.ClassUtils;
 import zly.rivulet.base.utils.StringUtil;
 
 import java.lang.reflect.Array;
@@ -90,7 +91,7 @@ public abstract class CheckCondition {
                 if (paramValue instanceof Collection) {
                     return !((Collection<?>) paramValue).isEmpty();
                 }
-                if (paramValue.getClass().isArray()) {
+                if (ClassUtils.isArray(paramValue.getClass())) {
                     return Array.getLength(paramValue) > 0;
                 }
                 throw new IllegalArgumentException();

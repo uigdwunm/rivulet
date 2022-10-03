@@ -15,7 +15,7 @@ public class NotNullOperateDefinition extends OperateDefinition {
     }
 
     private NotNullOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, ConditionElement<?, ?> condition) {
-        super(condition.getCheckCondition(), sqlPreParseHelper.getParamDefinitionManager());
+        super(condition.getCheckCondition(), sqlPreParseHelper.getParamReceiptManager());
         SingleValueElementDesc<?, ?> elementDesc = condition.getLeftFieldMapped();
 
         this.elementDesc = super.parse(sqlPreParseHelper, elementDesc);

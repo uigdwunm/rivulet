@@ -13,7 +13,7 @@ public enum ConditionOperate {
 //    LTE("<="),
 //    NE("!="),
     BETWEEN(BetweenOperateDefinition::new),
-//    IN("in"),
+    IN(InOperateDefinition::new),
 //    NOT_IN("not in"),
 //    IS_NULL(""),
     NOT_NULL(NotNullOperateDefinition::new),

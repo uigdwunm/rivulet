@@ -9,17 +9,17 @@ import zly.rivulet.sql.describer.condition.Condition;
 import zly.rivulet.sql.describer.condition.ConditionElement;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
-public class EqOperateDefinition extends OperateDefinition {
+public class InOperateDefinition extends OperateDefinition {
 
     private SingleValueElementDefinition leftElement;
 
     private SingleValueElementDefinition rightElement;
 
-    public EqOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
+    public InOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
         this(sqlPreParseHelper, (ConditionElement<?, ?>) condition);
     }
 
-    public EqOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, ConditionElement<?, ?> condition) {
+    public InOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, ConditionElement<?, ?> condition) {
         super(condition.getCheckCondition(), sqlPreParseHelper.getParamReceiptManager());
         SingleValueElementDesc<?, ?> leftFieldMapped = condition.getLeftFieldMapped();
         SingleValueElementDesc<?, ?> rightFieldMapped = condition.getRightFieldMappeds()[0];
@@ -28,8 +28,8 @@ public class EqOperateDefinition extends OperateDefinition {
         this.rightElement = super.parse(sqlPreParseHelper, rightFieldMapped);
     }
 
-    public EqOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, FieldDefinition fieldDefinition, Param<?> param) {
-        super(CheckCondition.notNull(param), sqlPreParseHelper.getParamReceiptManager());
+    public InOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, FieldDefinition fieldDefinition, Param<?> param) {
+        super(CheckCondition.notEmpty(param), sqlPreParseHelper.getParamReceiptManager());
 
         this.leftElement =  fieldDefinition;
         this.rightElement = super.parse(sqlPreParseHelper, param);
@@ -44,7 +44,7 @@ public class EqOperateDefinition extends OperateDefinition {
     }
 
     @Override
-    public EqOperateDefinition forAnalyze() {
+    public InOperateDefinition forAnalyze() {
         return null;
     }
 }

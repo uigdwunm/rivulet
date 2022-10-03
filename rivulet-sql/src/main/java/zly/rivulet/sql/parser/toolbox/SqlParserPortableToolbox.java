@@ -33,7 +33,7 @@ public class SqlParserPortableToolbox implements ParserPortableToolbox {
         return sqlPreParser;
     }
 
-    public ParamReceiptManager getParamDefinitionManager() {
+    public ParamReceiptManager getParamReceiptManager() {
         return paramReceiptManager;
     }
 

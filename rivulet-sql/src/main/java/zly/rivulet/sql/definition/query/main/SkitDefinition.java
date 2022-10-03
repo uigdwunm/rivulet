@@ -11,8 +11,8 @@ public class SkitDefinition extends AbstractDefinition {
     private ParamReceipt skit;
 
     public SkitDefinition(SqlParserPortableToolbox sqlPreParseHelper, Param<Integer> skit) {
-        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamDefinitionManager());
-        ParamReceiptManager paramReceiptManager = sqlPreParseHelper.getParamDefinitionManager();
+        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamReceiptManager());
+        ParamReceiptManager paramReceiptManager = sqlPreParseHelper.getParamReceiptManager();
         this.skit = paramReceiptManager.registerParam(skit);
     }
 

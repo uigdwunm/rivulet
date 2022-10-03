@@ -16,8 +16,13 @@ public class WhereDefinition extends AbstractContainerDefinition {
     }
 
     public WhereDefinition(SqlParserPortableToolbox sqlPreParseHelper, ConditionContainer<?, ?> whereConditionContainer) {
-        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamDefinitionManager());
+        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamReceiptManager());
         this.operateDefinition = whereConditionContainer.getOperate().createDefinition(sqlPreParseHelper, whereConditionContainer);
+    }
+
+    public WhereDefinition(SqlParserPortableToolbox sqlPreParseHelper, OperateDefinition operateDefinition) {
+        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamReceiptManager());
+        this.operateDefinition = operateDefinition;
     }
 
     public OperateDefinition getOperateDefinition() {

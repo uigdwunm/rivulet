@@ -24,7 +24,7 @@ public class JoinRelationDefinition extends AbstractDefinition {
     private JoinType joinType;
 
     public JoinRelationDefinition(SqlParserPortableToolbox sqlPreParseHelper, ComplexDescriber.Relation<?> desc) {
-        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamDefinitionManager());
+        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamReceiptManager());
         QueryProxyNode proxyNode = sqlPreParseHelper.getCurrNode();
         JoinConditionContainer<?, ?> conditionContainer = desc.getConditionContainer();
         OperateDefinition operateDefinition = conditionContainer.getOperate().createDefinition(sqlPreParseHelper, conditionContainer);

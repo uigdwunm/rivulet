@@ -1,32 +1,37 @@
 package zly.rivulet.sql.definition.query;
 
-import zly.rivulet.base.definer.ModelMeta;
 import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.definition.AbstractDefinition;
-import zly.rivulet.base.parser.ParamReceiptManager;
-import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.param.Param;
+import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.sql.assigner.SQLQueryResultAssigner;
 import zly.rivulet.sql.definer.meta.QueryFromMeta;
+import zly.rivulet.sql.definer.meta.SQLFieldMeta;
+import zly.rivulet.sql.definer.meta.SQLModelMeta;
+import zly.rivulet.sql.definition.field.FieldDefinition;
 import zly.rivulet.sql.definition.query.main.*;
-import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
+import zly.rivulet.sql.definition.query.operate.AndOperateDefinition;
+import zly.rivulet.sql.definition.query.operate.EqOperateDefinition;
+import zly.rivulet.sql.definition.query.operate.OperateDefinition;
+import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
 import zly.rivulet.sql.describer.condition.Condition;
 import zly.rivulet.sql.describer.condition.ConditionContainer;
+import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.query.desc.OrderBy;
 import zly.rivulet.sql.parser.SQLAliasManager;
-import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
+import zly.rivulet.sql.parser.SqlParamReceiptManager;
 import zly.rivulet.sql.parser.node.QueryProxyNode;
+import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingleValueElementDefinition {
 
-    private final String key;
-
-    private final SqlQueryMetaDesc<?, ?> metaDesc;
+    private final RivuletFlag flag = RivuletFlag.QUERY;
 
     private SelectDefinition selectDefinition;
 
@@ -54,19 +59,12 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
 
     private SQLAliasManager.AliasFlag aliasFlag;
 
-    private SqlQueryDefinition(SqlQueryMetaDesc<?, ?> metaDesc) {
-        this.key = metaDesc.getKey();
-        this.metaDesc = metaDesc;
-    }
-
     public SqlQueryDefinition(SqlParserPortableToolbox toolbox, WholeDesc wholeDesc) {
         SqlQueryMetaDesc<?, ?> metaDesc = (SqlQueryMetaDesc<?, ?>) wholeDesc;
-        this.key = metaDesc.getKey();
         QueryProxyNode queryProxyNode = new QueryProxyNode(toolbox, metaDesc.getMainFrom());
         toolbox.setCurrNode(queryProxyNode);
 
         // 解析赋值
-        this.metaDesc = metaDesc;
         this.fromDefinition = new FromDefinition(toolbox);
         this.selectDefinition = new SelectDefinition(
             toolbox,
@@ -112,13 +110,36 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
         this.sqlQueryResultAssigner = selectDefinition.getSqlAssigner();
 
         this.aliasManager = SQLAliasManager.create(toolbox.getConfigProperties(), queryProxyNode);
-        this.paramReceiptManager = toolbox.getParamDefinitionManager();
+        this.paramReceiptManager = toolbox.getParamReceiptManager();
         this.aliasFlag = queryProxyNode.getAliasFlag();
     }
 
+    public SqlQueryDefinition(SqlParserPortableToolbox toolbox, SQLModelMeta modelMeta, SQLFieldMeta primaryKey) {
+        Class<?> modelClass = modelMeta.getModelClass();
+        QueryProxyNode queryProxyNode = new QueryProxyNode(toolbox, modelClass);
+        toolbox.setCurrNode(queryProxyNode);
+        this.fromDefinition = new FromDefinition(toolbox);
+        this.selectDefinition = new SelectDefinition(toolbox, modelClass, modelClass, null);
+        this.whereDefinition = new WhereDefinition(
+            toolbox,
+            new AndOperateDefinition(
+                toolbox,
+                new EqOperateDefinition(
+                    toolbox,
+                    new FieldDefinition(null, modelMeta, primaryKey),
+                    Param.of(primaryKey.getClass(), )
+                )
+            )
+        );
+        this.aliasManager = ;
+        this.paramReceiptManager = toolbox.getParamReceiptManager();
+    }
+
+    public SqlQueryDefinition() {}
+
     @Override
     public SqlQueryDefinition forAnalyze() {
-        SqlQueryDefinition sqlQueryDefinition = new SqlQueryDefinition(this.metaDesc);
+        SqlQueryDefinition sqlQueryDefinition = new SqlQueryDefinition();
         sqlQueryDefinition.selectDefinition = selectDefinition.forAnalyze();
         sqlQueryDefinition.fromDefinition = fromDefinition.forAnalyze();
         // TODO 这里要注意
@@ -144,10 +165,6 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
         }
 
         return sqlQueryDefinition;
-    }
-
-    public SqlQueryMetaDesc<?, ?> getMetaDesc() {
-        return metaDesc;
     }
 
     public SelectDefinition getSelectDefinition() {
@@ -192,13 +209,8 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
     }
 
     @Override
-    public String getKey() {
-        return this.key;
-    }
-
-    @Override
     public RivuletFlag getFlag() {
-        return metaDesc.getFlag();
+        return this.flag;
     }
 
     @Override

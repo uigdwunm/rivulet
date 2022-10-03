@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Description 对应每个查询方法都有一个
+ * Description 参数凭证管理器，对应每个查询方法都有一个
  *
  * @author zhaolaiyuan
  * Date 2022/2/26 9:25

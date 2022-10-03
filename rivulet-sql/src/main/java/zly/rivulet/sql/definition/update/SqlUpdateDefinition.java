@@ -52,7 +52,7 @@ public class SqlUpdateDefinition implements SQLBlueprint {
         }
 
         this.aliasManager = SQLAliasManager.create(toolbox.getConfigProperties(), queryProxyNode);
-        this.paramReceiptManager = toolbox.getParamDefinitionManager();
+        this.paramReceiptManager = toolbox.getParamReceiptManager();
 
     }
 

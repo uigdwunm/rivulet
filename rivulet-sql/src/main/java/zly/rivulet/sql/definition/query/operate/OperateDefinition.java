@@ -40,7 +40,7 @@ public abstract class OperateDefinition extends AbstractDefinition {
             toolbox.setCurrNode(currNode);
             return sqlQueryDefinition;
         } else if (singleValueElementDesc instanceof Param) {
-            ParamReceiptManager paramReceiptManager = toolbox.getParamDefinitionManager();
+            ParamReceiptManager paramReceiptManager = toolbox.getParamReceiptManager();
             return paramReceiptManager.registerParam((Param<?>) singleValueElementDesc);
 //        } else if (singleValueElementDesc instanceof Function) {
         }

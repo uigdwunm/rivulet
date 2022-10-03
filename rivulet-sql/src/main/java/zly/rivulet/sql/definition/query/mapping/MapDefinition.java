@@ -66,7 +66,7 @@ public class MapDefinition implements SQLSingleValueElementDefinition {
 
     public MapDefinition(SqlParserPortableToolbox sqlPreParseHelper, Param<?> paramDesc, SetMapping<?, ?> selectField) {
         this.selectField = selectField;
-        ParamReceiptManager paramReceiptManager = sqlPreParseHelper.getParamDefinitionManager();
+        ParamReceiptManager paramReceiptManager = sqlPreParseHelper.getParamReceiptManager();
         this.valueDefinition = paramReceiptManager.registerParam(paramDesc);
         this.referenceAlias = sqlPreParseHelper.getCurrNode().getAliasFlag();
         this.aliasFlag = SQLAliasManager.createFieldAlias();

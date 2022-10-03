@@ -10,7 +10,7 @@ import java.util.List;
 public class OrderByDefinition extends AbstractDefinition {
 
     public OrderByDefinition(SqlParserPortableToolbox sqlPreParseHelper, List<? extends OrderBy.Item<?,?>> orderFieldList) {
-        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamDefinitionManager());
+        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamReceiptManager());
     }
 
     @Override

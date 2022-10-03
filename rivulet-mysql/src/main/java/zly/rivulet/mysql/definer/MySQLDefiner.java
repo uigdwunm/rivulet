@@ -3,6 +3,7 @@ package zly.rivulet.mysql.definer;
 import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.definer.annotations.Comment;
 import zly.rivulet.base.definer.annotations.DefaultValue;
+import zly.rivulet.base.definer.annotations.PrimaryKey;
 import zly.rivulet.base.definer.outerType.OriginOuterType;
 import zly.rivulet.base.exception.ModelDefineException;
 import zly.rivulet.base.utils.StringUtil;
@@ -79,9 +80,12 @@ public class MySQLDefiner extends SqlDefiner {
         String comment = null;
         String defaultValue = null;
         OriginOuterType originOuterType = null;
+        boolean isPrimary = false;
         for (Annotation annotation : field.getAnnotations()) {
             if (annotation instanceof SqlColumn) {
                 sqlColumn = (SqlColumn) annotation;
+            } else if (annotation instanceof PrimaryKey) {
+                isPrimary = true;
             } else if (annotation instanceof Comment) {
                 // 注释
                 comment = ((Comment) annotation).value();
@@ -113,7 +117,8 @@ public class MySQLDefiner extends SqlDefiner {
             StringUtil.defaultIfBlank(sqlColumn.value(), field.getName()),
             originOuterType,
             comment,
-            defaultValue
+            defaultValue,
+            isPrimary
         );
     }
 }

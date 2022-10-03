@@ -45,8 +45,8 @@ public class SelectDefinition extends AbstractContainerDefinition {
 //        super(CheckCondition.IS_TRUE);
 //    }
 
-    public SelectDefinition(SqlParserPortableToolbox sqlPreParseHelper, Class<?> fromModel, Class<?> selectModel, List<? extends Mapping<?, ?, ?>> mappedItemList) {
-        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamDefinitionManager());
+    public SelectDefinition(SqlParserPortableToolbox toolbox, Class<?> fromModel, Class<?> selectModel, List<? extends Mapping<?, ?, ?>> mappedItemList) {
+        super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
         this.selectModel = selectModel;
         if (mappedItemList == null || mappedItemList.isEmpty()) {
             // 比较select对象和from对象必须是同一个。
@@ -55,8 +55,8 @@ public class SelectDefinition extends AbstractContainerDefinition {
             }
             // 结果对象就是查询对象
 
-            QueryProxyNode currNode = sqlPreParseHelper.getCurrNode();
-            sqlQueryResultAssigner = new ContainerSQLQueryResultAssigner(sqlPreParseHelper, currNode, 0);
+            QueryProxyNode currNode = toolbox.getCurrNode();
+            this.sqlQueryResultAssigner = new ContainerSQLQueryResultAssigner(toolbox, currNode, 0);
             this.mappingDefinitionList = View.create(currNode.getMapDefinitionList());
         } else {
             List<MapDefinition> mapDefinitions = new ArrayList<>();
@@ -64,11 +64,11 @@ public class SelectDefinition extends AbstractContainerDefinition {
             // 结果对象是新的vo
             // 这里可能有子查询的情况
             for (Mapping<?, ?, ?> item : mappedItemList) {
-                MapDefinition mapDefinition = this.createMappingDefinition(sqlPreParseHelper, item);
+                MapDefinition mapDefinition = this.createMappingDefinition(toolbox, item);
                 mapDefinitions.add(mapDefinition);
                 setMappingList.add((SetMapping<Object, Object>) item.getMappingField());
             }
-            sqlQueryResultAssigner = new ModelSQLQueryResultAssigner(selectModel, setMappingList);
+            this.sqlQueryResultAssigner = new ModelSQLQueryResultAssigner(selectModel, setMappingList);
             this.mappingDefinitionList = View.create(mapDefinitions);
         }
     }

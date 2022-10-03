@@ -11,8 +11,6 @@ import zly.rivulet.base.parser.ParamReceiptManager;
  * Date 2022/2/27 10:49
  **/
 public interface Blueprint extends Definition {
-    String getKey();
-
     RivuletFlag getFlag();
 
     Assigner<?> getAssigner();

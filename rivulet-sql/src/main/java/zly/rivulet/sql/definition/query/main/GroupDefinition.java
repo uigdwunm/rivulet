@@ -13,7 +13,7 @@ public class GroupDefinition extends AbstractDefinition {
     }
 
     public GroupDefinition(SqlParserPortableToolbox sqlPreParseHelper, List<? extends FieldMapping<?,?>> groupFieldList) {
-        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamDefinitionManager());
+        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamReceiptManager());
     }
 
     @Override

@@ -4,15 +4,20 @@ import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.definer.Definer;
 import zly.rivulet.base.definer.ModelMeta;
 import zly.rivulet.base.definer.annotations.RivuletDesc;
+import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.exception.DescDefineException;
 import zly.rivulet.base.exception.ParseException;
 import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.parser.Parser;
+import zly.rivulet.base.utils.TwofoldConcurrentHashMap;
+import zly.rivulet.base.utils.View;
 import zly.rivulet.base.warehouse.WarehouseManager;
 import zly.rivulet.sql.SqlRivuletProperties;
 import zly.rivulet.sql.definer.SqlDefiner;
+import zly.rivulet.sql.definer.meta.SQLFieldMeta;
+import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.query.HalfBlueprint;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.definition.update.SqlUpdateDefinition;
@@ -42,6 +47,8 @@ public class SqlParser implements Parser {
     private final WarehouseManager warehouseManager;
 
     private final Map<String, Blueprint> key_queryDefinition_map = new HashMap<>();
+
+    private final TwofoldConcurrentHashMap<ModelMeta, RivuletFlag, Blueprint> modelMetaFlagBlueprintMap = new TwofoldConcurrentHashMap<>();
 
     public SqlParser(WarehouseManager warehouseManager, SqlDefiner definer, SqlRivuletProperties configProperties, ConvertorManager convertorManager) {
         this.warehouseManager = warehouseManager;
@@ -125,22 +132,69 @@ public class SqlParser implements Parser {
 
     @Override
     public Blueprint parseInsertByMeta(ModelMeta modelMeta) {
-        return null;
+        RivuletFlag flag = RivuletFlag.INSERT;
+        Blueprint blueprint = modelMetaFlagBlueprintMap.get(modelMeta, flag);
+        if (blueprint == null) {
+            View<SQLFieldMeta> primaryFieldMeta = ((SQLModelMeta) modelMeta).getPrimaryFieldMeta();
+            if (primaryFieldMeta.size() != 1) {
+                throw ParseException.noAvailablePrimaryKey();
+            }
+            SqlParserPortableToolbox sqlPreParseHelper = new SqlParserPortableToolbox(this);
+            // TODO
+            blueprint = ;
+            modelMetaFlagBlueprintMap.put(modelMeta, flag, blueprint);
+        }
+        return blueprint;
     }
 
     @Override
     public Blueprint parseUpdateByMeta(ModelMeta modelMeta) {
-        return null;
+        RivuletFlag flag = RivuletFlag.UPDATE;
+        Blueprint blueprint = modelMetaFlagBlueprintMap.get(modelMeta, flag);
+        if (blueprint == null) {
+            View<SQLFieldMeta> primaryFieldMeta = ((SQLModelMeta) modelMeta).getPrimaryFieldMeta();
+            if (primaryFieldMeta.size() != 1) {
+                throw ParseException.noAvailablePrimaryKey();
+            }
+            SqlParserPortableToolbox sqlPreParseHelper = new SqlParserPortableToolbox(this);
+            // TODO
+            blueprint = ;
+            modelMetaFlagBlueprintMap.put(modelMeta, flag, blueprint);
+        }
+        return blueprint;
     }
 
     @Override
     public Blueprint parseDeleteByMeta(ModelMeta modelMeta) {
-        return null;
+        RivuletFlag flag = RivuletFlag.DELETE;
+        Blueprint blueprint = modelMetaFlagBlueprintMap.get(modelMeta, flag);
+        if (blueprint == null) {
+            View<SQLFieldMeta> primaryFieldMeta = ((SQLModelMeta) modelMeta).getPrimaryFieldMeta();
+            if (primaryFieldMeta.size() != 1) {
+                throw ParseException.noAvailablePrimaryKey();
+            }
+            SqlParserPortableToolbox sqlPreParseHelper = new SqlParserPortableToolbox(this);
+            // TODO
+            blueprint = ;
+            modelMetaFlagBlueprintMap.put(modelMeta, flag, blueprint);
+        }
+        return blueprint;
     }
 
     @Override
     public Blueprint parseSelectByMeta(ModelMeta modelMeta) {
-        return null;
+        RivuletFlag flag = RivuletFlag.QUERY;
+        Blueprint blueprint = modelMetaFlagBlueprintMap.get(modelMeta, flag);
+        if (blueprint == null) {
+            // TODO
+            View<SQLFieldMeta> primaryFieldMeta = ((SQLModelMeta) modelMeta).getPrimaryFieldMeta();
+            if (primaryFieldMeta.size() != 1) {
+                throw ParseException.noAvailablePrimaryKey();
+            }
+            SqlParserPortableToolbox sqlPreParseHelper = new SqlParserPortableToolbox(this);
+            blueprint = new SqlQueryDefinition(sqlPreParseHelper, (SQLModelMeta) modelMeta, primaryFieldMeta.get(0));
+        }
+        return blueprint;
     }
 
     @Override

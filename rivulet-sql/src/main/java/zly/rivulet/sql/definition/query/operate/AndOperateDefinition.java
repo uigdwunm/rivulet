@@ -9,14 +9,16 @@ import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class AndOperateDefinition extends OperateDefinition {
 
-    private final ArrayList<OperateDefinition> operateDefinitionList = new ArrayList<>();
+    private final List<OperateDefinition> operateDefinitionList;
 
     public AndOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
-        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamDefinitionManager());
-        List<OperateDefinition> operateDefinitionList = this.operateDefinitionList;
+        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamReceiptManager());
+        List<OperateDefinition> operateDefinitionList = new ArrayList<>();
 
         if (condition instanceof ConditionContainer) {
             ConditionContainer<?, ?> container = (ConditionContainer<?, ?>) condition;
@@ -32,9 +34,15 @@ public class AndOperateDefinition extends OperateDefinition {
         } else {
             throw UnbelievableException.unknownType();
         }
+        this.operateDefinitionList = operateDefinitionList;
     }
 
-    public ArrayList<OperateDefinition> getOperateDefinitionList() {
+    public AndOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, OperateDefinition ... operateDefinitions) {
+        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamReceiptManager());
+        this.operateDefinitionList = Stream.of(operateDefinitions).collect(Collectors.toList());
+    }
+
+    public List<OperateDefinition> getOperateDefinitionList() {
         return operateDefinitionList;
     }
 

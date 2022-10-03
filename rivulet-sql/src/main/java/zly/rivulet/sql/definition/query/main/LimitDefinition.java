@@ -11,8 +11,8 @@ public class LimitDefinition extends AbstractDefinition {
     private final ParamReceipt limit;
 
     public LimitDefinition(SqlParserPortableToolbox sqlPreParseHelper, Param<Integer> limit) {
-        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamDefinitionManager());
-        ParamReceiptManager paramReceiptManager = sqlPreParseHelper.getParamDefinitionManager();
+        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamReceiptManager());
+        ParamReceiptManager paramReceiptManager = sqlPreParseHelper.getParamReceiptManager();
         this.limit = paramReceiptManager.registerParam(limit);
     }
 

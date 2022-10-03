@@ -31,7 +31,7 @@ public class SetItemDefinition extends AbstractDefinition {
     private final FieldDefinition fieldDefinition;
 
     public SetItemDefinition(SqlParserPortableToolbox toolbox, Mapping<?, ?, ?> mapping) {
-        super(CheckCondition.IS_TRUE, toolbox.getParamDefinitionManager());
+        super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
 
         this.valueDefinition = this.parseSingleValue(toolbox, mapping.getDesc());
 
@@ -76,7 +76,7 @@ public class SetItemDefinition extends AbstractDefinition {
             toolbox.setCurrNode(currNode);
             return sqlQueryDefinition;
         } else if (singleValueElementDesc instanceof Param) {
-            ParamReceiptManager paramReceiptManager = toolbox.getParamDefinitionManager();
+            ParamReceiptManager paramReceiptManager = toolbox.getParamReceiptManager();
             return paramReceiptManager.registerParam((Param<?>) singleValueElementDesc);
 //        } else if (singleValueElementDesc instanceof Function) {
         }

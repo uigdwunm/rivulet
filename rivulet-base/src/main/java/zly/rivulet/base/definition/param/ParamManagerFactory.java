@@ -6,7 +6,7 @@ import zly.rivulet.base.generator.param_manager.ParamManager;
 import zly.rivulet.base.generator.param_manager.for_model_meta.ModelMetaParamManager;
 import zly.rivulet.base.generator.param_manager.for_proxy_method.ProxyMethodParamManager;
 import zly.rivulet.base.parser.ParamReceiptManager;
-import zly.rivulet.base.utils.Constant;
+import zly.rivulet.base.utils.TwofoldConcurrentHashMap;
 
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -15,7 +15,8 @@ import java.util.function.Function;
 
 public class ParamManagerFactory {
 
-    public final Map<String, Function<Object[], ProxyMethodParamManager>> proxyMethodAndKey_paramManagerCreator_map = new ConcurrentHashMap<>();
+//    public final Map<Blueprint, Map<Method, Function<Object[], ProxyMethodParamManager>>> proxyMethod_paramManagerCreator_map = new ConcurrentHashMap<>();
+    public final TwofoldConcurrentHashMap<Blueprint, Method, Function<Object[], ProxyMethodParamManager>> proxyMethod_paramManagerCreator_map = new TwofoldConcurrentHashMap<>();
 
     public final Map<Class<?>, Function<Object[], ModelMetaParamManager>> modelType_paramManagerCreator_map = new ConcurrentHashMap<>();
 
@@ -35,24 +36,20 @@ public class ParamManagerFactory {
         return paramManagerCreator.apply(params);
     }
 
-    public void registerProxyMethod(Blueprint blueprint, Method method) {
+    public Function<Object[], ProxyMethodParamManager> registerProxyMethod(Blueprint blueprint, Method method) {
         ParamReceiptManager paramReceiptManager = blueprint.getParamReceiptManager();
         Function<Object[], ProxyMethodParamManager> paramManagerCreator = ProxyMethodParamManagerCreateorHelper.createParamManagerCreator(method, paramReceiptManager.getAllParamReceiptList());
-        String proxyMethodKey = this.getProxyMethodKey(blueprint, method);
-        this.proxyMethodAndKey_paramManagerCreator_map.put(proxyMethodKey, paramManagerCreator);
+
+        proxyMethod_paramManagerCreator_map.put(blueprint, method, paramManagerCreator);
+        return paramManagerCreator;
     }
 
     public ParamManager getByProxyMethod(Blueprint blueprint, Method method, Object[] params) {
-        Function<Object[], ProxyMethodParamManager> paramManagerCreator = proxyMethodAndKey_paramManagerCreator_map.get(this.getProxyMethodKey(blueprint, method));
+        Function<Object[], ProxyMethodParamManager> paramManagerCreator = proxyMethod_paramManagerCreator_map.get(blueprint, method);
         if (paramManagerCreator == null) {
-            this.registerProxyMethod(blueprint, method);
-            paramManagerCreator = proxyMethodAndKey_paramManagerCreator_map.get(this.getProxyMethodKey(blueprint, method));
+            paramManagerCreator = this.registerProxyMethod(blueprint, method);
         }
         return paramManagerCreator.apply(params);
-    }
-
-    private String getProxyMethodKey(Blueprint blueprint, Method method) {
-        return blueprint.getKey() + Constant.UNDERSCORE + method.getName();
     }
 
 }

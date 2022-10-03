@@ -21,7 +21,9 @@ public final class MySQLFieldMeta extends SQLFieldMeta {
 
     private final Field field;
 
-    public MySQLFieldMeta(Field field, String columnName, OriginOuterType originOuterType, String comment, String defaultValue) {
+    private final boolean isPrimary;
+
+    public MySQLFieldMeta(Field field, String columnName, OriginOuterType originOuterType, String comment, String defaultValue, boolean isPrimary) {
         this.fieldName = field.getName();
         this.fieldType = field.getDeclaringClass();
         this.columnName = columnName;
@@ -29,6 +31,7 @@ public final class MySQLFieldMeta extends SQLFieldMeta {
         this.comment = comment;
         this.defaultValue = defaultValue;
         this.field = field;
+        this.isPrimary = isPrimary;
 
         // 字段权限放开，方便操作
         field.setAccessible(true);
@@ -53,6 +56,10 @@ public final class MySQLFieldMeta extends SQLFieldMeta {
 
     public String getDefaultValue() {
         return defaultValue;
+    }
+
+    public boolean isPrimary() {
+        return isPrimary;
     }
 
     @Override

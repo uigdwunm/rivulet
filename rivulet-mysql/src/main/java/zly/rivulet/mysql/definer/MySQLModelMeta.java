@@ -2,9 +2,12 @@ package zly.rivulet.mysql.definer;
 
 import zly.rivulet.base.definer.FieldMeta;
 import zly.rivulet.base.utils.View;
+import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MySQLModelMeta extends SQLModelMeta {
@@ -12,6 +15,11 @@ public class MySQLModelMeta extends SQLModelMeta {
     private final String tableName;
 
     private final Class<?> modelClass;
+
+    /**
+     * 主键id(多个时为复合主键，为空时没有设置主键)
+     **/
+    private final View<SQLFieldMeta> primaryKey;
 
     private final View<MySQLFieldMeta> fieldMetaList;
 
@@ -24,9 +32,15 @@ public class MySQLModelMeta extends SQLModelMeta {
         this.modelClass = modelClass;
         this.fieldMetaList = fieldMetaList;
         Map<String, MySQLFieldMeta> map = new HashMap<>();
+        List<SQLFieldMeta> primaryKey = new ArrayList<>();
         for (MySQLFieldMeta mySQLFieldMeta : fieldMetaList) {
             map.put(mySQLFieldMeta.getFieldName(), mySQLFieldMeta);
+            if (mySQLFieldMeta.isPrimary()) {
+                primaryKey.add(mySQLFieldMeta);
+            }
         }
+
+        this.primaryKey = View.create(primaryKey);
         this.nameMetaMap = map;
 
         this.comment = comment;
@@ -35,6 +49,11 @@ public class MySQLModelMeta extends SQLModelMeta {
     @Override
     public String getTableName() {
         return tableName;
+    }
+
+    @Override
+    public View<SQLFieldMeta> getPrimaryFieldMeta() {
+        return this.primaryKey;
     }
 
     public View<FieldMeta> getFieldMetaList() {

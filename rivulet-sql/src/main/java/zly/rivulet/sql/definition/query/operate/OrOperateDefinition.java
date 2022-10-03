@@ -15,7 +15,7 @@ public class OrOperateDefinition extends OperateDefinition {
     private final ArrayList<OperateDefinition> operateDefinitionList = new ArrayList<>();
 
     public OrOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
-        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamDefinitionManager());
+        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamReceiptManager());
         List<OperateDefinition> operateDefinitionList = this.operateDefinitionList;
 
         if (condition instanceof ConditionContainer) {

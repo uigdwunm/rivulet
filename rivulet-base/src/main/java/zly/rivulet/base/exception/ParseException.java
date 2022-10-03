@@ -38,4 +38,8 @@ public class ParseException extends RuntimeException {
     public static ParseException execError(String s) {
         return new ParseException(s);
     }
+
+    public static ParseException noAvailablePrimaryKey() {
+        return new ParseException("有且仅有一个主键时，才能以模型方式解析调用");
+    }
 }
