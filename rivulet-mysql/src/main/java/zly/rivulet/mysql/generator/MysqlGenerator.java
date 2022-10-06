@@ -15,15 +15,10 @@ import zly.rivulet.mysql.generator.statement.operate.OrOperateStatement;
 import zly.rivulet.mysql.generator.statement.param.SQLParamStatement;
 import zly.rivulet.mysql.generator.statement.query.*;
 import zly.rivulet.sql.definition.query.SQLBlueprint;
-import zly.rivulet.sql.parser.SQLAliasManager;
 import zly.rivulet.sql.generator.toolbox.GenerateToolbox;
 import zly.rivulet.sql.generator.toolbox.WarmUpToolbox;
 import zly.rivulet.sql.generator.SqlStatementFactory;
 import zly.rivulet.sql.generator.statement.SqlStatement;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
 
 public class MysqlGenerator implements Generator {
 
@@ -32,12 +27,6 @@ public class MysqlGenerator implements Generator {
     private final MySQLRivuletProperties configProperties;
 
     private final ConvertorManager convertorManager;
-
-    /**
-     * key是设计图，value是流水线过程中用到的工具箱，
-     * 如果没查到说明没有初始化过
-     **/
-    private final Map<Blueprint, Function<ParamManager, GenerateToolbox>> toolboxCreatorMap = new ConcurrentHashMap<>();
 
     public MysqlGenerator(MySQLRivuletProperties configProperties, ConvertorManager convertorManager) {
         this.sqlStatementFactory = new SqlStatementFactory();
@@ -48,39 +37,31 @@ public class MysqlGenerator implements Generator {
 
     @Override
     public void warmUp(Blueprint blueprint) {
-        if (toolboxCreatorMap.containsKey(blueprint)) {
+        if (blueprint.isWarmUp()) {
             // 已经初始化过了
             return;
         }
         SQLBlueprint sqlBlueprint = (SQLBlueprint) blueprint;
 
-        Function<ParamManager, GenerateToolbox> toolboxCreator = this.warmUpAndToolbox(sqlBlueprint);
-        toolboxCreatorMap.put(sqlBlueprint, toolboxCreator);
+        RelationSwitch rootSwitch = RelationSwitch.createRootSwitch();
+        WarmUpToolbox warmUpToolbox = new WarmUpToolbox(sqlBlueprint);
+        sqlStatementFactory.warmUp(sqlBlueprint, rootSwitch, warmUpToolbox);
+        blueprint.finishWarmUp();
     }
 
-    private Function<ParamManager, GenerateToolbox> warmUpAndToolbox(SQLBlueprint sqlBlueprint) {
-        RelationSwitch rootSwitch = RelationSwitch.createRootSwitch();
-        SQLAliasManager aliasManager = sqlBlueprint.getAliasManager();
-        WarmUpToolbox warmUpToolbox = new WarmUpToolbox(aliasManager);
-        sqlStatementFactory.init(sqlBlueprint, rootSwitch, warmUpToolbox);
-        return paramManager -> new GenerateToolbox(paramManager, sqlBlueprint.getAliasManager());
-    }
 
     @Override
     public Fish generate(Blueprint blueprint, ParamManager paramManager) {
         SQLBlueprint sqlBlueprint = (SQLBlueprint) blueprint;
-
-        Function<ParamManager, GenerateToolbox> toolboxCreator = toolboxCreatorMap.get(blueprint);
-        if (toolboxCreator == null) {
+        if (!sqlBlueprint.isWarmUp()) {
             // 没有初始化过，先初始化
-            toolboxCreator = this.warmUpAndToolbox(sqlBlueprint);
-            toolboxCreatorMap.put(sqlBlueprint, toolboxCreator);
+            this.warmUp(sqlBlueprint);
         }
         // 参数本身不能缓存
         // 有查询条件的父级不能缓存
         // 有排序的容器不能缓存
 
-        GenerateToolbox toolbox = toolboxCreator.apply(paramManager);
+        GenerateToolbox toolbox = new GenerateToolbox(paramManager, sqlBlueprint);
         SqlStatement rootStatement = sqlStatementFactory.getOrCreate(sqlBlueprint, toolbox);
         return new MySQLFish(sqlBlueprint, rootStatement);
     }

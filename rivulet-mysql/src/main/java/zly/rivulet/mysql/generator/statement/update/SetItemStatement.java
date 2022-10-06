@@ -32,8 +32,8 @@ public class SetItemStatement implements SqlStatement {
             SetItemDefinition.class,
             (definition, soleFlag, toolbox) -> {
                 SetItemDefinition setItemDefinition = (SetItemDefinition) definition;
-                SqlStatement singleValueStatement = sqlStatementFactory.init(setItemDefinition.getValueDefinition(), soleFlag.subSwitch(), toolbox);
-                SqlStatement fieldStatement = sqlStatementFactory.init(setItemDefinition.getFieldDefinition(), soleFlag.subSwitch(), toolbox);
+                SqlStatement singleValueStatement = sqlStatementFactory.warmUp(setItemDefinition.getValueDefinition(), soleFlag.subSwitch(), toolbox);
+                SqlStatement fieldStatement = sqlStatementFactory.warmUp(setItemDefinition.getFieldDefinition(), soleFlag.subSwitch(), toolbox);
                 return new SetItemStatement((SingleValueElementStatement) singleValueStatement, (FieldStatement) fieldStatement);
             },
             (definition, toolbox) -> {

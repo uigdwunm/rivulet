@@ -45,32 +45,33 @@ public class SelectDefinition extends AbstractContainerDefinition {
 //        super(CheckCondition.IS_TRUE);
 //    }
 
-    public SelectDefinition(SqlParserPortableToolbox toolbox, Class<?> fromModel, Class<?> selectModel, List<? extends Mapping<?, ?, ?>> mappedItemList) {
+    public SelectDefinition(SqlParserPortableToolbox toolbox, Class<?> fromModel, Class<?> selectModel) {
         super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
         this.selectModel = selectModel;
-        if (mappedItemList == null || mappedItemList.isEmpty()) {
-            // 比较select对象和from对象必须是同一个。
-            if (!selectModel.equals(fromModel)) {
-                throw SQLDescDefineException.selectAndFromNoMatch();
-            }
-            // 结果对象就是查询对象
-
-            QueryProxyNode currNode = toolbox.getCurrNode();
-            this.sqlQueryResultAssigner = new ContainerSQLQueryResultAssigner(toolbox, currNode, 0);
-            this.mappingDefinitionList = View.create(currNode.getMapDefinitionList());
-        } else {
-            List<MapDefinition> mapDefinitions = new ArrayList<>();
-            List<SetMapping<Object, Object>> setMappingList = new ArrayList<>();
-            // 结果对象是新的vo
-            // 这里可能有子查询的情况
-            for (Mapping<?, ?, ?> item : mappedItemList) {
-                MapDefinition mapDefinition = this.createMappingDefinition(toolbox, item);
-                mapDefinitions.add(mapDefinition);
-                setMappingList.add((SetMapping<Object, Object>) item.getMappingField());
-            }
-            this.sqlQueryResultAssigner = new ModelSQLQueryResultAssigner(selectModel, setMappingList);
-            this.mappingDefinitionList = View.create(mapDefinitions);
+        // 比较select对象和from对象必须是同一个。
+        if (!selectModel.equals(fromModel)) {
+            throw SQLDescDefineException.selectAndFromNoMatch();
         }
+        // 结果对象就是查询对象
+        QueryProxyNode currNode = toolbox.getCurrNode();
+        this.sqlQueryResultAssigner = new ContainerSQLQueryResultAssigner(toolbox, currNode, 0);
+        this.mappingDefinitionList = View.create(currNode.getMapDefinitionList());
+    }
+
+    public SelectDefinition(SqlParserPortableToolbox toolbox, Class<?> selectModel, List<? extends Mapping<?, ?, ?>> mappedItemList) {
+        super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
+        this.selectModel = selectModel;
+        List<MapDefinition> mapDefinitions = new ArrayList<>();
+        List<SetMapping<Object, Object>> setMappingList = new ArrayList<>();
+        // 结果对象是新的vo
+        // 这里可能有子查询的情况
+        for (Mapping<?, ?, ?> item : mappedItemList) {
+            MapDefinition mapDefinition = this.createMappingDefinition(toolbox, item);
+            mapDefinitions.add(mapDefinition);
+            setMappingList.add((SetMapping<Object, Object>) item.getMappingField());
+        }
+        this.sqlQueryResultAssigner = new ModelSQLQueryResultAssigner(selectModel, setMappingList);
+        this.mappingDefinitionList = View.create(mapDefinitions);
     }
 
     private MapDefinition createMappingDefinition(SqlParserPortableToolbox sqlPreParseHelper, Mapping<?, ?, ?> item) {

@@ -28,8 +28,8 @@ public class InOperateDefinition extends OperateDefinition {
         this.rightElement = super.parse(sqlPreParseHelper, rightFieldMapped);
     }
 
-    public InOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, FieldDefinition fieldDefinition, Param<?> param) {
-        super(CheckCondition.notEmpty(param), sqlPreParseHelper.getParamReceiptManager());
+    public InOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, FieldDefinition fieldDefinition, Param<?> param, CheckCondition checkCondition) {
+        super(checkCondition, sqlPreParseHelper.getParamReceiptManager());
 
         this.leftElement =  fieldDefinition;
         this.rightElement = super.parse(sqlPreParseHelper, param);

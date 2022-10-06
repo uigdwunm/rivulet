@@ -36,7 +36,7 @@ public class SelectStatement implements SqlStatement {
             (definition, soleFlag, initHelper) -> {
                 SelectDefinition selectDefinition = (SelectDefinition) definition;
                 List<SqlStatement> mapStatementList = selectDefinition.getMapDefinitionList().stream()
-                    .map(mapDefinition -> sqlStatementFactory.init(mapDefinition, soleFlag.subSwitch(), initHelper))
+                    .map(mapDefinition -> sqlStatementFactory.warmUp(mapDefinition, soleFlag.subSwitch(), initHelper))
                     .collect(Collectors.toList());
                 return new SelectStatement(selectDefinition, (List) mapStatementList);
             },

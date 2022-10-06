@@ -48,6 +48,8 @@ public class SqlParser implements Parser {
 
     private final Map<String, Blueprint> key_queryDefinition_map = new HashMap<>();
 
+    private final ProxyModelManager proxyModelManager = new ProxyModelManager();
+
     private final TwofoldConcurrentHashMap<ModelMeta, RivuletFlag, Blueprint> modelMetaFlagBlueprintMap = new TwofoldConcurrentHashMap<>();
 
     public SqlParser(WarehouseManager warehouseManager, SqlDefiner definer, SqlRivuletProperties configProperties, ConvertorManager convertorManager) {
@@ -141,7 +143,7 @@ public class SqlParser implements Parser {
             }
             SqlParserPortableToolbox sqlPreParseHelper = new SqlParserPortableToolbox(this);
             // TODO
-            blueprint = ;
+//            blueprint = ;
             modelMetaFlagBlueprintMap.put(modelMeta, flag, blueprint);
         }
         return blueprint;
@@ -156,9 +158,9 @@ public class SqlParser implements Parser {
             if (primaryFieldMeta.size() != 1) {
                 throw ParseException.noAvailablePrimaryKey();
             }
-            SqlParserPortableToolbox sqlPreParseHelper = new SqlParserPortableToolbox(this);
+            SqlParserPortableToolbox toolbox = new SqlParserPortableToolbox(this);
             // TODO
-            blueprint = ;
+            blueprint = new SqlUpdateDefinition(toolbox, (SQLModelMeta) modelMeta, primaryFieldMeta.get(0));
             modelMetaFlagBlueprintMap.put(modelMeta, flag, blueprint);
         }
         return blueprint;
@@ -175,7 +177,7 @@ public class SqlParser implements Parser {
             }
             SqlParserPortableToolbox sqlPreParseHelper = new SqlParserPortableToolbox(this);
             // TODO
-            blueprint = ;
+//            blueprint = ;
             modelMetaFlagBlueprintMap.put(modelMeta, flag, blueprint);
         }
         return blueprint;
@@ -186,7 +188,6 @@ public class SqlParser implements Parser {
         RivuletFlag flag = RivuletFlag.QUERY;
         Blueprint blueprint = modelMetaFlagBlueprintMap.get(modelMeta, flag);
         if (blueprint == null) {
-            // TODO
             View<SQLFieldMeta> primaryFieldMeta = ((SQLModelMeta) modelMeta).getPrimaryFieldMeta();
             if (primaryFieldMeta.size() != 1) {
                 throw ParseException.noAvailablePrimaryKey();
@@ -208,5 +209,9 @@ public class SqlParser implements Parser {
 
     public ConvertorManager getConvertorManager() {
         return convertorManager;
+    }
+
+    public ProxyModelManager getProxyModelManager() {
+        return proxyModelManager;
     }
 }

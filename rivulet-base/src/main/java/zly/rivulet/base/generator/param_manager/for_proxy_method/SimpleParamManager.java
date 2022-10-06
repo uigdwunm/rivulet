@@ -7,7 +7,7 @@ import zly.rivulet.base.exception.UnbelievableException;
 
 import java.util.Map;
 
-public class SimpleParamManager implements ProxyMethodParamManager {
+public class SimpleParamManager implements CommonParamManager {
 
     private final Map<String, Object> keyValue;
 

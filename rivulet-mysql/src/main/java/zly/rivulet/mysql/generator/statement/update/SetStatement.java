@@ -37,7 +37,7 @@ public class SetStatement implements SqlStatement {
             (definition, soleFlag, toolbox) -> {
                 SetDefinition setDefinition = (SetDefinition) definition;
                 List<SqlStatement> setItemDefinitionList = setDefinition.getSetItemDefinitionView().stream()
-                    .map(itemDefinition -> sqlStatementFactory.init(itemDefinition, soleFlag.subSwitch(), toolbox))
+                    .map(itemDefinition -> sqlStatementFactory.warmUp(itemDefinition, soleFlag.subSwitch(), toolbox))
                     .collect(Collectors.toList());
 
                 return new SetStatement(setDefinition, (View) setItemDefinitionList);

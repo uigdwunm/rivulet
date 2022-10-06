@@ -28,8 +28,8 @@ public class EqOperateDefinition extends OperateDefinition {
         this.rightElement = super.parse(sqlPreParseHelper, rightFieldMapped);
     }
 
-    public EqOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, FieldDefinition fieldDefinition, Param<?> param) {
-        super(CheckCondition.notNull(param), sqlPreParseHelper.getParamReceiptManager());
+    public EqOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, FieldDefinition fieldDefinition, Param<?> param, CheckCondition checkCondition) {
+        super(checkCondition, sqlPreParseHelper.getParamReceiptManager());
 
         this.leftElement =  fieldDefinition;
         this.rightElement = super.parse(sqlPreParseHelper, param);

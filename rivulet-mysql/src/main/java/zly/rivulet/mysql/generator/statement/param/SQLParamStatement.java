@@ -4,6 +4,7 @@ import zly.rivulet.base.generator.param_manager.ParamManager;
 import zly.rivulet.base.convertor.Convertor;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.describer.param.StaticParam;
+import zly.rivulet.base.generator.param_manager.for_proxy_method.CommonParamManager;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.statement.SingleValueElementStatement;
 import zly.rivulet.sql.definition.param.SQLParamReceipt;
@@ -45,7 +46,7 @@ public class SQLParamStatement implements SingleValueElementStatement {
             },
             (definition, helper) -> {
                 SQLParamReceipt sqlParamDefinition = (SQLParamReceipt) definition;
-                ParamManager paramManager = helper.getParamManager();
+                CommonParamManager paramManager = helper.getParamManager();
                 String value = paramManager.getStatement(sqlParamDefinition);
                 return new SQLParamStatement(sqlParamDefinition, value);
             }

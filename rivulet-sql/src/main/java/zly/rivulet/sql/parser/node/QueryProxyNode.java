@@ -13,7 +13,7 @@ import zly.rivulet.base.utils.View;
 import zly.rivulet.sql.definer.QueryComplexModel;
 import zly.rivulet.sql.definer.SqlDefiner;
 import zly.rivulet.sql.definer.annotations.SQLModelJoin;
-import zly.rivulet.sql.definer.annotations.SQLSubJoin;
+import zly.rivulet.sql.definer.annotations.SQLSubQueryJoin;
 import zly.rivulet.sql.definer.annotations.SqlQueryAlias;
 import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
@@ -41,7 +41,7 @@ public class QueryProxyNode implements FromNode, SelectNode {
     /**
      * 当前query的所有select
      **/
-    private List<SelectNode> selectNodeList = new ArrayList<>();
+    private final List<SelectNode> selectNodeList = new ArrayList<>();
 
     /**
      * 当前query的所有from，如果是单表查询则只有一个，但是不会为空
@@ -60,7 +60,7 @@ public class QueryProxyNode implements FromNode, SelectNode {
     /**
      * where条件中如果出现子查询也记录到这里
      **/
-    private List<QueryProxyNode> conditionSubQueryList = new ArrayList<>();
+    private final List<QueryProxyNode> conditionSubQueryList = new ArrayList<>();
 
     /**
      * 当前节点所属的父节点,如果是根节点则为null
@@ -75,7 +75,9 @@ public class QueryProxyNode implements FromNode, SelectNode {
 
     private final Class<?> fromModelClass;
 
-    private final SqlParserPortableToolbox toolbox;
+    private final SqlParser sqlParser;
+
+    private final SqlDefiner sqlDefiner;
 
     /**
      * 当前节点的别名flag
@@ -95,12 +97,13 @@ public class QueryProxyNode implements FromNode, SelectNode {
     private final Map<String, MapDefinition> mappingDefinitionMap = new HashMap<>();
 
     public QueryProxyNode(SqlParserPortableToolbox toolbox, Class<?> mainFrom) {
+        this.sqlParser = toolbox.getSqlPreParser();
+        this.sqlDefiner = (SqlDefiner) sqlParser.getDefiner();
         this.fromModelClass = mainFrom;
-        this.toolbox = toolbox;
         if (QueryComplexModel.class.isAssignableFrom(mainFrom)) {
             this.registerComplexProxyModel(mainFrom);
         } else {
-            SqlDefiner sqlDefiner = toolbox.getSqlPreParser().getSqlDefiner();
+            SqlDefiner sqlDefiner = (SqlDefiner) toolbox.getSqlPreParser().getDefiner();
             SQLModelMeta modelMeta = sqlDefiner.createOrGetModelMeta(mainFrom);
             SQLAliasManager.AliasFlag modelAlias = SQLAliasManager.createModelAlias(modelMeta.getTableName(), modelMeta);
             // 生成from代理节点
@@ -110,13 +113,11 @@ public class QueryProxyNode implements FromNode, SelectNode {
     }
 
     public void registerComplexProxyModel(Class<?> clazz) {
-        SqlParser sqlPreParser = toolbox.getSqlPreParser();
-        SqlDefiner sqlDefiner = sqlPreParser.getSqlDefiner();
         Object o = this.proxyDONewInstance(clazz);
         // 每个字段注入代理对象
         for (Field field : clazz.getDeclaredFields()) {
             SQLModelJoin sqlModelJoin = field.getAnnotation(SQLModelJoin.class);
-            SQLSubJoin sqlSubJoin = field.getAnnotation(SQLSubJoin.class);
+            SQLSubQueryJoin sqlSubJoin = field.getAnnotation(SQLSubQueryJoin.class);
             if ((sqlModelJoin != null && sqlSubJoin != null) || (sqlModelJoin == null && sqlSubJoin == null)) {
                 // 两个注解都有，或两个注解都没有，报错
                 throw SQLDescDefineException.unknowQueryType();
@@ -270,7 +271,7 @@ public class QueryProxyNode implements FromNode, SelectNode {
                 SQLSingleValueElementDefinition SQLSingleValueElementDefinition = THREAD_LOCAL.get();
                 if (SQLSingleValueElementDefinition == null) {
                     String fieldName = StringUtil.parseGetterMethodNameToFieldName(methodName);
-                    THREAD_LOCAL.set(new FieldDefinition(modelAlias, modelMeta, fieldName));
+                    THREAD_LOCAL.set(new FieldDefinition(modelMeta, fieldName));
                 }
                 return result;
             }
@@ -397,5 +398,10 @@ public class QueryProxyNode implements FromNode, SelectNode {
 
     public void setSqlQueryDefinition(SqlQueryDefinition sqlQueryDefinition) {
         this.sqlQueryDefinition = sqlQueryDefinition;
+    }
+
+    public QueryProxyNode createSubQueryProxyNode(SqlQueryDefinition sqlQueryDefinition, SqlParserPortableToolbox toolbox, Class<?> mainFrom) {
+        QueryProxyNode queryProxyNode = new QueryProxyNode(toolbox, mainFrom);
+        // TODO
     }
 }

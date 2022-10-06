@@ -3,6 +3,7 @@ package zly.rivulet.base.definition.checkCondition;
 
 import zly.rivulet.base.definition.param.ParamReceipt;
 import zly.rivulet.base.describer.param.Param;
+import zly.rivulet.base.generator.param_manager.for_proxy_method.CommonParamManager;
 import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.base.generator.param_manager.ParamManager;
 import zly.rivulet.base.utils.ClassUtils;
@@ -22,7 +23,7 @@ public abstract class CheckCondition {
     // 解析后的参数
     private ParamReceipt[] paramReceipts;
 
-    public boolean checkCondition(ParamManager paramManager) {
+    public boolean checkCondition(CommonParamManager paramManager) {
         if (paramReceipts == null) {
             return check();
         }

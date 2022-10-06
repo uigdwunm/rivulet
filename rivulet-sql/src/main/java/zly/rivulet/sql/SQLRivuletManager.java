@@ -163,7 +163,7 @@ public abstract class SQLRivuletManager extends RivuletManager {
         ModelMeta modelMeta = definer.createOrGetModelMeta(clazz);
         SQLBlueprint blueprint = (SQLBlueprint) parser.parseInsertByMeta(modelMeta);
 
-        ParamManager paramManager = paramManagerFactory.getByModelMeta(modelMeta, new Object[]{obj});
+        ParamManager paramManager = paramManagerFactory.getByModelMeta(blueprint, modelMeta, new Object[]{obj});
         try (Connection connection = this.getConnection()) {
             return this.executeUpdate(connection, blueprint, paramManager);
         } catch (SQLException e) {
@@ -194,8 +194,6 @@ public abstract class SQLRivuletManager extends RivuletManager {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-        return 0;
     }
 
     private Object executeQueryOne(Connection connection, SQLBlueprint sqlBlueprint, ParamManager paramManager) {
@@ -300,18 +298,33 @@ public abstract class SQLRivuletManager extends RivuletManager {
         }
 
         @Override
-        public <T> T queryOneByDesc(WholeDesc wholeDesc, ParamManager paramManager) {
+        public Blueprint parse(WholeDesc wholeDesc) {
             return null;
         }
 
         @Override
-        public <T> void queryManyByDesc(WholeDesc wholeDesc, ParamManager paramManager, Collection<T> resultContainer) {
+        public <T> T queryOneByDescKey(String descKey, Map<String, Object> params) {
+            return null;
+        }
 
+        @Override
+        public <T> T queryOneByBlueprint(Blueprint blueprint, ParamManager paramManager) {
+            return null;
         }
 
         @Override
         public <T, I> T queryById(I id, Class<T> modelClass) {
             return null;
+        }
+
+        @Override
+        public <T> void queryManyByDescKey(String descKey, Map<String, Object> params, Collection<T> resultContainer) {
+
+        }
+
+        @Override
+        public <T> void queryManyByBlueprint(Blueprint blueprint, ParamManager paramManager, Collection<T> resultContainer) {
+
         }
 
         @Override
@@ -327,13 +340,13 @@ public abstract class SQLRivuletManager extends RivuletManager {
             ModelMeta modelMeta = definer.createOrGetModelMeta(clazz);
             SQLBlueprint blueprint = (SQLBlueprint) parser.parseInsertByMeta(modelMeta);
 
-            ParamManager paramManager = paramManagerFactory.getByModelMeta(modelMeta, new Object[]{obj});
+            ParamManager paramManager = paramManagerFactory.getByModelMeta(blueprint, modelMeta, new Object[]{obj});
             return executeUpdate(connection, blueprint, paramManager);
         }
 
         @Override
-        public <T> int batchInsert(Collection<T> batchModel) {
-            return 0;
+        public <T> int[] batchInsert(Collection<T> batchModel, Class<T> dOModelClass) {
+            return new int[0];
         }
 
         @Override
@@ -347,7 +360,12 @@ public abstract class SQLRivuletManager extends RivuletManager {
         }
 
         @Override
-        public int updateByDesc(WholeDesc wholeDesc, Map<String, Object> params) {
+        public int updateByDescKey(String descKey, Map<String, Object> params) {
+            return 0;
+        }
+
+        @Override
+        public int updateByBlueprint(Blueprint blueprint, Map<String, Object> params) {
             return 0;
         }
 
@@ -362,7 +380,7 @@ public abstract class SQLRivuletManager extends RivuletManager {
         }
 
         @Override
-        public int deleteByDesc(WholeDesc wholeDesc, Map<String, Object> params) {
+        public int deleteByBlueprint(Blueprint blueprint, Map<String, Object> params) {
             return 0;
         }
 

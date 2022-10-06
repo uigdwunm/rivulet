@@ -46,7 +46,7 @@ public class MapStatement implements SingleValueElementStatement {
             collector.leftBracket();
             value.singleCollectStatement(collector);
             collector.rightBracket();
-            collector.space().append(Constant.AS);
+            collector.space().append(Constant.AS).space();
             collector.append(this.alias);
         } else if (StringUtil.isNotBlank(this.referenceAlias)) {
             value.singleCollectStatement(collector);
@@ -62,7 +62,7 @@ public class MapStatement implements SingleValueElementStatement {
             MapDefinition.class,
             (definition, soleFlag, initHelper) -> {
                 MapDefinition mapDefinition = (MapDefinition) definition;
-                SqlStatement value = sqlStatementFactory.init(mapDefinition.getValueDefinition(), soleFlag.subSwitch(), initHelper);
+                SqlStatement value = sqlStatementFactory.warmUp(mapDefinition.getValueDefinition(), soleFlag.subSwitch(), initHelper);
                 SQLAliasManager aliasManager = initHelper.getAliasManager();
                 String alias = aliasManager.getAlias(mapDefinition.getAliasFlag());
                 String referenceAlias = aliasManager.getAlias(mapDefinition.getReferenceAlias());

@@ -15,23 +15,16 @@ public class FieldDefinition implements SQLSingleValueElementDefinition {
 
     private final FieldMeta fieldMeta;
 
-    /**
-     * 引用别名，就是当前字段所属范围的引用表别名
-     **/
-    private final SQLAliasManager.AliasFlag modelAlias;
-
-    public FieldDefinition(SQLAliasManager.AliasFlag modelAlias, ModelMeta modelMeta, FieldMeta fieldMeta) {
-        this.modelAlias = modelAlias;
+    public FieldDefinition(ModelMeta modelMeta, FieldMeta fieldMeta) {
         this.modelMeta = modelMeta;
         this.fieldMeta = fieldMeta;
     }
 
-    public FieldDefinition(SQLAliasManager.AliasFlag modelAlias, SQLModelMeta modelMeta, String fieldName) {
-        SQLFieldMeta fieldMeta = modelMeta.getFieldMeta(fieldName);
+    public FieldDefinition(SQLModelMeta modelMeta, String fieldName) {
+        SQLFieldMeta fieldMeta = modelMeta.getFieldMetaByFieldName(fieldName);
         if (fieldMeta == null) {
             throw SQLModelDefineException.noField();
         }
-        this.modelAlias = modelAlias;
         this.modelMeta = modelMeta;
         this.fieldMeta = fieldMeta;
     }
@@ -39,10 +32,6 @@ public class FieldDefinition implements SQLSingleValueElementDefinition {
     @Override
     public Definition forAnalyze() {
         return null;
-    }
-
-    public SQLAliasManager.AliasFlag getModelAlias() {
-        return modelAlias;
     }
 
     public ModelMeta getModelMeta() {

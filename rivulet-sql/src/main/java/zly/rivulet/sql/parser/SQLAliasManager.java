@@ -1,17 +1,15 @@
 package zly.rivulet.sql.parser;
 
-import zly.rivulet.base.definer.ModelMeta;
 import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.utils.StringUtil;
 import zly.rivulet.sql.SqlRivuletProperties;
 import zly.rivulet.sql.definer.annotations.SqlQueryAlias;
-import zly.rivulet.sql.definer.meta.SQLModelMeta;
-import zly.rivulet.sql.parser.node.FromNode;
-import zly.rivulet.sql.parser.node.ProxyNode;
-import zly.rivulet.sql.parser.node.QueryProxyNode;
-import zly.rivulet.sql.parser.node.SelectNode;
+import zly.rivulet.sql.exception.SQLDescDefineException;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class SQLAliasManager {
 
@@ -19,7 +17,7 @@ public class SQLAliasManager {
 
     private final Map<AliasFlag, String> shortAliasMap = new HashMap<>();
 
-    private final Set<AliasFlag> allAliasSet;
+    private final Set<AliasFlag> allAliasSet = new HashSet<>();
 
     /**
      * 查询中存在子查询的情况，对这类可能存在嵌套的，则把表别名的嵌套关系保留起来
@@ -27,123 +25,97 @@ public class SQLAliasManager {
      * 这里只有表别名，没有字段别名
      * 最外层的表别名是没有对应的父查询的
      **/
-    private final Map<AliasFlag, AliasFlag> aliasToParentAlias;
+    private final Map<AliasFlag, AliasFlag> aliasToParentAlias = new HashMap<>();
 
     private final SqlRivuletProperties configProperties;
 
-    private SQLAliasManager(SqlRivuletProperties configProperties, Set<AliasFlag> allAliasSet, Map<AliasFlag, AliasFlag> aliasToParentAlias) {
+    public SQLAliasManager(SqlRivuletProperties configProperties) {
         this.configProperties = configProperties;
-        this.allAliasSet = allAliasSet;
-        this.aliasToParentAlias = aliasToParentAlias;
-        initAlias();
     }
 
-    public static SQLAliasManager create(SqlRivuletProperties configProperties, QueryProxyNode queryProxyNode) {
-        Set<AliasFlag> allAliasSet = new HashSet<>();
-        Map<AliasFlag, AliasFlag> aliasToParentAlias = new HashMap<>();
-        create(allAliasSet, aliasToParentAlias, queryProxyNode);
-        return new SQLAliasManager(configProperties, allAliasSet, aliasToParentAlias);
-    }
-
-    private static void create(Set<AliasFlag> allAliasSet, Map<AliasFlag, AliasFlag> aliasToParentAlias, ProxyNode proxyNode) {
-        if (proxyNode instanceof QueryProxyNode) {
-            QueryProxyNode queryProxyNode = (QueryProxyNode) proxyNode;
-            for (FromNode fromNode : queryProxyNode.getFromNodeList()) {
-                allAliasSet.add(fromNode.getAliasFlag());
-                ProxyNode parentNode = fromNode.getParentNode();
-                if (parentNode != null) {
-                    aliasToParentAlias.put(fromNode.getAliasFlag(), parentNode.getAliasFlag());
-                }
-                create(allAliasSet, aliasToParentAlias, fromNode);
-            }
-            for (SelectNode selectNode : queryProxyNode.getSelectNodeList()) {
-                allAliasSet.add(selectNode.getAliasFlag());
-                ProxyNode parentNode = selectNode.getParentNode();
-                if (parentNode != null) {
-                    aliasToParentAlias.put(selectNode.getAliasFlag(), parentNode.getAliasFlag());
-                }
-                create(allAliasSet, aliasToParentAlias, selectNode);
-            }
-
-            for (QueryProxyNode whereNode : queryProxyNode.getConditionSubQueryList()) {
-                allAliasSet.add(whereNode.getAliasFlag());
-                ProxyNode parentNode = whereNode.getParentNode();
-                if (parentNode != null) {
-                    aliasToParentAlias.put(whereNode.getAliasFlag(), parentNode.getAliasFlag());
-                }
-                create(allAliasSet, aliasToParentAlias, whereNode);
-            }
-
-        }
-
-    }
-
-    private void initAlias() {
+    public void initAlias() {
         Map<String, Integer> repeatAlias = new HashMap<>();
+        Set<String> forceAliasCheck = new HashSet<>();
         for (AliasFlag aliasFlag : allAliasSet) {
-            String alias = aliasFlag.alias;
-            boolean isForce = aliasFlag.isForce;
-            Integer count = repeatAlias.compute(alias, (k, v) -> {
-                if (v == null) {
-                    return 0;
+            String forceAlias = aliasFlag.getForceAlias();
+            if (StringUtil.isNotBlank(forceAlias)) {
+                // 强制指定的别名，这里检查下
+                if (!forceAliasCheck.add(forceAlias)) {
+                    throw SQLDescDefineException.forceAliasRepeat(forceAlias);
                 }
-                return v + 1;
-            });
-            if (isForce) {
-                this.aliasMap.put(aliasFlag, alias);
-            } else if (count == 0) {
-                this.aliasMap.put(aliasFlag, alias);
+                aliasMap.put(aliasFlag, forceAlias);
+                shortAliasMap.put(aliasFlag, forceAlias);
             } else {
-                this.aliasMap.put(aliasFlag, alias + '_' + count);
+                // 非强制指定的别名，这里保存并生成短别名
+                String alias = aliasFlag.getSuggestAlias();
+                int repeatCount = repeatAlias.compute(alias, (k, v) -> {
+                    if (v == null) {
+                        return 0;
+                    }
+                    return v + 1;
+                });
+                if (repeatCount == 0) {
+                    this.aliasMap.put(aliasFlag, alias);
+                } else {
+                    this.aliasMap.put(aliasFlag, alias + '_' + repeatCount);
+                }
+
+                shortAliasMap.put(aliasFlag, this.generateShortAlias(repeatAlias, repeatCount));
             }
-            int tableCount = repeatAlias.size();
-            String shortName;
-            if (tableCount < 26) {
-                shortName = String.valueOf((char) (tableCount - 1 + 'a'));
-            } else {
-                // 最高支持一个查询里有 26*26 个表
-                int aa = tableCount / 26;
-                int bb = tableCount % 26;
-                shortName = "" + (char) aa + (char) bb;
-            }
-            if (count == 0) {
-                this.shortAliasMap.put(aliasFlag, shortName);
-            } else {
-                this.shortAliasMap.put(aliasFlag, shortName + '_' + count);
-            }
+
         }
     }
 
-    public static AliasFlag createModelAlias(String alias, SQLModelMeta sqlModelMeta) {
-        return new AliasFlag(alias, false, sqlModelMeta, false);
+
+    /**
+     * Description 生成短别名的规则
+     *
+     * @author zhaolaiyuan
+     * Date 2022/10/6 11:30
+     **/
+    private String generateShortAlias(Map<String, Integer> repeatAlias, int repeatCount) {
+        int tableCount = repeatAlias.size();
+        String shortName;
+        if (tableCount < 26) {
+            shortName = String.valueOf((char) (tableCount - 1 + 'a'));
+        } else {
+            // 最高支持一个查询里有 26*26 个表
+            int aa = tableCount / 26;
+            int bb = tableCount % 26;
+            shortName = "" + (char) aa + (char) bb;
+        }
+        if (repeatCount == 0) {
+            return shortName;
+        } else {
+            return shortName + '_' + repeatCount;
+        }
+
     }
 
-    public static AliasFlag createModelAlias(SqlQueryAlias sqlQueryAlias, SQLModelMeta sqlModelMeta) {
-        return new AliasFlag(sqlQueryAlias.value(), true, sqlModelMeta, false);
+    public AliasFlag createAlias(SqlQueryAlias sqlQueryAlias) {
+        AliasFlag aliasFlag = new AliasFlag(sqlQueryAlias.value(), null);
+        this.allAliasSet.add(aliasFlag);
+        return aliasFlag;
     }
 
-    public static AliasFlag createModelAlias(SqlQueryAlias sqlQueryAlias) {
-        return new AliasFlag(sqlQueryAlias.value(), true, null, false);
+    public AliasFlag createAlias(String suggestedAlias) {
+        AliasFlag aliasFlag = new AliasFlag(null, suggestedAlias);
+        this.allAliasSet.add(aliasFlag);
+        return aliasFlag;
     }
 
-    public static AliasFlag createModelAlias(String suggestedAlias) {
-        return new AliasFlag(suggestedAlias, false, null, false);
+    public AliasFlag createAlias() {
+        AliasFlag aliasFlag = new AliasFlag(null, null);
+        this.allAliasSet.add(aliasFlag);
+        return aliasFlag;
     }
 
-    public static AliasFlag createModelAlias() {
-        return new AliasFlag(null, false, null, false);
+    public void addRelation(AliasFlag child, AliasFlag parent) {
+        aliasToParentAlias.put(child, parent);
     }
 
-    public static AliasFlag createFieldAlias(SqlQueryAlias sqlQueryAlias) {
-        return new AliasFlag(sqlQueryAlias.value(), true, null, true);
-    }
-
-    public static AliasFlag createFieldAlias(String suggestedAlias) {
-        return new AliasFlag(suggestedAlias, false, null, true);
-    }
-
-    public static AliasFlag createFieldAlias() {
-        return new AliasFlag(null, false, null, true);
+    public void addAllSubAlias(SQLAliasManager subAliasManager) {
+        this.allAliasSet.addAll(subAliasManager.allAliasSet);
     }
 
     /**
@@ -178,70 +150,42 @@ public class SQLAliasManager {
     public static class AliasFlag {
 
         /**
-         * 别名建议值，可能是{@link SqlQueryAlias}注解指定的，可能是query中的字段名
-         * 可能为空，为空表示随便指定一个
+         * 强制别名值
+         * 可能为空，为空表示不强制
          **/
-        private String alias;
+        private String forceAlias;
 
         /**
-         * 是否强制使用上面的别名，如果是通过 {@link SqlQueryAlias}注解 指定的就是强制使用的
+         * 建议别名值
+         * 可能为空，为空表示随便给
          **/
-        private boolean isForce;
+        private String suggestAlias;
 
-        /**
-         * 如果对应到一个表，则记录
-         **/
-        private final ModelMeta modelMeta;
-
-        /**
-         * 是否是字段
-         **/
-        private final boolean isField;
-
-        private AliasFlag(String alias, boolean isForce, ModelMeta modelMeta, boolean isField) {
-            this.alias = alias;
-            this.isForce = isForce;
-            this.modelMeta = modelMeta;
-            this.isField = isField;
-        }
-
-        private AliasFlag(ModelMeta modelMeta, boolean isField) {
-            this.alias = null;
-            this.isForce = false;
-            this.modelMeta = modelMeta;
-            this.isField = isField;
+        private AliasFlag(String forceAlias, String suggestAlias) {
+            this.forceAlias = forceAlias;
+            this.suggestAlias = suggestAlias;
         }
 
         public void suggestedAlias(String alias) {
-            if (StringUtil.isBlank(alias)) {
+            if (StringUtil.isNotBlank(this.forceAlias) && StringUtil.isNotBlank(this.suggestAlias)) {
                 return;
             }
-            this.alias = alias;
-            this.isForce = false;
+            this.suggestAlias = alias;
         }
 
         public void forceAlias(String alias) {
-            if (isForce) {
+            if (StringUtil.isNotBlank(this.forceAlias)) {
                 throw UnbelievableException.unbelievable();
             }
-            this.alias = alias;
-            this.isForce = true;
+            this.forceAlias = alias;
         }
 
-        public String getAlias() {
-            return alias;
+        public String getForceAlias() {
+            return forceAlias;
         }
 
-        public boolean isForce() {
-            return isForce;
-        }
-
-        public ModelMeta getModelMeta() {
-            return modelMeta;
-        }
-
-        public boolean isField() {
-            return isField;
+        public String getSuggestAlias() {
+            return suggestAlias;
         }
     }
 }

@@ -8,7 +8,7 @@ import zly.rivulet.base.utils.StupidMap;
 
 import java.util.Map;
 
-public class ForTestParamManager implements ProxyMethodParamManager {
+public class ForTestParamManager implements CommonParamManager {
 
     private final Map<String, String> keyValue;
 

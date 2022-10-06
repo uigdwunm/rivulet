@@ -4,7 +4,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SQLSubJoin {
+public @interface SQLSubQueryJoin {
 
     /**
      * Description 关联的子查询key

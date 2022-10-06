@@ -15,4 +15,6 @@ public interface ModelMeta {
     Object getProxy();
 
     View<FieldMeta> getFieldMetaList();
+
+    FieldMeta getFieldMetaByFieldName(String fieldName);
 }

@@ -30,8 +30,8 @@ public class EqOperateStatement implements OperateStatement {
             EqOperateDefinition.class,
             (definition, soleFlag, initHelper) -> {
                 EqOperateDefinition eqOperateDefinition = (EqOperateDefinition) definition;
-                SqlStatement leftStatement = sqlStatementFactory.init(eqOperateDefinition.getLeftElement(), soleFlag.subSwitch(), initHelper);
-                SqlStatement rightStatement = sqlStatementFactory.init(eqOperateDefinition.getRightElement(), soleFlag.subSwitch(), initHelper);
+                SqlStatement leftStatement = sqlStatementFactory.warmUp(eqOperateDefinition.getLeftElement(), soleFlag.subSwitch(), initHelper);
+                SqlStatement rightStatement = sqlStatementFactory.warmUp(eqOperateDefinition.getRightElement(), soleFlag.subSwitch(), initHelper);
                 return new EqOperateStatement((SingleValueElementStatement) leftStatement, (SingleValueElementStatement) rightStatement);
             },
             (definition, helper) -> {

@@ -1,6 +1,7 @@
 package zly.rivulet.mysql.definer;
 
 import zly.rivulet.base.definer.FieldMeta;
+import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.utils.View;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
@@ -60,13 +61,13 @@ public class MySQLModelMeta extends SQLModelMeta {
         return (View) fieldMetaList;
     }
 
-    public String getComment() {
-        return comment;
+    @Override
+    public MySQLFieldMeta getFieldMetaByFieldName(String fieldName) {
+        return nameMetaMap.get(fieldName);
     }
 
-    @Override
-    public MySQLFieldMeta getFieldMeta(String fieldName) {
-        return nameMetaMap.get(fieldName);
+    public String getComment() {
+        return comment;
     }
 
     @Override
@@ -77,5 +78,10 @@ public class MySQLModelMeta extends SQLModelMeta {
     @Override
     public Object getProxy() {
         return null;
+    }
+
+    @Override
+    public Definition forAnalyze() {
+        return this;
     }
 }

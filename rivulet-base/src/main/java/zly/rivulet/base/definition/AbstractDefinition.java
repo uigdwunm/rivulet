@@ -1,6 +1,7 @@
 package zly.rivulet.base.definition;
 
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
+import zly.rivulet.base.generator.param_manager.for_proxy_method.CommonParamManager;
 import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.base.generator.param_manager.ParamManager;
 
@@ -25,7 +26,7 @@ public abstract class AbstractDefinition implements Definition, Checked {
     }
 
     @Override
-    public boolean check(ParamManager paramManager) {
+    public boolean check(CommonParamManager paramManager) {
         if (CheckCondition.IS_TRUE == this.checkCondition) {
             // 稍微优化一下
             return true;

@@ -31,4 +31,8 @@ public class SQLDescDefineException extends RuntimeException {
     public static SQLDescDefineException unSupportMultiModelUpdate() {
         return new SQLDescDefineException("更新操作仅支持单个模型");
     }
+
+    public static SQLDescDefineException forceAliasRepeat(String forceAlias) {
+        return new SQLDescDefineException("强制指定的别名重复," + forceAlias);
+    }
 }

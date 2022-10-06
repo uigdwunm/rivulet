@@ -26,7 +26,6 @@ public class ModelFromStatement implements QueryFromStatement {
             MySQLModelMeta.class,
             (definition, soleFlag, initHelper) -> {
                 MySQLModelMeta mySQLModelMeta = (MySQLModelMeta) definition;
-
                 return new ModelFromStatement(mySQLModelMeta, mySQLModelMeta.getTableName());
             },
             (definition, helper) -> {

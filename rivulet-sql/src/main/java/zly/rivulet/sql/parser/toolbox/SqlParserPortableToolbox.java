@@ -1,11 +1,11 @@
 package zly.rivulet.sql.parser.toolbox;
 
-import zly.rivulet.base.parser.toolbox.ParserPortableToolbox;
 import zly.rivulet.base.parser.ParamReceiptManager;
+import zly.rivulet.base.parser.toolbox.ParserPortableToolbox;
 import zly.rivulet.sql.SqlRivuletProperties;
 import zly.rivulet.sql.parser.SqlParamReceiptManager;
 import zly.rivulet.sql.parser.SqlParser;
-import zly.rivulet.sql.parser.node.QueryProxyNode;
+import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
 
 public class SqlParserPortableToolbox implements ParserPortableToolbox {
 
@@ -13,7 +13,7 @@ public class SqlParserPortableToolbox implements ParserPortableToolbox {
 
     private final ParamReceiptManager paramReceiptManager;
 
-    private QueryProxyNode currNode;
+    private QueryProxyNode queryProxyNode;
 
     private final SqlRivuletProperties configProperties;
 
@@ -37,12 +37,12 @@ public class SqlParserPortableToolbox implements ParserPortableToolbox {
         return paramReceiptManager;
     }
 
-    public QueryProxyNode getCurrNode() {
-        return currNode;
+    public QueryProxyNode getQueryProxyNode() {
+        return queryProxyNode;
     }
 
-    public void setCurrNode(QueryProxyNode currNode) {
-        this.currNode = currNode;
+    public void setQueryProxyNode(QueryProxyNode queryProxyNode) {
+        this.queryProxyNode = queryProxyNode;
     }
 
     public SqlRivuletProperties getConfigProperties() {

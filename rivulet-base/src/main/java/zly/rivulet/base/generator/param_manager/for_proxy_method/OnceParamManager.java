@@ -5,23 +5,23 @@ import zly.rivulet.base.definition.param.PathKeyParamReceipt;
 import zly.rivulet.base.definition.param.StaticParamReceipt;
 import zly.rivulet.base.exception.UnbelievableException;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-public class LazyParamManager extends OnceParamManager {
-
+public class OnceParamManager implements CommonParamManager {
     /**
-     * Description 每次查询都有的，所以不用并发
+     * Description 原始参数
      *
      * @author zhaolaiyuan
-     * Date 2022/1/23 12:16
+     * Date 2022/1/23 12:15
      **/
-    private final Map<String, Object> cache = new HashMap<>();
+    protected final Object[] originParam;
 
+    protected final Map<String, Function<Object[], Object>> paramCreatorMap;
 
-    public LazyParamManager(Object[] originParam, Map<String, Function<Object[], Object>> paramCreatorMap) {
-        super(originParam, paramCreatorMap);
+    public OnceParamManager(Object[] originParam, Map<String, Function<Object[], Object>> paramCreatorMap) {
+        this.originParam = originParam;
+        this.paramCreatorMap = paramCreatorMap;
     }
 
     @Override
@@ -29,14 +29,8 @@ public class LazyParamManager extends OnceParamManager {
         if (paramReceipt instanceof PathKeyParamReceipt) {
             PathKeyParamReceipt pathKeyParamReceipt = (PathKeyParamReceipt) paramReceipt;
             String pathKey = pathKeyParamReceipt.getPathKey();
-            Object param = cache.get(pathKey);
-            if (param != null) {
-                return param;
-            }
-            Function<Object[], Object> creator = super.paramCreatorMap.get(pathKey);
-            param = creator.apply(super.originParam);
-            cache.put(pathKey, param);
-            return param;
+            Function<Object[], Object> creator = paramCreatorMap.get(pathKey);
+            return creator.apply(this.originParam);
         } else if (paramReceipt instanceof StaticParamReceipt) {
             StaticParamReceipt staticParamReceipt = (StaticParamReceipt) paramReceipt;
             return staticParamReceipt.getParamValue();
@@ -44,5 +38,4 @@ public class LazyParamManager extends OnceParamManager {
             throw UnbelievableException.unknownType();
         }
     }
-
 }

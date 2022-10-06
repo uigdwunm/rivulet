@@ -27,7 +27,7 @@ public class WhereStatement implements SqlStatement {
             WhereDefinition.class,
             (definition, soleFlag, initHelper) -> {
                 WhereDefinition whereDefinition = (WhereDefinition) definition;
-                OperateStatement operateStatement = (OperateStatement) sqlStatementFactory.init(whereDefinition.getOperateDefinition(), soleFlag.subSwitch(), initHelper);
+                OperateStatement operateStatement = (OperateStatement) sqlStatementFactory.warmUp(whereDefinition.getOperateDefinition(), soleFlag.subSwitch(), initHelper);
                 return new WhereStatement(operateStatement);
             },
             (definition, helper) -> {

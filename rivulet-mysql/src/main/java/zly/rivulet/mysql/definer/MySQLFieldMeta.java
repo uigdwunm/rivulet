@@ -42,6 +42,7 @@ public final class MySQLFieldMeta extends SQLFieldMeta {
         return fieldName;
     }
 
+    @Override
     public Class<?> getFieldType() {
         return fieldType;
     }

@@ -1,6 +1,6 @@
 package zly.rivulet.mysql.generator.statement.operate;
 
-import zly.rivulet.base.generator.param_manager.ParamManager;
+import zly.rivulet.base.generator.param_manager.for_proxy_method.CommonParamManager;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.sql.definition.query.operate.AndOperateDefinition;
 import zly.rivulet.sql.generator.SqlStatementFactory;
@@ -40,13 +40,13 @@ public class AndOperateStatement implements OperateStatement {
             (definition, soleFlag, initHelper) -> {
                 AndOperateDefinition andOperateDefinition = (AndOperateDefinition) definition;
                 List<OperateStatement> operateStatementList = andOperateDefinition.getOperateDefinitionList().stream()
-                    .map(subOperation -> (OperateStatement) sqlStatementFactory.init(subOperation, soleFlag.subSwitch(), initHelper))
+                    .map(subOperation -> (OperateStatement) sqlStatementFactory.warmUp(subOperation, soleFlag.subSwitch(), initHelper))
                     .collect(Collectors.toList());
                 return new AndOperateStatement(operateStatementList);
             },
             (definition, helper) -> {
                 AndOperateDefinition andOperateDefinition = (AndOperateDefinition) definition;
-                ParamManager paramManager = helper.getParamManager();
+                CommonParamManager paramManager = helper.getParamManager();
                 List<OperateStatement> operateStatementList = andOperateDefinition.getOperateDefinitionList().stream()
                     .filter(subOperation -> subOperation.check(paramManager))
                     .map(subOperation -> (OperateStatement) sqlStatementFactory.getOrCreate(subOperation, helper))

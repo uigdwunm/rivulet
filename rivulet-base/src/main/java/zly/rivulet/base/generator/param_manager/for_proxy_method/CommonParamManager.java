@@ -5,7 +5,7 @@ import zly.rivulet.base.definition.param.ParamReceipt;
 import zly.rivulet.base.exception.ParseException;
 import zly.rivulet.base.generator.param_manager.ParamManager;
 
-public interface ProxyMethodParamManager extends ParamManager {
+public interface CommonParamManager extends ParamManager {
 
     Object getParam(ParamReceipt paramReceipt);
 

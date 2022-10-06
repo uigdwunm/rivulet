@@ -1,6 +1,6 @@
 package zly.rivulet.mysql.generator.statement.query;
 
-import zly.rivulet.base.generator.param_manager.ParamManager;
+import zly.rivulet.base.generator.param_manager.for_proxy_method.CommonParamManager;
 import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
@@ -45,13 +45,13 @@ public class MySqlQueryStatement implements QueryFromStatement {
             (definition, soleFlag, initHelper) -> {
                 SqlQueryDefinition sqlQueryDefinition = (SqlQueryDefinition) definition;
                 List<SqlStatement> subStatementList = sqlQueryDefinition.getSubDefinitionList().stream()
-                    .map(subDefinition -> sqlStatementFactory.init(subDefinition, soleFlag.subSwitch(), initHelper))
+                    .map(subDefinition -> sqlStatementFactory.warmUp(subDefinition, soleFlag.subSwitch(), initHelper))
                     .collect(Collectors.toList());
                 return new MySqlQueryStatement(sqlQueryDefinition, subStatementList);
             },
             (definition, helper) -> {
                 SqlQueryDefinition sqlQueryDefinition = (SqlQueryDefinition) definition;
-                ParamManager paramManager = helper.getParamManager();
+                CommonParamManager paramManager = helper.getParamManager();
                 List<SqlStatement> subStatementList = sqlQueryDefinition.getSubDefinitionList().stream()
                     .filter(subDefinition -> subDefinition.check(paramManager))
                     .map(subDefinition -> sqlStatementFactory.getOrCreate(subDefinition, helper))

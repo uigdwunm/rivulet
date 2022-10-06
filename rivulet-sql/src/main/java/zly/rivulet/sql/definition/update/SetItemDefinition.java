@@ -26,9 +26,16 @@ import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 public class SetItemDefinition extends AbstractDefinition {
 
+    private final FieldDefinition fieldDefinition;
+
     private final SingleValueElementDefinition valueDefinition;
 
-    private final FieldDefinition fieldDefinition;
+    public SetItemDefinition(SqlParserPortableToolbox toolbox, FieldDefinition fieldDefinition, Param<?> param) {
+        super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
+
+        this.fieldDefinition = fieldDefinition;
+        this.valueDefinition = this.parseSingleValue(toolbox, param);
+    }
 
     public SetItemDefinition(SqlParserPortableToolbox toolbox, Mapping<?, ?, ?> mapping) {
         super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());

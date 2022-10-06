@@ -1,9 +1,10 @@
 package zly.rivulet.base.definition.param;
 
+import zly.rivulet.base.definer.ModelMeta;
 import zly.rivulet.base.exception.ParamDefineException;
 import zly.rivulet.base.exception.UnbelievableException;
+import zly.rivulet.base.generator.param_manager.for_proxy_method.CommonParamManager;
 import zly.rivulet.base.generator.param_manager.for_proxy_method.LazyParamManager;
-import zly.rivulet.base.generator.param_manager.for_proxy_method.ProxyMethodParamManager;
 import zly.rivulet.base.generator.param_manager.for_proxy_method.SimpleParamManager;
 import zly.rivulet.base.utils.ArrayUtils;
 import zly.rivulet.base.utils.StringUtil;
@@ -16,9 +17,34 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-public class ProxyMethodParamManagerCreateorHelper {
+public class CommonParamManagerCreatorHelper {
 
-    public static Function<Object[], ProxyMethodParamManager> createParamManagerCreator(Method method, List<ParamReceipt> allParamReceiptList) {
+    public static Function<Object[], CommonParamManager> createParamManagerCreator(ModelMeta modelMeta, List<ParamReceipt> allParamReceiptList) {
+        Map<String, Function<Object[], Object>> paramCreatorMap = new HashMap<>(allParamReceiptList.size());
+        for (ParamReceipt paramReceipt : allParamReceiptList) {
+            if (paramReceipt instanceof StaticParamReceipt) {
+                continue;
+            } else if (paramReceipt instanceof PathKeyParamReceipt) {
+                PathKeyParamReceipt pathKeyParamReceipt = (PathKeyParamReceipt) paramReceipt;
+                String pathKey = pathKeyParamReceipt.getPathKey();
+                Field field = modelMeta.getFieldMetaByFieldName(pathKey).getField();
+                Function<Object[], Object> paramCreator = params -> {
+                    try {
+                        return field.get(params[0]);
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                };
+                paramCreatorMap.put(pathKey, paramCreator);
+            } else {
+                throw UnbelievableException.unknownType();
+            }
+        }
+
+        return originParams -> new LazyParamManager(originParams, paramCreatorMap);
+    }
+
+    public static Function<Object[], CommonParamManager> createParamManagerCreator(Method method, List<ParamReceipt> allParamReceiptList) {
         Parameter[] parameters = method.getParameters();
         if (parameters.length == 1 && Map.class.isAssignableFrom(parameters[0].getType())) {
             // 参数只有一个并且是map类型
@@ -38,7 +64,6 @@ public class ProxyMethodParamManagerCreateorHelper {
                 }
             }
 
-            // TODO 这里批量获取参数的情况怎么办,要换个manager
             return originParams -> new LazyParamManager(originParams, paramCreatorMap);
         }
     }

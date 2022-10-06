@@ -9,6 +9,8 @@ public interface FieldMeta {
 
     String getFieldName();
 
+    Class<?> getFieldType();
+
     String getOriginName();
 
     Field getField();

@@ -1,6 +1,6 @@
 package zly.rivulet.base.utils;
 
-public class Constant {
+public final class Constant {
 
     public static final char UNDERSCORE = '_';
 
@@ -22,4 +22,14 @@ public class Constant {
 
     public static final String AS = "AS ";
     public static final char EQ = '=';
+
+
+    /**
+     * 模型解析方式时，主键id key的名称
+     **/
+    public static final String MAIN_ID = "mainId";
+    /**
+     * 模型解析方式时，主键id key的名称
+     **/
+    public static final String MAIN_IDS = "mainIds";
 }

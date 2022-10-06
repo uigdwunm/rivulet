@@ -1,7 +1,5 @@
 package zly.rivulet.base.definition;
 
-import zly.rivulet.base.describer.Desc;
-
 /**
  * Description 预解析后得到的信息
  *

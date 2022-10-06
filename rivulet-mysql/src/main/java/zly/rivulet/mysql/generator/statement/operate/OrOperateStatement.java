@@ -38,7 +38,7 @@ public class OrOperateStatement implements OperateStatement {
             (definition, soleFlag, initHelper) -> {
                 OrOperateDefinition orOperateDefinition = (OrOperateDefinition) definition;
                 List<OperateStatement> operateStatementList = orOperateDefinition.getOperateDefinitionList().stream()
-                    .map(subOperation -> (OperateStatement) sqlStatementFactory.init(subOperation, soleFlag.subSwitch(), initHelper))
+                    .map(subOperation -> (OperateStatement) sqlStatementFactory.warmUp(subOperation, soleFlag.subSwitch(), initHelper))
                     .collect(Collectors.toList());
                 return new OrOperateStatement(operateStatementList);
             },

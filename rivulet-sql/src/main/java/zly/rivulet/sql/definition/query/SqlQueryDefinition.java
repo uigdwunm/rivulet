@@ -2,10 +2,15 @@ package zly.rivulet.sql.definition.query;
 
 import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.definition.AbstractDefinition;
+import zly.rivulet.base.definition.Definition;
+import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.param.Param;
+import zly.rivulet.base.generator.statement.Statement;
 import zly.rivulet.base.parser.ParamReceiptManager;
+import zly.rivulet.base.utils.CollectionUtils;
+import zly.rivulet.base.utils.Constant;
 import zly.rivulet.sql.assigner.SQLQueryResultAssigner;
 import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
@@ -14,20 +19,22 @@ import zly.rivulet.sql.definition.field.FieldDefinition;
 import zly.rivulet.sql.definition.query.main.*;
 import zly.rivulet.sql.definition.query.operate.AndOperateDefinition;
 import zly.rivulet.sql.definition.query.operate.EqOperateDefinition;
-import zly.rivulet.sql.definition.query.operate.OperateDefinition;
+import zly.rivulet.sql.definition.query.operate.InOperateDefinition;
 import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
 import zly.rivulet.sql.describer.condition.Condition;
 import zly.rivulet.sql.describer.condition.ConditionContainer;
+import zly.rivulet.sql.describer.param.SqlParamCheckType;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.query.desc.OrderBy;
+import zly.rivulet.sql.generator.statement.SqlStatement;
 import zly.rivulet.sql.parser.SQLAliasManager;
-import zly.rivulet.sql.parser.SqlParamReceiptManager;
-import zly.rivulet.sql.parser.node.QueryProxyNode;
+import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingleValueElementDefinition {
 
@@ -53,25 +60,42 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
 
     private final List<AbstractDefinition> subDefinitionList = new ArrayList<>();
 
-    private SQLAliasManager aliasManager;
-
     private ParamReceiptManager paramReceiptManager;
+
+    private final QueryProxyNode queryProxyNode;
+
+    private SQLAliasManager aliasManager;
 
     private SQLAliasManager.AliasFlag aliasFlag;
 
+    private boolean isWarmUp = false;
+
+    /**
+     * definition类和statement之间的缓存映射
+     **/
+    private final Map<Definition, SqlStatement> statementCache = new ConcurrentHashMap<>();
+
     public SqlQueryDefinition(SqlParserPortableToolbox toolbox, WholeDesc wholeDesc) {
         SqlQueryMetaDesc<?, ?> metaDesc = (SqlQueryMetaDesc<?, ?>) wholeDesc;
-        QueryProxyNode queryProxyNode = new QueryProxyNode(toolbox, metaDesc.getMainFrom());
-        toolbox.setCurrNode(queryProxyNode);
+        QueryProxyNode parentQueryProxyNode = toolbox.getQueryProxyNode();
+        this.aliasManager = new SQLAliasManager(toolbox.getConfigProperties());
+
+        if (parentQueryProxyNode != null) {
+            // 说明当前是子查询
+            this.queryProxyNode = parentQueryProxyNode.createSubQueryProxyNode(this, toolbox, metaDesc.getMainFrom());
+        } else {
+            // 说明当时是最外层查询，则在这里初始化QueryProxyNode
+            this.queryProxyNode = new QueryProxyNode(this, toolbox, metaDesc.getMainFrom());
+        }
+        toolbox.setQueryProxyNode(this.queryProxyNode);
 
         // 解析赋值
         this.fromDefinition = new FromDefinition(toolbox);
-        this.selectDefinition = new SelectDefinition(
-            toolbox,
-            this.fromDefinition.getFromMode(),
-            metaDesc.getSelectModel(),
-            metaDesc.getMappedItemList()
-        );
+        if (CollectionUtils.isEmpty(metaDesc.getMappedItemList())) {
+            this.selectDefinition = new SelectDefinition(toolbox, this.fromDefinition.getFromMode(), metaDesc.getSelectModel());
+        } else {
+            this.selectDefinition = new SelectDefinition(toolbox, metaDesc.getSelectModel(), metaDesc.getMappedItemList());
+        }
 
         this.subDefinitionList.add(selectDefinition);
         this.subDefinitionList.add(fromDefinition);
@@ -109,33 +133,52 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
 
         this.sqlQueryResultAssigner = selectDefinition.getSqlAssigner();
 
-        this.aliasManager = SQLAliasManager.create(toolbox.getConfigProperties(), queryProxyNode);
         this.paramReceiptManager = toolbox.getParamReceiptManager();
         this.aliasFlag = queryProxyNode.getAliasFlag();
+
+        if (parentQueryProxyNode != null) {
+            // 这里还原toolbox中的node
+            toolbox.setQueryProxyNode(parentQueryProxyNode);
+            // 把子别名集并入到父别名集
+            SQLAliasManager parentAliasManger = parentQueryProxyNode.getSqlAliasManager();
+            parentAliasManger.addAllSubAlias(this.aliasManager);
+        }
     }
 
-    public SqlQueryDefinition(SqlParserPortableToolbox toolbox, SQLModelMeta modelMeta, SQLFieldMeta primaryKey) {
-        Class<?> modelClass = modelMeta.getModelClass();
-        QueryProxyNode queryProxyNode = new QueryProxyNode(toolbox, modelClass);
-        toolbox.setCurrNode(queryProxyNode);
+    public SqlQueryDefinition(SqlParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta, SQLFieldMeta primaryKey) {
+        Class<?> modelClass = sqlModelMeta.getModelClass();
+        this.aliasManager = new SQLAliasManager(toolbox.getConfigProperties());
+        this.queryProxyNode = new QueryProxyNode(this, toolbox, modelClass);
+        toolbox.setQueryProxyNode(this.queryProxyNode);
         this.fromDefinition = new FromDefinition(toolbox);
-        this.selectDefinition = new SelectDefinition(toolbox, modelClass, modelClass, null);
+        this.selectDefinition = new SelectDefinition(toolbox, modelClass, modelClass);
+        Param<? extends SQLFieldMeta> mainIdParam = Param.of(primaryKey.getClass(), Constant.MAIN_ID, SqlParamCheckType.NATURE);
+        Param<? extends SQLFieldMeta> mainIdsParam = Param.of(primaryKey.getClass(), Constant.MAIN_IDS, SqlParamCheckType.NATURE);
         this.whereDefinition = new WhereDefinition(
             toolbox,
             new AndOperateDefinition(
                 toolbox,
                 new EqOperateDefinition(
                     toolbox,
-                    new FieldDefinition(null, modelMeta, primaryKey),
-                    Param.of(primaryKey.getClass(), )
+                    new FieldDefinition(sqlModelMeta, primaryKey),
+                    mainIdParam,
+                    CheckCondition.notNull(mainIdParam)
+
+                ),
+                new InOperateDefinition(
+                    toolbox,
+                    new FieldDefinition(sqlModelMeta, primaryKey),
+                    mainIdsParam,
+                    CheckCondition.notEmpty(mainIdsParam)
                 )
             )
         );
-        this.aliasManager = ;
         this.paramReceiptManager = toolbox.getParamReceiptManager();
     }
 
-    public SqlQueryDefinition() {}
+    public SqlQueryDefinition(QueryProxyNode queryProxyNode) {
+        this.queryProxyNode = queryProxyNode;
+    }
 
     @Override
     public SqlQueryDefinition forAnalyze() {
@@ -225,5 +268,29 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
 
     public SQLAliasManager.AliasFlag getAliasFlag() {
         return this.aliasFlag;
+    }
+
+    @Override
+    public void putStatement(Definition key, Statement sqlStatement) {
+        this.statementCache.put(key, (SqlStatement) sqlStatement);
+    }
+
+    @Override
+    public SqlStatement getStatement(Definition key) {
+        return this.statementCache.get(key);
+    }
+
+    @Override
+    public boolean isWarmUp() {
+        return this.isWarmUp;
+    }
+
+    @Override
+    public void finishWarmUp() {
+        this.isWarmUp = true;
+    }
+
+    public QueryProxyNode getQueryProxyNode() {
+        return queryProxyNode;
     }
 }

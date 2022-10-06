@@ -5,12 +5,14 @@ import zly.rivulet.base.definition.param.PathKeyParamReceipt;
 import zly.rivulet.base.definition.param.StaticParamReceipt;
 import zly.rivulet.base.exception.ParseException;
 import zly.rivulet.base.exception.UnbelievableException;
+import zly.rivulet.base.generator.param_manager.ParamManager;
+import zly.rivulet.base.generator.param_manager.for_proxy_method.CommonParamManager;
 import zly.rivulet.base.utils.ClassUtils;
 
 import java.util.*;
 import java.util.function.Function;
 
-public class ModelBatchParamManager implements ModelMetaParamManager {
+public class ModelBatchParamManager implements ParamManager {
 
     private List<Object> modelParamList;
 
@@ -41,19 +43,8 @@ public class ModelBatchParamManager implements ModelMetaParamManager {
     }
 
 
-    @Override
-    public Object getParam(Object model, ParamReceipt paramReceipt) {
-        if (paramReceipt instanceof PathKeyParamReceipt) {
-            PathKeyParamReceipt pathKeyParamReceipt = (PathKeyParamReceipt) paramReceipt;
-            String pathKey = pathKeyParamReceipt.getPathKey();
-            Function<Object, Object> creator = paramCreatorMap.get(pathKey);
-            return creator.apply(model);
-        } else if (paramReceipt instanceof StaticParamReceipt) {
-            StaticParamReceipt staticParamReceipt = (StaticParamReceipt) paramReceipt;
-            return staticParamReceipt.getParamValue();
-        } else {
-            throw UnbelievableException.unknownType();
-        }
+    public CommonParamManager getCommonParamManager(Object model) {
+        return
     }
 
     public List<Object> getModelParamList() {

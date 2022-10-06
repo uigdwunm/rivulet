@@ -67,9 +67,9 @@ public class JoinStatement implements SqlStatement {
                 JoinRelationDefinition joinRelation = (JoinRelationDefinition) definition;
                 SQLAliasManager aliasManager = initHelper.getAliasManager();
 
-                QueryFromStatement joinFromStatement = (QueryFromStatement) sqlStatementFactory.init(joinRelation.getJoinModel(), soleFlag.subSwitch(), initHelper);
+                QueryFromStatement joinFromStatement = (QueryFromStatement) sqlStatementFactory.warmUp(joinRelation.getJoinModel(), soleFlag.subSwitch(), initHelper);
                 String joinFromAlias = aliasManager.getAlias(joinRelation.getAliasFlag());
-                OperateStatement operateStatement = (OperateStatement) sqlStatementFactory.init(joinRelation.getOperateContainerDefinition(), soleFlag.subSwitch(), initHelper);
+                OperateStatement operateStatement = (OperateStatement) sqlStatementFactory.warmUp(joinRelation.getOperateContainerDefinition(), soleFlag.subSwitch(), initHelper);
                 return new JoinStatement(joinFromStatement, joinFromAlias, operateStatement, joinRelation.getJoinType());
             },
             (definition, helper) -> {
