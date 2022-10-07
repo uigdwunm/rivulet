@@ -13,7 +13,7 @@ import zly.rivulet.base.utils.View;
 import zly.rivulet.sql.definer.QueryComplexModel;
 import zly.rivulet.sql.definer.SqlDefiner;
 import zly.rivulet.sql.definer.annotations.SQLModelJoin;
-import zly.rivulet.sql.definer.annotations.SQLSubQueryJoin;
+import zly.rivulet.sql.definer.annotations.SQLSubQuery;
 import zly.rivulet.sql.definer.annotations.SqlQueryAlias;
 import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
@@ -116,17 +116,14 @@ public class QueryProxyNode implements FromNode, SelectNode {
         Object o = this.proxyDONewInstance(clazz);
         // 每个字段注入代理对象
         for (Field field : clazz.getDeclaredFields()) {
-            SQLModelJoin sqlModelJoin = field.getAnnotation(SQLModelJoin.class);
-            SQLSubQueryJoin sqlSubJoin = field.getAnnotation(SQLSubQueryJoin.class);
-            if ((sqlModelJoin != null && sqlSubJoin != null) || (sqlModelJoin == null && sqlSubJoin == null)) {
-                // 两个注解都有，或两个注解都没有，报错
-                throw SQLDescDefineException.unknowQueryType();
-            }
+            // 表示连接了一个子查询的注解
+            SQLSubQuery sqlSubJoin = field.getAnnotation(SQLSubQuery.class);
+
             // 别名
             SqlQueryAlias sqlQueryAlias = field.getAnnotation(SqlQueryAlias.class);
             FromNode fromNode;
 
-            if (sqlModelJoin != null) {
+            if (sqlSubJoin == null) {
                 SQLModelMeta modelMeta = sqlDefiner.createOrGetModelMeta(field.getType());
                 if (modelMeta == null) {
                     // 没找到对应的表对象

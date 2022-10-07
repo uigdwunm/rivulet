@@ -1,7 +1,6 @@
 package zly.rivulet.sql.parser;
 
 import zly.rivulet.base.convertor.ConvertorManager;
-import zly.rivulet.base.definer.Definer;
 import zly.rivulet.base.definer.ModelMeta;
 import zly.rivulet.base.definer.annotations.RivuletDesc;
 import zly.rivulet.base.definer.enums.RivuletFlag;
@@ -24,6 +23,7 @@ import zly.rivulet.sql.definition.update.SqlUpdateDefinition;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.update.SqlUpdateMetaDesc;
 import zly.rivulet.sql.exception.SQLDescDefineException;
+import zly.rivulet.sql.parser.proxy_node.ProxyNodeManager;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 import java.util.HashMap;
@@ -48,7 +48,7 @@ public class SqlParser implements Parser {
 
     private final Map<String, Blueprint> key_queryDefinition_map = new HashMap<>();
 
-    private final ProxyModelManager proxyModelManager = new ProxyModelManager();
+    private final ProxyNodeManager proxyNodeManager;
 
     private final TwofoldConcurrentHashMap<ModelMeta, RivuletFlag, Blueprint> modelMetaFlagBlueprintMap = new TwofoldConcurrentHashMap<>();
 
@@ -57,6 +57,7 @@ public class SqlParser implements Parser {
         this.configProperties = configProperties;
         this.convertorManager = convertorManager;
         this.definer = definer;
+        this.proxyNodeManager = new ProxyNodeManager(this);
     }
 
 
@@ -199,7 +200,7 @@ public class SqlParser implements Parser {
     }
 
     @Override
-    public Definer getDefiner() {
+    public SqlDefiner getDefiner() {
         return this.definer;
     }
 
@@ -211,7 +212,7 @@ public class SqlParser implements Parser {
         return convertorManager;
     }
 
-    public ProxyModelManager getProxyModelManager() {
-        return proxyModelManager;
+    public ProxyNodeManager getProxyModelManager() {
+        return proxyNodeManager;
     }
 }

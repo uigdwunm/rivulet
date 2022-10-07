@@ -23,4 +23,8 @@ public class SQLModelDefineException extends RuntimeException {
     public static SQLModelDefineException noField() {
         return new SQLModelDefineException("未定义对应的字段");
     }
+
+    public static SQLModelDefineException notTable() {
+        return new SQLModelDefineException("定义的表对象非法");
+    }
 }

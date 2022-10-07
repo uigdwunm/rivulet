@@ -7,7 +7,7 @@ import zly.rivulet.base.pipeline.toolbox.PipelineToolbox;
 import zly.rivulet.base.utils.collector.FixedLengthStatementCollector;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.MySQLFish;
-import zly.rivulet.sql.assigner.SQLQueryResultAssigner;
+import zly.rivulet.sql.assigner.AbstractSQLQueryResultAssigner;
 import zly.rivulet.sql.pipeline.ResultSetIterable;
 
 import javax.sql.DataSource;
@@ -26,7 +26,7 @@ public class MySQLExecutor implements Executor {
     @Override
     public Object queryOne(Fish fish, Assigner<?> assigner, PipelineToolbox pipelineToolbox) {
         MySQLFish mySQLFish = (MySQLFish) fish;
-        SQLQueryResultAssigner sqlQueryResultAssigner = (SQLQueryResultAssigner) assigner;
+        AbstractSQLQueryResultAssigner abstractSqlQueryResultAssigner = (AbstractSQLQueryResultAssigner) assigner;
         StatementCollector collector = new FixedLengthStatementCollector(mySQLFish.getLength());
         mySQLFish.getStatement().collectStatement(collector);
         try {
@@ -34,7 +34,7 @@ public class MySQLExecutor implements Executor {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(collector.toString());
             resultSet.next();
-            return sqlQueryResultAssigner.assign(resultSet);
+            return abstractSqlQueryResultAssigner.assign(resultSet);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -44,7 +44,7 @@ public class MySQLExecutor implements Executor {
     public Stream<Object> queryList(Fish fish, Assigner<?> assigner, PipelineToolbox pipelineToolbox) {
         // TODO
         MySQLFish mySQLFish = (MySQLFish) fish;
-        SQLQueryResultAssigner sqlQueryResultAssigner = (SQLQueryResultAssigner) assigner;
+        AbstractSQLQueryResultAssigner abstractSqlQueryResultAssigner = (AbstractSQLQueryResultAssigner) assigner;
         StatementCollector collector = new FixedLengthStatementCollector(mySQLFish.getLength());
         mySQLFish.getStatement().collectStatement(collector);
         try {
@@ -53,7 +53,7 @@ public class MySQLExecutor implements Executor {
             ResultSet resultSet = preparedStatement.executeQuery(collector.toString());
             ResultSetIterable<Object> iterable = new ResultSetIterable<>(
                 resultSet,
-                sqlQueryResultAssigner,
+                abstractSqlQueryResultAssigner,
                 () -> {
                     try {
                         // 结束回调时回收资源

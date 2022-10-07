@@ -5,6 +5,10 @@ import zly.rivulet.base.utils.StringUtil;
 import zly.rivulet.sql.SqlRivuletProperties;
 import zly.rivulet.sql.definer.annotations.SqlQueryAlias;
 import zly.rivulet.sql.exception.SQLDescDefineException;
+import zly.rivulet.sql.parser.proxy_node.FromNode;
+import zly.rivulet.sql.parser.proxy_node.ProxyNode;
+import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
+import zly.rivulet.sql.parser.proxy_node.SelectNode;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,41 +33,102 @@ public class SQLAliasManager {
 
     private final SqlRivuletProperties configProperties;
 
+    /**
+     * Description 检测用，所有别名全部加载后丢弃
+     *
+     * @author zhaolaiyuan
+     * Date 2022/10/7 19:58
+     **/
+    private Map<String, Integer> repeatAlias = new HashMap<>();
+
+    /**
+     * Description 检测用，所有别名全部加载完丢弃
+     *
+     * @author zhaolaiyuan
+     * Date 2022/10/7 19:59
+     **/
+    private Set<String> forceAliasCheck = new HashSet<>();
+
     public SQLAliasManager(SqlRivuletProperties configProperties) {
         this.configProperties = configProperties;
     }
 
-    public void initAlias() {
-        Map<String, Integer> repeatAlias = new HashMap<>();
-        Set<String> forceAliasCheck = new HashSet<>();
-        for (AliasFlag aliasFlag : allAliasSet) {
-            String forceAlias = aliasFlag.getForceAlias();
-            if (StringUtil.isNotBlank(forceAlias)) {
-                // 强制指定的别名，这里检查下
-                if (!forceAliasCheck.add(forceAlias)) {
-                    throw SQLDescDefineException.forceAliasRepeat(forceAlias);
-                }
-                aliasMap.put(aliasFlag, forceAlias);
-                shortAliasMap.put(aliasFlag, forceAlias);
-            } else {
-                // 非强制指定的别名，这里保存并生成短别名
-                String alias = aliasFlag.getSuggestAlias();
-                int repeatCount = repeatAlias.compute(alias, (k, v) -> {
-                    if (v == null) {
-                        return 0;
-                    }
-                    return v + 1;
-                });
-                if (repeatCount == 0) {
-                    this.aliasMap.put(aliasFlag, alias);
-                } else {
-                    this.aliasMap.put(aliasFlag, alias + '_' + repeatCount);
-                }
+    public void init(QueryProxyNode queryProxyNode) {
+        this.collect(queryProxyNode);
+        this.initAlias();
+    }
 
-                shortAliasMap.put(aliasFlag, this.generateShortAlias(repeatAlias, repeatCount));
+    private void collect(ProxyNode proxyNode) {
+        if (proxyNode instanceof QueryProxyNode) {
+            QueryProxyNode queryProxyNode = (QueryProxyNode) proxyNode;
+            for (FromNode fromNode : queryProxyNode.getFromNodeList()) {
+                allAliasSet.add(fromNode.getAliasFlag());
+                ProxyNode parentNode = fromNode.getParentNode();
+                if (parentNode != null) {
+                    aliasToParentAlias.put(fromNode.getAliasFlag(), parentNode.getAliasFlag());
+                }
+                this.collect(fromNode);
+            }
+            for (SelectNode selectNode : queryProxyNode.getSelectNodeList()) {
+                allAliasSet.add(selectNode.getAliasFlag());
+                ProxyNode parentNode = selectNode.getParentNode();
+                if (parentNode != null) {
+                    aliasToParentAlias.put(selectNode.getAliasFlag(), parentNode.getAliasFlag());
+                }
+                this.collect(selectNode);
+            }
+
+            for (QueryProxyNode whereNode : queryProxyNode.getConditionSubQueryList()) {
+                allAliasSet.add(whereNode.getAliasFlag());
+                ProxyNode parentNode = whereNode.getParentNode();
+                if (parentNode != null) {
+                    aliasToParentAlias.put(whereNode.getAliasFlag(), parentNode.getAliasFlag());
+                }
+                this.collect(whereNode);
             }
 
         }
+    }
+
+    private void initAlias() {
+        for (AliasFlag aliasFlag : allAliasSet) {
+            // 保存并生成短别名
+            this.suggestAlias(aliasFlag, aliasFlag.getSuggestAlias());
+        }
+    }
+
+    public void forceAlias(AliasFlag aliasFlag, String forceAlias) {
+        // 强制指定的别名，这里检查下
+        if (!forceAliasCheck.add(forceAlias)) {
+            throw SQLDescDefineException.forceAliasRepeat(forceAlias);
+        }
+        aliasMap.put(aliasFlag, forceAlias);
+        shortAliasMap.put(aliasFlag, forceAlias);
+    }
+
+    public void suggestAlias(AliasFlag aliasFlag, String alias) {
+        if (StringUtil.isBlank(alias)) {
+            alias = "t";
+        }
+        // 非强制指定的别名，并且没有事先指定过，这里保存并生成短别名
+        int repeatCount = repeatAlias.compute(alias, (k, v) -> {
+            if (v == null) {
+                return 0;
+            }
+            return v + 1;
+        });
+
+        if (repeatCount == 0) {
+            this.aliasMap.put(aliasFlag, alias);
+        } else {
+            this.aliasMap.put(aliasFlag, alias + '_' + repeatCount);
+        }
+
+        String shortAlias = this.generateShortAlias(repeatAlias, repeatCount);
+        while (repeatAlias.containsKey(shortAlias)) {
+            shortAlias = this.generateShortAlias(repeatAlias, ++repeatCount);
+        }
+        shortAliasMap.put(aliasFlag, shortAlias);
     }
 
 
@@ -92,30 +157,12 @@ public class SQLAliasManager {
 
     }
 
-    public AliasFlag createAlias(SqlQueryAlias sqlQueryAlias) {
-        AliasFlag aliasFlag = new AliasFlag(sqlQueryAlias.value(), null);
-        this.allAliasSet.add(aliasFlag);
-        return aliasFlag;
+    public static AliasFlag createAlias(String suggestedAlias) {
+        return new AliasFlag(suggestedAlias);
     }
 
-    public AliasFlag createAlias(String suggestedAlias) {
-        AliasFlag aliasFlag = new AliasFlag(null, suggestedAlias);
-        this.allAliasSet.add(aliasFlag);
-        return aliasFlag;
-    }
-
-    public AliasFlag createAlias() {
-        AliasFlag aliasFlag = new AliasFlag(null, null);
-        this.allAliasSet.add(aliasFlag);
-        return aliasFlag;
-    }
-
-    public void addRelation(AliasFlag child, AliasFlag parent) {
-        aliasToParentAlias.put(child, parent);
-    }
-
-    public void addAllSubAlias(SQLAliasManager subAliasManager) {
-        this.allAliasSet.addAll(subAliasManager.allAliasSet);
+    public static AliasFlag createAlias() {
+        return new AliasFlag(null);
     }
 
     /**
@@ -150,38 +197,20 @@ public class SQLAliasManager {
     public static class AliasFlag {
 
         /**
-         * 强制别名值
-         * 可能为空，为空表示不强制
-         **/
-        private String forceAlias;
-
-        /**
          * 建议别名值
          * 可能为空，为空表示随便给
          **/
         private String suggestAlias;
 
-        private AliasFlag(String forceAlias, String suggestAlias) {
-            this.forceAlias = forceAlias;
+        private AliasFlag(String suggestAlias) {
             this.suggestAlias = suggestAlias;
         }
 
-        public void suggestedAlias(String alias) {
-            if (StringUtil.isNotBlank(this.forceAlias) && StringUtil.isNotBlank(this.suggestAlias)) {
+        public void suggestAlias(String alias) {
+            if (StringUtil.isNotBlank(this.suggestAlias)) {
                 return;
             }
             this.suggestAlias = alias;
-        }
-
-        public void forceAlias(String alias) {
-            if (StringUtil.isNotBlank(this.forceAlias)) {
-                throw UnbelievableException.unbelievable();
-            }
-            this.forceAlias = alias;
-        }
-
-        public String getForceAlias() {
-            return forceAlias;
         }
 
         public String getSuggestAlias() {

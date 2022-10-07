@@ -15,6 +15,7 @@ import zly.rivulet.mysql.definer.annotations.type.string.MySQLVarchar;
 import zly.rivulet.sql.definer.SqlDefiner;
 import zly.rivulet.sql.definer.annotations.SqlColumn;
 import zly.rivulet.sql.definer.annotations.SqlTable;
+import zly.rivulet.sql.exception.SQLModelDefineException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -39,6 +40,9 @@ public class MySQLDefiner extends SqlDefiner {
         }
 
         SqlTable sqlTable = clazz.getAnnotation(SqlTable.class);
+        if (sqlTable == null) {
+            throw SQLModelDefineException.notTable();
+        }
         String tableName = sqlTable.value();
 
         Comment commentAnno = clazz.getAnnotation(Comment.class);

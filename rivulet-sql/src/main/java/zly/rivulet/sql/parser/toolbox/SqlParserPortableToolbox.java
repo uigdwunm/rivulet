@@ -3,6 +3,7 @@ package zly.rivulet.sql.parser.toolbox;
 import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.base.parser.toolbox.ParserPortableToolbox;
 import zly.rivulet.sql.SqlRivuletProperties;
+import zly.rivulet.sql.parser.SQLAliasManager;
 import zly.rivulet.sql.parser.SqlParamReceiptManager;
 import zly.rivulet.sql.parser.SqlParser;
 import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
@@ -17,12 +18,15 @@ public class SqlParserPortableToolbox implements ParserPortableToolbox {
 
     private final SqlRivuletProperties configProperties;
 
+    private final SQLAliasManager sqlAliasManager;
+
     private int subQueryCount = 0;
 
     public SqlParserPortableToolbox(SqlParser sqlPreParser) {
         this.sqlPreParser = sqlPreParser;
         this.paramReceiptManager = new SqlParamReceiptManager(sqlPreParser.getConvertorManager());
         this.configProperties = sqlPreParser.getConfigProperties();
+        this.sqlAliasManager = new SQLAliasManager(sqlPreParser.getConfigProperties());
     }
 
     public int incrSubQuery() {
@@ -47,5 +51,9 @@ public class SqlParserPortableToolbox implements ParserPortableToolbox {
 
     public SqlRivuletProperties getConfigProperties() {
         return configProperties;
+    }
+
+    public SQLAliasManager getSqlAliasManager() {
+        return sqlAliasManager;
     }
 }

@@ -81,10 +81,6 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
         this.limit = limit;
     }
 
-    public Class<F> getModelFrom() {
-        return modelFrom;
-    }
-
     public Class<S> getSelectModel() {
         return selectModel;
     }

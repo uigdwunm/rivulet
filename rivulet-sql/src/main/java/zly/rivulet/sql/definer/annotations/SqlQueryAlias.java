@@ -7,4 +7,6 @@ import java.lang.annotation.RetentionPolicy;
 public @interface SqlQueryAlias {
 
     String value();
+
+    boolean isForce() default true;
 }

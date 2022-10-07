@@ -13,6 +13,4 @@ public interface ProxyNode {
 
     SQLAliasManager.AliasFlag getAliasFlag();
 
-    ProxyNode getParentNode();
-
 }

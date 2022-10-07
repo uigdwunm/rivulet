@@ -1,6 +1,6 @@
 package zly.rivulet.sql.pipeline;
 
-import zly.rivulet.sql.assigner.SQLQueryResultAssigner;
+import zly.rivulet.sql.assigner.AbstractSQLQueryResultAssigner;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,7 +10,7 @@ public class ResultSetIterable<T> implements Iterable<T> {
 
     private final ResultSet resultSet;
 
-    private final SQLQueryResultAssigner assigner;
+    private final AbstractSQLQueryResultAssigner assigner;
 
     /**
      * Description 结束回调
@@ -20,13 +20,13 @@ public class ResultSetIterable<T> implements Iterable<T> {
      **/
     private final Runnable finishCallBack;
 
-    public ResultSetIterable(ResultSet resultSet, SQLQueryResultAssigner assigner) {
+    public ResultSetIterable(ResultSet resultSet, AbstractSQLQueryResultAssigner assigner) {
         this.resultSet = resultSet;
         this.assigner = assigner;
         this.finishCallBack = null;
     }
 
-    public ResultSetIterable(ResultSet resultSet, SQLQueryResultAssigner assigner, Runnable finishCallBack) {
+    public ResultSetIterable(ResultSet resultSet, AbstractSQLQueryResultAssigner assigner, Runnable finishCallBack) {
         this.resultSet = resultSet;
         this.assigner = assigner;
         this.finishCallBack = finishCallBack;

@@ -9,9 +9,9 @@ import zly.rivulet.base.describer.field.SetMapping;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.utils.View;
-import zly.rivulet.sql.assigner.ContainerSQLQueryResultAssigner;
-import zly.rivulet.sql.assigner.ModelSQLQueryResultAssigner;
-import zly.rivulet.sql.assigner.SQLQueryResultAssigner;
+import zly.rivulet.sql.assigner.ContainerAbstractSQLQueryResultAssigner;
+import zly.rivulet.sql.assigner.ModelAbstractSQLQueryResultAssigner;
+import zly.rivulet.sql.assigner.AbstractSQLQueryResultAssigner;
 import zly.rivulet.sql.definition.field.FieldDefinition;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
 import zly.rivulet.sql.describer.function.MFunctionDesc;
@@ -39,7 +39,7 @@ public class SelectDefinition extends AbstractContainerDefinition {
 
     private final View<MapDefinition> mappingDefinitionList;
 
-    private final SQLQueryResultAssigner sqlQueryResultAssigner;
+    private final AbstractSQLQueryResultAssigner abstractSqlQueryResultAssigner;
 
 //    protected SelectDefinition() {
 //        super(CheckCondition.IS_TRUE);
@@ -54,7 +54,7 @@ public class SelectDefinition extends AbstractContainerDefinition {
         }
         // 结果对象就是查询对象
         QueryProxyNode currNode = toolbox.getCurrNode();
-        this.sqlQueryResultAssigner = new ContainerSQLQueryResultAssigner(toolbox, currNode, 0);
+        this.abstractSqlQueryResultAssigner = new ContainerAbstractSQLQueryResultAssigner(toolbox, currNode, 0);
         this.mappingDefinitionList = View.create(currNode.getMapDefinitionList());
     }
 
@@ -70,7 +70,7 @@ public class SelectDefinition extends AbstractContainerDefinition {
             mapDefinitions.add(mapDefinition);
             setMappingList.add((SetMapping<Object, Object>) item.getMappingField());
         }
-        this.sqlQueryResultAssigner = new ModelSQLQueryResultAssigner(selectModel, setMappingList);
+        this.abstractSqlQueryResultAssigner = new ModelAbstractSQLQueryResultAssigner(selectModel, setMappingList);
         this.mappingDefinitionList = View.create(mapDefinitions);
     }
 
@@ -108,8 +108,8 @@ public class SelectDefinition extends AbstractContainerDefinition {
         return mappingDefinitionList;
     }
 
-    public SQLQueryResultAssigner getSqlAssigner() {
-        return sqlQueryResultAssigner;
+    public AbstractSQLQueryResultAssigner getSqlAssigner() {
+        return abstractSqlQueryResultAssigner;
     }
 
     public Class<?> getSelectModel() {

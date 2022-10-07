@@ -11,7 +11,7 @@ import zly.rivulet.base.generator.statement.Statement;
 import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.base.utils.CollectionUtils;
 import zly.rivulet.base.utils.Constant;
-import zly.rivulet.sql.assigner.SQLQueryResultAssigner;
+import zly.rivulet.sql.assigner.AbstractSQLQueryResultAssigner;
 import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
@@ -56,17 +56,15 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
 
     private LimitDefinition limit;
 
-    private SQLQueryResultAssigner sqlQueryResultAssigner;
+    private AbstractSQLQueryResultAssigner abstractSqlQueryResultAssigner;
 
     private final List<AbstractDefinition> subDefinitionList = new ArrayList<>();
 
     private ParamReceiptManager paramReceiptManager;
 
-    private final QueryProxyNode queryProxyNode;
-
     private SQLAliasManager aliasManager;
 
-    private SQLAliasManager.AliasFlag aliasFlag;
+    private final SQLAliasManager.AliasFlag aliasFlag = SQLAliasManager.createAlias();
 
     private boolean isWarmUp = false;
 
@@ -80,14 +78,15 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
         QueryProxyNode parentQueryProxyNode = toolbox.getQueryProxyNode();
         this.aliasManager = new SQLAliasManager(toolbox.getConfigProperties());
 
+        QueryProxyNode queryProxyNode;
         if (parentQueryProxyNode != null) {
             // 说明当前是子查询
-            this.queryProxyNode = parentQueryProxyNode.createSubQueryProxyNode(this, toolbox, metaDesc.getMainFrom());
+            queryProxyNode = parentQueryProxyNode.createSubQueryProxyNode(this, toolbox, metaDesc.getMainFrom());
         } else {
             // 说明当时是最外层查询，则在这里初始化QueryProxyNode
-            this.queryProxyNode = new QueryProxyNode(this, toolbox, metaDesc.getMainFrom());
+            queryProxyNode = new QueryProxyNode(this, toolbox, metaDesc.getMainFrom());
         }
-        toolbox.setQueryProxyNode(this.queryProxyNode);
+        toolbox.setQueryProxyNode(queryProxyNode);
 
         // 解析赋值
         this.fromDefinition = new FromDefinition(toolbox);
@@ -131,17 +130,14 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
             this.subDefinitionList.add(this.limit);
         }
 
-        this.sqlQueryResultAssigner = selectDefinition.getSqlAssigner();
+        this.abstractSqlQueryResultAssigner = selectDefinition.getSqlAssigner();
 
         this.paramReceiptManager = toolbox.getParamReceiptManager();
-        this.aliasFlag = queryProxyNode.getAliasFlag();
 
+        this.aliasManager.init(queryProxyNode);
         if (parentQueryProxyNode != null) {
             // 这里还原toolbox中的node
             toolbox.setQueryProxyNode(parentQueryProxyNode);
-            // 把子别名集并入到父别名集
-            SQLAliasManager parentAliasManger = parentQueryProxyNode.getSqlAliasManager();
-            parentAliasManger.addAllSubAlias(this.aliasManager);
         }
     }
 
@@ -257,8 +253,8 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
     }
 
     @Override
-    public SQLQueryResultAssigner getAssigner() {
-        return this.sqlQueryResultAssigner;
+    public AbstractSQLQueryResultAssigner getAssigner() {
+        return this.abstractSqlQueryResultAssigner;
     }
 
     @Override
@@ -290,7 +286,4 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
         this.isWarmUp = true;
     }
 
-    public QueryProxyNode getQueryProxyNode() {
-        return queryProxyNode;
-    }
 }

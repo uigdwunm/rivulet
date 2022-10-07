@@ -3,7 +3,6 @@ package zly.rivulet.sql.assigner;
 import zly.rivulet.base.definer.FieldMeta;
 import zly.rivulet.base.describer.field.SetMapping;
 import zly.rivulet.base.utils.View;
-import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.field.FieldDefinition;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
@@ -18,14 +17,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModelSQLQueryResultAssigner extends SQLQueryResultAssigner {
+public class ModelAbstractSQLQueryResultAssigner extends AbstractSQLQueryResultAssigner {
 
     /**
      * 每个字段的赋值器
      **/
     private final View<SetMapping<Object, Object>> fieldAssignerList;
 
-    public ModelSQLQueryResultAssigner(ModelProxyNode modelProxyNode, int indexStart) {
+    public ModelAbstractSQLQueryResultAssigner(ModelProxyNode modelProxyNode, int indexStart) {
         super(modelProxyNode.getFromModelClass(), indexStart);
         SQLModelMeta modelMeta = modelProxyNode.getModelMeta();
         QueryProxyNode parentNode = modelProxyNode.getParentNode();
@@ -49,7 +48,7 @@ public class ModelSQLQueryResultAssigner extends SQLQueryResultAssigner {
         this.fieldAssignerList = View.create(fieldAssignerList);
     }
 
-    public ModelSQLQueryResultAssigner(Class<?> selectModel, List<SetMapping<Object, Object>> setMappingList) {
+    public ModelAbstractSQLQueryResultAssigner(Class<?> selectModel, List<SetMapping<Object, Object>> setMappingList) {
         super(selectModel, 0);
         this.fieldAssignerList = View.create(setMappingList);
     }
