@@ -1,5 +1,6 @@
 package zly.rivulet.sql.parser.proxy_node;
 
+import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
 import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.parser.SQLAliasManager;
@@ -11,7 +12,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
     /**
      * 是SqlQueryDefinition, 解析时没啥用,也不能用,提前放到这
      **/
-    private final SqlQueryDefinition queryFromMeta;
+    private final SqlQueryDefinition sqlQueryDefinition;
 
     private final Object proxyModel;
 
@@ -32,14 +33,14 @@ public class QueryProxyNode implements SelectNode, FromNode {
 
     protected QueryProxyNode(Object proxyModel, SqlQueryDefinition sqlQueryDefinition, List<FromNode> fromNodeList, List<SelectNode> selectNodeList) {
         this.proxyModel = proxyModel;
-        this.queryFromMeta = sqlQueryDefinition;
+        this.sqlQueryDefinition = sqlQueryDefinition;
         this.fromNodeList = fromNodeList;
         this.selectNodeList = selectNodeList;
     }
 
     @Override
     public QueryFromMeta getQueryFromMeta() {
-        return this.queryFromMeta;
+        return this.sqlQueryDefinition;
     }
 
     @Override
@@ -60,4 +61,8 @@ public class QueryProxyNode implements SelectNode, FromNode {
         return this.aliasFlag;
     }
 
+    @Override
+    public SingleValueElementDefinition getQuerySelectMeta() {
+        return this.sqlQueryDefinition;
+    }
 }

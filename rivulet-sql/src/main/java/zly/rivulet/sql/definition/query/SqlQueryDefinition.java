@@ -28,6 +28,7 @@ import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.query.desc.OrderBy;
 import zly.rivulet.sql.generator.statement.SqlStatement;
 import zly.rivulet.sql.parser.SQLAliasManager;
+import zly.rivulet.sql.parser.proxy_node.ProxyNodeManager;
 import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
@@ -75,17 +76,10 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
 
     public SqlQueryDefinition(SqlParserPortableToolbox toolbox, WholeDesc wholeDesc) {
         SqlQueryMetaDesc<?, ?> metaDesc = (SqlQueryMetaDesc<?, ?>) wholeDesc;
-        QueryProxyNode parentQueryProxyNode = toolbox.getQueryProxyNode();
         this.aliasManager = new SQLAliasManager(toolbox.getConfigProperties());
 
-        QueryProxyNode queryProxyNode;
-        if (parentQueryProxyNode != null) {
-            // 说明当前是子查询
-            queryProxyNode = parentQueryProxyNode.createSubQueryProxyNode(this, toolbox, metaDesc.getMainFrom());
-        } else {
-            // 说明当时是最外层查询，则在这里初始化QueryProxyNode
-            queryProxyNode = new QueryProxyNode(this, toolbox, metaDesc.getMainFrom());
-        }
+        ProxyNodeManager proxyModelManager = toolbox.getSqlPreParser().getProxyModelManager();
+        QueryProxyNode queryProxyNode = proxyModelManager.parseProxyNode(this, toolbox, metaDesc);
         toolbox.setQueryProxyNode(queryProxyNode);
 
         // 解析赋值
@@ -135,10 +129,6 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
         this.paramReceiptManager = toolbox.getParamReceiptManager();
 
         this.aliasManager.init(queryProxyNode);
-        if (parentQueryProxyNode != null) {
-            // 这里还原toolbox中的node
-            toolbox.setQueryProxyNode(parentQueryProxyNode);
-        }
     }
 
     public SqlQueryDefinition(SqlParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta, SQLFieldMeta primaryKey) {

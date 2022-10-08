@@ -9,21 +9,8 @@ public abstract class SqlRivuletProperties extends RivuletProperties {
      **/
     private boolean useShortAlias = true;
 
-    /**
-     * 单个语句嵌套子查询的最大值（避免出现死循环嵌套）
-     **/
-    private int subQueryMax = 100;
-
     public boolean isUseShortAlias() {
         return useShortAlias;
-    }
-
-    public int getSubQueryMax() {
-        return subQueryMax;
-    }
-
-    public void setSubQueryMax(int subQueryMax) {
-        this.subQueryMax = subQueryMax;
     }
 
     public void setUseShortAlias(boolean useShortAlias) {

@@ -3,7 +3,10 @@ package zly.rivulet.sql.parser.proxy_node;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
-import zly.rivulet.base.describer.WholeDesc;
+import zly.rivulet.base.describer.SingleValueElementDesc;
+import zly.rivulet.base.describer.field.FieldMapping;
+import zly.rivulet.base.describer.field.SetMapping;
+import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.utils.ClassUtils;
 import zly.rivulet.base.utils.CollectionUtils;
 import zly.rivulet.base.utils.StringUtil;
@@ -13,16 +16,13 @@ import zly.rivulet.sql.definer.annotations.SQLSubQuery;
 import zly.rivulet.sql.definer.annotations.SqlQueryAlias;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.field.FieldDefinition;
-import zly.rivulet.sql.definition.query.SQLBlueprint;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
+import zly.rivulet.sql.describer.function.MFunctionDesc;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.query.desc.Mapping;
 import zly.rivulet.sql.exception.SQLDescDefineException;
 import zly.rivulet.sql.parser.SQLAliasManager;
 import zly.rivulet.sql.parser.SqlParser;
-import zly.rivulet.sql.parser.proxy_node.FromNode;
-import zly.rivulet.sql.parser.proxy_node.ModelProxyNode;
-import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 import java.lang.reflect.Field;
@@ -36,9 +36,18 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class ProxyNodeManager {
     private static final ThreadLocal<FieldDefinition> THREAD_LOCAL = new ThreadLocal<>();
 
-    private final Map<SQLModelMeta, ModelProxyNode> proxyNodeMap = new ConcurrentHashMap<>();
+    /**
+     * 专用于DOModel智能update保存的proxyNode
+     **/
+    private final Map<SQLModelMeta, ModelProxyNode> forUpdateProxyNodeMap = new ConcurrentHashMap<>();
 
-    private final Map<SqlQueryDefinition, QueryProxyNode> queryProxyNodeMap = new ConcurrentHashMap<>();
+    /**
+     * Description 缓存起来，用于解析运行时手动创建的Definition （比如运行是手动指定sort部分definition）
+     *
+     * @author zhaolaiyuan
+     * Date 2022/10/8 19:46
+     **/
+//    private final Map<SqlQueryDefinition, QueryProxyNode> queryProxyNodeMap = new ConcurrentHashMap<>();
 
     private final SqlParser sqlParser;
 
@@ -52,8 +61,8 @@ public final class ProxyNodeManager {
     public QueryProxyNode parseProxyNode(SqlQueryDefinition sqlQueryDefinition, SqlParserPortableToolbox toolbox, SqlQueryMetaDesc<?, ?> sqlQueryMetaDesc) {
         Class<?> fromModelClass = sqlQueryMetaDesc.getMainFrom();
 
-        Object proxyModel;
         // 解析from模型
+        Object proxyModel;
         List<FromNode> fromNodeList;
         if (ClassUtils.isExtend(QueryComplexModel.class, fromModelClass)) {
             proxyModel = ClassUtils.newInstance(fromModelClass);
@@ -68,19 +77,18 @@ public final class ProxyNodeManager {
         List<SelectNode> selectNodeList;
         Class<?> selectModelClass = sqlQueryMetaDesc.getSelectModel();
         List<? extends Mapping<?, ?, ?>> mappedItemList = sqlQueryMetaDesc.getMappedItemList();
-        // 解析select模型
         if (CollectionUtils.isEmpty(mappedItemList)) {
-            // 通过指定好的映射
-            selectNodeList = this.parseMappedItemListSelect(fromNodeList, mappedItemList);
+            // 通过指定好的映射解析
+            selectNodeList = this.parseMappedItemListSelect(proxyModel, fromNodeList, mappedItemList);
         } else if (fromModelClass.equals(selectModelClass)) {
+            // 直接解析模型为select
             selectNodeList = this.parseModelSelect(fromNodeList, selectModelClass);
         } else {
+            // 两种情况都不是，抛异常
             throw SQLDescDefineException.selectAndFromNoMatch();
         }
 
-        QueryProxyNode queryProxyNode = new QueryProxyNode(proxyModel, sqlQueryDefinition, fromNodeList, selectNodeList);
-        this.queryProxyNodeMap.put(sqlQueryDefinition, queryProxyNode);
-        return queryProxyNode;
+        return new QueryProxyNode(proxyModel, sqlQueryDefinition, fromNodeList, selectNodeList);
     }
 
     private List<FromNode> parseComplexModelFrom(Object proxyModel, Class<?> fromModelClass, SqlParserPortableToolbox toolbox) {
@@ -123,8 +131,8 @@ public final class ProxyNodeManager {
         SQLSubQuery sqlSubQuery = field.getAnnotation(SQLSubQuery.class);
         if (sqlSubQuery != null) {
             // 解析子查询
-            SqlQueryDefinition subQueryDefinition = (SqlQueryDefinition) sqlParser.parseByKey(sqlSubQuery.value(), toolbox);
-            return this.queryProxyNodeMap.get(subQueryDefinition);
+            sqlParser.parseByKey(sqlSubQuery.value(), toolbox);
+            return toolbox.popQueryProxyNode();
         } else {
             // 不是子查询, 则按modelMeta解析
             SQLModelMeta sqlModelMeta = sqlDefiner.createOrGetModelMeta(field.getType());
@@ -132,17 +140,37 @@ public final class ProxyNodeManager {
                 // 没找到对应的表对象
                 throw SQLDescDefineException.unknowQueryType();
             }
-            return this.getOrCreateMetaModel(sqlModelMeta);
+            return this.createMetaModel(sqlModelMeta);
         }
     }
 
     private ModelProxyNode parseMetaModelFrom(Class<?> fromModelClass) {
         SQLModelMeta sqlModelMeta = sqlDefiner.createOrGetModelMeta(fromModelClass);
-        return this.getOrCreateMetaModel(sqlModelMeta);
+        return this.createMetaModel(sqlModelMeta);
     }
 
-    private List<SelectNode> parseMappedItemListSelect(List<FromNode> fromNodeList, List<? extends Mapping<?, ?, ?>> mappedItemList) {
+    private List<SelectNode> parseMappedItemListSelect(Object proxyModel, List<FromNode> fromNodeList, List<? extends Mapping<?, ?, ?>> mappedItemList) {
         // TODO
+        for (Mapping<?, ?, ?> mapping : mappedItemList) {
+            SetMapping<?, ?> mappingField = mapping.getMappingField();
+            SingleValueElementDesc<?, ?> singleValueElementDesc = mapping.getDesc();
+            if (singleValueElementDesc instanceof FieldMapping) {
+                FieldDefinition fieldDefinition = this.getFieldDefinitionFromThreadLocal((FieldMapping<?, ?>) singleValueElementDesc, proxyModel);
+                // TODO 有问题，这个有可能是从很深很深的子查询中拿到的，路径都无法得到
+
+            } else if (singleValueElementDesc instanceof SqlQueryMetaDesc) {
+
+            } else if (singleValueElementDesc instanceof Param) {
+
+
+            } else if (singleValueElementDesc instanceof MFunctionDesc) {
+
+
+            } else {
+
+            }
+
+        }
         return null;
     }
 
@@ -151,12 +179,24 @@ public final class ProxyNodeManager {
         return null;
     }
 
-    private ModelProxyNode getOrCreateMetaModel(SQLModelMeta sqlModelMeta) {
-        ModelProxyNode modelProxyNode = proxyNodeMap.get(sqlModelMeta);
+    /**
+     * Description 获取缓存的modelProxyNode，专门用于ModelUpdate
+     *
+     * @author zhaolaiyuan
+     * Date 2022/10/8 19:42
+     **/
+    public ModelProxyNode getOrCreateProxyMetaModelForModelUpdate(SQLModelMeta sqlModelMeta) {
+        ModelProxyNode modelProxyNode = forUpdateProxyNodeMap.get(sqlModelMeta);
         if (modelProxyNode == null) {
             return modelProxyNode;
         }
 
+        modelProxyNode = this.createMetaModel(sqlModelMeta);
+        forUpdateProxyNodeMap.put(sqlModelMeta, modelProxyNode);
+        return modelProxyNode;
+    }
+
+    private ModelProxyNode createMetaModel(SQLModelMeta sqlModelMeta) {
         String firstChar = String.valueOf(sqlModelMeta.getTableName().charAt(0));
         SQLAliasManager.AliasFlag aliasFlag = SQLAliasManager.createAlias(firstChar);
         Enhancer enhancer = new Enhancer();
@@ -183,12 +223,11 @@ public final class ProxyNodeManager {
                 return result;
             }
         });
-        modelProxyNode = new ModelProxyNode(aliasFlag, sqlModelMeta, enhancer.create());
-        proxyNodeMap.put(sqlModelMeta, modelProxyNode);
-        return modelProxyNode;
+        return new ModelProxyNode(aliasFlag, sqlModelMeta, enhancer.create());
     }
 
-    public FieldDefinition getFieldDefinitionFromThreadLocal() {
+    public FieldDefinition getFieldDefinitionFromThreadLocal(FieldMapping<?, ?> fieldMapping, Object proxyModel) {
+        ((FieldMapping<Object, Object>) fieldMapping).getMapping(proxyModel);
         return THREAD_LOCAL.get();
     }
 }
