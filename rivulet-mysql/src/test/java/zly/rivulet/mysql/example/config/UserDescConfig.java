@@ -3,6 +3,7 @@ package zly.rivulet.mysql.example.config;
 import zly.rivulet.base.definer.annotations.RivuletDescConfig;
 import zly.rivulet.base.definer.annotations.RivuletDesc;
 import zly.rivulet.base.describer.param.Param;
+import zly.rivulet.mysql.example.enums.Rule;
 import zly.rivulet.mysql.example.model.JoinQueryDO;
 import zly.rivulet.mysql.example.model.user.User;
 import zly.rivulet.mysql.example.vo.UserJoinVO;
@@ -31,6 +32,20 @@ public class UserDescConfig {
                     Condition.equalTo(User::getName, User::getCode)
                 )
             ).build();
+    }
+
+    @RivuletDesc("allStudent")
+    public SqlQueryMetaDesc<User, User> queryStudent() {
+        return QueryBuilder.query(User.class, User.class)
+            .where(Condition.equalTo(User::getRule, Param.staticOf(Rule.STUDENT)))
+            .build();
+    }
+
+    @RivuletDesc("allTeacher")
+    public SqlQueryMetaDesc<User, User> allTeacher() {
+        return QueryBuilder.query(User.class, User.class)
+            .where(Condition.equalTo(User::getRule, Param.staticOf(Rule.TEACHER)))
+            .build();
     }
 
     @RivuletDesc("")

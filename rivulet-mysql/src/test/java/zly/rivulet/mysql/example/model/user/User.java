@@ -4,6 +4,7 @@ import zly.rivulet.base.definer.annotations.Comment;
 import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLBigInt;
 import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLInt;
 import zly.rivulet.mysql.definer.annotations.type.string.MySQLVarchar;
+import zly.rivulet.mysql.example.enums.Rule;
 import zly.rivulet.mysql.example.enums.UserType;
 import zly.rivulet.sql.definer.annotations.SqlColumn;
 import zly.rivulet.sql.definer.annotations.SqlTable;
@@ -23,16 +24,6 @@ public class User {
     private String name;
 
     @SqlColumn
-    @Comment("学号")
-    @MySQLVarchar(length = 32)
-    private String code;
-
-    @SqlColumn
-    @Comment("好朋友")
-    @MySQLBigInt
-    private long friendId;
-
-    @SqlColumn
     @Comment("年龄")
     @MySQLInt
     private int age;
@@ -40,6 +31,8 @@ public class User {
     private boolean isMale;
 
     private UserType userType;
+
+    private Rule rule;
 
     private Date birthday;
 
@@ -54,25 +47,15 @@ public class User {
     public User() {
     }
 
-    public User(long id, String name, String code, long friendId, int age, boolean isMale, UserType userType, Date birthday, int cityCode, int provinceCode) {
+    public User(long id, String name, int age, boolean isMale, UserType userType, Date birthday, int cityCode, int provinceCode) {
         this.id = id;
         this.name = name;
-        this.code = code;
-        this.friendId = friendId;
         this.age = age;
         this.isMale = isMale;
         this.userType = userType;
         this.birthday = birthday;
         this.cityCode = cityCode;
         this.provinceCode = provinceCode;
-    }
-
-    public long getFriendId() {
-        return friendId;
-    }
-
-    public void setFriendId(long friendId) {
-        this.friendId = friendId;
     }
 
     public long getId() {
@@ -111,14 +94,6 @@ public class User {
         return userType;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
     public void setUserType(UserType userType) {
         this.userType = userType;
     }
@@ -145,5 +120,13 @@ public class User {
 
     public void setProvinceCode(int provinceCode) {
         this.provinceCode = provinceCode;
+    }
+
+    public Rule getRule() {
+        return rule;
+    }
+
+    public void setRule(Rule rule) {
+        this.rule = rule;
     }
 }

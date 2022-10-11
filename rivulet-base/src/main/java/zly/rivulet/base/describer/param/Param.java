@@ -40,7 +40,7 @@ public abstract class Param<C> implements SingleValueElementDesc<C, C> {
         return new StandardParam<>(clazz, pathKey, paramCheckType);
     }
 
-    public static StaticParam<?> staticOf(Object paramValue) {
+    public static <C> StaticParam<C> staticOf(C paramValue) {
         return new StaticParam<>(paramValue);
     }
 }

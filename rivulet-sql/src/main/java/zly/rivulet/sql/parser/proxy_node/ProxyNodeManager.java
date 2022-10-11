@@ -1,12 +1,14 @@
 package zly.rivulet.sql.parser.proxy_node;
 
-import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
+import zly.rivulet.base.definition.Blueprint;
+import zly.rivulet.base.definition.param.ParamReceipt;
 import zly.rivulet.base.describer.SingleValueElementDesc;
+import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.field.SetMapping;
 import zly.rivulet.base.describer.param.Param;
+import zly.rivulet.base.exception.UnbelievableException;
+import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.base.utils.ClassUtils;
 import zly.rivulet.base.utils.CollectionUtils;
 import zly.rivulet.base.utils.StringUtil;
@@ -14,9 +16,11 @@ import zly.rivulet.sql.definer.QueryComplexModel;
 import zly.rivulet.sql.definer.SqlDefiner;
 import zly.rivulet.sql.definer.annotations.SQLSubQuery;
 import zly.rivulet.sql.definer.annotations.SqlQueryAlias;
+import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.field.FieldDefinition;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
+import zly.rivulet.sql.definition.query.mapping.MapDefinition;
 import zly.rivulet.sql.describer.function.MFunctionDesc;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.query.desc.Mapping;
@@ -26,7 +30,6 @@ import zly.rivulet.sql.parser.SqlParser;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,7 +37,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class ProxyNodeManager {
-    private static final ThreadLocal<FieldDefinition> THREAD_LOCAL = new ThreadLocal<>();
+    private static final ThreadLocal<MapDefinition> THREAD_LOCAL = new ThreadLocal<>();
 
     /**
      * 专用于DOModel智能update保存的proxyNode
@@ -60,12 +63,13 @@ public final class ProxyNodeManager {
 
     public QueryProxyNode parseProxyNode(SqlQueryDefinition sqlQueryDefinition, SqlParserPortableToolbox toolbox, SqlQueryMetaDesc<?, ?> sqlQueryMetaDesc) {
         Class<?> fromModelClass = sqlQueryMetaDesc.getMainFrom();
+        SQLAliasManager.AliasFlag aliasFlag = SQLAliasManager.createAlias();
 
         // 解析from模型
         Object proxyModel;
         List<FromNode> fromNodeList;
         if (ClassUtils.isExtend(QueryComplexModel.class, fromModelClass)) {
-            proxyModel = ClassUtils.newInstance(fromModelClass);
+            proxyModel = this.createProxyComplexModelFrom(fromModelClass, aliasFlag);
             fromNodeList = this.parseComplexModelFrom(proxyModel, fromModelClass, toolbox);
         } else {
             ModelProxyNode modelProxyNode = this.parseMetaModelFrom(fromModelClass);
@@ -79,7 +83,7 @@ public final class ProxyNodeManager {
         List<? extends Mapping<?, ?, ?>> mappedItemList = sqlQueryMetaDesc.getMappedItemList();
         if (CollectionUtils.isEmpty(mappedItemList)) {
             // 通过指定好的映射解析
-            selectNodeList = this.parseMappedItemListSelect(proxyModel, fromNodeList, mappedItemList);
+            selectNodeList = this.parseMappedItemListSelect(toolbox, proxyModel, mappedItemList);
         } else if (fromModelClass.equals(selectModelClass)) {
             // 直接解析模型为select
             selectNodeList = this.parseModelSelect(fromNodeList, selectModelClass);
@@ -149,29 +153,54 @@ public final class ProxyNodeManager {
         return this.createMetaModel(sqlModelMeta);
     }
 
-    private List<SelectNode> parseMappedItemListSelect(Object proxyModel, List<FromNode> fromNodeList, List<? extends Mapping<?, ?, ?>> mappedItemList) {
-        // TODO
+    private List<SelectNode> parseMappedItemListSelect(
+        SqlParserPortableToolbox toolbox,
+        Object proxyModel,
+        List<? extends Mapping<?, ?, ?>> mappedItemList
+    ) {
+        QueryProxyNode queryProxyNode = toolbox.getQueryProxyNode();
+        ParamReceiptManager paramReceiptManager = toolbox.getParamReceiptManager();
+        List<SelectNode> selectNodeList = new ArrayList<>();
         for (Mapping<?, ?, ?> mapping : mappedItemList) {
-            SetMapping<?, ?> mappingField = mapping.getMappingField();
             SingleValueElementDesc<?, ?> singleValueElementDesc = mapping.getDesc();
+            MapDefinition mapDefinition;
             if (singleValueElementDesc instanceof FieldMapping) {
-                FieldDefinition fieldDefinition = this.getFieldDefinitionFromThreadLocal((FieldMapping<?, ?>) singleValueElementDesc, proxyModel);
-                // TODO 有问题，这个有可能是从很深很深的子查询中拿到的，路径都无法得到
+                // 字段类的select
+                mapDefinition = this.getFieldDefinitionFromThreadLocal((FieldMapping<?, ?>) singleValueElementDesc, proxyModel);
 
             } else if (singleValueElementDesc instanceof SqlQueryMetaDesc) {
+                // 子查询类型的select
+                this.sqlParser.parseByDesc((WholeDesc) singleValueElementDesc, toolbox);
+                QueryProxyNode subQueryProxyNode = toolbox.popQueryProxyNode();
+                mapDefinition = new MapDefinition(
+                    subQueryProxyNode.getQuerySelectMeta(),
+                    queryProxyNode.getAliasFlag(),
+                    subQueryProxyNode.getAliasFlag()
+                );
 
             } else if (singleValueElementDesc instanceof Param) {
+                // 参数类型的selet
+                ParamReceipt paramReceipt = paramReceiptManager.registerParam((Param<?>) singleValueElementDesc);
+                mapDefinition = new MapDefinition(
+                    paramReceipt,
+                    queryProxyNode.getAliasFlag(),
+                    SQLAliasManager.createAlias()
+                );
 
-
-            } else if (singleValueElementDesc instanceof MFunctionDesc) {
-
+//            } else if (singleValueElementDesc instanceof MFunctionDesc) {
+                // TODO
 
             } else {
-
+                throw UnbelievableException.unknownType();
             }
 
+            // 将desc中的set能力直接拿过来
+            mapDefinition.setSelectField(mapping.getMappingField());
+            // 保存到结果list中
+            selectNodeList.add(new CommonSelectNode(mapDefinition.getAliasFlag(), mapDefinition));
+
         }
-        return null;
+        return selectNodeList;
     }
 
     private List<SelectNode> parseModelSelect(List<FromNode> fromNodeList, Class<?> selectModelClass) {
@@ -196,37 +225,43 @@ public final class ProxyNodeManager {
         return modelProxyNode;
     }
 
+
+    private Object createProxyComplexModelFrom(Class<?> fromModelClass, SQLAliasManager.AliasFlag aliasFlag) {
+        return ClassUtils.dynamicProxy(
+            fromModelClass,
+            (method, args) -> {
+                MapDefinition mapDefinition = THREAD_LOCAL.get();
+                if (mapDefinition != null) {
+                    THREAD_LOCAL.set(new MapDefinition(mapDefinition, aliasFlag));
+                }
+            }
+        );
+    }
+
     private ModelProxyNode createMetaModel(SQLModelMeta sqlModelMeta) {
         String firstChar = String.valueOf(sqlModelMeta.getTableName().charAt(0));
-        SQLAliasManager.AliasFlag aliasFlag = SQLAliasManager.createAlias(firstChar);
-        Enhancer enhancer = new Enhancer();
-        enhancer.setSuperclass(sqlModelMeta.getModelClass());
-        enhancer.setCallback(new MethodInterceptor() {
-            @Override
-            public Object intercept(Object o, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
-                // 执行
-                Object result = methodProxy.invokeSuper(o, args);
-
+        SQLAliasManager.AliasFlag modelAliasFlag = SQLAliasManager.createAlias(firstChar);
+        Object proxyModel = ClassUtils.dynamicProxy(
+            sqlModelMeta.getModelClass(),
+            (method, args) -> {
                 // 通过方法名解析出字段，获取fieldMeta
                 String methodName = method.getName();
                 if (!StringUtil.checkGetterMethodName(methodName)) {
                     // 只能解析get开头的方法
-                    return result;
+                    return;
                 }
 
+                String fieldName = StringUtil.parseGetterMethodNameToFieldName(methodName);
+                SQLFieldMeta sqlFieldMeta = sqlModelMeta.getFieldMetaByFieldName(fieldName);
+                SQLAliasManager.AliasFlag fieldAliasFlag = SQLAliasManager.createAlias(sqlFieldMeta.getOriginName());
 
-                FieldDefinition fieldDefinition = THREAD_LOCAL.get();
-                if (fieldDefinition == null) {
-                    String fieldName = StringUtil.parseGetterMethodNameToFieldName(methodName);
-                    THREAD_LOCAL.set(new FieldDefinition(sqlModelMeta, fieldName, aliasFlag));
-                }
-                return result;
+                THREAD_LOCAL.set(new MapDefinition(sqlFieldMeta, modelAliasFlag, fieldAliasFlag));
             }
-        });
-        return new ModelProxyNode(aliasFlag, sqlModelMeta, enhancer.create());
+        );
+        return new ModelProxyNode(modelAliasFlag, sqlModelMeta, proxyModel);
     }
 
-    public FieldDefinition getFieldDefinitionFromThreadLocal(FieldMapping<?, ?> fieldMapping, Object proxyModel) {
+    public MapDefinition getFieldDefinitionFromThreadLocal(FieldMapping<?, ?> fieldMapping, Object proxyModel) {
         ((FieldMapping<Object, Object>) fieldMapping).getMapping(proxyModel);
         return THREAD_LOCAL.get();
     }

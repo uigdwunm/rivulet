@@ -1,6 +1,7 @@
 package zly.rivulet.mysql.definer;
 
 import zly.rivulet.base.definer.outerType.OriginOuterType;
+import zly.rivulet.base.definition.Definition;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 
 import java.lang.reflect.Field;
@@ -76,5 +77,10 @@ public final class MySQLFieldMeta extends SQLFieldMeta {
     @Override
     public Field getField() {
         return field;
+    }
+
+    @Override
+    public Definition forAnalyze() {
+        return this;
     }
 }
