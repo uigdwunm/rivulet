@@ -1,5 +1,6 @@
 package zly.rivulet.sql.parser.proxy_node;
 
+import zly.rivulet.base.assigner.Assigner;
 import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.definition.param.ParamReceipt;
 import zly.rivulet.base.describer.SingleValueElementDesc;
@@ -12,6 +13,7 @@ import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.base.utils.ClassUtils;
 import zly.rivulet.base.utils.CollectionUtils;
 import zly.rivulet.base.utils.StringUtil;
+import zly.rivulet.sql.assigner.ModelAbstractSQLQueryResultAssigner;
 import zly.rivulet.sql.definer.QueryComplexModel;
 import zly.rivulet.sql.definer.SqlDefiner;
 import zly.rivulet.sql.definer.annotations.SQLSubQuery;
@@ -30,11 +32,13 @@ import zly.rivulet.sql.parser.SqlParser;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 import java.lang.reflect.Field;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public final class ProxyNodeManager {
     private static final ThreadLocal<MapDefinition> THREAD_LOCAL = new ThreadLocal<>();
@@ -79,14 +83,24 @@ public final class ProxyNodeManager {
 
         // 解析select模型
         List<SelectNode> selectNodeList;
+        Assigner<ResultSet> assigner;
         Class<?> selectModelClass = sqlQueryMetaDesc.getSelectModel();
         List<? extends Mapping<?, ?, ?>> mappedItemList = sqlQueryMetaDesc.getMappedItemList();
         if (CollectionUtils.isEmpty(mappedItemList)) {
             // 通过指定好的映射解析
-            selectNodeList = this.parseMappedItemListSelect(toolbox, proxyModel, mappedItemList);
+            selectNodeList = this.parseMappedItemListSelect(toolbox, aliasFlag, proxyModel, mappedItemList);
+
+            // 生成赋值器
+            List<SetMapping<Object, Object>> mappingList = mappedItemList.stream()
+                .map(mapping -> (SetMapping<Object, Object>) mapping.getMappingField())
+                .collect(Collectors.toList());
+            assigner = new ModelAbstractSQLQueryResultAssigner(selectModelClass, mappingList);
         } else if (fromModelClass.equals(selectModelClass)) {
             // 直接解析模型为select
+            // TODO
             selectNodeList = this.parseModelSelect(fromNodeList, selectModelClass);
+
+            assigner = ;
         } else {
             // 两种情况都不是，抛异常
             throw SQLDescDefineException.selectAndFromNoMatch();
@@ -131,11 +145,21 @@ public final class ProxyNodeManager {
     }
 
     private FromNode parseFromNode(SqlParserPortableToolbox toolbox, Field field) {
+        Class<?> fieldType = field.getType();
         // 这个注解表示当前字段代表一个子查询，value是key
         SQLSubQuery sqlSubQuery = field.getAnnotation(SQLSubQuery.class);
         if (sqlSubQuery != null) {
             // 解析子查询
-            sqlParser.parseByKey(sqlSubQuery.value(), toolbox);
+            WholeDesc wholeDesc = sqlParser.getWholeDesc(sqlSubQuery.value());
+            // 校验下
+            if (wholeDesc instanceof SqlQueryMetaDesc) {
+                SqlQueryMetaDesc<?, ?> sqlQueryMetaDesc = (SqlQueryMetaDesc<?, ?>) wholeDesc;
+                if (!fieldType.equals(sqlQueryMetaDesc.getSelectModel())) {
+                    throw SQLDescDefineException.subQueryMustOriginSelect(sqlSubQuery.value(), fieldType, sqlQueryMetaDesc.getSelectModel());
+                }
+            }
+            // 解析子查询
+            sqlParser.parseByDesc(wholeDesc, toolbox);
             return toolbox.popQueryProxyNode();
         } else {
             // 不是子查询, 则按modelMeta解析
@@ -155,52 +179,58 @@ public final class ProxyNodeManager {
 
     private List<SelectNode> parseMappedItemListSelect(
         SqlParserPortableToolbox toolbox,
+        SQLAliasManager.AliasFlag aliasFlag,
         Object proxyModel,
         List<? extends Mapping<?, ?, ?>> mappedItemList
     ) {
-        QueryProxyNode queryProxyNode = toolbox.getQueryProxyNode();
-        ParamReceiptManager paramReceiptManager = toolbox.getParamReceiptManager();
         List<SelectNode> selectNodeList = new ArrayList<>();
+
         for (Mapping<?, ?, ?> mapping : mappedItemList) {
             SingleValueElementDesc<?, ?> singleValueElementDesc = mapping.getDesc();
-            MapDefinition mapDefinition;
-            if (singleValueElementDesc instanceof FieldMapping) {
-                // 字段类的select
-                mapDefinition = this.getFieldDefinitionFromThreadLocal((FieldMapping<?, ?>) singleValueElementDesc, proxyModel);
 
-            } else if (singleValueElementDesc instanceof SqlQueryMetaDesc) {
-                // 子查询类型的select
-                this.sqlParser.parseByDesc((WholeDesc) singleValueElementDesc, toolbox);
-                QueryProxyNode subQueryProxyNode = toolbox.popQueryProxyNode();
-                mapDefinition = new MapDefinition(
-                    subQueryProxyNode.getQuerySelectMeta(),
-                    queryProxyNode.getAliasFlag(),
-                    subQueryProxyNode.getAliasFlag()
-                );
+            // 解析成MapDefinition
+            MapDefinition mapDefinition = this.parseMapDefinition(toolbox, proxyModel, aliasFlag, singleValueElementDesc);
 
-            } else if (singleValueElementDesc instanceof Param) {
-                // 参数类型的selet
-                ParamReceipt paramReceipt = paramReceiptManager.registerParam((Param<?>) singleValueElementDesc);
-                mapDefinition = new MapDefinition(
-                    paramReceipt,
-                    queryProxyNode.getAliasFlag(),
-                    SQLAliasManager.createAlias()
-                );
-
-//            } else if (singleValueElementDesc instanceof MFunctionDesc) {
-                // TODO
-
-            } else {
-                throw UnbelievableException.unknownType();
-            }
-
-            // 将desc中的set能力直接拿过来
-            mapDefinition.setSelectField(mapping.getMappingField());
             // 保存到结果list中
             selectNodeList.add(new CommonSelectNode(mapDefinition.getAliasFlag(), mapDefinition));
 
         }
+
         return selectNodeList;
+    }
+
+    private MapDefinition parseMapDefinition(SqlParserPortableToolbox toolbox, Object proxyModel, SQLAliasManager.AliasFlag aliasFlag, SingleValueElementDesc<?, ?> singleValueElementDesc) {
+        if (singleValueElementDesc instanceof FieldMapping) {
+            // 字段类的select
+            return this.getFieldDefinitionFromThreadLocal((FieldMapping<?, ?>) singleValueElementDesc, proxyModel);
+
+        } else if (singleValueElementDesc instanceof SqlQueryMetaDesc) {
+            // 子查询类型的select
+            this.sqlParser.parseByDesc((WholeDesc) singleValueElementDesc, toolbox);
+            QueryProxyNode subQueryProxyNode = toolbox.popQueryProxyNode();
+            return new MapDefinition(
+                subQueryProxyNode.getQuerySelectMeta(),
+                aliasFlag,
+                subQueryProxyNode.getAliasFlag()
+            );
+
+        } else if (singleValueElementDesc instanceof Param) {
+            // 参数类型的select
+            ParamReceiptManager paramReceiptManager = toolbox.getParamReceiptManager();
+            ParamReceipt paramReceipt = paramReceiptManager.registerParam((Param<?>) singleValueElementDesc);
+            return new MapDefinition(
+                paramReceipt,
+                aliasFlag,
+                SQLAliasManager.createAlias()
+            );
+
+//            } else if (singleValueElementDesc instanceof MFunctionDesc) {
+//            return mapDefinition;
+            // TODO
+
+        } else {
+            throw UnbelievableException.unknownType();
+        }
     }
 
     private List<SelectNode> parseModelSelect(List<FromNode> fromNodeList, Class<?> selectModelClass) {

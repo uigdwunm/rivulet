@@ -20,14 +20,8 @@ public abstract class AbstractSQLQueryResultAssigner implements Assigner<ResultS
      **/
     private final Supplier<?> containerCreator;
 
-    /**
-     * 在select中的位置索引起始
-     **/
-    protected final int indexStart;
-
-    protected AbstractSQLQueryResultAssigner(Class<?> modelClass, int indexStart) {
+    protected AbstractSQLQueryResultAssigner(Class<?> modelClass) {
         this.containerCreator = this.buildContainerCreator(modelClass);
-        this.indexStart = indexStart;
     }
 
     private Supplier<?> buildContainerCreator(Class<?> modelClass) {
@@ -57,7 +51,7 @@ public abstract class AbstractSQLQueryResultAssigner implements Assigner<ResultS
         assigner.setMapping(parentContainer, o);
     }
 
-    public abstract Object assign(ResultSet resultSet);
+//    public abstract Object assign(ResultSet resultSet, int indexStart);
 
     public abstract int size();
 

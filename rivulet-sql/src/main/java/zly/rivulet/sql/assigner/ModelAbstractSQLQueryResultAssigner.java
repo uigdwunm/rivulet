@@ -24,8 +24,8 @@ public class ModelAbstractSQLQueryResultAssigner extends AbstractSQLQueryResultA
      **/
     private final View<SetMapping<Object, Object>> fieldAssignerList;
 
-    public ModelAbstractSQLQueryResultAssigner(ModelProxyNode modelProxyNode, int indexStart) {
-        super(modelProxyNode.getFromModelClass(), indexStart);
+    public ModelAbstractSQLQueryResultAssigner(ModelProxyNode modelProxyNode) {
+        super(modelProxyNode.getFromModelClass());
         SQLModelMeta modelMeta = modelProxyNode.getModelMeta();
         QueryProxyNode parentNode = modelProxyNode.getParentNode();
         List<SetMapping<Object, Object>> fieldAssignerList = new ArrayList<>();
@@ -54,13 +54,13 @@ public class ModelAbstractSQLQueryResultAssigner extends AbstractSQLQueryResultA
     }
 
     @Override
-    public Object assign(ResultSet resultSet) {
+    public Object assign(ResultSet resultSet, int indexStart) {
         Object o = super.buildContainer();
         int size = fieldAssignerList.size();
         for (int i = 0; i < size; i++) {
             SetMapping<Object, Object> setMapping = fieldAssignerList.get(i);
             try {
-                setMapping.setMapping(o, resultSet.getObject(super.indexStart + i + 1));
+                setMapping.setMapping(o, resultSet.getObject(indexStart + i + 1));
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }

@@ -67,7 +67,7 @@ public class ContainerAbstractSQLQueryResultAssigner extends AbstractSQLQueryRes
 
 
     @Override
-    public Object assign(ResultSet resultSet) {
+    public Object assign(ResultSet resultSet, int indexStart) {
         Object o = super.buildContainer();
 
         for (AbstractSQLQueryResultAssigner subAbstractSQLQueryResultAssigner : assignerList) {

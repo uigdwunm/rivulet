@@ -52,23 +52,18 @@ public class SqlParser implements Parser {
         this.proxyNodeManager = new ProxyNodeManager(this);
     }
 
+    public WholeDesc getWholeDesc(String key) {
+        return warehouseManager.getWholeDesc(key);
+    }
 
     @Override
     public Blueprint parseByKey(String key) {
-        WholeDesc wholeDesc = warehouseManager.getWholeDesc(key);
+        WholeDesc wholeDesc = this.getWholeDesc(key);
         if (wholeDesc == null) {
             throw DescDefineException.noMatchDescKey();
         }
 
         SqlParserPortableToolbox sqlPreParseHelper = new SqlParserPortableToolbox(this);
-        return this.parseByDesc(wholeDesc, sqlPreParseHelper);
-    }
-
-    public Blueprint parseByKey(String key, SqlParserPortableToolbox sqlPreParseHelper) {
-        WholeDesc wholeDesc = warehouseManager.getWholeDesc(key);
-        if (wholeDesc == null) {
-            throw DescDefineException.noMatchDescKey();
-        }
         return this.parseByDesc(wholeDesc, sqlPreParseHelper);
     }
 
