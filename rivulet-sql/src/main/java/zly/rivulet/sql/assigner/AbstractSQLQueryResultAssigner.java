@@ -11,16 +11,17 @@ import java.util.function.Supplier;
 
 public abstract class AbstractSQLQueryResultAssigner implements Assigner<ResultSet> {
     /**
-     * 把自己塞到父对象的assigner
+     * 把当前model塞到父容器的（如果没有父容器，则为空）
      **/
-    private SetMapping<Object, Object> assigner;
+    private final SetMapping<Object, Object> assigner;
 
     /**
      * 创建当前容器的
      **/
     private final Supplier<?> containerCreator;
 
-    protected AbstractSQLQueryResultAssigner(Class<?> modelClass) {
+    protected AbstractSQLQueryResultAssigner(SetMapping<Object, Object> assigner, Class<?> modelClass) {
+        this.assigner = assigner;
         this.containerCreator = this.buildContainerCreator(modelClass);
     }
 
@@ -45,17 +46,20 @@ public abstract class AbstractSQLQueryResultAssigner implements Assigner<ResultS
         return containerCreator.get();
     }
 
-    public void assign(Object parentContainer, ResultSet resultSet) {
-        Object o = this.assign(resultSet);
-        // 把自己塞到父容器
-        assigner.setMapping(parentContainer, o);
+    public abstract void assign(Object parentContainer, ResultSet resultSet, int indexStart);
+
+    @Override
+    public Object getValue(ResultSet results, int indexStart) {
+        Object container = this.buildContainer();
+        this.assign(container, results, indexStart);
+        return container;
     }
 
-//    public abstract Object assign(ResultSet resultSet, int indexStart);
+    //    public abstract Object assign(ResultSet resultSet, int indexStart);
 
     public abstract int size();
 
-    public void setAssigner(SetMapping<Object, Object> assigner) {
-        this.assigner = assigner;
+    public SetMapping<Object, Object> getAssigner() {
+        return assigner;
     }
 }
