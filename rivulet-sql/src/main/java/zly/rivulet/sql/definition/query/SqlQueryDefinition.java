@@ -11,7 +11,7 @@ import zly.rivulet.base.generator.statement.Statement;
 import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.base.utils.CollectionUtils;
 import zly.rivulet.base.utils.Constant;
-import zly.rivulet.sql.assigner.AbstractSQLQueryResultAssigner;
+import zly.rivulet.sql.assigner.SQLQueryResultAssigner;
 import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
@@ -57,7 +57,7 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
 
     private LimitDefinition limit;
 
-    private AbstractSQLQueryResultAssigner abstractSqlQueryResultAssigner;
+    private SQLQueryResultAssigner assigner;
 
     private final List<AbstractDefinition> subDefinitionList = new ArrayList<>();
 
@@ -124,7 +124,7 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
             this.subDefinitionList.add(this.limit);
         }
 
-        this.abstractSqlQueryResultAssigner = selectDefinition.getSqlAssigner();
+        this.assigner = selectDefinition.getSqlAssigner();
 
         this.paramReceiptManager = toolbox.getParamReceiptManager();
 
@@ -243,8 +243,8 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
     }
 
     @Override
-    public AbstractSQLQueryResultAssigner getAssigner() {
-        return this.abstractSqlQueryResultAssigner;
+    public SQLQueryResultAssigner getAssigner() {
+        return this.assigner;
     }
 
     @Override

@@ -1,7 +1,6 @@
 package zly.rivulet.sql.assigner;
 
 import zly.rivulet.base.assigner.Assigner;
-import zly.rivulet.base.describer.field.SetMapping;
 import zly.rivulet.sql.exception.SQLModelDefineException;
 
 import java.lang.reflect.Constructor;
@@ -9,19 +8,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.util.function.Supplier;
 
-public abstract class AbstractSQLQueryResultAssigner implements Assigner<ResultSet> {
-    /**
-     * 把当前model塞到父容器的（如果没有父容器，则为空）
-     **/
-    private final SetMapping<Object, Object> assigner;
+public abstract class SQLQueryResultAssigner implements Assigner<ResultSet> {
 
     /**
      * 创建当前容器的
      **/
     private final Supplier<?> containerCreator;
 
-    protected AbstractSQLQueryResultAssigner(SetMapping<Object, Object> assigner, Class<?> modelClass) {
-        this.assigner = assigner;
+    protected SQLQueryResultAssigner(Class<?> modelClass) {
         this.containerCreator = this.buildContainerCreator(modelClass);
     }
 
@@ -55,11 +49,5 @@ public abstract class AbstractSQLQueryResultAssigner implements Assigner<ResultS
         return container;
     }
 
-    //    public abstract Object assign(ResultSet resultSet, int indexStart);
-
     public abstract int size();
-
-    public SetMapping<Object, Object> getAssigner() {
-        return assigner;
-    }
 }

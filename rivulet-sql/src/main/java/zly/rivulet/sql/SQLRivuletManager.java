@@ -18,7 +18,7 @@ import zly.rivulet.base.utils.CollectionUtils;
 import zly.rivulet.base.utils.collector.FixedLengthStatementCollector;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.base.warehouse.WarehouseManager;
-import zly.rivulet.sql.assigner.AbstractSQLQueryResultAssigner;
+import zly.rivulet.sql.assigner.SQLQueryResultAssigner;
 import zly.rivulet.sql.definition.query.SQLBlueprint;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.generator.SQLFish;
@@ -201,7 +201,7 @@ public abstract class SQLRivuletManager extends RivuletManager {
             try {
                 PreparedStatement statement = connection.prepareStatement(collector.toString());
                 ResultSet resultSet = statement.executeQuery(collector.toString());
-                AbstractSQLQueryResultAssigner assigner = (AbstractSQLQueryResultAssigner) sqlBlueprint.getAssigner();
+                SQLQueryResultAssigner assigner = (SQLQueryResultAssigner) sqlBlueprint.getAssigner();
                 return assigner.assign(resultSet);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
@@ -216,7 +216,7 @@ public abstract class SQLRivuletManager extends RivuletManager {
             sqlFish.getStatement().collectStatement(collector);
             try {
                 PreparedStatement statement = connection.prepareStatement(collector.toString());
-                AbstractSQLQueryResultAssigner assigner = (AbstractSQLQueryResultAssigner) sqlBlueprint.getAssigner();
+                SQLQueryResultAssigner assigner = (SQLQueryResultAssigner) sqlBlueprint.getAssigner();
 
                 // 执行查询
                 ResultSet resultSet = statement.executeQuery(collector.toString());

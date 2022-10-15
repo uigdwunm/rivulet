@@ -4,21 +4,22 @@ import zly.rivulet.base.describer.field.SetMapping;
 import zly.rivulet.base.utils.View;
 
 import java.sql.ResultSet;
+import java.util.List;
 
-public class ContainerAbstractSQLQueryResultAssigner extends AbstractSQLQueryResultAssigner {
+public class SQLContainerResultAssigner extends SQLQueryResultAssigner {
 
-    private final View<AbstractSQLQueryResultAssigner> assignerList;
+    /**
+     * 把每个字段塞到当前model的赋值器
+     **/
+    private final View<ContainerFieldAssignerWrap> fieldAssignerList;
+//    private final View<AbstractSQLQueryResultAssigner> assignerList;
 
     private int size;
 
-    public ContainerAbstractSQLQueryResultAssigner(SetMapping<Object, Object> assignToParent, Class<?> modelClass, View<AbstractSQLQueryResultAssigner> assignerList) {
-        super(assignToParent, modelClass);
-        this.assignerList = assignerList;
-        this.size = assignerList.stream().map(AbstractSQLQueryResultAssigner::size).reduce(0, Integer::sum);
-    }
-
-    public ContainerAbstractSQLQueryResultAssigner(Class<?> modelClass, View<AbstractSQLQueryResultAssigner> assignerList) {
-        this(null, modelClass, assignerList);
+    public SQLContainerResultAssigner(Class<?> modelClass, List<ContainerFieldAssignerWrap> assignerList) {
+        super(modelClass);
+        this.fieldAssignerList = View.create(assignerList);
+        this.size = assignerList.stream().map(ContainerFieldAssignerWrap::size).reduce(0, Integer::sum);
     }
 
 //    public ContainerAbstractSQLQueryResultAssigner(
@@ -69,11 +70,13 @@ public class ContainerAbstractSQLQueryResultAssigner extends AbstractSQLQueryRes
 
     @Override
     public void assign(Object parentContainer, ResultSet resultSet, int indexStart) {
-        for (AbstractSQLQueryResultAssigner subAssigner : assignerList) {
+        for (ContainerFieldAssignerWrap subAssignerWrap : fieldAssignerList) {
+            SQLQueryResultAssigner subAssigner = subAssignerWrap.assigner;
+            SetMapping<Object, Object> setMapping = subAssignerWrap.setMapping;
+            // 获取值
             Object value = subAssigner.getValue(resultSet, indexStart);
-            SetMapping<Object, Object> assigner = subAssigner.getAssigner();
-            // 赋值
-            assigner.setMapping(parentContainer, value);
+            // 字段赋值
+            setMapping.setMapping(parentContainer, value);
             indexStart += subAssigner.size();
         }
     }
@@ -83,5 +86,17 @@ public class ContainerAbstractSQLQueryResultAssigner extends AbstractSQLQueryRes
         return size;
     }
 
+    public static class ContainerFieldAssignerWrap {
+        private final SQLQueryResultAssigner assigner;
 
+        private final SetMapping<Object, Object> setMapping;
+
+        public ContainerFieldAssignerWrap(SQLQueryResultAssigner assigner, SetMapping<Object, Object> setMapping) {
+            this.assigner = assigner;
+            this.setMapping = setMapping;
+        }
+        public int size() {
+            return assigner.size();
+        }
+    }
 }

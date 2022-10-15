@@ -7,8 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public class ModelAbstractSQLQueryResultAssigner extends AbstractSQLQueryResultAssigner {
 
+public class SQLMetaModelResultAssigner extends SQLQueryResultAssigner {
     /**
      * 把每个字段塞到当前model的赋值器
      **/
@@ -38,12 +38,8 @@ public class ModelAbstractSQLQueryResultAssigner extends AbstractSQLQueryResultA
 //        this.fieldAssignerList = View.create(fieldAssignerList);
 //    }
 
-    public ModelAbstractSQLQueryResultAssigner(Class<?> selectModel, List<SetMapping<Object, Object>> setMappingList) {
-        this(null, selectModel, setMappingList);
-    }
-
-    public ModelAbstractSQLQueryResultAssigner(SetMapping<Object, Object> assignToParent, Class<?> selectModel, List<SetMapping<Object, Object>> setMappingList) {
-        super(assignToParent, selectModel);
+    public SQLMetaModelResultAssigner(Class<?> selectModel, List<SetMapping<Object, Object>> setMappingList) {
+        super(selectModel);
         this.fieldAssignerList = View.create(setMappingList);
     }
 
