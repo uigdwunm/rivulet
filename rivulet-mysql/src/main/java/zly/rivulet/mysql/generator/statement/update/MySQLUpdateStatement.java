@@ -39,7 +39,7 @@ public class MySQLUpdateStatement implements SqlStatement {
             SqlUpdateDefinition.class,
             (definition, soleFlag, toolbox) -> {
                 SqlUpdateDefinition sqlUpdateDefinition = (SqlUpdateDefinition) definition;
-                MySQLModelMeta mySQLModelMeta = (MySQLModelMeta) sqlUpdateDefinition.getFromDefinition().getFrom();
+                MySQLModelMeta mySQLModelMeta = (MySQLModelMeta) sqlUpdateDefinition.getFromDefinition().getMainFrom();
                 SqlStatement setSQLStatement = sqlStatementFactory.warmUp(sqlUpdateDefinition.getSetDefinition(), soleFlag.subSwitch(), toolbox);
                 SqlStatement whereSQLStatement = sqlStatementFactory.warmUp(sqlUpdateDefinition.getWhereDefinition(), soleFlag.subSwitch(), toolbox);
 
@@ -47,7 +47,7 @@ public class MySQLUpdateStatement implements SqlStatement {
             },
             (definition, toolbox) -> {
                 SqlUpdateDefinition sqlUpdateDefinition = (SqlUpdateDefinition) definition;
-                MySQLModelMeta mySQLModelMeta = (MySQLModelMeta) sqlUpdateDefinition.getFromDefinition().getFrom();
+                MySQLModelMeta mySQLModelMeta = (MySQLModelMeta) sqlUpdateDefinition.getFromDefinition().getMainFrom();
                 SqlStatement setSQLStatement = sqlStatementFactory.getOrCreate(sqlUpdateDefinition.getSetDefinition(), toolbox);
                 SqlStatement whereSQLStatement = sqlStatementFactory.getOrCreate(sqlUpdateDefinition.getWhereDefinition(), toolbox);
 

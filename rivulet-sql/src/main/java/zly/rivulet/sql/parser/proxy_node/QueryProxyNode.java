@@ -167,7 +167,8 @@ public class QueryProxyNode implements SelectNode, FromNode {
             Field field = fieldMeta.getField();
             SQLAliasManager.AliasFlag fieldAliasFlag = SQLAliasManager.createAlias(fieldMeta.getOriginName());
             // 生成模型字段的selectNode
-            CommonSelectNode commonSelectNode = new CommonSelectNode(fieldAliasFlag, (SQLFieldMeta) fieldMeta);
+            MapDefinition mapDefinition = new MapDefinition((SQLFieldMeta) fieldMeta, metaModelProxyNode.getAliasFlag(), fieldAliasFlag);
+            CommonSelectNode commonSelectNode = new CommonSelectNode(fieldAliasFlag, mapDefinition);
             selectNodeList.add(commonSelectNode);
             setMappingList.add((s, f) -> {
                 try {
@@ -232,10 +233,28 @@ public class QueryProxyNode implements SelectNode, FromNode {
             WholeDesc wholeDesc = sqlParser.getWholeDesc(sqlSubQuery.value());
             // 校验下
             if (wholeDesc instanceof SqlQueryMetaDesc) {
-                SqlQueryMetaDesc<?, ?> sqlQueryMetaDesc = (SqlQueryMetaDesc<?, ?>) wholeDesc;
-                if (!fieldType.equals(sqlQueryMetaDesc.getSelectModel())) {
-                    throw SQLDescDefineException.subQueryMustOriginSelect(sqlSubQuery.value(), fieldType, sqlQueryMetaDesc.getSelectModel());
+                SqlQueryMetaDesc<Object, Object> sqlQueryMetaDesc = (SqlQueryMetaDesc<Object, Object>) wholeDesc;
+                // 校验子查询的模型是否等于原desc的from模型
+                if (!fieldType.equals(sqlQueryMetaDesc.getMainFrom())) {
+                    throw SQLDescDefineException.subQueryMustOriginFrom(sqlSubQuery.value(), fieldType, sqlQueryMetaDesc.getMainFrom());
                 }
+                if (!sqlQueryMetaDesc.getMainFrom().equals(sqlQueryMetaDesc.getSelectModel())) {
+                    // 如果原desa的from模型和select模型不匹配，则重新改造一个
+                    Class<Object> mainFrom = (Class<Object>) sqlQueryMetaDesc.getMainFrom();
+                    wholeDesc = new SqlQueryMetaDesc<>(
+                        mainFrom,
+                        mainFrom,
+                        null,
+                        sqlQueryMetaDesc.getWhereConditionContainer(),
+                        sqlQueryMetaDesc.getGroupFieldList(),
+                        sqlQueryMetaDesc.getHavingItemList(),
+                        sqlQueryMetaDesc.getOrderFieldList(),
+                        sqlQueryMetaDesc.getSkit(),
+                        sqlQueryMetaDesc.getLimit()
+                    );
+                }
+            } else {
+                throw SQLDescDefineException.mustQueryKey(sqlSubQuery.value(), fieldType);
             }
             // 解析子查询
             sqlParser.parseByDesc(wholeDesc, toolbox);
@@ -291,15 +310,16 @@ public class QueryProxyNode implements SelectNode, FromNode {
         SqlParser sqlParser = toolbox.getSqlPreParser();
         if (singleValueElementDesc instanceof FieldMapping) {
             // 字段类的select
-            return this.getFieldDefinitionFromThreadLocal((FieldMapping<?, ?>) singleValueElementDesc, proxyModel);
-
+            MapDefinition mapDefinition = this.getFieldDefinitionFromThreadLocal((FieldMapping<?, ?>) singleValueElementDesc, proxyModel);
+            // 会多一层，丢弃掉
+            return (MapDefinition) mapDefinition.getValueDefinition();
         } else if (singleValueElementDesc instanceof SqlQueryMetaDesc) {
             // 子查询类型的select
             sqlParser.parseByDesc((WholeDesc) singleValueElementDesc, toolbox);
             QueryProxyNode subQueryProxyNode = toolbox.popQueryProxyNode();
             return new MapDefinition(
                 subQueryProxyNode.getQuerySelectMeta(),
-                aliasFlag,
+                null,
                 subQueryProxyNode.getAliasFlag()
             );
 
@@ -309,7 +329,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
             ParamReceipt paramReceipt = paramReceiptManager.registerParam((Param<?>) singleValueElementDesc);
             return new MapDefinition(
                 paramReceipt,
-                aliasFlag,
+                null,
                 SQLAliasManager.createAlias()
             );
 

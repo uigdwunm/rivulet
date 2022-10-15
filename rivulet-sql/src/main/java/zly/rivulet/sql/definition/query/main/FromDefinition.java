@@ -8,26 +8,25 @@ import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.describer.join.ComplexDescriber;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.parser.SQLAliasManager;
+import zly.rivulet.sql.parser.proxy_node.FromNode;
+import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
-import zly.rivulet.sql.parser.node.FromNode;
-import zly.rivulet.sql.parser.node.ModelProxyNode;
-import zly.rivulet.sql.parser.node.QueryProxyNode;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class FromDefinition extends AbstractDefinition {
-    private QueryFromMeta from;
+    private QueryFromMeta mainFrom;
 
     private SQLAliasManager.AliasFlag mainFromAliasFlag;
 
     private List<JoinRelationDefinition> joinRelations;
 
-    public FromDefinition(SqlParserPortableToolbox sqlPreParseHelper) {
-        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamReceiptManager());
+    public FromDefinition(SqlParserPortableToolbox toolbox, SqlQueryMetaDesc<?, ?> metaDesc) {
+        super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
 
-        QueryProxyNode proxyNode = sqlPreParseHelper.getCurrNode();
+        QueryProxyNode proxyNode = toolbox.getQueryProxyNode();
         Object proxyModel = proxyNode.getProxyModel();
 
         if (proxyModel instanceof QueryComplexModel) {
@@ -36,7 +35,7 @@ public class FromDefinition extends AbstractDefinition {
             ComplexDescriber complexDescriber = queryComplexModel.register();
 
             FromNode mainFromNode = proxyNode.getFromNode(complexDescriber.getModelFrom());
-            this.from = mainFromNode.getQueryFromMeta();
+            this.mainFrom = mainFromNode.getQueryFromMeta();
             this.mainFromAliasFlag = mainFromNode.getAliasFlag();
             this.joinRelations = complexDescriber.getJoinRelations().stream()
                 .map(relation -> new JoinRelationDefinition(sqlPreParseHelper, relation))
@@ -45,23 +44,23 @@ public class FromDefinition extends AbstractDefinition {
             // 单表查询对象,node里一定有一个唯一的fromNode
             FromNode fromNode = proxyNode.getFromNodeList().get(0);
             ModelProxyNode modelProxyNode = (ModelProxyNode) fromNode;
-            this.from = modelProxyNode.getModelMeta();
+            this.mainFrom = modelProxyNode.getModelMeta();
             this.mainFromAliasFlag = fromNode.getAliasFlag();
             this.joinRelations = Collections.emptyList();
         }
     }
 
     public Class<?> getFromMode() {
-        if (from instanceof SQLModelMeta) {
-            return ((SQLModelMeta) from).getModelClass();
+        if (mainFrom instanceof SQLModelMeta) {
+            return ((SQLModelMeta) mainFrom).getModelClass();
         } else {
             // 随便返回一个,无意义
             return SqlQueryMetaDesc.class;
         }
     }
 
-    public QueryFromMeta getFrom() {
-        return from;
+    public QueryFromMeta getMainFrom() {
+        return mainFrom;
     }
 
     public SQLAliasManager.AliasFlag getMainFromAliasFlag() {

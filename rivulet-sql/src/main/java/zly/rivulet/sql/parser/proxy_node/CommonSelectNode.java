@@ -1,6 +1,7 @@
 package zly.rivulet.sql.parser.proxy_node;
 
 import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
+import zly.rivulet.sql.definition.query.mapping.MapDefinition;
 import zly.rivulet.sql.parser.SQLAliasManager;
 
 public class CommonSelectNode implements SelectNode {
@@ -9,11 +10,11 @@ public class CommonSelectNode implements SelectNode {
      **/
     private final SQLAliasManager.AliasFlag aliasFlag;
 
-    private final SingleValueElementDefinition singleValueElementDefinition;
+    private final MapDefinition mapDefinition;
 
-    public CommonSelectNode(SQLAliasManager.AliasFlag aliasFlag, SingleValueElementDefinition singleValueElementDefinition) {
+    public CommonSelectNode(SQLAliasManager.AliasFlag aliasFlag, MapDefinition mapDefinition) {
         this.aliasFlag = aliasFlag;
-        this.singleValueElementDefinition = singleValueElementDefinition;
+        this.mapDefinition = mapDefinition;
     }
 
     @Override
@@ -22,7 +23,7 @@ public class CommonSelectNode implements SelectNode {
     }
 
     @Override
-    public SingleValueElementDefinition getQuerySelectMeta() {
-        return this.singleValueElementDefinition;
+    public MapDefinition getQuerySelectMeta() {
+        return this.mapDefinition;
     }
 }

@@ -36,7 +36,11 @@ public class SQLDescDefineException extends RuntimeException {
         return new SQLDescDefineException("强制指定的别名重复," + forceAlias);
     }
 
-    public static SQLDescDefineException subQueryMustOriginSelect(String value, Class<?> fieldType, Class<?> selectModel) {
-        return new SQLDescDefineException("子查询使用的视图模型必须是原始查询的select模型");
+    public static SQLDescDefineException subQueryMustOriginFrom(String value, Class<?> fieldType, Class<?> fromModel) {
+        return new SQLDescDefineException("子查询使用的视图模型必须是原始查询的from模型");
+    }
+
+    public static SQLDescDefineException mustQueryKey(String value, Class<?> fieldType) {
+        return new SQLDescDefineException("必须使用查询key作为子查询" + value);
     }
 }

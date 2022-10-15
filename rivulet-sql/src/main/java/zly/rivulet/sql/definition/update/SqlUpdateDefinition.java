@@ -50,7 +50,7 @@ public class SqlUpdateDefinition implements SQLBlueprint {
         QueryProxyNode queryProxyNode = new QueryProxyNode(toolbox, mainFrom);
         toolbox.setCurrNode(queryProxyNode);
 
-        this.fromDefinition = new FromDefinition(toolbox);
+        this.fromDefinition = new FromDefinition(toolbox, metaDesc);
 
         this.setDefinition = new SetDefinition(toolbox, metaDesc.getMappedItemList());
 
@@ -73,7 +73,7 @@ public class SqlUpdateDefinition implements SQLBlueprint {
         QueryProxyNode queryProxyNode = new QueryProxyNode(toolbox, mainFrom);
         toolbox.setCurrNode(queryProxyNode);
 
-        this.fromDefinition = new FromDefinition(toolbox);
+        this.fromDefinition = new FromDefinition(toolbox, metaDesc);
 
         this.setDefinition = new SetDefinition(toolbox, sqlModelMeta);
 

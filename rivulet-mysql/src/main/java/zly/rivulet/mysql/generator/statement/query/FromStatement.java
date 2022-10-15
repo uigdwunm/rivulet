@@ -51,7 +51,7 @@ public class FromStatement implements SqlStatement {
                 FromDefinition fromDefinition = (FromDefinition) definition;
                 SQLAliasManager aliasManager = initHelper.getAliasManager();
 
-                QueryFromStatement mainFromStatement = (QueryFromStatement) sqlStatementFactory.warmUp(fromDefinition.getFrom(), soleFlag.subSwitch(), initHelper);
+                QueryFromStatement mainFromStatement = (QueryFromStatement) sqlStatementFactory.warmUp(fromDefinition.getMainFrom(), soleFlag.subSwitch(), initHelper);
                 String mainFromAlias = aliasManager.getAlias(fromDefinition.getMainFromAliasFlag());
                 List<JoinStatement> joinStatementList = fromDefinition.getJoinRelations().stream()
                     .map(joinRelation -> (JoinStatement) sqlStatementFactory.warmUp(joinRelation, soleFlag.subSwitch(), initHelper))
@@ -62,7 +62,7 @@ public class FromStatement implements SqlStatement {
                 FromDefinition fromDefinition = (FromDefinition) definition;
                 SQLAliasManager aliasManager = helper.getAliasManager();
 
-                QueryFromStatement mainFromStatement = (QueryFromStatement) sqlStatementFactory.getOrCreate(fromDefinition.getFrom(), helper);
+                QueryFromStatement mainFromStatement = (QueryFromStatement) sqlStatementFactory.getOrCreate(fromDefinition.getMainFrom(), helper);
                 String mainFromAlias = aliasManager.getAlias(fromDefinition.getMainFromAliasFlag());
                 List<JoinStatement> joinStatementList = fromDefinition.getJoinRelations().stream()
                     .map(joinRelation -> (JoinStatement) sqlStatementFactory.getOrCreate(joinRelation, helper))

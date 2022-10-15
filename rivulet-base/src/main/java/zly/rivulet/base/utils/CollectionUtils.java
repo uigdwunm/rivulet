@@ -6,9 +6,10 @@ import java.util.List;
 public class CollectionUtils {
 
     public static boolean isEmpty(Collection<?> collection) {
-        if (collection == null) {
-            return true;
-        }
-        return collection.isEmpty();
+        return isNotEmpty(collection);
+    }
+
+    public static boolean isNotEmpty(Collection<?> collection) {
+        return collection != null && !collection.isEmpty();
     }
 }
