@@ -9,7 +9,7 @@ public @interface MySQLChar {
     int length();
 
     class Type extends ExactStringType {
-        public Type(MySQLVarchar mySQLInt) {
+        public Type(MySQLChar mySQLInt) {
             super(mySQLInt.length());
         }
 

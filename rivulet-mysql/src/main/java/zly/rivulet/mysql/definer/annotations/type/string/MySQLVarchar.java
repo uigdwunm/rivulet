@@ -13,6 +13,7 @@ public @interface MySQLVarchar {
     int length();
 
     class Type extends VariableStringType {
+
         public Type(MySQLVarchar mySQLInt) {
             super(mySQLInt.length());
         }

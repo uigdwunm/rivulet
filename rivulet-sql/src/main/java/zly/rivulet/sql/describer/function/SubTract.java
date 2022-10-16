@@ -1,6 +1,12 @@
 package zly.rivulet.sql.describer.function;
 
 import zly.rivulet.base.describer.SingleValueElementDesc;
+import zly.rivulet.base.describer.custom.CustomCollector;
+import zly.rivulet.base.describer.custom.CustomSingleValueWrap;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.BiConsumer;
 
 public class SubTract<F, C> implements SQLFunction<F, C> {
 
@@ -19,11 +25,15 @@ public class SubTract<F, C> implements SQLFunction<F, C> {
         this.minus = minus;
     }
 
-    public SingleValueElementDesc<F, C> getMinuend() {
-        return minuend;
+    @Override
+    public List<SingleValueElementDesc<?, ?>> getSingleValueList() {
+        return Arrays.asList(minuend, minus);
     }
 
-    public SingleValueElementDesc<F, C> getMinus() {
-        return minus;
+    @Override
+    public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
+        return ((customCollector, customSingleValueWraps) -> {
+            customCollector.append(customSingleValueWraps.get(0)).append("-").append(customSingleValueWraps.get(1));
+        });
     }
 }
