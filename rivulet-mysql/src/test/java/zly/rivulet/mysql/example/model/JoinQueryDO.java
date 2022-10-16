@@ -12,13 +12,10 @@ import zly.rivulet.sql.describer.condition.JoinCondition;
 
 public class JoinQueryDO implements QueryComplexModel {
 
-    @SQLModelJoin
     private User user;
 
-    @SQLModelJoin
     private City city;
 
-    @SQLModelJoin
     private Province province;
 
     @SQLSubQuery("sdf")

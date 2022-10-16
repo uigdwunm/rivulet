@@ -14,8 +14,8 @@ import zly.rivulet.sql.assigner.SQLQueryResultAssigner;
 import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
-import zly.rivulet.sql.definition.field.FieldDefinition;
 import zly.rivulet.sql.definition.query.main.*;
+import zly.rivulet.sql.definition.query.mapping.MapDefinition;
 import zly.rivulet.sql.definition.query.operate.AndOperateDefinition;
 import zly.rivulet.sql.definition.query.operate.EqOperateDefinition;
 import zly.rivulet.sql.definition.query.operate.InOperateDefinition;
@@ -27,6 +27,7 @@ import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.query.desc.OrderBy;
 import zly.rivulet.sql.generator.statement.SqlStatement;
 import zly.rivulet.sql.parser.SQLAliasManager;
+import zly.rivulet.sql.parser.proxy_node.FromNode;
 import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
@@ -80,7 +81,7 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
         toolbox.setQueryProxyNode(queryProxyNode);
 
         this.selectDefinition = new SelectDefinition(toolbox, metaDesc.getSelectModel(), queryProxyNode);
-        this.fromDefinition = new FromDefinition(toolbox, metaDesc);
+        this.fromDefinition = new FromDefinition(toolbox);
 
         this.subDefinitionList.add(selectDefinition);
         this.subDefinitionList.add(fromDefinition);
@@ -116,7 +117,7 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
             this.subDefinitionList.add(this.limit);
         }
 
-        this.assigner = selectDefinition.getSqlAssigner();
+        this.assigner = queryProxyNode.getAssigner();
 
         this.paramReceiptManager = toolbox.getParamReceiptManager();
 
@@ -126,26 +127,27 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
     public SqlQueryDefinition(SqlParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta, SQLFieldMeta primaryKey) {
         Class<?> modelClass = sqlModelMeta.getModelClass();
         this.aliasManager = new SQLAliasManager(toolbox.getConfigProperties());
-        new QueryProxyNode(this, toolbox, sqlModelMeta);
-        toolbox.setQueryProxyNode(this.queryProxyNode);
-        this.fromDefinition = new FromDefinition(toolbox, metaDesc);
-        this.selectDefinition = new SelectDefinition(toolbox, modelClass, quer);
+        QueryProxyNode queryProxyNode = new QueryProxyNode(this, sqlModelMeta);
+        toolbox.setQueryProxyNode(queryProxyNode);
+        this.fromDefinition = new FromDefinition(toolbox);
+        this.selectDefinition = new SelectDefinition(toolbox, modelClass, queryProxyNode);
         Param<? extends SQLFieldMeta> mainIdParam = Param.of(primaryKey.getClass(), Constant.MAIN_ID, SqlParamCheckType.NATURE);
         Param<? extends SQLFieldMeta> mainIdsParam = Param.of(primaryKey.getClass(), Constant.MAIN_IDS, SqlParamCheckType.NATURE);
+        FromNode fromNode = queryProxyNode.getFromNode(0);
         this.whereDefinition = new WhereDefinition(
             toolbox,
             new AndOperateDefinition(
                 toolbox,
                 new EqOperateDefinition(
                     toolbox,
-                    new FieldDefinition(sqlModelMeta, primaryKey),
+                    new MapDefinition(primaryKey, fromNode.getAliasFlag(), null),
                     mainIdParam,
                     CheckCondition.notNull(mainIdParam)
 
                 ),
                 new InOperateDefinition(
                     toolbox,
-                    new FieldDefinition(sqlModelMeta, primaryKey),
+                    new MapDefinition(primaryKey, fromNode.getAliasFlag(), null),
                     mainIdsParam,
                     CheckCondition.notEmpty(mainIdsParam)
                 )
@@ -154,9 +156,7 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
         this.paramReceiptManager = toolbox.getParamReceiptManager();
     }
 
-    public SqlQueryDefinition(QueryProxyNode queryProxyNode) {
-        this.queryProxyNode = queryProxyNode;
-    }
+    public SqlQueryDefinition() {}
 
     @Override
     public SqlQueryDefinition forAnalyze() {

@@ -5,6 +5,7 @@ import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.generator.Fish;
 import zly.rivulet.base.generator.statement.Statement;
 import zly.rivulet.base.utils.collector.FixedLengthStatementCollector;
+import zly.rivulet.mysql.discriber.function.MySQLFunction;
 import zly.rivulet.mysql.util.FormatStatementCollector;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.base.warehouse.DefaultWarehouseManager;
@@ -36,10 +37,12 @@ public class App {
             null
         );
 
-
-        Fish test = rivuletManager.test(
+        Fish test = rivuletManager.testParse(
             QueryBuilder.query(User.class, UserVO.class)
                 .select(
+                    Mapping.of(UserVO::setId, MySQLFunction.Date.curDate()),
+                    Mapping.of(UserVO::setId, MySQLFunction.add(User::getId)),
+                    Mapping.of(UserVO::setId, MySQLFunction.add(User::getId, MySQLFunction.add(User::getId), MySQLFunction.add(User::getId))),
                     Mapping.of(UserVO::setId, User::getId),
                     Mapping.of(UserVO::setName, User::getName)
                 )

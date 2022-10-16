@@ -10,8 +10,8 @@ import zly.rivulet.sql.describer.join.ComplexDescriber;
 import zly.rivulet.sql.describer.condition.JoinConditionContainer;
 import zly.rivulet.sql.parser.SQLAliasManager;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
-import zly.rivulet.sql.parser.node.FromNode;
-import zly.rivulet.sql.parser.node.QueryProxyNode;
+import zly.rivulet.sql.parser.proxy_node.FromNode;
+import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
 
 public class JoinRelationDefinition extends AbstractDefinition {
 
@@ -23,11 +23,11 @@ public class JoinRelationDefinition extends AbstractDefinition {
 
     private JoinType joinType;
 
-    public JoinRelationDefinition(SqlParserPortableToolbox sqlPreParseHelper, ComplexDescriber.Relation<?> desc) {
-        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamReceiptManager());
-        QueryProxyNode proxyNode = sqlPreParseHelper.getCurrNode();
+    public JoinRelationDefinition(SqlParserPortableToolbox toolbox, ComplexDescriber.Relation<?> desc) {
+        super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
+        QueryProxyNode proxyNode = toolbox.getQueryProxyNode();
         JoinConditionContainer<?, ?> conditionContainer = desc.getConditionContainer();
-        OperateDefinition operateDefinition = conditionContainer.getOperate().createDefinition(sqlPreParseHelper, conditionContainer);
+        OperateDefinition operateDefinition = conditionContainer.getOperate().createDefinition(toolbox, conditionContainer);
         FromNode fromNode = proxyNode.getFromNode(desc.getModelRelation());
 
         this.joinModel = fromNode.getQueryFromMeta();

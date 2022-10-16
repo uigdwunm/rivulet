@@ -4,7 +4,7 @@ import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
 import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.sql.definition.field.FieldDefinition;
+import zly.rivulet.sql.definition.query.mapping.MapDefinition;
 import zly.rivulet.sql.describer.condition.Condition;
 import zly.rivulet.sql.describer.condition.ConditionElement;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
@@ -28,10 +28,10 @@ public class EqOperateDefinition extends OperateDefinition {
         this.rightElement = super.parse(sqlPreParseHelper, rightFieldMapped);
     }
 
-    public EqOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, FieldDefinition fieldDefinition, Param<?> param, CheckCondition checkCondition) {
+    public EqOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, MapDefinition mapDefinition, Param<?> param, CheckCondition checkCondition) {
         super(checkCondition, sqlPreParseHelper.getParamReceiptManager());
 
-        this.leftElement =  fieldDefinition;
+        this.leftElement =  mapDefinition;
         this.rightElement = super.parse(sqlPreParseHelper, param);
     }
 

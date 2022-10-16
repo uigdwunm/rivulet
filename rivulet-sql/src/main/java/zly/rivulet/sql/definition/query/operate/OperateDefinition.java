@@ -12,8 +12,8 @@ import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.parser.SqlParser;
+import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
-import zly.rivulet.sql.parser.node.QueryProxyNode;
 
 public abstract class OperateDefinition extends AbstractDefinition {
     protected OperateDefinition(CheckCondition checkCondition, ParamReceiptManager paramReceiptManager) {
@@ -24,25 +24,24 @@ public abstract class OperateDefinition extends AbstractDefinition {
     public abstract OperateDefinition forAnalyze();
 
     protected SingleValueElementDefinition parse(SqlParserPortableToolbox toolbox, SingleValueElementDesc<?, ?> singleValueElementDesc) {
-        QueryProxyNode currNode = toolbox.getCurrNode();
+        QueryProxyNode queryProxyNode = toolbox.getQueryProxyNode();
         if (singleValueElementDesc instanceof FieldMapping) {
             FieldMapping<Object, Object> fieldMapping = (FieldMapping<Object, Object>) singleValueElementDesc;
-            return currNode.parseField(fieldMapping);
+            return queryProxyNode.getFieldDefinitionFromThreadLocal(fieldMapping, queryProxyNode.getProxyModel());
         } else if (singleValueElementDesc instanceof JoinFieldMapping) {
             JoinFieldMapping<Object> joinFieldMapping = (JoinFieldMapping<Object>) singleValueElementDesc;
-            return currNode.parseField(joinFieldMapping);
+            return queryProxyNode.getFieldDefinitionFromThreadLocal(joinFieldMapping, queryProxyNode.getProxyModel());
         } else if (singleValueElementDesc instanceof SqlQueryMetaDesc) {
             SqlParser sqlPreParser = toolbox.getSqlPreParser();
             SqlQueryDefinition sqlQueryDefinition = (SqlQueryDefinition) sqlPreParser.parseByDesc((SqlQueryMetaDesc<?, ?>) singleValueElementDesc, toolbox);
-            QueryProxyNode subQueryNode = toolbox.getCurrNode();
-            currNode.addConditionSubQueryNode(subQueryNode, sqlQueryDefinition);
-            // 这里替换回来
-            toolbox.setCurrNode(currNode);
+            QueryProxyNode subQueryNode = toolbox.popQueryProxyNode();
+            queryProxyNode.addConditionSubQuery(subQueryNode);
             return sqlQueryDefinition;
         } else if (singleValueElementDesc instanceof Param) {
             ParamReceiptManager paramReceiptManager = toolbox.getParamReceiptManager();
             return paramReceiptManager.registerParam((Param<?>) singleValueElementDesc);
 //        } else if (singleValueElementDesc instanceof Function) {
+            // TODO
         }
         throw UnbelievableException.unknownType();
     }

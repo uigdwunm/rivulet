@@ -1,9 +1,7 @@
 package zly.rivulet.sql.parser;
 
-import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.utils.StringUtil;
 import zly.rivulet.sql.SqlRivuletProperties;
-import zly.rivulet.sql.definer.annotations.SqlQueryAlias;
 import zly.rivulet.sql.exception.SQLDescDefineException;
 import zly.rivulet.sql.parser.proxy_node.FromNode;
 import zly.rivulet.sql.parser.proxy_node.ProxyNode;
@@ -63,27 +61,18 @@ public class SQLAliasManager {
             QueryProxyNode queryProxyNode = (QueryProxyNode) proxyNode;
             for (FromNode fromNode : queryProxyNode.getFromNodeList()) {
                 allAliasSet.add(fromNode.getAliasFlag());
-                ProxyNode parentNode = fromNode.getParentNode();
-                if (parentNode != null) {
-                    aliasToParentAlias.put(fromNode.getAliasFlag(), parentNode.getAliasFlag());
-                }
+                aliasToParentAlias.put(fromNode.getAliasFlag(), queryProxyNode.getAliasFlag());
                 this.collect(fromNode);
             }
             for (SelectNode selectNode : queryProxyNode.getSelectNodeList()) {
                 allAliasSet.add(selectNode.getAliasFlag());
-                ProxyNode parentNode = selectNode.getParentNode();
-                if (parentNode != null) {
-                    aliasToParentAlias.put(selectNode.getAliasFlag(), parentNode.getAliasFlag());
-                }
+                aliasToParentAlias.put(selectNode.getAliasFlag(), queryProxyNode.getAliasFlag());
                 this.collect(selectNode);
             }
 
             for (QueryProxyNode whereNode : queryProxyNode.getConditionSubQueryList()) {
                 allAliasSet.add(whereNode.getAliasFlag());
-                ProxyNode parentNode = whereNode.getParentNode();
-                if (parentNode != null) {
-                    aliasToParentAlias.put(whereNode.getAliasFlag(), parentNode.getAliasFlag());
-                }
+                aliasToParentAlias.put(whereNode.getAliasFlag(), queryProxyNode.getAliasFlag());
                 this.collect(whereNode);
             }
 

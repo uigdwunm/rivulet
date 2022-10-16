@@ -8,6 +8,7 @@ import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.describer.join.ComplexDescriber;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.parser.SQLAliasManager;
+import zly.rivulet.sql.parser.node.ModelProxyNode;
 import zly.rivulet.sql.parser.proxy_node.FromNode;
 import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
@@ -23,7 +24,7 @@ public class FromDefinition extends AbstractDefinition {
 
     private List<JoinRelationDefinition> joinRelations;
 
-    public FromDefinition(SqlParserPortableToolbox toolbox, SqlQueryMetaDesc<?, ?> metaDesc) {
+    public FromDefinition(SqlParserPortableToolbox toolbox) {
         super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
 
         QueryProxyNode proxyNode = toolbox.getQueryProxyNode();
@@ -31,21 +32,20 @@ public class FromDefinition extends AbstractDefinition {
 
         if (proxyModel instanceof QueryComplexModel) {
             // 是复杂查询对象
-            QueryComplexModel queryComplexModel = (QueryComplexModel) proxyNode.getProxyModel();
+            QueryComplexModel queryComplexModel = (QueryComplexModel) proxyModel;
             ComplexDescriber complexDescriber = queryComplexModel.register();
 
             FromNode mainFromNode = proxyNode.getFromNode(complexDescriber.getModelFrom());
             this.mainFrom = mainFromNode.getQueryFromMeta();
             this.mainFromAliasFlag = mainFromNode.getAliasFlag();
             this.joinRelations = complexDescriber.getJoinRelations().stream()
-                .map(relation -> new JoinRelationDefinition(sqlPreParseHelper, relation))
+                .map(relation -> new JoinRelationDefinition(toolbox, relation))
                 .collect(Collectors.toList());
         } else {
             // 单表查询对象,node里一定有一个唯一的fromNode
-            FromNode fromNode = proxyNode.getFromNodeList().get(0);
-            ModelProxyNode modelProxyNode = (ModelProxyNode) fromNode;
+            ModelProxyNode modelProxyNode = (ModelProxyNode) proxyNode.getFromNodeList().get(0);
             this.mainFrom = modelProxyNode.getModelMeta();
-            this.mainFromAliasFlag = fromNode.getAliasFlag();
+            this.mainFromAliasFlag = modelProxyNode.getAliasFlag();
             this.joinRelations = Collections.emptyList();
         }
     }
