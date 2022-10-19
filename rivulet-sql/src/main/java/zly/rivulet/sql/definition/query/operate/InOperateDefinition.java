@@ -19,20 +19,20 @@ public class InOperateDefinition extends OperateDefinition {
         this(sqlPreParseHelper, (ConditionElement<?, ?>) condition);
     }
 
-    public InOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, ConditionElement<?, ?> condition) {
-        super(condition.getCheckCondition(), sqlPreParseHelper.getParamReceiptManager());
+    public InOperateDefinition(SqlParserPortableToolbox toolbox, ConditionElement<?, ?> condition) {
+        super(condition.getCheckCondition(), toolbox.getParamReceiptManager());
         SingleValueElementDesc<?, ?> leftFieldMapped = condition.getLeftFieldMapped();
         SingleValueElementDesc<?, ?> rightFieldMapped = condition.getRightFieldMappeds()[0];
 
-        this.leftElement = super.parse(sqlPreParseHelper, leftFieldMapped);
-        this.rightElement = super.parse(sqlPreParseHelper, rightFieldMapped);
+        this.leftElement = toolbox.parseSingleValueForCondition(leftFieldMapped);
+        this.rightElement = toolbox.parseSingleValueForCondition(rightFieldMapped);
     }
 
-    public InOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, MapDefinition mapDefinition, Param<?> param, CheckCondition checkCondition) {
-        super(checkCondition, sqlPreParseHelper.getParamReceiptManager());
+    public InOperateDefinition(SqlParserPortableToolbox toolbox, MapDefinition mapDefinition, Param<?> param, CheckCondition checkCondition) {
+        super(checkCondition, toolbox.getParamReceiptManager());
 
         this.leftElement =  mapDefinition;
-        this.rightElement = super.parse(sqlPreParseHelper, param);
+        this.rightElement = toolbox.parseSingleValueForCondition(param);
     }
 
     public SingleValueElementDefinition getLeftElement() {

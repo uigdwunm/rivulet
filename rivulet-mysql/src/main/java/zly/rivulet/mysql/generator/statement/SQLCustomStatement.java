@@ -4,6 +4,7 @@ import zly.rivulet.base.describer.custom.CustomCollector;
 import zly.rivulet.base.describer.custom.CustomSingleValueWrap;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.sql.definition.SQLCustomDefinition;
+import zly.rivulet.sql.definition.function.SQLFunctionDefinition;
 import zly.rivulet.sql.generator.SqlStatementFactory;
 import zly.rivulet.sql.generator.statement.SqlStatement;
 
@@ -44,18 +45,17 @@ public class SQLCustomStatement implements SqlStatement {
     }
 
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
-        sqlStatementFactory.register(
-            SQLCustomDefinition.class,
-            (definition, soleFlag, initHelper) -> {
-                SQLCustomDefinition sqlCustomDefinition = (SQLCustomDefinition) definition;
-                List<CustomSingleValueWrap> singleValueList = sqlCustomDefinition.getSingleValueList().stream()
-                    .map(singleValueElementDefinition -> {
-                        SqlStatement sqlStatement = sqlStatementFactory.warmUp(singleValueElementDefinition, soleFlag.subSwitch(), initHelper);
-                        return new SQLCustomSingleValueWrap((SingleValueElementStatement) sqlStatement);
-                    }).collect(Collectors.toList());
-                return new SQLCustomStatement(singleValueList, sqlCustomDefinition.getCustomCollect());
-            },
-            (definition, helper) -> {
+        SqlStatementFactory.StatementInitCreator statementInitCreator = (definition, soleFlag, initHelper) -> {
+            SQLCustomDefinition sqlCustomDefinition = (SQLCustomDefinition) definition;
+            List<CustomSingleValueWrap> singleValueList = sqlCustomDefinition.getSingleValueList().stream()
+                .map(singleValueElementDefinition -> {
+                    SqlStatement sqlStatement = sqlStatementFactory.warmUp(singleValueElementDefinition, soleFlag.subSwitch(), initHelper);
+                    return new SQLCustomSingleValueWrap((SingleValueElementStatement) sqlStatement);
+                }).collect(Collectors.toList());
+            return new SQLCustomStatement(singleValueList, sqlCustomDefinition.getCustomCollect());
+        };
+
+        SqlStatementFactory.StatementRunCreator statementRunCreator = (definition, helper) -> {
                 SQLCustomDefinition sqlCustomDefinition = (SQLCustomDefinition) definition;
                 List<CustomSingleValueWrap> singleValueList = sqlCustomDefinition.getSingleValueList().stream()
                     .map(singleValueElementDefinition -> {
@@ -63,7 +63,8 @@ public class SQLCustomStatement implements SqlStatement {
                         return new SQLCustomSingleValueWrap((SingleValueElementStatement) sqlStatement);
                     }).collect(Collectors.toList());
                 return new SQLCustomStatement(singleValueList, sqlCustomDefinition.getCustomCollect());
-            }
-        );
+            };
+        sqlStatementFactory.register(SQLCustomDefinition.class, statementInitCreator, statementRunCreator);
+        sqlStatementFactory.register(SQLFunctionDefinition.class, statementInitCreator, statementRunCreator);
     }
 }

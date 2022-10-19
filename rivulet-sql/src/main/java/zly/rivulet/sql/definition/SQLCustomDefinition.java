@@ -7,20 +7,19 @@ import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefiniti
 import zly.rivulet.base.describer.custom.CustomCollector;
 import zly.rivulet.base.describer.custom.CustomSingleValueWrap;
 import zly.rivulet.base.parser.ParamReceiptManager;
+import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 import java.util.List;
 import java.util.function.BiConsumer;
 
 public class SQLCustomDefinition extends AbstractDefinition {
 
-    private final List<SingleValueElementDefinition> singleValueList;
+    protected List<SingleValueElementDefinition> singleValueList;
 
-    private final BiConsumer<CustomCollector, List<CustomSingleValueWrap>> customCollect;
+    protected BiConsumer<CustomCollector, List<CustomSingleValueWrap>> customCollect;
 
-    protected SQLCustomDefinition(CheckCondition checkCondition, ParamReceiptManager paramReceiptManager, List<SingleValueElementDefinition> singleValueList, BiConsumer<CustomCollector, List<CustomSingleValueWrap>> customCollect) {
-        super(checkCondition, paramReceiptManager);
-        this.singleValueList = singleValueList;
-        this.customCollect = customCollect;
+    protected SQLCustomDefinition(SqlParserPortableToolbox toolbox) {
+        super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
     }
 
     @Override

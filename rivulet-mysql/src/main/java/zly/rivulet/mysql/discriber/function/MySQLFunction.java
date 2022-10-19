@@ -2,8 +2,6 @@ package zly.rivulet.mysql.discriber.function;
 
 import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.base.describer.field.FieldMapping;
-import zly.rivulet.base.describer.field.JoinFieldMapping;
-import zly.rivulet.mysql.discriber.function.date.CurDate;
 import zly.rivulet.sql.describer.function.Add;
 import zly.rivulet.sql.describer.function.SQLCommonFunction;
 import zly.rivulet.sql.describer.function.SQLFunction;
@@ -56,6 +54,9 @@ public interface MySQLFunction {
     }
 
     interface Cast {
+        static <F, C> SQLFunction<F, C> cast(SingleValueElementDesc<F, C> singleValue, ) {
+            return new C<>("POW", Arrays.asList(left, right));
+        }
 
     }
 }

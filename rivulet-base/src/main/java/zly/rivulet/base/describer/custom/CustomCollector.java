@@ -12,6 +12,11 @@ public class CustomCollector {
         this.collector = collector;
     }
 
+    public CustomCollector space() {
+        collector.space();
+        return this;
+    }
+
     public CustomCollector append(CustomSingleValueWrap singleValueWrap) {
         singleValueWrap.collectSingleValue(collector);
         return this;

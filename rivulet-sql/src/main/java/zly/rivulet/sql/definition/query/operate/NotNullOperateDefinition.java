@@ -14,11 +14,11 @@ public class NotNullOperateDefinition extends OperateDefinition {
         this(sqlPreParseHelper, (ConditionElement<?, ?>) condition);
     }
 
-    private NotNullOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, ConditionElement<?, ?> condition) {
-        super(condition.getCheckCondition(), sqlPreParseHelper.getParamReceiptManager());
+    private NotNullOperateDefinition(SqlParserPortableToolbox toolbox, ConditionElement<?, ?> condition) {
+        super(condition.getCheckCondition(), toolbox.getParamReceiptManager());
         SingleValueElementDesc<?, ?> elementDesc = condition.getLeftFieldMapped();
 
-        this.elementDesc = super.parse(sqlPreParseHelper, elementDesc);
+        this.elementDesc = toolbox.parseSingleValueForCondition(elementDesc);
     }
 
     public SingleValueElementDefinition getElementDesc() {
