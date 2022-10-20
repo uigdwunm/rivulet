@@ -41,8 +41,8 @@ public class App {
             QueryBuilder.query(User.class, UserVO.class)
                 .select(
                     Mapping.of(UserVO::setId, MySQLFunction.Date.curDate()),
-                    Mapping.of(UserVO::setId, MySQLFunction.add(User::getId)),
-                    Mapping.of(UserVO::setId, MySQLFunction.add(User::getId, MySQLFunction.add(User::getId), MySQLFunction.add(User::getId))),
+                    Mapping.of(UserVO::setId, MySQLFunction.Arithmetical.add(User::getId)),
+                    Mapping.of(UserVO::setId, MySQLFunction.Arithmetical.add(User::getId, MySQLFunction.Arithmetical.add(User::getId), MySQLFunction.Arithmetical.add(User::getId))),
                     Mapping.of(UserVO::setId, User::getId),
                     Mapping.of(UserVO::setName, User::getName)
                 )

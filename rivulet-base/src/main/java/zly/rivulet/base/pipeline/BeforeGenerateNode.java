@@ -10,8 +10,8 @@ public abstract class BeforeGenerateNode {
 
     public abstract Object handle(Blueprint blueprint, ParamManager paramManager, RunningPipeline.Executor executor);
 
-    protected Object nextHandle(Blueprint blueprint, ParamManager paramManager, PipelineToolbox pipelineToolbox) {
-        return next.handle(blueprint, paramManager, pipelineToolbox);
+    protected Object nextHandle(Blueprint blueprint, ParamManager paramManager, RunningPipeline.Executor executor) {
+        return next.handle(blueprint, paramManager, executor);
     }
 
     void setNext(BeforeGenerateNode next) {

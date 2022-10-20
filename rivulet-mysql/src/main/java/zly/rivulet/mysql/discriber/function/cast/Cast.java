@@ -37,7 +37,7 @@ public class Cast<F, C> implements SQLFunction<F, C> {
     public static class Type {
         private final String type;
 
-        public Type(String type) {
+        private Type(String type) {
             this.type = type;
         }
 
@@ -49,14 +49,36 @@ public class Cast<F, C> implements SQLFunction<F, C> {
             return new Type("BINARY(" + length + ")");
         }
 
-        BINARY(),
-        CHAR(),
-        DATE,
-        DATETIME,
-        DECIMAL(, ),
-        NCHAR(),
-        SINGED(),
-        TIME,
-        UNSIGNED();
+        public Type charType(int length) {
+            return new Type("CHAR(" + length + ")");
+        }
+
+        public Type date() {
+            return new Type("DATE");
+        }
+
+        public Type datetime() {
+            return new Type("DATETIME");
+        }
+
+        public Type decimal(int a, int b) {
+            return new Type("decimal(" + a + "," + b + ")");
+        }
+
+        public Type nchar(int length) {
+            return new Type("NCHAR(" + length + ")");
+        }
+
+        public Type signed(int length) {
+            return new Type("SIGNED(" + length + ")");
+        }
+
+        public Type time() {
+            return new Type("TIME");
+        }
+
+        public Type unsigned(int length) {
+            return new Type("UNSIGNED(" + length + ")");
+        }
     }
 }

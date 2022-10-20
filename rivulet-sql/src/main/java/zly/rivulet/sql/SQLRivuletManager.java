@@ -202,7 +202,7 @@ public abstract class SQLRivuletManager extends RivuletManager {
                 PreparedStatement statement = connection.prepareStatement(collector.toString());
                 ResultSet resultSet = statement.executeQuery(collector.toString());
                 SQLQueryResultAssigner assigner = (SQLQueryResultAssigner) sqlBlueprint.getAssigner();
-                return assigner.assign(resultSet);
+                return assigner.getValue(resultSet, 0);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -223,7 +223,7 @@ public abstract class SQLRivuletManager extends RivuletManager {
 
                 // 拼装结果
                 while (resultSet.next()) {
-                    collection.add(assigner.assign(resultSet));
+                    collection.add(assigner.getValue(resultSet, 0));
                 }
                 // 回收资源
                 resultSet.close();
