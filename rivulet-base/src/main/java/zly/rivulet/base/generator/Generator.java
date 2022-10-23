@@ -1,7 +1,10 @@
 package zly.rivulet.base.generator;
 
+import zly.rivulet.base.RivuletProperties;
+import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.generator.param_manager.ParamManager;
 import zly.rivulet.base.definition.Blueprint;
+import zly.rivulet.base.parser.Parser;
 
 public interface Generator {
 
@@ -14,4 +17,10 @@ public interface Generator {
      * Date 2021/12/5 12:00
      **/
     Fish generate(Blueprint definition, ParamManager paramManager);
+
+    Parser getParser();
+
+    RivuletProperties getProperties();
+
+    ConvertorManager getConvertorManager();
 }

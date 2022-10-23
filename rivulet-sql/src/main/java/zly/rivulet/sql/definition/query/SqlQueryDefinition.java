@@ -249,6 +249,11 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
     }
 
     @Override
+    public Map<Class<? extends Definition>, ParamReceipt> getCustomStatementMap() {
+        return this.customStatementMap;
+    }
+
+    @Override
     public RivuletFlag getFlag() {
         return this.flag;
     }

@@ -18,21 +18,19 @@ public class MySQLRivuletManager extends SQLRivuletManager {
         DataSource dataSource
     ) {
         super(
-            new SqlParser(
-                warehouseManager,
-                new MySQLDefiner(convertorManager),
-                configProperties,
-                convertorManager
-            ),
             new MysqlGenerator(
                 configProperties,
-                convertorManager
+                new SqlParser(
+                    warehouseManager,
+                    new MySQLDefiner(convertorManager),
+                    configProperties,
+                    convertorManager
+                )
             ),
-            configProperties,
-            convertorManager,
             warehouseManager,
             dataSource
         );
     }
+
 
 }

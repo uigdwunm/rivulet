@@ -4,35 +4,33 @@ import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.base.describer.custom.CustomCollector;
 import zly.rivulet.base.describer.custom.CustomDesc;
 import zly.rivulet.base.describer.custom.CustomSingleValueWrap;
-import zly.rivulet.base.describer.param.Param;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
- * Description 整个语句的自定义语句，仅能提供param的解析
+ * Description 整个语句的自定义语句，既然要自定义，就全都自己写，参数啥的都自己拼上
  *
  * @author zhaolaiyuan
  * Date 2022/10/23 13:41
  **/
 public class SQLWholeCustomDesc implements CustomDesc {
 
-    private final List<Param<?>> paramList;
+    private final Consumer<CustomCollector> consumer;
 
-    private final BiConsumer<CustomCollector, List<CustomSingleValueWrap>> biConsumer;
-
-    public SQLWholeCustomDesc(List<Param<?>> paramList, BiConsumer<CustomCollector, List<CustomSingleValueWrap>> biConsumer) {
-        this.paramList = paramList;
-        this.biConsumer = biConsumer;
+    public SQLWholeCustomDesc(Consumer<CustomCollector> consumer) {
+        this.consumer = consumer;
     }
 
     @Override
     public List<SingleValueElementDesc<?, ?>> getSingleValueList() {
-        return (List)this.paramList;
+        return Collections.emptyList();
     }
 
     @Override
     public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
-        return biConsumer;
+        return ((customCollector, customSingleValueWraps) -> consumer.accept(customCollector));
     }
 }

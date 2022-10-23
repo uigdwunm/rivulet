@@ -35,14 +35,11 @@ public abstract class SQLRivuletManager extends RivuletManager {
     private final DataSource dataSource;
 
     protected SQLRivuletManager(
-        Parser parser,
         Generator generator,
-        RivuletProperties configProperties,
-        ConvertorManager convertorManager,
         WarehouseManager warehouseManager,
         DataSource dataSource
     ) {
-        super(parser, generator, configProperties, convertorManager, warehouseManager);
+        super(generator.getParser(), generator, generator.getProperties(), generator.getConvertorManager(), warehouseManager);
         this.dataSource = dataSource;
     }
 

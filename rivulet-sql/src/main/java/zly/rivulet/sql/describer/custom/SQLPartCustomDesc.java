@@ -5,8 +5,6 @@ import zly.rivulet.base.describer.custom.CustomCollector;
 import zly.rivulet.base.describer.custom.CustomDesc;
 import zly.rivulet.base.describer.custom.CustomSingleValueWrap;
 import zly.rivulet.base.describer.field.FieldMapping;
-import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.sql.exception.SQLDescDefineException;
 
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -19,27 +17,18 @@ import java.util.function.BiConsumer;
  **/
 public class SQLPartCustomDesc implements CustomDesc {
 
-    private final List<SingleValueElementDesc<?, ?>> singleValueList;
+    private final List<FieldMapping<?, ?>> fieldMappingList;
 
     private final BiConsumer<CustomCollector, List<CustomSingleValueWrap>> biConsumer;
 
-    public SQLPartCustomDesc(List<SingleValueElementDesc<?, ?>> singleValueList, BiConsumer<CustomCollector, List<CustomSingleValueWrap>> biConsumer) {
-        for (SingleValueElementDesc<?, ?> singleValueElementDesc : singleValueList) {
-            if (singleValueElementDesc instanceof FieldMapping) {
-                continue;
-            } else if (singleValueElementDesc instanceof Param) {
-                continue;
-            } else {
-                throw SQLDescDefineException.partCustomSingleVlaueUnsupport();
-            }
-        }
-        this.singleValueList = singleValueList;
+    public SQLPartCustomDesc(List<FieldMapping<?, ?>> fieldMappingList, BiConsumer<CustomCollector, List<CustomSingleValueWrap>> biConsumer) {
+        this.fieldMappingList = fieldMappingList;
         this.biConsumer = biConsumer;
     }
 
     @Override
     public List<SingleValueElementDesc<?, ?>> getSingleValueList() {
-        return this.singleValueList;
+        return (List) this.fieldMappingList;
     }
 
     @Override

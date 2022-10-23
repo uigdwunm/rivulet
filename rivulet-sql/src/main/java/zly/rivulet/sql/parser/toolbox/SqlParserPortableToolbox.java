@@ -130,21 +130,18 @@ public class SqlParserPortableToolbox implements ParserPortableToolbox {
     }
 
     /**
-     * Description custom解析singleValue仅支持FieldMapping和Param
+     * Description custom解析singleValue仅支持FieldMapping
      *
      * @author zhaolaiyuan
      * Date 2022/10/23 13:51
      **/
     public static SingleValueElementDefinition parseSingleValueForCustom(
-        ParamReceiptManager paramReceiptManager,
         QueryProxyNode queryProxyNode,
         SingleValueElementDesc<?, ?> singleValueElementDesc
     ) {
         if (singleValueElementDesc instanceof FieldMapping) {
             FieldMapping<Object, Object> fieldMapping = (FieldMapping<Object, Object>) singleValueElementDesc;
             return queryProxyNode.getFieldDefinitionFromThreadLocal(fieldMapping, queryProxyNode.getProxyModel());
-        } else if (singleValueElementDesc instanceof Param) {
-            return paramReceiptManager.registerParam((Param<?>) singleValueElementDesc);
         } else {
             throw UnbelievableException.unknownType();
         }

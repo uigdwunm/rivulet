@@ -3,7 +3,7 @@ package zly.rivulet.sql.generator;
 import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.utils.RelationSwitch;
 import zly.rivulet.sql.generator.statement.SqlStatement;
-import zly.rivulet.sql.generator.toolbox.GenerateToolbox;
+import zly.rivulet.sql.generator.toolbox.SQLGenerateToolbox;
 import zly.rivulet.sql.generator.toolbox.WarmUpToolbox;
 
 import java.util.Map;
@@ -26,20 +26,20 @@ public class SqlStatementFactory {
         DEFINITION_RUN_CREATOR_MAP.put(clazz, statementRunCreator);
     }
 
-    public SqlStatement getOrCreate(Definition definition, GenerateToolbox generateToolbox) {
-        Definition replaceDefinition = generateToolbox.getReplaceDefinition(definition);
+    public SqlStatement getOrCreate(Definition definition, SQLGenerateToolbox SQLGenerateToolbox) {
+        Definition replaceDefinition = SQLGenerateToolbox.getReplaceDefinition(definition.getClass());
         if (replaceDefinition != null) {
             definition = replaceDefinition;
         } else {
             // 如果存在replaceDefinition，那一定没有缓存，不存在才需要查下
-            SqlStatement statement = (SqlStatement) generateToolbox.getBlueprint().getStatement(definition);
+            SqlStatement statement = (SqlStatement) SQLGenerateToolbox.getBlueprint().getStatement(definition);
             if (statement != null) {
                 // 缓存查到了
                 return statement;
             }
         }
         StatementRunCreator statementRunCreator = DEFINITION_RUN_CREATOR_MAP.get(definition.getClass());
-        return statementRunCreator.create(definition, generateToolbox);
+        return statementRunCreator.create(definition, SQLGenerateToolbox);
     }
 
     public SqlStatement warmUp(Definition definition, RelationSwitch soleFlag, WarmUpToolbox initHelper) {
@@ -61,6 +61,6 @@ public class SqlStatementFactory {
 
     @FunctionalInterface
     public interface StatementRunCreator {
-        SqlStatement create(Object definition, GenerateToolbox helper);
+        SqlStatement create(Object definition, SQLGenerateToolbox helper);
     }
 }
