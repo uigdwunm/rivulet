@@ -4,7 +4,7 @@ import zly.rivulet.base.describer.SingleValueElementDesc;
 
 import java.util.List;
 
-public class Add<F, C> implements SQLFunction<F, C> {
+public class Add<F, C> implements Function<F, C> {
 
     private final List<SingleValueElementDesc<F, C>> addItemList;
 

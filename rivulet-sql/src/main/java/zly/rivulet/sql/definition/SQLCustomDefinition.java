@@ -22,6 +22,15 @@ public class SQLCustomDefinition extends AbstractDefinition {
         super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
     }
 
+    public SQLCustomDefinition(
+        List<SingleValueElementDefinition> singleValueList,
+        BiConsumer<CustomCollector, List<CustomSingleValueWrap>> customCollect
+    ) {
+        super(CheckCondition.IS_TRUE, null);
+        this.singleValueList = singleValueList;
+        this.customCollect = customCollect;
+    }
+
     @Override
     public Definition forAnalyze() {
         return null;

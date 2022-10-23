@@ -43,4 +43,8 @@ public class SQLDescDefineException extends RuntimeException {
     public static SQLDescDefineException mustQueryKey(String value, Class<?> fieldType) {
         return new SQLDescDefineException("必须使用查询key作为子查询" + value);
     }
+
+    public static SQLDescDefineException partCustomSingleVlaueUnsupport() {
+        return new SQLDescDefineException("部分自定义语句仅能解析FieldMapping及Param类型的singleValue");
+    }
 }

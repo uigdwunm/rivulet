@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-public class SubTract<F, C> implements SQLFunction<F, C> {
+public class SubTract<F, C> implements Function<F, C> {
 
     /**
      * 被减数

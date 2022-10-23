@@ -14,7 +14,7 @@ import zly.rivulet.sql.SqlRivuletProperties;
 import zly.rivulet.sql.definition.function.SQLFunctionDefinition;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
-import zly.rivulet.sql.describer.function.SQLFunction;
+import zly.rivulet.sql.describer.function.Function;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.exception.SQLDescDefineException;
 import zly.rivulet.sql.parser.SQLAliasManager;
@@ -47,6 +47,12 @@ public class SqlParserPortableToolbox implements ParserPortableToolbox {
      * 子查询循环检测
      **/
     private final Set<WholeDesc> subQueryCycleCheck = new HashSet<>();
+
+    /**
+     * 整个语句中会可能会有多个子查询，每个子查询必须要有自己的ProxyNode，要不解析会乱套
+     * 所以从缓存拿ProxyNode没问题，但是只能拿一次，如果出现重复的，一定得新建
+     **/
+    private final Set<QueryProxyNode> repeatProxyNodeCheck = new HashSet<>();
 
     public SqlParserPortableToolbox(SqlParser sqlPreParser) {
         this.sqlPreParser = sqlPreParser;
@@ -85,8 +91,8 @@ public class SqlParserPortableToolbox implements ParserPortableToolbox {
                 SQLAliasManager.createAlias()
             );
 
-        } else if (singleValueElementDesc instanceof SQLFunction) {
-            SQLFunction<?, ?> sqlFunction = (SQLFunction<?, ?>) singleValueElementDesc;
+        } else if (singleValueElementDesc instanceof Function) {
+            Function<?, ?> sqlFunction = (Function<?, ?>) singleValueElementDesc;
             SQLFunctionDefinition sqlFunctionDefinition = new SQLFunctionDefinition(this, sqlFunction);
             return new MapDefinition(
                 sqlFunctionDefinition,
@@ -115,11 +121,33 @@ public class SqlParserPortableToolbox implements ParserPortableToolbox {
         } else if (singleValueElementDesc instanceof Param) {
             ParamReceiptManager paramReceiptManager = this.getParamReceiptManager();
             return paramReceiptManager.registerParam((Param<?>) singleValueElementDesc);
-        } else if (singleValueElementDesc instanceof SQLFunction) {
-            SQLFunction<?, ?> sqlFunction = (SQLFunction<?, ?>) singleValueElementDesc;
+        } else if (singleValueElementDesc instanceof Function) {
+            Function<?, ?> sqlFunction = (Function<?, ?>) singleValueElementDesc;
             return new SQLFunctionDefinition(this, sqlFunction);
+        } else {
+            throw UnbelievableException.unknownType();
         }
-        throw UnbelievableException.unknownType();
+    }
+
+    /**
+     * Description custom解析singleValue仅支持FieldMapping和Param
+     *
+     * @author zhaolaiyuan
+     * Date 2022/10/23 13:51
+     **/
+    public static SingleValueElementDefinition parseSingleValueForCustom(
+        ParamReceiptManager paramReceiptManager,
+        QueryProxyNode queryProxyNode,
+        SingleValueElementDesc<?, ?> singleValueElementDesc
+    ) {
+        if (singleValueElementDesc instanceof FieldMapping) {
+            FieldMapping<Object, Object> fieldMapping = (FieldMapping<Object, Object>) singleValueElementDesc;
+            return queryProxyNode.getFieldDefinitionFromThreadLocal(fieldMapping, queryProxyNode.getProxyModel());
+        } else if (singleValueElementDesc instanceof Param) {
+            return paramReceiptManager.registerParam((Param<?>) singleValueElementDesc);
+        } else {
+            throw UnbelievableException.unknownType();
+        }
     }
 
     public SqlParser getSqlPreParser() {
@@ -160,5 +188,9 @@ public class SqlParserPortableToolbox implements ParserPortableToolbox {
     public void finishParse(WholeDesc wholeDesc) {
         // 撤销检查
         subQueryCycleCheck.remove(wholeDesc);
+    }
+
+    public boolean repeatProxyNodeCheck(QueryProxyNode queryProxyNode) {
+        return repeatProxyNodeCheck.add(queryProxyNode);
     }
 }

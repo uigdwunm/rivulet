@@ -2,16 +2,21 @@ package zly.rivulet.sql.describer.query;
 
 import zly.rivulet.base.definer.annotations.RivuletDesc;
 import zly.rivulet.base.definer.enums.RivuletFlag;
+import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.base.describer.WholeDesc;
+import zly.rivulet.base.describer.custom.CustomDesc;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.sql.describer.condition.Condition;
 import zly.rivulet.sql.describer.condition.ConditionContainer;
+import zly.rivulet.sql.describer.custom.SQLPartCustomDesc;
 import zly.rivulet.sql.describer.query.desc.Mapping;
-import zly.rivulet.sql.describer.query.desc.OrderBy;
+import zly.rivulet.sql.describer.query.desc.SortItem;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, WholeDesc {
     /**
@@ -50,7 +55,7 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
     /**
      * order排序子项
      **/
-    protected final List<OrderBy.Item<F, ?>> orderFieldList;
+    protected final List<SortItem<F, ?>> orderItemList;
 
     /**
      * 跳过行数
@@ -62,6 +67,11 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
      **/
     protected final Param<Integer> limit;
 
+    /**
+     * 如果有自定义语句，后面解析的时候会替代原Definition进行解析
+     **/
+    protected final Map<Class<? extends Definition>, Param<SQLPartCustomDesc>> customStatementMap;
+
     protected RivuletDesc anno;
 
     /**
@@ -69,16 +79,21 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
      **/
 //    protected final boolean isHaveNativeStatement;
 
-    public SqlQueryMetaDesc(Class<F> modelFrom, Class<S> selectModel, List<Mapping<F, S, ?>> mappedItemList, ConditionContainer<?, ?> whereConditionContainer, List<FieldMapping<F, ?>> groupFieldList, List<Condition<F, ?>> havingItemList, List<OrderBy.Item<F, ?>> orderFieldList, Param<Integer> skit, Param<Integer> limit) {
+    public SqlQueryMetaDesc(Class<F> modelFrom, Class<S> selectModel, List<Mapping<F, S, ?>> mappedItemList, ConditionContainer<?, ?> whereConditionContainer, List<FieldMapping<F, ?>> groupFieldList, List<Condition<F, ?>> havingItemList, List<SortItem<F, ?>> orderItemList, Param<Integer> skit, Param<Integer> limit, Map<Class<? extends Definition>, Param<SQLPartCustomDesc>> customStatementMap) {
         this.modelFrom = modelFrom;
         this.selectModel = selectModel;
         this.mappedItemList = mappedItemList;
         this.whereConditionContainer = whereConditionContainer;
         this.groupFieldList = groupFieldList;
         this.havingItemList = havingItemList;
-        this.orderFieldList = orderFieldList;
+        this.orderItemList = orderItemList;
         this.skit = skit;
         this.limit = limit;
+        this.customStatementMap = customStatementMap;
+    }
+
+    public Map<Class<? extends Definition>, Param<SQLPartCustomDesc>> getCustomStatementMap() {
+        return customStatementMap;
     }
 
     public Class<S> getSelectModel() {
@@ -101,8 +116,8 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
         return havingItemList;
     }
 
-    public List<OrderBy.Item<F, ?>> getOrderFieldList() {
-        return orderFieldList;
+    public List<SortItem<F, ?>> getOrderItemList() {
+        return orderItemList;
     }
 
     public Param<Integer> getSkit() {

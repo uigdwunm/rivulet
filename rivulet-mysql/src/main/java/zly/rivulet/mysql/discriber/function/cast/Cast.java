@@ -3,13 +3,13 @@ package zly.rivulet.mysql.discriber.function.cast;
 import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.base.describer.custom.CustomCollector;
 import zly.rivulet.base.describer.custom.CustomSingleValueWrap;
-import zly.rivulet.sql.describer.function.SQLFunction;
+import zly.rivulet.sql.describer.function.Function;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-public class Cast<F, C> implements SQLFunction<F, C> {
+public class Cast<F, C> implements Function<F, C> {
 
     private final SingleValueElementDesc<F, C> value;
 

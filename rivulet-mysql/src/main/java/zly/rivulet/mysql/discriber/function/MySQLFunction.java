@@ -4,8 +4,8 @@ import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.mysql.discriber.function.cast.Cast;
 import zly.rivulet.sql.describer.function.Add;
-import zly.rivulet.sql.describer.function.SQLCommonFunction;
-import zly.rivulet.sql.describer.function.SQLFunction;
+import zly.rivulet.sql.describer.function.CommonFunction;
+import zly.rivulet.sql.describer.function.Function;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,21 +14,21 @@ import java.util.Arrays;
 
 public interface MySQLFunction {
 
-    static <F, C> SQLFunction<F, C> cast(SingleValueElementDesc<F, C> singleValue, Cast.Type castType) {
+    static <F, C> Function<F, C> cast(SingleValueElementDesc<F, C> singleValue, Cast.Type castType) {
         return new Cast<>(singleValue, castType);
     }
 
     interface Date {
-        static <F> SQLFunction<F, java.util.Date> curDateToDate() {
-            return new SQLCommonFunction<>("CURDATE", null);
+        static <F> Function<F, java.util.Date> curDateToDate() {
+            return new CommonFunction<>("CURDATE", null);
         }
 
-        static <F> SQLFunction<F, LocalDate> curDateToLocalDate() {
-            return new SQLCommonFunction<>("CURDATE", null);
+        static <F> Function<F, LocalDate> curDateToLocalDate() {
+            return new CommonFunction<>("CURDATE", null);
         }
 
-        static <F> SQLFunction<F, LocalDateTime> curDateToLocalDateTime() {
-            return new SQLCommonFunction<>("CURDATE", null);
+        static <F> Function<F, LocalDateTime> curDateToLocalDateTime() {
+            return new CommonFunction<>("CURDATE", null);
         }
 
     }
@@ -54,8 +54,8 @@ public interface MySQLFunction {
             return new Add<>(list);
         }
 
-        static <F> SQLFunction<F, Integer> powToInt(SingleValueElementDesc<F, Integer> left, SingleValueElementDesc<F, Integer> right) {
-            return new SQLCommonFunction<>("POW", Arrays.asList(left, right));
+        static <F> Function<F, Integer> powToInt(SingleValueElementDesc<F, Integer> left, SingleValueElementDesc<F, Integer> right) {
+            return new CommonFunction<>("POW", Arrays.asList(left, right));
         }
     }
 

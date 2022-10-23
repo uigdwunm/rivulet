@@ -1,14 +1,19 @@
 package zly.rivulet.sql.describer.query;
 
+import zly.rivulet.base.definition.Definition;
+import zly.rivulet.base.describer.custom.CustomDesc;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.sql.describer.query.builder.SelectBuilder;
+import zly.rivulet.sql.describer.custom.SQLPartCustomDesc;
+import zly.rivulet.sql.describer.query.builder.SelectByBuilder;
 import zly.rivulet.sql.describer.condition.Condition;
 import zly.rivulet.sql.describer.condition.ConditionContainer;
 import zly.rivulet.sql.describer.query.desc.Mapping;
-import zly.rivulet.sql.describer.query.desc.OrderBy;
+import zly.rivulet.sql.describer.query.desc.SortItem;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class QueryBuilder<F, S> {
     /**
@@ -48,7 +53,7 @@ public class QueryBuilder<F, S> {
     /**
      * order排序子项
      **/
-    protected List<OrderBy.Item<F, ?>> orderFieldList;
+    protected List<SortItem<F, ?>> orderItemList;
 
     /**
      * 跳过行数
@@ -60,8 +65,13 @@ public class QueryBuilder<F, S> {
      **/
     protected Param<Integer> limit;
 
-    public static <F, S> SelectBuilder<F, S> query(Class<F> from, Class<S> select) {
-        return new SelectBuilder<>(from, select);
+    /**
+     * 如果有自定义语句，后面解析的时候会替代原Definition进行解析
+     **/
+    protected Map<Class<? extends Definition>, Param<SQLPartCustomDesc>> customStatementMap = new HashMap<>();
+
+    public static <F, S> SelectByBuilder<F, S> query(Class<F> from, Class<S> select) {
+        return new SelectByBuilder<>(from, select);
     }
 
     public final SqlQueryMetaDesc<F, S> build() {
@@ -72,9 +82,10 @@ public class QueryBuilder<F, S> {
             this.whereConditionContainer,
             this.groupFieldList,
             this.havingItemList,
-            this.orderFieldList,
+            this.orderItemList,
             this.skit,
-            this.limit
+            this.limit,
+            customStatementMap
         );
     }
 }

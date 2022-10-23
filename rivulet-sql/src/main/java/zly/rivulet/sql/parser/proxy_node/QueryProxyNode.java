@@ -268,9 +268,10 @@ public class QueryProxyNode implements SelectNode, FromNode {
                         sqlQueryMetaDesc.getWhereConditionContainer(),
                         sqlQueryMetaDesc.getGroupFieldList(),
                         sqlQueryMetaDesc.getHavingItemList(),
-                        sqlQueryMetaDesc.getOrderFieldList(),
+                        sqlQueryMetaDesc.getOrderItemList(),
                         sqlQueryMetaDesc.getSkit(),
-                        sqlQueryMetaDesc.getLimit()
+                        sqlQueryMetaDesc.getLimit(),
+                        sqlQueryMetaDesc.getCustomStatementMap()
                     );
                 }
             } else {

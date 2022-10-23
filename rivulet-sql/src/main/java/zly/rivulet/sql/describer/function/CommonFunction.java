@@ -1,10 +1,8 @@
 package zly.rivulet.sql.describer.function;
 
-import com.sun.org.apache.xerces.internal.xs.datatypes.ObjectList;
 import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.base.describer.custom.CustomCollector;
 import zly.rivulet.base.describer.custom.CustomSingleValueWrap;
-import zly.rivulet.base.utils.collector.StatementCollector;
 
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -15,13 +13,13 @@ import java.util.function.BiConsumer;
  * @author zhaolaiyuan
  * Date 2022/10/16 13:27
  **/
-public  class SQLCommonFunction<F, C> implements SQLFunction<F, C> {
+public class CommonFunction<F, C> implements Function<F, C> {
 
     private final String functionName;
 
     private final List<SingleValueElementDesc<F, C>> functionBody;
 
-    public SQLCommonFunction(String functionName, List<SingleValueElementDesc<F, C>> functionBody) {
+    public CommonFunction(String functionName, List<SingleValueElementDesc<F, C>> functionBody) {
         this.functionName = functionName;
         this.functionBody = functionBody;
     }

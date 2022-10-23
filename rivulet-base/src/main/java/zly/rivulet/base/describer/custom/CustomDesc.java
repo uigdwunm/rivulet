@@ -1,12 +1,11 @@
 package zly.rivulet.base.describer.custom;
 
 import zly.rivulet.base.describer.SingleValueElementDesc;
-import zly.rivulet.base.utils.collector.StatementCollector;
 
 import java.util.List;
 import java.util.function.BiConsumer;
 
-public interface SQLCustomDesc {
+public interface CustomDesc {
 
     List<SingleValueElementDesc<?, ?>> getSingleValueList();
 

@@ -4,12 +4,16 @@ import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.definition.AbstractDefinition;
 import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
+import zly.rivulet.base.definition.param.ParamReceipt;
 import zly.rivulet.base.describer.WholeDesc;
+import zly.rivulet.base.describer.custom.CustomDesc;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.generator.statement.Statement;
 import zly.rivulet.base.parser.ParamReceiptManager;
+import zly.rivulet.base.utils.CollectionUtils;
 import zly.rivulet.base.utils.Constant;
+import zly.rivulet.base.utils.MapUtils;
 import zly.rivulet.sql.assigner.SQLQueryResultAssigner;
 import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
@@ -22,12 +26,14 @@ import zly.rivulet.sql.definition.query.operate.InOperateDefinition;
 import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
 import zly.rivulet.sql.describer.condition.Condition;
 import zly.rivulet.sql.describer.condition.ConditionContainer;
+import zly.rivulet.sql.describer.custom.SQLPartCustomDesc;
 import zly.rivulet.sql.describer.param.SqlParamCheckType;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
-import zly.rivulet.sql.describer.query.desc.OrderBy;
+import zly.rivulet.sql.describer.query.desc.SortItem;
 import zly.rivulet.sql.generator.statement.SqlStatement;
 import zly.rivulet.sql.parser.SQLAliasManager;
 import zly.rivulet.sql.parser.proxy_node.FromNode;
+import zly.rivulet.sql.parser.proxy_node.ProxyNodeManager;
 import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
@@ -35,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingleValueElementDefinition {
 
@@ -66,6 +73,8 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
 
     private final SQLAliasManager.AliasFlag aliasFlag = SQLAliasManager.createAlias();
 
+    private Map<Class<? extends Definition>, ParamReceipt> customStatementMap;
+
     private boolean isWarmUp = false;
 
     /**
@@ -76,8 +85,10 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
     public SqlQueryDefinition(SqlParserPortableToolbox toolbox, WholeDesc wholeDesc) {
         SqlQueryMetaDesc<?, ?> metaDesc = (SqlQueryMetaDesc<?, ?>) wholeDesc;
         this.aliasManager = new SQLAliasManager(toolbox.getConfigProperties());
+        this.paramReceiptManager = toolbox.getParamReceiptManager();
 
-        QueryProxyNode queryProxyNode = new QueryProxyNode(this, toolbox, metaDesc);
+        ProxyNodeManager proxyModelManager = toolbox.getSqlPreParser().getProxyModelManager();
+        QueryProxyNode queryProxyNode = proxyModelManager.getOrCreateQueryProxyNode(this, toolbox, metaDesc);
         toolbox.setQueryProxyNode(queryProxyNode);
 
         this.selectDefinition = new SelectDefinition(toolbox, metaDesc.getSelectModel(), queryProxyNode);
@@ -92,18 +103,18 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
         }
 
         List<? extends FieldMapping<?, ?>> groupFieldList = metaDesc.getGroupFieldList();
-        if (groupFieldList != null) {
+        if (CollectionUtils.isNotEmpty(groupFieldList)) {
             this.groupDefinition = new GroupDefinition(toolbox, groupFieldList);
             this.subDefinitionList.add(this.groupDefinition);
         }
         List<? extends Condition<?, ?>> havingItemList = metaDesc.getHavingItemList();
-        if (havingItemList != null) {
+        if (CollectionUtils.isNotEmpty(havingItemList)) {
             this.havingDefinition = new HavingDefinition(toolbox, havingItemList);
             this.subDefinitionList.add(this.havingDefinition);
         }
-        List<? extends OrderBy.Item<?, ?>> orderFieldList = metaDesc.getOrderFieldList();
-        if (orderFieldList != null) {
-            this.orderByDefinition = new OrderByDefinition(toolbox, orderFieldList);
+        List<? extends SortItem<?, ?>> orderItemList = metaDesc.getOrderItemList();
+        if (CollectionUtils.isNotEmpty(orderItemList)) {
+            this.orderByDefinition = new OrderByDefinition(toolbox, orderItemList);
             this.subDefinitionList.add(this.orderByDefinition);
         }
         Param<Integer> skit = metaDesc.getSkit();
@@ -117,9 +128,16 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
             this.subDefinitionList.add(this.limit);
         }
 
-        this.assigner = queryProxyNode.getAssigner();
+        Map<Class<? extends Definition>, Param<SQLPartCustomDesc>> customStatementMap = metaDesc.getCustomStatementMap();
+        if (MapUtils.isNotEmpty(customStatementMap)) {
+            this.customStatementMap = customStatementMap.entrySet().stream()
+                .collect(Collectors.toMap(
+                    Map.Entry::getKey,
+                    entry -> this.paramReceiptManager.registerParam(entry.getValue()))
+                );
+        }
 
-        this.paramReceiptManager = toolbox.getParamReceiptManager();
+        this.assigner = queryProxyNode.getAssigner();
 
         this.aliasManager.init(queryProxyNode);
     }
@@ -154,6 +172,7 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
             )
         );
         this.paramReceiptManager = toolbox.getParamReceiptManager();
+        this.customStatementMap = null;
     }
 
     public SqlQueryDefinition() {}

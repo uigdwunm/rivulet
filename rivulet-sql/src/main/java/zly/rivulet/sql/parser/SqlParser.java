@@ -4,10 +4,14 @@ import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.definer.ModelMeta;
 import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.definition.Blueprint;
+import zly.rivulet.base.definition.Definition;
+import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
 import zly.rivulet.base.describer.WholeDesc;
+import zly.rivulet.base.describer.custom.CustomDesc;
 import zly.rivulet.base.exception.DescDefineException;
 import zly.rivulet.base.exception.ParseException;
 import zly.rivulet.base.exception.UnbelievableException;
+import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.base.parser.Parser;
 import zly.rivulet.base.utils.TwofoldConcurrentHashMap;
 import zly.rivulet.base.utils.View;
@@ -16,12 +20,17 @@ import zly.rivulet.sql.SqlRivuletProperties;
 import zly.rivulet.sql.definer.SqlDefiner;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
+import zly.rivulet.sql.definition.SQLCustomDefinition;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.definition.update.SqlUpdateDefinition;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.update.SqlUpdateMetaDesc;
 import zly.rivulet.sql.parser.proxy_node.ProxyNodeManager;
+import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Description 解析器
@@ -40,7 +49,7 @@ public class SqlParser implements Parser {
 
     private final WarehouseManager warehouseManager;
 
-    private final ProxyNodeManager proxyNodeManager;
+    private final ProxyNodeManager proxyNodeManager = new ProxyNodeManager();
 
     private final TwofoldConcurrentHashMap<ModelMeta, RivuletFlag, Blueprint> modelMetaFlagBlueprintMap = new TwofoldConcurrentHashMap<>();
 
@@ -49,7 +58,6 @@ public class SqlParser implements Parser {
         this.configProperties = configProperties;
         this.convertorManager = convertorManager;
         this.definer = definer;
-        this.proxyNodeManager = new ProxyNodeManager(this);
     }
 
     public WholeDesc getWholeDesc(String key) {
@@ -170,6 +178,14 @@ public class SqlParser implements Parser {
     @Override
     public SqlDefiner getDefiner() {
         return this.definer;
+    }
+
+    public SQLCustomDefinition parseCustom(ParamReceiptManager paramReceiptManager, SqlQueryDefinition sqlQueryDefinition, CustomDesc customDesc) {
+        QueryProxyNode queryProxyNode = proxyNodeManager.getQueryProxyNode(sqlQueryDefinition);
+        List<SingleValueElementDefinition> singleValueList = customDesc.getSingleValueList().stream()
+            .map(singleValueElementDesc -> SqlParserPortableToolbox.parseSingleValueForCustom(paramReceiptManager, queryProxyNode, singleValueElementDesc))
+            .collect(Collectors.toList());
+        return new SQLCustomDefinition(singleValueList, customDesc.getCustomCollect());
     }
 
     public SqlRivuletProperties getConfigProperties() {

@@ -5,21 +5,21 @@ import zly.rivulet.sql.describer.condition.ConditionContainer;
 
 import java.util.Arrays;
 
-public class WhereBuilder<F, S> extends GroupBuilder<F, S> {
+public class WhereByBuilder<F, S> extends GroupByBuilder<F, S> {
 
     @SafeVarargs
-    public final GroupBuilder<F, S> where(Condition<F, ?>... items) {
+    public final GroupByBuilder<F, S> where(Condition<F, ?>... items) {
         return this.whereAnd(items);
     }
 
     @SafeVarargs
-    public final GroupBuilder<F, S> whereAnd(Condition<F, ?>... items) {
+    public final GroupByBuilder<F, S> whereAnd(Condition<F, ?>... items) {
         super.whereConditionContainer = new ConditionContainer.AND<>(Arrays.asList(items));
         return this;
     }
 
     @SafeVarargs
-    public final GroupBuilder<F, S> whereOr(Condition<F, ?>... items) {
+    public final GroupByBuilder<F, S> whereOr(Condition<F, ?>... items) {
         super.whereConditionContainer = new ConditionContainer.OR<>(Arrays.asList(items));
         return this;
     }

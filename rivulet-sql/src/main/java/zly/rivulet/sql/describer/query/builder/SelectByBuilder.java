@@ -1,20 +1,18 @@
 package zly.rivulet.sql.describer.query.builder;
 
-import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.query.desc.Mapping;
 
 import java.util.Arrays;
-import java.util.Collections;
 
-public class SelectBuilder<F, S> extends WhereBuilder<F, S> {
+public class SelectByBuilder<F, S> extends WhereByBuilder<F, S> {
 
-    public SelectBuilder(Class<F> from, Class<S> select) {
+    public SelectByBuilder(Class<F> from, Class<S> select) {
         super.modelFrom = from;
         super.selectModel = select;
     }
 
     @SafeVarargs
-    public final WhereBuilder<F, S> select(Mapping<F, S, ?> ... items) {
+    public final WhereByBuilder<F, S> select(Mapping<F, S, ?> ... items) {
         super.mappedItemList = Arrays.asList(items);
         return this;
     }

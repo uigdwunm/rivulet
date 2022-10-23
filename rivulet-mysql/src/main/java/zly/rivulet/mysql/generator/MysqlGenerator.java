@@ -62,6 +62,7 @@ public class MysqlGenerator implements Generator {
         // 有排序的容器不能缓存
 
         GenerateToolbox toolbox = new GenerateToolbox(paramManager, sqlBlueprint);
+        // TODO 在这里把custom要替换的Definition放到toolbox中
         SqlStatement rootStatement = sqlStatementFactory.getOrCreate(sqlBlueprint, toolbox);
         return new MySQLFish(sqlBlueprint, rootStatement);
     }

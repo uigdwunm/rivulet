@@ -4,7 +4,7 @@ import zly.rivulet.base.describer.field.FieldMapping;
 
 import java.util.Arrays;
 
-public class GroupBuilder<F, S> extends HavingBuilder<F, S> {
+public class GroupByBuilder<F, S> extends HavingBuilder<F, S> {
 
 
     @SafeVarargs

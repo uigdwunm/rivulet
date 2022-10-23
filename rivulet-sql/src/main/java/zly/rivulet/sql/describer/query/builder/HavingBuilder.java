@@ -4,10 +4,10 @@ import zly.rivulet.sql.describer.condition.Condition;
 
 import java.util.Arrays;
 
-public class HavingBuilder<F, S> extends OrderBuilder<F, S> {
+public class HavingBuilder<F, S> extends OrderByBuilder<F, S> {
 
     @SafeVarargs
-    public final OrderBuilder<F, S> having(Condition<F, ?>... items) {
+    public final OrderByBuilder<F, S> having(Condition<F, ?>... items) {
         super.havingItemList = Arrays.asList(items);
         return this;
     }

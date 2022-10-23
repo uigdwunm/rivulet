@@ -2,7 +2,7 @@ package zly.rivulet.sql.describer.function;
 
 import zly.rivulet.base.describer.SingleValueElementDesc;
 
-public class Divide<F, C> implements SQLFunction<F, C> {
+public class Divide<F, C> implements Function<F, C> {
 
     /**
      * 被除数
