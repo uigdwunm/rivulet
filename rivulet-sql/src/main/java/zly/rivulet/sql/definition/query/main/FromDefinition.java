@@ -8,8 +8,8 @@ import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.describer.join.ComplexDescriber;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.parser.SQLAliasManager;
-import zly.rivulet.sql.parser.node.ModelProxyNode;
 import zly.rivulet.sql.parser.proxy_node.FromNode;
+import zly.rivulet.sql.parser.proxy_node.MetaModelProxyNode;
 import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
@@ -43,8 +43,8 @@ public class FromDefinition extends AbstractDefinition {
                 .collect(Collectors.toList());
         } else {
             // 单表查询对象,node里一定有一个唯一的fromNode
-            ModelProxyNode modelProxyNode = (ModelProxyNode) proxyNode.getFromNodeList().get(0);
-            this.mainFrom = modelProxyNode.getModelMeta();
+            MetaModelProxyNode modelProxyNode = (MetaModelProxyNode) proxyNode.getFromNodeList().get(0);
+            this.mainFrom = modelProxyNode.getQueryFromMeta();
             this.mainFromAliasFlag = modelProxyNode.getAliasFlag();
             this.joinRelations = Collections.emptyList();
         }

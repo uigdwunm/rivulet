@@ -22,8 +22,10 @@ import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
+import zly.rivulet.sql.definition.update.SqlUpdateDefinition;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.query.desc.Mapping;
+import zly.rivulet.sql.describer.update.SqlUpdateMetaDesc;
 import zly.rivulet.sql.exception.SQLDescDefineException;
 import zly.rivulet.sql.parser.SQLAliasManager;
 import zly.rivulet.sql.parser.SqlParser;
@@ -64,6 +66,12 @@ public class QueryProxyNode implements SelectNode, FromNode {
     private final SQLAliasManager.AliasFlag aliasFlag = SQLAliasManager.createAlias();
 
 
+    /**
+     * Description queryDesc形式的解析
+     *
+     * @author zhaolaiyuan
+     * Date 2022/10/24 8:27
+     **/
     public QueryProxyNode(SqlQueryDefinition sqlQueryDefinition, SqlParserPortableToolbox toolbox, SqlQueryMetaDesc<?, ?> sqlQueryMetaDesc) {
         this.sqlQueryDefinition = sqlQueryDefinition;
         Class<?> fromModelClass = sqlQueryMetaDesc.getMainFrom();
@@ -116,7 +124,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
     }
 
     /**
-     * Description
+     * Description query的MetaModel模型解析
      *
      * @author zhaolaiyuan
      * Date 2022/10/16 11:37
@@ -132,6 +140,26 @@ public class QueryProxyNode implements SelectNode, FromNode {
         PairReturn<List<SelectNode>, SQLQueryResultAssigner> pairReturn = this.parseSelectNodeListAndAssignerByMetaModel(metaModelProxyNode);
         selectNodeList = pairReturn.getLeft();
         assigner = pairReturn.getRight();
+    }
+
+    /**
+     * Description update的desc解析
+     *
+     * @author zhaolaiyuan
+     * Date 2022/10/24 8:36
+     **/
+    public QueryProxyNode(SqlParserPortableToolbox toolbox, SqlUpdateMetaDesc<?> metaDesc) {
+        Class<?> fromModelClass = metaDesc.getMainFrom();
+
+        // from只能是表模型
+        MetaModelProxyNode metaModelProxyNode = new MetaModelProxyNode(toolbox, fromModelClass);
+        this.proxyModel = metaModelProxyNode.getProxyModel();
+        this.fromNodeList = Collections.singletonList(metaModelProxyNode);
+
+        // 没有select不需要
+        this.sqlQueryDefinition = null;
+        selectNodeList = null;
+        assigner = null;
     }
 
     private PairReturn<List<SelectNode>, SQLQueryResultAssigner> parseSelectNodeListAndAssignerByComplexModel(

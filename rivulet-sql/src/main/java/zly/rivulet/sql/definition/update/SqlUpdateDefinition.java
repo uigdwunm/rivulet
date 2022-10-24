@@ -23,7 +23,7 @@ import zly.rivulet.sql.describer.param.SqlParamCheckType;
 import zly.rivulet.sql.describer.update.SqlUpdateMetaDesc;
 import zly.rivulet.sql.exception.SQLDescDefineException;
 import zly.rivulet.sql.parser.SQLAliasManager;
-import zly.rivulet.sql.parser.node.QueryProxyNode;
+import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 public class SqlUpdateDefinition implements SQLBlueprint {
@@ -47,10 +47,10 @@ public class SqlUpdateDefinition implements SQLBlueprint {
             // 仅支持单表更新
             throw SQLDescDefineException.unSupportMultiModelUpdate();
         }
-        QueryProxyNode queryProxyNode = new QueryProxyNode(toolbox, mainFrom);
-        toolbox.setCurrNode(queryProxyNode);
+        QueryProxyNode queryProxyNode = new QueryProxyNode(toolbox, metaDesc);
+        toolbox.setQueryProxyNode(queryProxyNode);
 
-        this.fromDefinition = new FromDefinition(toolbox, metaDesc);
+        this.fromDefinition = new FromDefinition(toolbox);
 
         this.setDefinition = new SetDefinition(toolbox, metaDesc.getMappedItemList());
 

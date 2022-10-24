@@ -17,23 +17,27 @@ import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.field.FieldDefinition;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
+import zly.rivulet.sql.definition.query.mapping.MapDefinition;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.query.desc.Mapping;
 import zly.rivulet.sql.parser.SqlParser;
 import zly.rivulet.sql.parser.node.FromNode;
 import zly.rivulet.sql.parser.node.QueryProxyNode;
+import zly.rivulet.sql.parser.proxy_node.FromNode;
+import zly.rivulet.sql.parser.proxy_node.MetaModelProxyNode;
+import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 public class SetItemDefinition extends AbstractDefinition {
 
-    private final FieldDefinition fieldDefinition;
+    private final MapDefinition fieldMap;
 
     private final SingleValueElementDefinition valueDefinition;
 
-    public SetItemDefinition(SqlParserPortableToolbox toolbox, FieldDefinition fieldDefinition, Param<?> param) {
+    public SetItemDefinition(SqlParserPortableToolbox toolbox, MapDefinition fieldMap, Param<?> param) {
         super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
 
-        this.fieldDefinition = fieldDefinition;
+        this.fieldMap = fieldMap;
         this.valueDefinition = this.parseSingleValue(toolbox, param);
     }
 
@@ -42,18 +46,18 @@ public class SetItemDefinition extends AbstractDefinition {
 
         this.valueDefinition = this.parseSingleValue(toolbox, mapping.getDesc());
 
-        QueryProxyNode currNode = toolbox.getCurrNode();
+        QueryProxyNode currNode = toolbox.getQueryProxyNode();
         // 更新模型仅支持单个 model，所以直接取第一个
-        FromNode fromNode = currNode.getFromNodeList().get(0);
-        SQLModelMeta modelMeta = this.getModelMeta(toolbox);
+        MetaModelProxyNode metaModelProxyNode = (MetaModelProxyNode) currNode.getFromNodeList().get(0);
+        SQLModelMeta modelMeta = metaModelProxyNode.getQueryFromMeta();
         SQLFieldMeta fieldMeta = getFieldName(modelMeta, mapping);
-        this.fieldDefinition = new FieldDefinition(fromNode.getAliasFlag(), modelMeta, fieldMeta);
+        this.fieldMap = new MapDefinition(fieldMeta, fromNode.getAliasFlag(), null);
     }
 
     private SQLModelMeta getModelMeta(SqlParserPortableToolbox toolbox) {
         QueryProxyNode currNode = toolbox.getCurrNode();
         SqlDefiner sqlDefiner = (SqlDefiner) toolbox.getSqlPreParser().getDefiner();
-        Class<?> fromModelClass = currNode.getFromModelClass();
+        Class<?> fromModelClass = currNode.getfr();
         return sqlDefiner.createOrGetModelMeta(fromModelClass);
     }
 
