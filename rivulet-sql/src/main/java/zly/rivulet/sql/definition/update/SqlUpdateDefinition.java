@@ -42,6 +42,7 @@ public class SqlUpdateDefinition implements SQLBlueprint {
 
     public SqlUpdateDefinition(SqlParserPortableToolbox toolbox, WholeDesc wholeDesc) {
         SqlUpdateMetaDesc<?> metaDesc = (SqlUpdateMetaDesc<?>) wholeDesc;
+        this.aliasManager = new SQLAliasManager(toolbox.getConfigProperties());
         Class<?> mainFrom = metaDesc.getMainFrom();
         if (ClassUtils.isExtend(QueryComplexModel.class, mainFrom)) {
             // 仅支持单表更新
@@ -59,8 +60,8 @@ public class SqlUpdateDefinition implements SQLBlueprint {
             this.whereDefinition = new WhereDefinition(toolbox, whereConditionContainer);
         }
 
-        this.aliasManager = SQLAliasManager.create(toolbox.getConfigProperties(), queryProxyNode);
         this.paramReceiptManager = toolbox.getParamReceiptManager();
+        this.aliasManager.init(queryProxyNode);
 
     }
 
@@ -70,8 +71,8 @@ public class SqlUpdateDefinition implements SQLBlueprint {
             // 仅支持单表更新
             throw SQLDescDefineException.unSupportMultiModelUpdate();
         }
-        QueryProxyNode queryProxyNode = new QueryProxyNode(toolbox, mainFrom);
-        toolbox.setCurrNode(queryProxyNode);
+        QueryProxyNode queryProxyNode = new QueryProxyNode(toolbox, sqlModelMeta);
+        toolbox.setQueryProxyNode(queryProxyNode);
 
         this.fromDefinition = new FromDefinition(toolbox, metaDesc);
 
