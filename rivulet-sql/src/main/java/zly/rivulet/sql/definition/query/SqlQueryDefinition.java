@@ -4,13 +4,9 @@ import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.definition.AbstractDefinition;
 import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
-import zly.rivulet.base.definition.param.ParamReceipt;
 import zly.rivulet.base.describer.WholeDesc;
-import zly.rivulet.base.describer.custom.CustomDesc;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.base.generator.statement.Statement;
-import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.base.utils.CollectionUtils;
 import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.MapUtils;
@@ -30,7 +26,6 @@ import zly.rivulet.sql.describer.custom.SQLPartCustomDesc;
 import zly.rivulet.sql.describer.param.SqlParamCheckType;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.query.desc.SortItem;
-import zly.rivulet.sql.generator.statement.SqlStatement;
 import zly.rivulet.sql.parser.SQLAliasManager;
 import zly.rivulet.sql.parser.proxy_node.FromNode;
 import zly.rivulet.sql.parser.proxy_node.ProxyNodeManager;
@@ -40,10 +35,9 @@ import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingleValueElementDefinition {
+public class SqlQueryDefinition extends SQLBlueprint implements QueryFromMeta, SQLSingleValueElementDefinition {
 
     private final RivuletFlag flag = RivuletFlag.QUERY;
 
@@ -67,24 +61,10 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
 
     private final List<AbstractDefinition> subDefinitionList = new ArrayList<>();
 
-    private ParamReceiptManager paramReceiptManager;
-
-    private SQLAliasManager aliasManager;
-
     private final SQLAliasManager.AliasFlag aliasFlag = SQLAliasManager.createAlias();
-
-    private Map<Class<? extends Definition>, ParamReceipt> customStatementMap;
-
-    private boolean isWarmUp = false;
-
-    /**
-     * definition类和statement之间的缓存映射
-     **/
-    private final Map<Definition, SqlStatement> statementCache = new ConcurrentHashMap<>();
 
     public SqlQueryDefinition(SqlParserPortableToolbox toolbox, WholeDesc wholeDesc) {
         SqlQueryMetaDesc<?, ?> metaDesc = (SqlQueryMetaDesc<?, ?>) wholeDesc;
-        this.aliasManager = new SQLAliasManager(toolbox.getConfigProperties());
         this.paramReceiptManager = toolbox.getParamReceiptManager();
 
         ProxyNodeManager proxyModelManager = toolbox.getSqlPreParser().getProxyModelManager();
@@ -139,6 +119,7 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
 
         this.assigner = queryProxyNode.getAssigner();
 
+        this.aliasManager = new SQLAliasManager(toolbox.getConfigProperties());
         this.aliasManager.init(queryProxyNode);
     }
 
@@ -173,6 +154,7 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
         );
         this.paramReceiptManager = toolbox.getParamReceiptManager();
         this.customStatementMap = null;
+        this.aliasManager.init(queryProxyNode);
     }
 
     public SqlQueryDefinition() {}
@@ -244,16 +226,6 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
     }
 
     @Override
-    public SQLAliasManager getAliasManager() {
-        return aliasManager;
-    }
-
-    @Override
-    public Map<Class<? extends Definition>, ParamReceipt> getCustomStatementMap() {
-        return this.customStatementMap;
-    }
-
-    @Override
     public RivuletFlag getFlag() {
         return this.flag;
     }
@@ -263,33 +235,8 @@ public class SqlQueryDefinition implements SQLBlueprint, QueryFromMeta, SQLSingl
         return this.assigner;
     }
 
-    @Override
-    public ParamReceiptManager getParamReceiptManager() {
-        return paramReceiptManager;
-    }
-
     public SQLAliasManager.AliasFlag getAliasFlag() {
         return this.aliasFlag;
-    }
-
-    @Override
-    public void putStatement(Definition key, Statement sqlStatement) {
-        this.statementCache.put(key, (SqlStatement) sqlStatement);
-    }
-
-    @Override
-    public SqlStatement getStatement(Definition key) {
-        return this.statementCache.get(key);
-    }
-
-    @Override
-    public boolean isWarmUp() {
-        return this.isWarmUp;
-    }
-
-    @Override
-    public void finishWarmUp() {
-        this.isWarmUp = true;
     }
 
 }

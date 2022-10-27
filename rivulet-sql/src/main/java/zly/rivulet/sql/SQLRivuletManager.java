@@ -15,6 +15,7 @@ import zly.rivulet.base.generator.param_manager.ParamManager;
 import zly.rivulet.base.parser.Parser;
 import zly.rivulet.base.utils.ClassUtils;
 import zly.rivulet.base.utils.CollectionUtils;
+import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.collector.FixedLengthStatementCollector;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.base.warehouse.WarehouseManager;
@@ -118,8 +119,7 @@ public abstract class SQLRivuletManager extends RivuletManager {
     public <T, I> T queryById(I id, Class<T> modelClass) {
         ModelMeta modelMeta = definer.createOrGetModelMeta(modelClass);
         Blueprint blueprint = this.parser.parseSelectByMeta(modelMeta);
-        this.queryOneByBlueprint(blueprint, )
-        return null;
+        return this.queryOneByBlueprint(blueprint, Collections.singletonMap(Constant.MAIN_ID, id));
     }
 
     @Override
@@ -146,9 +146,7 @@ public abstract class SQLRivuletManager extends RivuletManager {
     public <T, I> List<T> queryByIds(Collection<I> ids, Class<T> modelClass) {
         ModelMeta modelMeta = definer.createOrGetModelMeta(modelClass);
         Blueprint blueprint = this.parser.parseSelectByMeta(modelMeta);
-        this.queryManyByBlueprint(blueprint, )
-        // TODO
-        return null;
+        return this.queryManyByBlueprint(blueprint, Collections.singletonMap(Constant.MAIN_IDS, ids))
     }
 
     @Override

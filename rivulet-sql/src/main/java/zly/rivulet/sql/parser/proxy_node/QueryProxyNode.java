@@ -148,9 +148,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
      * @author zhaolaiyuan
      * Date 2022/10/24 8:36
      **/
-    public QueryProxyNode(SqlParserPortableToolbox toolbox, SqlUpdateMetaDesc<?> metaDesc) {
-        Class<?> fromModelClass = metaDesc.getMainFrom();
-
+    public QueryProxyNode(SqlParserPortableToolbox toolbox, Class<?> fromModelClass) {
         // from只能是表模型
         MetaModelProxyNode metaModelProxyNode = new MetaModelProxyNode(toolbox, fromModelClass);
         this.proxyModel = metaModelProxyNode.getProxyModel();

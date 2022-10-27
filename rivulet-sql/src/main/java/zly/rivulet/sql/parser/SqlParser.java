@@ -81,19 +81,19 @@ public class SqlParser implements Parser {
         return this.parseByDesc(wholeDesc, sqlPreParseHelper);
     }
 
-    public Blueprint parseByDesc(WholeDesc wholeDesc, SqlParserPortableToolbox sqlPreParseHelper) {
+    public Blueprint parseByDesc(WholeDesc wholeDesc, SqlParserPortableToolbox toolbox) {
         // 检查有没有循环嵌套的子查询，并保存当前desc，后续解析继续检查
-        sqlPreParseHelper.checkSubQueryCycle(wholeDesc);
+        toolbox.checkSubQueryCycle(wholeDesc);
 
         Blueprint blueprint;
         if (wholeDesc instanceof SqlQueryMetaDesc) {
             // 查询方法
-            blueprint = new SqlQueryDefinition(sqlPreParseHelper, wholeDesc);
+            blueprint = new SqlQueryDefinition(toolbox, wholeDesc);
 //        } else if () {
 //            // 新增
         } else if (wholeDesc instanceof SqlUpdateMetaDesc) {
             // 修改
-            blueprint = new SqlUpdateDefinition(sqlPreParseHelper, wholeDesc);
+            blueprint = new SqlUpdateDefinition(toolbox, wholeDesc);
 
 //        } else if () {
 //            // 删除
@@ -103,7 +103,7 @@ public class SqlParser implements Parser {
         }
 
         // 解析完成，撤销检查
-        sqlPreParseHelper.finishParse(wholeDesc);
+        toolbox.finishParse(wholeDesc);
 
         return blueprint;
     }

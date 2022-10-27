@@ -9,13 +9,14 @@ import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.base.utils.ClassUtils;
 import zly.rivulet.base.utils.Constant;
+import zly.rivulet.sql.assigner.SQLUpdateResultAssigner;
 import zly.rivulet.sql.definer.QueryComplexModel;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
-import zly.rivulet.sql.definition.field.FieldDefinition;
 import zly.rivulet.sql.definition.query.SQLBlueprint;
 import zly.rivulet.sql.definition.query.main.FromDefinition;
 import zly.rivulet.sql.definition.query.main.WhereDefinition;
+import zly.rivulet.sql.definition.query.mapping.MapDefinition;
 import zly.rivulet.sql.definition.query.operate.AndOperateDefinition;
 import zly.rivulet.sql.definition.query.operate.EqOperateDefinition;
 import zly.rivulet.sql.describer.condition.ConditionContainer;
@@ -23,10 +24,12 @@ import zly.rivulet.sql.describer.param.SqlParamCheckType;
 import zly.rivulet.sql.describer.update.SqlUpdateMetaDesc;
 import zly.rivulet.sql.exception.SQLDescDefineException;
 import zly.rivulet.sql.parser.SQLAliasManager;
+import zly.rivulet.sql.parser.proxy_node.FromNode;
+import zly.rivulet.sql.parser.proxy_node.ProxyNodeManager;
 import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
-public class SqlUpdateDefinition implements SQLBlueprint {
+public class SqlUpdateDefinition extends SQLBlueprint {
 
     private final RivuletFlag flag = RivuletFlag.UPDATE;
 
@@ -36,9 +39,7 @@ public class SqlUpdateDefinition implements SQLBlueprint {
 
     private WhereDefinition whereDefinition;
 
-    private SQLAliasManager aliasManager;
-
-    private ParamReceiptManager paramReceiptManager;
+    private SQLUpdateResultAssigner assigner;
 
     public SqlUpdateDefinition(SqlParserPortableToolbox toolbox, WholeDesc wholeDesc) {
         SqlUpdateMetaDesc<?> metaDesc = (SqlUpdateMetaDesc<?>) wholeDesc;
@@ -48,7 +49,9 @@ public class SqlUpdateDefinition implements SQLBlueprint {
             // 仅支持单表更新
             throw SQLDescDefineException.unSupportMultiModelUpdate();
         }
-        QueryProxyNode queryProxyNode = new QueryProxyNode(toolbox, metaDesc);
+        ProxyNodeManager proxyModelManager = toolbox.getSqlPreParser().getProxyModelManager();
+        proxyModelManager.getOrCreateQueryProxyNode(this, toolbox, metaDesc);
+        QueryProxyNode queryProxyNode = new QueryProxyNode(toolbox, metaDesc.getMainFrom());
         toolbox.setQueryProxyNode(queryProxyNode);
 
         this.fromDefinition = new FromDefinition(toolbox);
@@ -62,7 +65,7 @@ public class SqlUpdateDefinition implements SQLBlueprint {
 
         this.paramReceiptManager = toolbox.getParamReceiptManager();
         this.aliasManager.init(queryProxyNode);
-
+        this.assigner = new SQLUpdateResultAssigner();
     }
 
     public SqlUpdateDefinition(SqlParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta, SQLFieldMeta primaryKey) {
@@ -71,22 +74,22 @@ public class SqlUpdateDefinition implements SQLBlueprint {
             // 仅支持单表更新
             throw SQLDescDefineException.unSupportMultiModelUpdate();
         }
-        QueryProxyNode queryProxyNode = new QueryProxyNode(toolbox, sqlModelMeta);
+        QueryProxyNode queryProxyNode = new QueryProxyNode(toolbox, sqlModelMeta.getModelClass());
         toolbox.setQueryProxyNode(queryProxyNode);
 
-        this.fromDefinition = new FromDefinition(toolbox, metaDesc);
+        this.fromDefinition = new FromDefinition(toolbox);
 
         this.setDefinition = new SetDefinition(toolbox, sqlModelMeta);
 
         Param<? extends SQLFieldMeta> mainIdParam = Param.of(primaryKey.getClass(), Constant.MAIN_ID, SqlParamCheckType.NATURE);
-        Param<? extends SQLFieldMeta> mainIdsParam = Param.of(primaryKey.getClass(), Constant.MAIN_IDS, SqlParamCheckType.NATURE);
+        FromNode fromNode = queryProxyNode.getFromNode(0);
         this.whereDefinition = new WhereDefinition(
             toolbox,
             new AndOperateDefinition(
                 toolbox,
                 new EqOperateDefinition(
                     toolbox,
-                    new FieldDefinition(null, sqlModelMeta, primaryKey),
+                    new MapDefinition(primaryKey, fromNode.getAliasFlag(), null),
                     mainIdParam,
                     CheckCondition.notNull(mainIdParam)
 
@@ -94,8 +97,10 @@ public class SqlUpdateDefinition implements SQLBlueprint {
             )
         );
 
-        this.aliasManager = SQLAliasManager.create(toolbox.getConfigProperties(), queryProxyNode);
         this.paramReceiptManager = toolbox.getParamReceiptManager();
+
+        this.aliasManager = new SQLAliasManager(toolbox.getConfigProperties());
+        this.aliasManager.init(queryProxyNode);
     }
 
     @Override
@@ -105,13 +110,9 @@ public class SqlUpdateDefinition implements SQLBlueprint {
 
     @Override
     public Assigner<?> getAssigner() {
-        return null;
+        return this.assigner;
     }
 
-    @Override
-    public ParamReceiptManager getParamReceiptManager() {
-        return this.paramReceiptManager;
-    }
 
     @Override
     public Definition forAnalyze() {
@@ -125,6 +126,18 @@ public class SqlUpdateDefinition implements SQLBlueprint {
 
     public FromDefinition getFromDefinition() {
         return fromDefinition;
+    }
+
+    public void setFromDefinition(FromDefinition fromDefinition) {
+        this.fromDefinition = fromDefinition;
+    }
+
+    public void setSetDefinition(SetDefinition setDefinition) {
+        this.setDefinition = setDefinition;
+    }
+
+    public void setWhereDefinition(WhereDefinition whereDefinition) {
+        this.whereDefinition = whereDefinition;
     }
 
     public SetDefinition getSetDefinition() {

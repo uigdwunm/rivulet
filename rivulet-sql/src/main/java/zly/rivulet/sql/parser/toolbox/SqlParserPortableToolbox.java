@@ -187,6 +187,12 @@ public class SqlParserPortableToolbox implements ParserPortableToolbox {
         subQueryCycleCheck.remove(wholeDesc);
     }
 
+    /**
+     * Description 重复检查，true是检查通过，false是不通过存在重复
+     *
+     * @author zhaolaiyuan
+     * Date 2022/10/27 8:41
+     **/
     public boolean repeatProxyNodeCheck(QueryProxyNode queryProxyNode) {
         return repeatProxyNodeCheck.add(queryProxyNode);
     }
