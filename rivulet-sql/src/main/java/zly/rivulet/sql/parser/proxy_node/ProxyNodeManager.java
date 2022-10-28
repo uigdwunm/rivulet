@@ -2,7 +2,6 @@ package zly.rivulet.sql.parser.proxy_node;
 
 import zly.rivulet.base.definer.annotations.RivuletDesc;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
-import zly.rivulet.sql.definition.query.SQLBlueprint;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.definition.update.SqlUpdateDefinition;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
@@ -17,7 +16,7 @@ public final class ProxyNodeManager {
     /**
      * 专用于DOModel智能update保存的proxyNode
      **/
-    private final Map<SQLModelMeta, MetaModelProxyNode> forUpdateProxyNodeMap = new ConcurrentHashMap<>();
+    private final Map<SQLModelMeta, MetaModelProxyNode> metaModelProxyNodeMap = new ConcurrentHashMap<>();
 
     /**
      * Description 缓存起来，用于解析运行时手动创建的Definition （比如运行是手动指定sort部分definition）
@@ -33,14 +32,14 @@ public final class ProxyNodeManager {
      * @author zhaolaiyuan
      * Date 2022/10/8 19:42
      **/
-    public MetaModelProxyNode getOrCreateProxyMetaModelForModelUpdate(SQLModelMeta sqlModelMeta) {
-        MetaModelProxyNode metaModelProxyNode = forUpdateProxyNodeMap.get(sqlModelMeta);
-        if (metaModelProxyNode == null) {
+    public MetaModelProxyNode getOrCreateProxyMetaModel(SQLModelMeta sqlModelMeta) {
+        MetaModelProxyNode metaModelProxyNode = metaModelProxyNodeMap.get(sqlModelMeta);
+        if (metaModelProxyNode != null) {
             return metaModelProxyNode;
         }
 
         metaModelProxyNode = new MetaModelProxyNode(sqlModelMeta);
-        forUpdateProxyNodeMap.put(sqlModelMeta, metaModelProxyNode);
+        metaModelProxyNodeMap.put(sqlModelMeta, metaModelProxyNode);
         return metaModelProxyNode;
     }
 
@@ -50,24 +49,26 @@ public final class ProxyNodeManager {
         SqlParserPortableToolbox toolbox,
         SqlQueryMetaDesc<?, ?> metaDesc
     ) {
-        QueryProxyNode queryProxyNode;
         RivuletDesc rivuletDesc = metaDesc.getAnnotation();
         if (rivuletDesc == null) {
-            queryProxyNode = new QueryProxyNode(sqlQueryDefinition, toolbox, metaDesc);
-        } else {
-            String key = rivuletDesc.value();
-            queryProxyNode = this.queryProxyNodeMap.get(key);
-            if (queryProxyNode == null) {
-                queryProxyNode = new QueryProxyNode(sqlQueryDefinition, toolbox, metaDesc);
-                this.queryProxyNodeMap.put(key, queryProxyNode);
-            }
-            if (!toolbox.repeatProxyNodeCheck(queryProxyNode)) {
+            return new QueryProxyNode(sqlQueryDefinition, toolbox, metaDesc);
+        }
+        // 从缓存取
+        QueryProxyNode queryProxyNode = this.queryProxyNodeMap.get(rivuletDesc.value());
+        if (queryProxyNode != null) {
+            if (toolbox.repeatProxyNodeCheck(queryProxyNode)) {
+                return queryProxyNode;
+            } else {
                 // 整个语句中会可能会有多个子查询，每个子查询必须要有自己的ProxyNode，要不解析会乱套
                 // 所以从缓存拿ProxyNode没问题，但是只能拿一次，如果出现重复的，一定得新建
-                queryProxyNode = new QueryProxyNode(sqlQueryDefinition, toolbox, metaDesc);
+                return new QueryProxyNode(sqlQueryDefinition, toolbox, metaDesc);
             }
+        } else {
+            // 缓存中没有
+            queryProxyNode = new QueryProxyNode(sqlQueryDefinition, toolbox, metaDesc);
+            this.queryProxyNodeMap.put(rivuletDesc.value(), queryProxyNode);
+            return queryProxyNode;
         }
-        return queryProxyNode;
     }
 
     public QueryProxyNode getOrCreateQueryProxyNode(
@@ -75,19 +76,19 @@ public final class ProxyNodeManager {
         SqlParserPortableToolbox toolbox,
         SqlUpdateMetaDesc<?> metaDesc
     ) {
-        QueryProxyNode queryProxyNode;
-        if (metaDesc.getAnnotation() == null) {
-            queryProxyNode = new QueryProxyNode(toolbox, metaDesc.getMainFrom());
-        } else {
-            queryProxyNode = this.queryProxyNodeMap.get(metaDesc.getAnnotation().value());
+        RivuletDesc rivuletDesc = metaDesc.getAnnotation();
+        if (rivuletDesc == null) {
+            return new QueryProxyNode(toolbox, metaDesc.getMainFrom());
         }
-        if (queryProxyNode == null) {
-            queryProxyNode = new QueryProxyNode(toolbox, metaDesc.getMainFrom());
-            this.queryProxyNodeMap.put(, queryProxyNode);
-        }
-        // update不用检查重复，因为update一定是最外层才有的
-        return queryProxyNode;
 
+        QueryProxyNode queryProxyNode = this.queryProxyNodeMap.get(rivuletDesc.value());
+        if (queryProxyNode != null) {
+            return queryProxyNode;
+        }
+
+        queryProxyNode = new QueryProxyNode(toolbox, metaDesc.getMainFrom());
+        this.queryProxyNodeMap.put(rivuletDesc.value(), queryProxyNode);
+        return queryProxyNode;
     }
 
     public QueryProxyNode getQueryProxyNode(SqlQueryDefinition sqlQueryDefinition) {

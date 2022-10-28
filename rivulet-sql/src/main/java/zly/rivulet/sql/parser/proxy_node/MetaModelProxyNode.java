@@ -25,7 +25,7 @@ public class MetaModelProxyNode implements FromNode {
      **/
     private final Object proxyModel;
 
-    public MetaModelProxyNode(SQLModelMeta queryFromMeta) {
+    MetaModelProxyNode(SQLModelMeta queryFromMeta) {
         Class<?> modelClass = queryFromMeta.getModelClass();
         this.queryFromMeta = queryFromMeta;
         String firstChar = String.valueOf(queryFromMeta.getTableName().charAt(0));
@@ -48,11 +48,6 @@ public class MetaModelProxyNode implements FromNode {
             }
         );
     }
-
-    public MetaModelProxyNode(SqlParserPortableToolbox toolbox, Class<?> fromModelClass) {
-        this(toolbox.getSqlPreParser().getDefiner().createOrGetModelMeta(fromModelClass));
-    }
-
 
     @Override
     public SQLModelMeta getQueryFromMeta() {

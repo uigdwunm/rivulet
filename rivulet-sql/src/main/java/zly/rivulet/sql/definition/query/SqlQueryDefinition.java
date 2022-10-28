@@ -126,7 +126,7 @@ public class SqlQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
     public SqlQueryDefinition(SqlParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta, SQLFieldMeta primaryKey) {
         Class<?> modelClass = sqlModelMeta.getModelClass();
         this.aliasManager = new SQLAliasManager(toolbox.getConfigProperties());
-        QueryProxyNode queryProxyNode = new QueryProxyNode(this, sqlModelMeta);
+        QueryProxyNode queryProxyNode = new QueryProxyNode(this, toolbox, sqlModelMeta);
         toolbox.setQueryProxyNode(queryProxyNode);
         this.fromDefinition = new FromDefinition(toolbox);
         this.selectDefinition = new SelectDefinition(toolbox, modelClass, queryProxyNode);

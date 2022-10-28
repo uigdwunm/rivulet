@@ -22,10 +22,8 @@ import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
-import zly.rivulet.sql.definition.update.SqlUpdateDefinition;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.query.desc.Mapping;
-import zly.rivulet.sql.describer.update.SqlUpdateMetaDesc;
 import zly.rivulet.sql.exception.SQLDescDefineException;
 import zly.rivulet.sql.parser.SQLAliasManager;
 import zly.rivulet.sql.parser.SqlParser;
@@ -72,7 +70,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
      * @author zhaolaiyuan
      * Date 2022/10/24 8:27
      **/
-    public QueryProxyNode(SqlQueryDefinition sqlQueryDefinition, SqlParserPortableToolbox toolbox, SqlQueryMetaDesc<?, ?> sqlQueryMetaDesc) {
+    QueryProxyNode(SqlQueryDefinition sqlQueryDefinition, SqlParserPortableToolbox toolbox, SqlQueryMetaDesc<?, ?> sqlQueryMetaDesc) {
         this.sqlQueryDefinition = sqlQueryDefinition;
         Class<?> fromModelClass = sqlQueryMetaDesc.getMainFrom();
         Class<?> selectModelClass = sqlQueryMetaDesc.getSelectModel();
@@ -81,7 +79,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
         // 根据from模型和select方式的不同，有多种解析路径
         if (ClassUtils.isExtend(QueryComplexModel.class, fromModelClass)) {
             // from是复杂查询模型
-            // 复杂查询模型还需要填充这个，解析select可能会用到
+            // 复杂查询模型还需要填充node和field的映射，解析select可能会用到
             Map<FromNode, Field> fromNodeFieldMap = new HashMap<>();
             this.proxyModel = this.createProxyByComplexModel(fromModelClass, aliasFlag);
             this.fromNodeList = this.parseFromNodeListByComplexModel(toolbox, proxyModel, fromModelClass, fromNodeFieldMap);
@@ -102,7 +100,12 @@ public class QueryProxyNode implements SelectNode, FromNode {
             }
         } else {
             // from是表模型
-            MetaModelProxyNode metaModelProxyNode = new MetaModelProxyNode(toolbox, fromModelClass);
+            // 生成node
+            SqlParser sqlParser = toolbox.getSqlPreParser();
+            ProxyNodeManager proxyModelManager = sqlParser.getProxyModelManager();
+            SQLModelMeta sqlModelMeta = sqlParser.getDefiner().createOrGetModelMeta(fromModelClass);
+            MetaModelProxyNode metaModelProxyNode = proxyModelManager.getOrCreateProxyMetaModel(sqlModelMeta);
+
             this.proxyModel = metaModelProxyNode.getProxyModel();
             this.fromNodeList = Collections.singletonList(metaModelProxyNode);
 
@@ -129,11 +132,12 @@ public class QueryProxyNode implements SelectNode, FromNode {
      * @author zhaolaiyuan
      * Date 2022/10/16 11:37
      **/
-    public QueryProxyNode(SqlQueryDefinition sqlQueryDefinition, SQLModelMeta sqlModelMeta) {
+    QueryProxyNode(SqlQueryDefinition sqlQueryDefinition, SqlParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta) {
         this.sqlQueryDefinition = sqlQueryDefinition;
 
         // from是表模型
-        MetaModelProxyNode metaModelProxyNode = new MetaModelProxyNode(sqlModelMeta);
+        ProxyNodeManager proxyModelManager = toolbox.getSqlPreParser().getProxyModelManager();
+        MetaModelProxyNode metaModelProxyNode = proxyModelManager.getOrCreateProxyMetaModel(sqlModelMeta);
         this.proxyModel = metaModelProxyNode.getProxyModel();
         this.fromNodeList = Collections.singletonList(metaModelProxyNode);
 
@@ -150,7 +154,12 @@ public class QueryProxyNode implements SelectNode, FromNode {
      **/
     public QueryProxyNode(SqlParserPortableToolbox toolbox, Class<?> fromModelClass) {
         // from只能是表模型
-        MetaModelProxyNode metaModelProxyNode = new MetaModelProxyNode(toolbox, fromModelClass);
+        // 生成node
+        SqlParser sqlParser = toolbox.getSqlPreParser();
+        ProxyNodeManager proxyModelManager = sqlParser.getProxyModelManager();
+        SQLModelMeta sqlModelMeta = sqlParser.getDefiner().createOrGetModelMeta(fromModelClass);
+        MetaModelProxyNode metaModelProxyNode = proxyModelManager.getOrCreateProxyMetaModel(sqlModelMeta);
+
         this.proxyModel = metaModelProxyNode.getProxyModel();
         this.fromNodeList = Collections.singletonList(metaModelProxyNode);
 
@@ -314,7 +323,8 @@ public class QueryProxyNode implements SelectNode, FromNode {
                 // 没找到对应的表对象
                 throw SQLDescDefineException.unknowQueryType();
             }
-            return new MetaModelProxyNode(sqlModelMeta);
+            ProxyNodeManager proxyModelManager = sqlParser.getProxyModelManager();
+            return proxyModelManager.getOrCreateProxyMetaModel(sqlModelMeta);
         }
     }
 
