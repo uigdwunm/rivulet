@@ -72,7 +72,6 @@ public final class ProxyNodeManager {
     }
 
     public QueryProxyNode getOrCreateQueryProxyNode(
-        SqlUpdateDefinition sqlUpdateDefinition,
         SqlParserPortableToolbox toolbox,
         SqlUpdateMetaDesc<?> metaDesc
     ) {
@@ -91,7 +90,12 @@ public final class ProxyNodeManager {
         return queryProxyNode;
     }
 
-    public QueryProxyNode getQueryProxyNode(SqlQueryDefinition sqlQueryDefinition) {
-        return this.queryProxyNodeMap.get(sqlQueryDefinition);
+
+    public QueryProxyNode getOrCreateQueryProxyNode(SqlParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta) {
+        return new QueryProxyNode(toolbox, sqlModelMeta);
+    }
+
+    public QueryProxyNode getQueryProxyNode(String key) {
+        return this.queryProxyNodeMap.get(key);
     }
 }

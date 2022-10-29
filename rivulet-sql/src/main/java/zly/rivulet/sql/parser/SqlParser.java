@@ -180,8 +180,8 @@ public class SqlParser implements Parser {
         return this.definer;
     }
 
-    public SQLCustomDefinition parseCustom(Blueprint blueprint, CustomDesc customDesc) {
-        QueryProxyNode queryProxyNode = proxyNodeManager.getQueryProxyNode(blueprint);
+    public SQLCustomDefinition parseCustom(String key, CustomDesc customDesc) {
+        QueryProxyNode queryProxyNode = proxyNodeManager.getQueryProxyNode(key);
         List<SingleValueElementDefinition> singleValueList = customDesc.getSingleValueList().stream()
             .map(singleValueElementDesc -> SqlParserPortableToolbox.parseSingleValueForCustom(queryProxyNode, singleValueElementDesc))
             .collect(Collectors.toList());

@@ -6,7 +6,6 @@ import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.base.utils.ClassUtils;
 import zly.rivulet.base.utils.Constant;
 import zly.rivulet.sql.assigner.SQLUpdateResultAssigner;
@@ -24,6 +23,7 @@ import zly.rivulet.sql.describer.param.SqlParamCheckType;
 import zly.rivulet.sql.describer.update.SqlUpdateMetaDesc;
 import zly.rivulet.sql.exception.SQLDescDefineException;
 import zly.rivulet.sql.parser.SQLAliasManager;
+import zly.rivulet.sql.parser.SqlParser;
 import zly.rivulet.sql.parser.proxy_node.FromNode;
 import zly.rivulet.sql.parser.proxy_node.ProxyNodeManager;
 import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
@@ -42,6 +42,7 @@ public class SqlUpdateDefinition extends SQLBlueprint {
     private SQLUpdateResultAssigner assigner;
 
     public SqlUpdateDefinition(SqlParserPortableToolbox toolbox, WholeDesc wholeDesc) {
+        super(wholeDesc);
         SqlUpdateMetaDesc<?> metaDesc = (SqlUpdateMetaDesc<?>) wholeDesc;
         this.aliasManager = new SQLAliasManager(toolbox.getConfigProperties());
         Class<?> mainFrom = metaDesc.getMainFrom();
@@ -49,9 +50,9 @@ public class SqlUpdateDefinition extends SQLBlueprint {
             // 仅支持单表更新
             throw SQLDescDefineException.unSupportMultiModelUpdate();
         }
+        // 获取QueryProxyNode
         ProxyNodeManager proxyModelManager = toolbox.getSqlPreParser().getProxyModelManager();
-        proxyModelManager.getOrCreateQueryProxyNode(this, toolbox, metaDesc);
-        QueryProxyNode queryProxyNode = new QueryProxyNode(toolbox, metaDesc.getMainFrom());
+        QueryProxyNode queryProxyNode = proxyModelManager.getOrCreateQueryProxyNode(toolbox, metaDesc);
         toolbox.setQueryProxyNode(queryProxyNode);
 
         this.fromDefinition = new FromDefinition(toolbox);
@@ -69,12 +70,15 @@ public class SqlUpdateDefinition extends SQLBlueprint {
     }
 
     public SqlUpdateDefinition(SqlParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta, SQLFieldMeta primaryKey) {
+        super(null);
         Class<?> mainFrom = sqlModelMeta.getModelClass();
         if (ClassUtils.isExtend(QueryComplexModel.class, mainFrom)) {
             // 仅支持单表更新
             throw SQLDescDefineException.unSupportMultiModelUpdate();
         }
-        QueryProxyNode queryProxyNode = new QueryProxyNode(toolbox, sqlModelMeta.getModelClass());
+        SqlParser sqlParser = toolbox.getSqlPreParser();
+        ProxyNodeManager proxyModelManager = sqlParser.getProxyModelManager();
+        QueryProxyNode queryProxyNode = proxyModelManager.getOrCreateQueryProxyNode(toolbox, sqlModelMeta);
         toolbox.setQueryProxyNode(queryProxyNode);
 
         this.fromDefinition = new FromDefinition(toolbox);

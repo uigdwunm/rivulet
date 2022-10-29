@@ -146,7 +146,7 @@ public abstract class SQLRivuletManager extends RivuletManager {
     public <T, I> List<T> queryByIds(Collection<I> ids, Class<T> modelClass) {
         ModelMeta modelMeta = definer.createOrGetModelMeta(modelClass);
         Blueprint blueprint = this.parser.parseSelectByMeta(modelMeta);
-        return this.queryManyByBlueprint(blueprint, Collections.singletonMap(Constant.MAIN_IDS, ids))
+        return this.queryManyByBlueprint(blueprint, Collections.singletonMap(Constant.MAIN_IDS, ids));
     }
 
     @Override

@@ -127,13 +127,14 @@ public class QueryProxyNode implements SelectNode, FromNode {
     }
 
     /**
-     * Description query的MetaModel模型解析
+     * Description 以MetaModel模型解析
      *
      * @author zhaolaiyuan
      * Date 2022/10/16 11:37
      **/
-    QueryProxyNode(SqlQueryDefinition sqlQueryDefinition, SqlParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta) {
-        this.sqlQueryDefinition = sqlQueryDefinition;
+    QueryProxyNode(SqlParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta) {
+        // 给meta模型通用的，不只是query
+        this.sqlQueryDefinition = null;
 
         // from是表模型
         ProxyNodeManager proxyModelManager = toolbox.getSqlPreParser().getProxyModelManager();
@@ -152,7 +153,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
      * @author zhaolaiyuan
      * Date 2022/10/24 8:36
      **/
-    public QueryProxyNode(SqlParserPortableToolbox toolbox, Class<?> fromModelClass) {
+    QueryProxyNode(SqlParserPortableToolbox toolbox, Class<?> fromModelClass) {
         // from只能是表模型
         // 生成node
         SqlParser sqlParser = toolbox.getSqlPreParser();

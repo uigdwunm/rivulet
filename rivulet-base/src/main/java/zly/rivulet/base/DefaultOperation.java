@@ -68,7 +68,7 @@ public interface DefaultOperation {
      **/
     default <T> List<T> queryManyByBlueprint(Blueprint blueprint, Map<String, Object> params) {
         List<T> list = new LinkedList<>();
-        queryManyByBlueprint(blueprint, params, list);
+        this.queryManyByBlueprint(blueprint, params, list);
         return list;
     }
 

@@ -1,8 +1,10 @@
 package zly.rivulet.sql.definition.query;
 
+import zly.rivulet.base.definer.annotations.RivuletDesc;
 import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.param.ParamReceipt;
+import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.generator.statement.Statement;
 import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.sql.generator.statement.SqlStatement;
@@ -12,6 +14,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class SQLBlueprint implements Blueprint {
+
+    protected final WholeDesc wholeDesc;
 
     protected ParamReceiptManager paramReceiptManager;
 
@@ -25,6 +29,10 @@ public abstract class SQLBlueprint implements Blueprint {
     private final Map<Definition, SqlStatement> statementCache = new ConcurrentHashMap<>();
 
     protected boolean isWarmUp = false;
+
+    protected SQLBlueprint(WholeDesc wholeDesc) {
+        this.wholeDesc = wholeDesc;
+    }
 
 
     public void setAliasManager(SQLAliasManager aliasManager) {
@@ -51,10 +59,6 @@ public abstract class SQLBlueprint implements Blueprint {
         return paramReceiptManager;
     }
 
-    public void setParamReceiptManager(ParamReceiptManager paramReceiptManager) {
-        this.paramReceiptManager = paramReceiptManager;
-    }
-
     @Override
     public boolean isWarmUp() {
         return this.isWarmUp;
@@ -65,4 +69,19 @@ public abstract class SQLBlueprint implements Blueprint {
         this.isWarmUp = true;
     }
 
+    public Map<Class<? extends Definition>, ParamReceipt> getCustomStatementMap() {
+        return customStatementMap;
+    }
+
+    public String getRivuletKey() {
+        if (this.wholeDesc == null) {
+            return null;
+        }
+        RivuletDesc annotation = wholeDesc.getAnnotation();
+        if (annotation == null) {
+            return null;
+        }
+
+        return annotation.value();
+    }
 }

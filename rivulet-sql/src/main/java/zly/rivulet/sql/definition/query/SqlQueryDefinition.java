@@ -64,6 +64,7 @@ public class SqlQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
     private final SQLAliasManager.AliasFlag aliasFlag = SQLAliasManager.createAlias();
 
     public SqlQueryDefinition(SqlParserPortableToolbox toolbox, WholeDesc wholeDesc) {
+        super(wholeDesc);
         SqlQueryMetaDesc<?, ?> metaDesc = (SqlQueryMetaDesc<?, ?>) wholeDesc;
         this.paramReceiptManager = toolbox.getParamReceiptManager();
 
@@ -124,9 +125,12 @@ public class SqlQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
     }
 
     public SqlQueryDefinition(SqlParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta, SQLFieldMeta primaryKey) {
+        super(null);
         Class<?> modelClass = sqlModelMeta.getModelClass();
         this.aliasManager = new SQLAliasManager(toolbox.getConfigProperties());
-        QueryProxyNode queryProxyNode = new QueryProxyNode(this, toolbox, sqlModelMeta);
+        // 生成queryProxyNode
+        ProxyNodeManager proxyModelManager = toolbox.getSqlPreParser().getProxyModelManager();
+        QueryProxyNode queryProxyNode = proxyModelManager.getOrCreateQueryProxyNode(toolbox, sqlModelMeta);
         toolbox.setQueryProxyNode(queryProxyNode);
         this.fromDefinition = new FromDefinition(toolbox);
         this.selectDefinition = new SelectDefinition(toolbox, modelClass, queryProxyNode);
@@ -157,7 +161,9 @@ public class SqlQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
         this.aliasManager.init(queryProxyNode);
     }
 
-    public SqlQueryDefinition() {}
+    public SqlQueryDefinition() {
+        super(null);
+    }
 
     @Override
     public SqlQueryDefinition forAnalyze() {

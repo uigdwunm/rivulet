@@ -80,10 +80,10 @@ public class MysqlGenerator implements Generator {
             CommonParamManager commonParamManager = (CommonParamManager) paramManager;
             SQLGenerateToolbox toolbox = new SQLGenerateToolbox(paramManager, sqlBlueprint);
             // 在这里把custom要替换的Definition放到toolbox中
-            Map<Class<? extends Definition>, ParamReceipt> customStatementMap = ((SQLBlueprint) blueprint).getCustomStatementMap();
+            Map<Class<? extends Definition>, ParamReceipt> customStatementMap = sqlBlueprint.getCustomStatementMap();
             for (Map.Entry<Class<? extends Definition>, ParamReceipt> entry : customStatementMap.entrySet()) {
                 SQLPartCustomDesc sqlPartCustomDesc = (SQLPartCustomDesc) commonParamManager.getParam(entry.getValue());
-                toolbox.putReplaceDefinition(entry.getKey(), sqlParser.parseCustom(blueprint, sqlPartCustomDesc));
+                toolbox.putReplaceDefinition(entry.getKey(), sqlParser.parseCustom(sqlBlueprint.getRivuletKey(), sqlPartCustomDesc));
             }
             SqlStatement rootStatement = sqlStatementFactory.getOrCreate(sqlBlueprint, toolbox);
             return new MySQLFish(sqlBlueprint, rootStatement);
