@@ -57,17 +57,17 @@ public class MySQLRivuletManager extends SQLRivuletManager {
         try (Connection connection = this.getConnection()) {
 
             List<Integer> result = new ArrayList<>();
-            Collection<Object> subList = new ArrayList<>(rivuletProperties.getBatchInsertOneStatementMax());
+            List<Object> subList = new ArrayList<>(rivuletProperties.getBatchInsertOneStatementMax());
             for (T model : models) {
                 subList.add(model);
                 if (subList.size() == rivuletProperties.getBatchInsertOneStatementMax()) {
-                    ParamManager paramManager = paramManagerFactory.getBatchByModelMeta(sqlBlueprint, modelMeta, subList);
+                    ParamManager paramManager = paramManagerFactory.getBatchByModelMeta(modelMeta, subList);
                     int[] ints = this.executeBatchUpdate(connection, sqlBlueprint, paramManager, false);
                     result.addAll(Arrays.stream(ints).boxed().collect(Collectors.toList()));
                     subList.clear();
                 }
             }
-            ParamManager paramManager = paramManagerFactory.getBatchByModelMeta(sqlBlueprint, modelMeta, subList);
+            ParamManager paramManager = paramManagerFactory.getBatchByModelMeta(modelMeta, subList);
             int[] ints = this.executeBatchUpdate(connection, sqlBlueprint, paramManager, true);
             result.addAll(Arrays.stream(ints).boxed().collect(Collectors.toList()));
 

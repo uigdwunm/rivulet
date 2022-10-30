@@ -75,6 +75,8 @@ public class MysqlGenerator implements Generator {
         // 有排序的容器不能缓存
         if (paramManager instanceof ModelBatchParamManager) {
             // TODO 批量的语句在这里处理
+            ModelBatchParamManager modelBatchParamManager = (ModelBatchParamManager) paramManager;
+
 
         } else if (paramManager instanceof CommonParamManager) {
             CommonParamManager commonParamManager = (CommonParamManager) paramManager;

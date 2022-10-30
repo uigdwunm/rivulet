@@ -1,9 +1,6 @@
 package zly.rivulet.base.generator.param_manager.for_proxy_method;
 
-import zly.rivulet.base.definition.param.ParamReceipt;
 import zly.rivulet.base.definition.param.PathKeyParamReceipt;
-import zly.rivulet.base.definition.param.StaticParamReceipt;
-import zly.rivulet.base.exception.UnbelievableException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,24 +22,16 @@ public class LazyParamManager extends OnceParamManager {
     }
 
     @Override
-    public Object getParam(ParamReceipt paramReceipt) {
-        if (paramReceipt instanceof PathKeyParamReceipt) {
-            PathKeyParamReceipt pathKeyParamReceipt = (PathKeyParamReceipt) paramReceipt;
-            String pathKey = pathKeyParamReceipt.getPathKey();
-            Object param = cache.get(pathKey);
-            if (param != null) {
-                return param;
-            }
-            Function<Object[], Object> creator = super.paramCreatorMap.get(pathKey);
-            param = creator.apply(super.originParam);
-            cache.put(pathKey, param);
+    public Object getParam(PathKeyParamReceipt pathKeyParamReceipt) {
+        String pathKey = pathKeyParamReceipt.getPathKey();
+        Object param = cache.get(pathKey);
+        if (param != null) {
             return param;
-        } else if (paramReceipt instanceof StaticParamReceipt) {
-            StaticParamReceipt staticParamReceipt = (StaticParamReceipt) paramReceipt;
-            return staticParamReceipt.getParamValue();
-        } else {
-            throw UnbelievableException.unknownType();
         }
+        Function<Object[], Object> creator = super.paramCreatorMap.get(pathKey);
+        param = creator.apply(super.originParam);
+        cache.put(pathKey, param);
+        return param;
     }
 
 }

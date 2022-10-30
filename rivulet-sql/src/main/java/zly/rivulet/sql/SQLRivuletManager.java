@@ -154,7 +154,7 @@ public abstract class SQLRivuletManager extends RivuletManager {
         ModelMeta modelMeta = definer.createOrGetModelMeta(clazz);
         SQLBlueprint blueprint = (SQLBlueprint) parser.parseInsertByMeta(modelMeta);
 
-        ParamManager paramManager = paramManagerFactory.getByModelMeta(blueprint, modelMeta, obj);
+        ParamManager paramManager = paramManagerFactory.getByModelMeta(modelMeta, obj);
         try (Connection connection = this.getConnection()) {
             return this.executeUpdate(connection, blueprint, paramManager);
         } catch (SQLException e) {
@@ -307,7 +307,7 @@ public abstract class SQLRivuletManager extends RivuletManager {
             ModelMeta modelMeta = definer.createOrGetModelMeta(clazz);
             SQLBlueprint blueprint = (SQLBlueprint) parser.parseInsertByMeta(modelMeta);
 
-            ParamManager paramManager = paramManagerFactory.getByModelMeta(blueprint, modelMeta, new Object[]{obj});
+            ParamManager paramManager = paramManagerFactory.getByModelMeta(modelMeta, new Object[]{obj});
             return executeUpdate(connection, blueprint, paramManager);
         }
 

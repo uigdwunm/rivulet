@@ -11,6 +11,7 @@ import zly.rivulet.base.utils.TwofoldConcurrentHashMap;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -20,33 +21,24 @@ public class ParamManagerFactory {
 //    public final Map<Blueprint, Map<Method, Function<Object[], ProxyMethodParamManager>>> proxyMethod_paramManagerCreator_map = new ConcurrentHashMap<>();
     public final TwofoldConcurrentHashMap<Blueprint, Method, Function<Object[], CommonParamManager>> proxyMethod_paramManagerCreator_map = new TwofoldConcurrentHashMap<>();
 
-    public final Map<Class<?>, Function<Object[], CommonParamManager>> modelType_paramManagerCreator_map = new ConcurrentHashMap<>();
+    public final Map<Class<?>, Map<String, Function<Object, Object>>> modelType_modelMetaParamParser_map = new ConcurrentHashMap<>();
 
-    public Function<Object[], CommonParamManager> registerModelMeta(Blueprint blueprint, ModelMeta modelMeta) {
-        ParamReceiptManager paramReceiptManager = blueprint.getParamReceiptManager();
-        Function<Object[], CommonParamManager> paramManagerCreator = CommonParamManagerCreatorHelper.createParamManagerCreator(modelMeta, paramReceiptManager.getAllParamReceiptList());
-        // TODO 遗留任务，尽量保证只有批量的才会使用新的ParamManager
-
-        this.modelType_paramManagerCreator_map.put(modelMeta.getModelClass(), paramManagerCreator);
-
-        return paramManagerCreator;
+    public ParamManager getByModelMeta(ModelMeta modelMeta, Object model) {
+        Map<String, Function<Object, Object>> modelMetaParamParser = this.modelType_modelMetaParamParser_map.get(modelMeta.getModelClass());
+        if (modelMetaParamParser == null) {
+            modelMetaParamParser = CommonParamManagerCreatorHelper.createModelMetaParamParser(modelMeta);
+            this.modelType_modelMetaParamParser_map.put(modelMeta.getModelClass(), modelMetaParamParser);
+        }
+        return new ModelMetaParamManager(modelMetaParamParser, model);
     }
 
-    public ParamManager getByModelMeta(Blueprint blueprint, ModelMeta modelMeta, Object model) {
-        Function<Object[], CommonParamManager> paramManagerCreator = this.modelType_paramManagerCreator_map.get(modelMeta.getModelClass());
-        if (paramManagerCreator == null) {
-            paramManagerCreator = this.registerModelMeta(blueprint, modelMeta);
+    public ParamManager getBatchByModelMeta(ModelMeta modelMeta, List<Object> models) {
+        Map<String, Function<Object, Object>> modelMetaParamParser = this.modelType_modelMetaParamParser_map.get(modelMeta.getModelClass());
+        if (modelMetaParamParser == null) {
+            modelMetaParamParser = CommonParamManagerCreatorHelper.createModelMetaParamParser(modelMeta);
+            this.modelType_modelMetaParamParser_map.put(modelMeta.getModelClass(), modelMetaParamParser);
         }
-        return paramManagerCreator.apply(new Object[]{model});
-    }
-
-    public ParamManager getBatchByModelMeta(Blueprint blueprint, ModelMeta modelMeta, Collection<Object> models) {
-        Function<Object[], CommonParamManager> paramManagerCreator = this.modelType_paramManagerCreator_map.get(modelMeta.getModelClass());
-        if (paramManagerCreator == null) {
-            paramManagerCreator = this.registerModelMeta(blueprint, modelMeta);
-        }
-        return new ModelBatchParamManager()
-        return paramManagerCreator.apply(params);
+        return new ModelBatchParamManager(models, modelMetaParamParser);
     }
 
     public Function<Object[], CommonParamManager> registerProxyMethod(Blueprint blueprint, Method method) {

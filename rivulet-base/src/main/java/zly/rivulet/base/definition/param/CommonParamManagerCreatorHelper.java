@@ -1,5 +1,6 @@
 package zly.rivulet.base.definition.param;
 
+import zly.rivulet.base.definer.FieldMeta;
 import zly.rivulet.base.definer.ModelMeta;
 import zly.rivulet.base.exception.ParamDefineException;
 import zly.rivulet.base.exception.UnbelievableException;
@@ -8,6 +9,7 @@ import zly.rivulet.base.generator.param_manager.for_proxy_method.LazyParamManage
 import zly.rivulet.base.generator.param_manager.for_proxy_method.SimpleParamManager;
 import zly.rivulet.base.utils.ArrayUtils;
 import zly.rivulet.base.utils.StringUtil;
+import zly.rivulet.base.utils.View;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -19,29 +21,22 @@ import java.util.function.Function;
 
 public class CommonParamManagerCreatorHelper {
 
-    public static Function<Object[], CommonParamManager> createParamManagerCreator(ModelMeta modelMeta, List<ParamReceipt> allParamReceiptList) {
-        Map<String, Function<Object[], Object>> paramCreatorMap = new HashMap<>(allParamReceiptList.size());
-        for (ParamReceipt paramReceipt : allParamReceiptList) {
-            if (paramReceipt instanceof StaticParamReceipt) {
-                continue;
-            } else if (paramReceipt instanceof PathKeyParamReceipt) {
-                PathKeyParamReceipt pathKeyParamReceipt = (PathKeyParamReceipt) paramReceipt;
-                String pathKey = pathKeyParamReceipt.getPathKey();
-                Field field = modelMeta.getFieldMetaByFieldName(pathKey).getField();
-                Function<Object[], Object> paramCreator = params -> {
-                    try {
-                        return field.get(params[0]);
-                    } catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
-                };
-                paramCreatorMap.put(pathKey, paramCreator);
-            } else {
-                throw UnbelievableException.unknownType();
-            }
+    public static Map<String, Function<Object, Object>> createModelMetaParamParser(ModelMeta modelMeta) {
+        View<FieldMeta> fieldMetaList = modelMeta.getFieldMetaList();
+        Map<String, Function<Object, Object>> paramCreatorMap = new HashMap<>(fieldMetaList.size());
+        for (FieldMeta fieldMeta : fieldMetaList) {
+            Field field = fieldMeta.getField();
+            Function<Object, Object> paramCreator = obj -> {
+                try {
+                    return field.get(obj);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            };
+            paramCreatorMap.put(fieldMeta.getFieldName(), paramCreator);
         }
 
-        return originParams -> new LazyParamManager(originParams, paramCreatorMap);
+        return paramCreatorMap;
     }
 
     public static Function<Object[], CommonParamManager> createParamManagerCreator(Method method, List<ParamReceipt> allParamReceiptList) {
