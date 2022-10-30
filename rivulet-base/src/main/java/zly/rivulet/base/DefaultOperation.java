@@ -101,7 +101,7 @@ public interface DefaultOperation {
     /**
      * 批量新增
      **/
-    <T> int[] batchInsert(Collection<T> batchModel, Class<T> dOModelClass);
+    <T> List<Integer> batchInsert(Collection<T> batchModel, Class<T> dOModelClass);
 
 
 

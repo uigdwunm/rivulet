@@ -1,6 +1,7 @@
 package zly.rivulet.sql.definition.query;
 
 import zly.rivulet.base.definer.annotations.RivuletDesc;
+import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.param.ParamReceipt;
@@ -14,7 +15,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class SQLBlueprint implements Blueprint {
+    private final RivuletFlag flag;
 
+    /**
+     * Description 可能为空
+     *
+     * @author zhaolaiyuan
+     * Date 2022/10/30 12:40
+     **/
     protected final WholeDesc wholeDesc;
 
     protected ParamReceiptManager paramReceiptManager;
@@ -30,7 +38,8 @@ public abstract class SQLBlueprint implements Blueprint {
 
     protected boolean isWarmUp = false;
 
-    protected SQLBlueprint(WholeDesc wholeDesc) {
+    protected SQLBlueprint(RivuletFlag flag, WholeDesc wholeDesc) {
+        this.flag = flag;
         this.wholeDesc = wholeDesc;
     }
 
@@ -83,5 +92,10 @@ public abstract class SQLBlueprint implements Blueprint {
         }
 
         return annotation.value();
+    }
+
+    @Override
+    public RivuletFlag getFlag() {
+        return flag;
     }
 }

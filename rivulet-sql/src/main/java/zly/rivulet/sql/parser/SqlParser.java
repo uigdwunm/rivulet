@@ -21,6 +21,7 @@ import zly.rivulet.sql.definer.SqlDefiner;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.SQLCustomDefinition;
+import zly.rivulet.sql.definition.insert.SQLInsertDefinition;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.definition.update.SqlUpdateDefinition;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
@@ -114,13 +115,13 @@ public class SqlParser implements Parser {
         RivuletFlag flag = RivuletFlag.INSERT;
         Blueprint blueprint = modelMetaFlagBlueprintMap.get(modelMeta, flag);
         if (blueprint == null) {
-            View<SQLFieldMeta> primaryFieldMeta = ((SQLModelMeta) modelMeta).getPrimaryFieldMeta();
+            SQLModelMeta sqlModelMeta = (SQLModelMeta) modelMeta;
+            View<SQLFieldMeta> primaryFieldMeta = sqlModelMeta.getPrimaryFieldMeta();
             if (primaryFieldMeta.size() != 1) {
                 throw ParseException.noAvailablePrimaryKey();
             }
-            SqlParserPortableToolbox sqlPreParseHelper = new SqlParserPortableToolbox(this);
-            // TODO
-//            blueprint = ;
+//            SqlParserPortableToolbox sqlPreParseHelper = new SqlParserPortableToolbox(this);
+            blueprint = new SQLInsertDefinition(sqlModelMeta);
             modelMetaFlagBlueprintMap.put(modelMeta, flag, blueprint);
         }
         return blueprint;
@@ -136,7 +137,6 @@ public class SqlParser implements Parser {
                 throw ParseException.noAvailablePrimaryKey();
             }
             SqlParserPortableToolbox toolbox = new SqlParserPortableToolbox(this);
-            // TODO
             blueprint = new SqlUpdateDefinition(toolbox, (SQLModelMeta) modelMeta, primaryFieldMeta.get(0));
             modelMetaFlagBlueprintMap.put(modelMeta, flag, blueprint);
         }

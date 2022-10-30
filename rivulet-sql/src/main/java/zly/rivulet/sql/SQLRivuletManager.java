@@ -2,8 +2,6 @@ package zly.rivulet.sql;
 
 import zly.rivulet.base.DefaultOperation;
 import zly.rivulet.base.RivuletManager;
-import zly.rivulet.base.RivuletProperties;
-import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.definer.ModelMeta;
 import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.definition.Blueprint;
@@ -12,9 +10,7 @@ import zly.rivulet.base.exception.ExecuteException;
 import zly.rivulet.base.exception.ParseException;
 import zly.rivulet.base.generator.Generator;
 import zly.rivulet.base.generator.param_manager.ParamManager;
-import zly.rivulet.base.parser.Parser;
 import zly.rivulet.base.utils.ClassUtils;
-import zly.rivulet.base.utils.CollectionUtils;
 import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.collector.FixedLengthStatementCollector;
 import zly.rivulet.base.utils.collector.StatementCollector;
@@ -30,7 +26,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public abstract class SQLRivuletManager extends RivuletManager {
     private final DataSource dataSource;
@@ -155,7 +154,7 @@ public abstract class SQLRivuletManager extends RivuletManager {
         ModelMeta modelMeta = definer.createOrGetModelMeta(clazz);
         SQLBlueprint blueprint = (SQLBlueprint) parser.parseInsertByMeta(modelMeta);
 
-        ParamManager paramManager = paramManagerFactory.getByModelMeta(blueprint, modelMeta, new Object[]{obj});
+        ParamManager paramManager = paramManagerFactory.getByModelMeta(blueprint, modelMeta, obj);
         try (Connection connection = this.getConnection()) {
             return this.executeUpdate(connection, blueprint, paramManager);
         } catch (SQLException e) {
@@ -163,30 +162,6 @@ public abstract class SQLRivuletManager extends RivuletManager {
         }
     }
 
-    @Override
-    public <T> int[] batchInsert(Collection<T> models, Class<T> dOModelClass) {
-        if (CollectionUtils.isEmpty(models)) {
-            throw ExecuteException.execError("没有需要插入的数据");
-        }
-        ModelMeta modelMeta = definer.createOrGetModelMeta(dOModelClass);
-        SQLBlueprint sqlBlueprint = (SQLBlueprint) parser.parseInsertByMeta(modelMeta);
-
-        try (Connection connection = this.getConnection()) {
-//            T last = null;
-//            for (T model : models) {
-//                if (last == null) {
-//                    last = model;
-//                } else {
-//                    this.executeBatchUpdate(connection, sqlBlueprint, lastParamManager, false);
-//                }
-//            }
-//            int[] i = this.executeBatchUpdate(connection, sqlBlueprint, lastParamManager, true);
-
-            return this.executeBatchUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     private Object executeQueryOne(Connection connection, SQLBlueprint sqlBlueprint, ParamManager paramManager) {
         return runningPipeline.go(sqlBlueprint, paramManager, fish -> {
@@ -244,7 +219,7 @@ public abstract class SQLRivuletManager extends RivuletManager {
         });
     }
 
-    private int[] executeBatchUpdate(Connection connection, SQLBlueprint sqlBlueprint, ParamManager paramManager, boolean isLast) {
+    protected int[] executeBatchUpdate(Connection connection, SQLBlueprint sqlBlueprint, ParamManager paramManager, boolean isLast) {
         return (int[]) runningPipeline.go(sqlBlueprint, paramManager, fish -> {
             SQLFish sqlFish = (SQLFish) fish;
             StatementCollector collector = new FixedLengthStatementCollector(sqlFish.getLength());
@@ -334,11 +309,6 @@ public abstract class SQLRivuletManager extends RivuletManager {
 
             ParamManager paramManager = paramManagerFactory.getByModelMeta(blueprint, modelMeta, new Object[]{obj});
             return executeUpdate(connection, blueprint, paramManager);
-        }
-
-        @Override
-        public <T> int[] batchInsert(Collection<T> batchModel, Class<T> dOModelClass) {
-            return new int[0];
         }
 
         @Override

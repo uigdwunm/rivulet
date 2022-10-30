@@ -42,7 +42,6 @@ public class ModelBatchParamManager implements ParamManager {
         }
     }
 
-
     public CommonParamManager getCommonParamManager(Object model) {
         return
     }

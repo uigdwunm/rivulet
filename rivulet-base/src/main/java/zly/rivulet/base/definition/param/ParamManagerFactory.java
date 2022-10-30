@@ -40,7 +40,7 @@ public class ParamManagerFactory {
         return paramManagerCreator.apply(new Object[]{model});
     }
 
-    public ParamManager getByModelMeta(Blueprint blueprint, ModelMeta modelMeta, Collection<Object> models) {
+    public ParamManager getBatchByModelMeta(Blueprint blueprint, ModelMeta modelMeta, Collection<Object> models) {
         Function<Object[], CommonParamManager> paramManagerCreator = this.modelType_paramManagerCreator_map.get(modelMeta.getModelClass());
         if (paramManagerCreator == null) {
             paramManagerCreator = this.registerModelMeta(blueprint, modelMeta);

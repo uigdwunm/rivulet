@@ -42,7 +42,7 @@ public class SqlUpdateDefinition extends SQLBlueprint {
     private SQLUpdateResultAssigner assigner;
 
     public SqlUpdateDefinition(SqlParserPortableToolbox toolbox, WholeDesc wholeDesc) {
-        super(wholeDesc);
+        super(flag, wholeDesc);
         SqlUpdateMetaDesc<?> metaDesc = (SqlUpdateMetaDesc<?>) wholeDesc;
         this.aliasManager = new SQLAliasManager(toolbox.getConfigProperties());
         Class<?> mainFrom = metaDesc.getMainFrom();
@@ -70,7 +70,7 @@ public class SqlUpdateDefinition extends SQLBlueprint {
     }
 
     public SqlUpdateDefinition(SqlParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta, SQLFieldMeta primaryKey) {
-        super(null);
+        super(flag, null);
         Class<?> mainFrom = sqlModelMeta.getModelClass();
         if (ClassUtils.isExtend(QueryComplexModel.class, mainFrom)) {
             // 仅支持单表更新
