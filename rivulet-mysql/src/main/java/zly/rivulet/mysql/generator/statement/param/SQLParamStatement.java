@@ -12,12 +12,9 @@ import zly.rivulet.sql.generator.SqlStatementFactory;
 
 public class SQLParamStatement implements SingleValueElementStatement {
 
-    private final SQLParamReceipt sqlParamDefinition;
-
     private final String value;
 
-    public SQLParamStatement(SQLParamReceipt sqlParamDefinition, String value) {
-        this.sqlParamDefinition = sqlParamDefinition;
+    public SQLParamStatement(String value) {
         this.value = value;
     }
 
@@ -37,18 +34,18 @@ public class SQLParamStatement implements SingleValueElementStatement {
                     Convertor<Object, ?> convertor = (Convertor<Object, ?>) sqlParamDefinition.getConvertor();
                     String value = convertor.convertToStatement(staticParam.getValue());
 
-                    return new SQLParamStatement(sqlParamDefinition, value);
+                    return new SQLParamStatement(value);
                 } else {
                     // 参数是可变的，标记唯一性不可用
                     soleFlag.invalid();
-                    return new SQLParamStatement(sqlParamDefinition, null);
+                    return new SQLParamStatement(null);
                 }
             },
             (definition, helper) -> {
                 SQLParamReceipt sqlParamDefinition = (SQLParamReceipt) definition;
                 CommonParamManager paramManager = helper.getParamManager();
                 String value = paramManager.getStatement(sqlParamDefinition);
-                return new SQLParamStatement(sqlParamDefinition, value);
+                return new SQLParamStatement(value);
             }
         );
     }

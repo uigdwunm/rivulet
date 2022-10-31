@@ -22,8 +22,7 @@ public class LazyParamManager extends OnceParamManager {
     }
 
     @Override
-    public Object getParam(PathKeyParamReceipt pathKeyParamReceipt) {
-        String pathKey = pathKeyParamReceipt.getPathKey();
+    public Object getParam(String pathKey) {
         Object param = cache.get(pathKey);
         if (param != null) {
             return param;

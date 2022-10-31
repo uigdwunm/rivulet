@@ -10,7 +10,7 @@ import zly.rivulet.base.generator.param_manager.ParamManager;
 
 public interface CommonParamManager extends ParamManager {
 
-    Object getParam(PathKeyParamReceipt pathKeyParamReceipt);
+    Object getParam(String pathKey);
 
     default Object getParam(ParamReceipt paramReceipt) {
         if (paramReceipt instanceof StaticParamReceipt) {
@@ -18,7 +18,7 @@ public interface CommonParamManager extends ParamManager {
             return staticParamReceipt.getParamValue();
         } else if (paramReceipt instanceof PathKeyParamReceipt) {
             PathKeyParamReceipt pathKeyParamReceipt = (PathKeyParamReceipt) paramReceipt;
-            return this.getParam(pathKeyParamReceipt);
+            return this.getParam(pathKeyParamReceipt.getPathKey());
         } else {
             throw UnbelievableException.unknownType();
         }

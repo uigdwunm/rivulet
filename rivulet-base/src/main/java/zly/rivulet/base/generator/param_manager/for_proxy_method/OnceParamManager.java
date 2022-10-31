@@ -22,8 +22,7 @@ public class OnceParamManager implements CommonParamManager {
     }
 
     @Override
-    public Object getParam(PathKeyParamReceipt pathKeyParamReceipt) {
-        String pathKey = pathKeyParamReceipt.getPathKey();
+    public Object getParam(String pathKey) {
         Function<Object[], Object> creator = paramCreatorMap.get(pathKey);
         return creator.apply(this.originParam);
     }

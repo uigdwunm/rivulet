@@ -1,8 +1,99 @@
 package zly.rivulet.mysql.generator.statement.insert;
 
+import zly.rivulet.base.generator.param_manager.for_model_meta.ModelBatchParamManager;
+import zly.rivulet.base.generator.param_manager.for_proxy_method.CommonParamManager;
+import zly.rivulet.base.utils.CollectionUtils;
+import zly.rivulet.base.utils.View;
+import zly.rivulet.base.utils.collector.StatementCollector;
+import zly.rivulet.mysql.generator.statement.SingleValueElementStatement;
+import zly.rivulet.mysql.generator.statement.param.SQLParamStatement;
+import zly.rivulet.mysql.generator.statement.query.MySqlQueryStatement;
+import zly.rivulet.sql.definer.meta.SQLModelMeta;
+import zly.rivulet.sql.definition.insert.ColumnItemDefinition;
 import zly.rivulet.sql.definition.insert.SQLInsertDefinition;
+import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
+import zly.rivulet.sql.generator.SqlStatementFactory;
+import zly.rivulet.sql.generator.statement.SqlStatement;
 
-public class MySQLInsertStatement {
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class MySQLInsertStatement implements SqlStatement {
 
     private final SQLInsertDefinition definition;
+
+    private final SQLModelMeta sqlModelMeta;
+
+    private final View<ColumnItemStatement> columnItemStatements;
+
+    private final List<List<SingleValueElementStatement>> values;
+
+    public MySQLInsertStatement(SQLInsertDefinition definition, View<ColumnItemStatement> columnItemStatements, List<List<SingleValueElementStatement>> values) {
+        this.definition = definition;
+        this.sqlModelMeta = definition.getSqlModelMeta();
+        this.columnItemStatements = columnItemStatements;
+        this.values = values;
+    }
+
+    @Override
+    public void collectStatement(StatementCollector collector) {
+
+    }
+
+
+    public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
+        sqlStatementFactory.register(
+            SQLInsertDefinition.class,
+            (definition, soleFlag, toolbox) -> {
+                SQLInsertDefinition sqlInsertDefinition = (SQLInsertDefinition) definition;
+                List<ColumnItemStatement> columnItemStatements = sqlInsertDefinition.getColumnItemDefinitionList().stream()
+                    .map(columnItemDefinition -> (ColumnItemStatement) sqlStatementFactory.warmUp(columnItemDefinition, soleFlag.subSwitch(), toolbox))
+                    .collect(Collectors.toList());
+                List<List<SQLSingleValueElementDefinition>> values = sqlInsertDefinition.getValues();
+                List<List<SingleValueElementStatement>> valuesStatement = null;
+                if (CollectionUtils.isNotEmpty(values)) {
+                    valuesStatement = values.stream()
+                        .map(subValues -> subValues.stream()
+                            .map(sqlSingleValueElementDefinition -> (SingleValueElementStatement) sqlStatementFactory.warmUp(sqlSingleValueElementDefinition, soleFlag.subSwitch(), toolbox))
+                            .collect(Collectors.toList())).collect(Collectors.toList());
+
+                }
+                return new MySQLInsertStatement(sqlInsertDefinition, View.create(columnItemStatements), valuesStatement);
+            },
+            (definition, toolbox) -> {
+                SQLInsertDefinition sqlInsertDefinition = (SQLInsertDefinition) definition;
+
+                List<ColumnItemStatement> columnItemStatements = sqlInsertDefinition.getColumnItemDefinitionList().stream()
+                    .map(columnItemDefinition -> (ColumnItemStatement) sqlStatementFactory.getOrCreate(columnItemDefinition, toolbox))
+                    .collect(Collectors.toList());
+
+                List<List<SQLSingleValueElementDefinition>> values = sqlInsertDefinition.getValues();
+                List<List<SingleValueElementStatement>> valuesStatement;
+                if (CollectionUtils.isNotEmpty(values)) {
+                    valuesStatement = values.stream()
+                        .map(subValues -> subValues.stream()
+                            .map(sqlSingleValueElementDefinition -> (SingleValueElementStatement) sqlStatementFactory.getOrCreate(sqlSingleValueElementDefinition, toolbox))
+                            .collect(Collectors.toList())).collect(Collectors.toList());
+                } else {
+                    ModelBatchParamManager batchParamManager = toolbox.getBatchParamManager();
+                    List<List<Object>> collect = batchParamManager.getModelParamList().stream()
+                        .map(model -> {
+                            CommonParamManager subParamManager = batchParamManager.createCommonParamManager(model);
+                            return columnItemStatements.stream()
+                                .map(columnItemStatement -> {
+                                    return new SQLParamStatement(subParamManager.getParam(columnItemStatement.getSqlFieldMeta().getFieldName()));
+                                    }).collect(Collectors.toList());
+                        }).collect(Collectors.toList());
+
+
+                }
+                List<SqlStatement> subStatementList = sqlQueryDefinition.getSubDefinitionList().stream()
+                    .filter(subDefinition -> subDefinition.check(paramManager))
+                    .map(subDefinition -> sqlStatementFactory.getOrCreate(subDefinition, helper))
+                    .collect(Collectors.toList());
+
+                return new MySqlQueryStatement(sqlQueryDefinition, subStatementList);
+            }
+        );
+    }
 }

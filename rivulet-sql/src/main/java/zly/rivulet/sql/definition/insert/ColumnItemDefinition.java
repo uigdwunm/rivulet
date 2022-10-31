@@ -8,10 +8,10 @@ import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.describer.param.SqlParamCheckType;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
-public class ValueItemDefinition extends AbstractDefinition {
+public class ColumnItemDefinition extends AbstractDefinition {
     private final SQLFieldMeta sqlFieldMeta;
 
-    protected ValueItemDefinition(SqlParserPortableToolbox toolbox, SQLFieldMeta fieldMeta) {
+    protected ColumnItemDefinition(SqlParserPortableToolbox toolbox, SQLFieldMeta fieldMeta) {
         super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
         toolbox.getParamReceiptManager().registerParam(
             Param.of(

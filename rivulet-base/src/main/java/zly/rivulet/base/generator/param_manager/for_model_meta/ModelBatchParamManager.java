@@ -22,7 +22,7 @@ public class ModelBatchParamManager implements ParamManager {
         this.modelMetaParamParserMap = modelMetaParamParserMap;
     }
 
-    public CommonParamManager getCommonParamManager(Object model) {
+    public CommonParamManager createCommonParamManager(Object model) {
         return new ModelMetaParamManager(modelMetaParamParserMap, model);
     }
 

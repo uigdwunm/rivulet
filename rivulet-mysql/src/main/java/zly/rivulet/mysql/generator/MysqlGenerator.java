@@ -22,6 +22,7 @@ import zly.rivulet.mysql.generator.statement.param.SQLParamStatement;
 import zly.rivulet.mysql.generator.statement.query.*;
 import zly.rivulet.sql.definition.query.SQLBlueprint;
 import zly.rivulet.sql.describer.custom.SQLPartCustomDesc;
+import zly.rivulet.sql.exception.SQLDescDefineException;
 import zly.rivulet.sql.generator.toolbox.SQLGenerateToolbox;
 import zly.rivulet.sql.generator.toolbox.WarmUpToolbox;
 import zly.rivulet.sql.generator.SqlStatementFactory;
@@ -73,23 +74,19 @@ public class MysqlGenerator implements Generator {
         // 参数本身不能缓存
         // 有查询条件的父级不能缓存
         // 有排序的容器不能缓存
-        if (paramManager instanceof ModelBatchParamManager) {
-            // TODO 批量的语句在这里处理
-            ModelBatchParamManager modelBatchParamManager = (ModelBatchParamManager) paramManager;
-
-
-        } else if (paramManager instanceof CommonParamManager) {
+        SQLGenerateToolbox toolbox = new SQLGenerateToolbox(paramManager, sqlBlueprint);
+        if (paramManager instanceof CommonParamManager) {
             CommonParamManager commonParamManager = (CommonParamManager) paramManager;
-            SQLGenerateToolbox toolbox = new SQLGenerateToolbox(paramManager, sqlBlueprint);
+            // 仅支持非批量的替换
             // 在这里把custom要替换的Definition放到toolbox中
             Map<Class<? extends Definition>, ParamReceipt> customStatementMap = sqlBlueprint.getCustomStatementMap();
             for (Map.Entry<Class<? extends Definition>, ParamReceipt> entry : customStatementMap.entrySet()) {
                 SQLPartCustomDesc sqlPartCustomDesc = (SQLPartCustomDesc) commonParamManager.getParam(entry.getValue());
                 toolbox.putReplaceDefinition(entry.getKey(), sqlParser.parseCustom(sqlBlueprint.getRivuletKey(), sqlPartCustomDesc));
             }
-            SqlStatement rootStatement = sqlStatementFactory.getOrCreate(sqlBlueprint, toolbox);
-            return new MySQLFish(sqlBlueprint, rootStatement);
         }
+        SqlStatement rootStatement = sqlStatementFactory.getOrCreate(sqlBlueprint, toolbox);
+        return new MySQLFish(sqlBlueprint, rootStatement);
     }
 
     @Override

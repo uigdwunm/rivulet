@@ -6,6 +6,7 @@ import zly.rivulet.base.definition.Definition;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.query.SQLBlueprint;
+import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 import java.util.List;
@@ -15,14 +16,28 @@ public class SQLInsertDefinition extends SQLBlueprint {
 
     private final SQLModelMeta sqlModelMeta;
 
-    private List<ValueItemDefinition> valueItemDefinitionList;
+    private List<ColumnItemDefinition> columnItemDefinitionList;
+
+    private List<List<SQLSingleValueElementDefinition>> values;
 
     public SQLInsertDefinition(SQLModelMeta sqlModelMeta, SqlParserPortableToolbox toolbox) {
         super(RivuletFlag.INSERT, null);
         this.sqlModelMeta = sqlModelMeta;
-        this.valueItemDefinitionList = sqlModelMeta.getFieldMetaList().stream()
-            .map(fieldMeta -> new ValueItemDefinition(toolbox, (SQLFieldMeta) fieldMeta))
+        this.columnItemDefinitionList = sqlModelMeta.getFieldMetaList().stream()
+            .map(fieldMeta -> new ColumnItemDefinition(toolbox, (SQLFieldMeta) fieldMeta))
             .collect(Collectors.toList());
+    }
+
+    public SQLModelMeta getSqlModelMeta() {
+        return sqlModelMeta;
+    }
+
+    public List<ColumnItemDefinition> getColumnItemDefinitionList() {
+        return columnItemDefinitionList;
+    }
+
+    public List<List<SQLSingleValueElementDefinition>> getValues() {
+        return values;
     }
 
     @Override
