@@ -1,15 +1,10 @@
 package zly.rivulet.base.generator.param_manager.for_model_meta;
 
-import zly.rivulet.base.definition.param.ParamReceipt;
-import zly.rivulet.base.definition.param.PathKeyParamReceipt;
-import zly.rivulet.base.definition.param.StaticParamReceipt;
-import zly.rivulet.base.exception.ParseException;
-import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.generator.param_manager.ParamManager;
 import zly.rivulet.base.generator.param_manager.for_proxy_method.CommonParamManager;
-import zly.rivulet.base.utils.ClassUtils;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 public class ModelBatchParamManager implements ParamManager {
