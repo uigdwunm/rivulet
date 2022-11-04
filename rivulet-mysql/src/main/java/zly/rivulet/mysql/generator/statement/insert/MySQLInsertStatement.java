@@ -3,6 +3,7 @@ package zly.rivulet.mysql.generator.statement.insert;
 import zly.rivulet.base.generator.param_manager.for_model_meta.ModelBatchParamManager;
 import zly.rivulet.base.generator.param_manager.for_proxy_method.CommonParamManager;
 import zly.rivulet.base.utils.CollectionUtils;
+import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.View;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.statement.SingleValueElementStatement;
@@ -28,7 +29,9 @@ public class MySQLInsertStatement implements SqlStatement {
 
     private final List<List<SingleValueElementStatement>> values;
 
-    private final static String INSERT = "INSERT ";
+    private final static String INSERT_INTO = "INSERT INTO ";
+
+    private final static String VALUES = "VALUES";
 
     public MySQLInsertStatement(SQLInsertDefinition definition, View<ColumnItemStatement> columnItemStatements, List<List<SingleValueElementStatement>> values) {
         this.definition = definition;
@@ -39,8 +42,23 @@ public class MySQLInsertStatement implements SqlStatement {
 
     @Override
     public void collectStatement(StatementCollector collector) {
-        collector.append(INSERT);
+        collector.append(INSERT_INTO).append(sqlModelMeta.getTableName()).space();
 
+        collector.leftBracket();
+        for (ColumnItemStatement columnItemStatement : collector.createJoiner(Constant.COMMA, columnItemStatements)) {
+            collector.append(columnItemStatement);
+        }
+        collector.rightBracket();
+
+        collector.append(VALUES);
+
+        for (List<SingleValueElementStatement> singleValueStatements : collector.createJoiner(Constant.COMMA, values)) {
+            collector.leftBracket();
+            for (SingleValueElementStatement singleValueStatement : collector.createJoiner(Constant.COMMA, singleValueStatements)) {
+                singleValueStatement.singleCollectStatement(collector);
+            }
+            collector.rightBracket();
+        }
     }
 
 

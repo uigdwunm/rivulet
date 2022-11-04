@@ -1,5 +1,6 @@
 package zly.rivulet.base.utils.collector;
 
+import zly.rivulet.base.generator.statement.Statement;
 import zly.rivulet.base.utils.Constant;
 
 public class FixedLengthStatementCollector implements StatementCollector {
@@ -91,6 +92,12 @@ public class FixedLengthStatementCollector implements StatementCollector {
         int length = str.length();
         str.getChars(0, length, value, index);
         this.index += length;
+        return this;
+    }
+
+    @Override
+    public StatementCollector append(Statement statement) {
+        statement.collectStatement(this);
         return this;
     }
 

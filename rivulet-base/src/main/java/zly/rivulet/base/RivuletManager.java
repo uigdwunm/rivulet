@@ -2,29 +2,18 @@ package zly.rivulet.base;
 
 import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.definer.Definer;
-import zly.rivulet.base.definer.ModelMeta;
 import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.definition.param.ParamManagerFactory;
 import zly.rivulet.base.describer.WholeDesc;
-import zly.rivulet.base.exception.ParseException;
-import zly.rivulet.base.executor.Executor;
 import zly.rivulet.base.generator.Fish;
 import zly.rivulet.base.generator.Generator;
 import zly.rivulet.base.generator.param_manager.for_proxy_method.ForTestParamManager;
-import zly.rivulet.base.generator.param_manager.ParamManager;
-import zly.rivulet.base.generator.param_manager.for_proxy_method.SimpleParamManager;
 import zly.rivulet.base.parser.Parser;
 import zly.rivulet.base.pipeline.RunningPipeline;
 import zly.rivulet.base.utils.CollectionInstanceCreator;
-import zly.rivulet.base.utils.collector.FixedLengthStatementCollector;
-import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.base.warehouse.WarehouseManager;
 
 import java.lang.reflect.Method;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
