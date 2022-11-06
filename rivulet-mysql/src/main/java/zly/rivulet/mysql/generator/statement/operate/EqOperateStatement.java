@@ -7,7 +7,7 @@ import zly.rivulet.sql.definition.query.operate.EqOperateDefinition;
 import zly.rivulet.sql.generator.SqlStatementFactory;
 import zly.rivulet.sql.generator.statement.SqlStatement;
 
-public class EqOperateStatement implements OperateStatement {
+public class EqOperateStatement extends OperateStatement {
 
     private final SingleValueElementStatement leftValue;
 

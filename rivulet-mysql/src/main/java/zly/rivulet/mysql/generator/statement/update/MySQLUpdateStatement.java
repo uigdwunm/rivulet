@@ -7,7 +7,7 @@ import zly.rivulet.sql.definition.update.SqlUpdateDefinition;
 import zly.rivulet.sql.generator.SqlStatementFactory;
 import zly.rivulet.sql.generator.statement.SqlStatement;
 
-public class MySQLUpdateStatement implements SqlStatement {
+public class MySQLUpdateStatement extends SqlStatement {
 
     private final SqlUpdateDefinition definition;
 
@@ -25,6 +25,11 @@ public class MySQLUpdateStatement implements SqlStatement {
         this.mySQLModelMeta = mySQLModelMeta;
         this.setStatement = setStatement;
         this.whereStatement = whereStatement;
+    }
+
+    @Override
+    protected int length() {
+        return UPDATE.length() + mySQLModelMeta.getTableName().length() + 1 + setStatement.getLengthOrCache() + whereStatement.getLengthOrCache();
     }
 
     @Override

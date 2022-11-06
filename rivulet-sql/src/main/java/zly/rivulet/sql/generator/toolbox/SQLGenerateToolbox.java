@@ -6,7 +6,7 @@ import zly.rivulet.base.generator.param_manager.for_model_meta.ModelBatchParamMa
 import zly.rivulet.base.generator.param_manager.for_proxy_method.CommonParamManager;
 import zly.rivulet.base.utils.PortableToolbox;
 import zly.rivulet.sql.definition.SQLCustomDefinition;
-import zly.rivulet.sql.definition.query.SQLBlueprint;
+import zly.rivulet.sql.definition.SQLBlueprint;
 import zly.rivulet.sql.parser.SQLAliasManager;
 
 import java.util.HashMap;
@@ -57,8 +57,8 @@ public class SQLGenerateToolbox implements PortableToolbox {
         return blueprint;
     }
 
-    public Definition putReplaceDefinition(Class<? extends Definition> clazz, SQLCustomDefinition sqlCustomDefinition) {
-        return customStatementMap.put(clazz, sqlCustomDefinition);
+    public void putReplaceDefinition(Class<? extends Definition> clazz, SQLCustomDefinition sqlCustomDefinition) {
+        customStatementMap.put(clazz, sqlCustomDefinition);
     }
 
     public Definition getReplaceDefinition(Class<? extends Definition> clazz) {

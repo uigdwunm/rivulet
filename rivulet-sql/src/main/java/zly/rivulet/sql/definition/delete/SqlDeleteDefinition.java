@@ -1,4 +1,4 @@
-package zly.rivulet.sql.definition.update;
+package zly.rivulet.sql.definition.delete;
 
 import zly.rivulet.base.assigner.Assigner;
 import zly.rivulet.base.definer.enums.RivuletFlag;
@@ -19,8 +19,8 @@ import zly.rivulet.sql.definition.query.mapping.MapDefinition;
 import zly.rivulet.sql.definition.query.operate.AndOperateDefinition;
 import zly.rivulet.sql.definition.query.operate.EqOperateDefinition;
 import zly.rivulet.sql.describer.condition.ConditionContainer;
+import zly.rivulet.sql.describer.delete.SqlDeleteMetaDesc;
 import zly.rivulet.sql.describer.param.SqlParamCheckType;
-import zly.rivulet.sql.describer.update.SqlUpdateMetaDesc;
 import zly.rivulet.sql.exception.SQLDescDefineException;
 import zly.rivulet.sql.parser.SQLAliasManager;
 import zly.rivulet.sql.parser.SqlParser;
@@ -29,35 +29,29 @@ import zly.rivulet.sql.parser.proxy_node.ProxyNodeManager;
 import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
-public class SqlUpdateDefinition extends SQLBlueprint {
-
-    private final RivuletFlag flag = RivuletFlag.UPDATE;
+public class SqlDeleteDefinition extends SQLBlueprint {
 
     private FromDefinition fromDefinition;
-
-    private SetDefinition setDefinition;
 
     private WhereDefinition whereDefinition;
 
     private SQLUpdateResultAssigner assigner;
 
-    public SqlUpdateDefinition(SqlParserPortableToolbox toolbox, WholeDesc wholeDesc) {
-        super(flag, wholeDesc);
-        SqlUpdateMetaDesc<?> metaDesc = (SqlUpdateMetaDesc<?>) wholeDesc;
+    public SqlDeleteDefinition(SqlParserPortableToolbox toolbox, WholeDesc wholeDesc) {
+        super(RivuletFlag.DELETE, wholeDesc);
+        SqlDeleteMetaDesc<?> metaDesc = (SqlDeleteMetaDesc<?>) wholeDesc;
         this.aliasManager = new SQLAliasManager(toolbox.getConfigProperties());
         Class<?> mainFrom = metaDesc.getMainFrom();
         if (ClassUtils.isExtend(QueryComplexModel.class, mainFrom)) {
-            // 仅支持单表更新
+            // 仅支持单表删除
             throw SQLDescDefineException.unSupportMultiModelUpdate();
         }
         // 获取QueryProxyNode
         ProxyNodeManager proxyModelManager = toolbox.getSqlPreParser().getProxyModelManager();
-        QueryProxyNode queryProxyNode = proxyModelManager.getOrCreateQueryProxyNode(toolbox, metaDesc);
+        QueryProxyNode queryProxyNode = proxyModelManager.getOrCreateQueryProxyNode(toolbox, metaDesc.getAnnotation(), mainFrom);
         toolbox.setQueryProxyNode(queryProxyNode);
 
         this.fromDefinition = new FromDefinition(toolbox);
-
-        this.setDefinition = new SetDefinition(toolbox, metaDesc.getMappedItemList());
 
         ConditionContainer<?, ?> whereConditionContainer = metaDesc.getWhereConditionContainer();
         if (whereConditionContainer != null) {
@@ -69,8 +63,8 @@ public class SqlUpdateDefinition extends SQLBlueprint {
         this.assigner = new SQLUpdateResultAssigner();
     }
 
-    public SqlUpdateDefinition(SqlParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta, SQLFieldMeta primaryKey) {
-        super(flag, null);
+    public SqlDeleteDefinition(SqlParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta, SQLFieldMeta primaryKey) {
+        super(RivuletFlag.DELETE, null);
         Class<?> mainFrom = sqlModelMeta.getModelClass();
         if (ClassUtils.isExtend(QueryComplexModel.class, mainFrom)) {
             // 仅支持单表更新
@@ -82,8 +76,6 @@ public class SqlUpdateDefinition extends SQLBlueprint {
         toolbox.setQueryProxyNode(queryProxyNode);
 
         this.fromDefinition = new FromDefinition(toolbox);
-
-        this.setDefinition = new SetDefinition(toolbox, sqlModelMeta);
 
         Param<? extends SQLFieldMeta> mainIdParam = Param.of(primaryKey.getClass(), Constant.MAIN_ID, SqlParamCheckType.NATURE);
         FromNode fromNode = queryProxyNode.getFromNode(0);
@@ -109,7 +101,7 @@ public class SqlUpdateDefinition extends SQLBlueprint {
 
     @Override
     public RivuletFlag getFlag() {
-        return flag;
+        return RivuletFlag.DELETE;
     }
 
     @Override
@@ -136,16 +128,8 @@ public class SqlUpdateDefinition extends SQLBlueprint {
         this.fromDefinition = fromDefinition;
     }
 
-    public void setSetDefinition(SetDefinition setDefinition) {
-        this.setDefinition = setDefinition;
-    }
-
     public void setWhereDefinition(WhereDefinition whereDefinition) {
         this.whereDefinition = whereDefinition;
-    }
-
-    public SetDefinition getSetDefinition() {
-        return setDefinition;
     }
 
     public WhereDefinition getWhereDefinition() {

@@ -9,7 +9,7 @@ import zly.rivulet.sql.definition.query.join.SQLJoinType;
 
 import java.util.*;
 
-public class FormatStatementCollector implements StatementCollector {
+public class MySQLFormatStatementCollector implements StatementCollector {
     /**
      * Description 需要在前面插入行的
      *
@@ -64,7 +64,7 @@ public class FormatStatementCollector implements StatementCollector {
     private int currLineTab;
 
 
-    public FormatStatementCollector() {
+    public MySQLFormatStatementCollector() {
         allLine.add(currLine);
     }
 
@@ -89,7 +89,7 @@ public class FormatStatementCollector implements StatementCollector {
     }
 
     @Override
-    public FormatStatementCollector append(String str) {
+    public MySQLFormatStatementCollector append(String str) {
         if (AFTER_APPEND_LINE.contains(str)) {
             this.line();
         }
@@ -101,7 +101,7 @@ public class FormatStatementCollector implements StatementCollector {
     }
 
     @Override
-    public FormatStatementCollector append(int str) {
+    public MySQLFormatStatementCollector append(int str) {
         currLine.append(str);
         return this;
     }
@@ -148,25 +148,25 @@ public class FormatStatementCollector implements StatementCollector {
     }
 
     @Override
-    public FormatStatementCollector append(long str) {
+    public MySQLFormatStatementCollector append(long str) {
         currLine.append(str);
         return this;
     }
 
     @Override
-    public FormatStatementCollector append(boolean str) {
+    public MySQLFormatStatementCollector append(boolean str) {
         currLine.append(str);
         return this;
     }
 
     @Override
-    public FormatStatementCollector append(char str) {
+    public MySQLFormatStatementCollector append(char str) {
         currLine.append(str);
         return this;
     }
 
     @Override
-    public FormatStatementCollector append(char[] chars) {
+    public MySQLFormatStatementCollector append(char[] chars) {
         currLine.append(chars);
         return this;
     }

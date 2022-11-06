@@ -16,7 +16,7 @@ import zly.rivulet.base.utils.collector.FixedLengthStatementCollector;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.base.warehouse.WarehouseManager;
 import zly.rivulet.sql.assigner.SQLQueryResultAssigner;
-import zly.rivulet.sql.definition.query.SQLBlueprint;
+import zly.rivulet.sql.definition.SQLBlueprint;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.generator.SQLFish;
 

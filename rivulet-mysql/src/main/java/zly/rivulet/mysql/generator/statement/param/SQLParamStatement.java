@@ -10,7 +10,7 @@ import zly.rivulet.mysql.generator.statement.SingleValueElementStatement;
 import zly.rivulet.sql.definition.param.SQLParamReceipt;
 import zly.rivulet.sql.generator.SqlStatementFactory;
 
-public class SQLParamStatement implements SingleValueElementStatement {
+public class SQLParamStatement extends SingleValueElementStatement {
 
     private final String value;
 

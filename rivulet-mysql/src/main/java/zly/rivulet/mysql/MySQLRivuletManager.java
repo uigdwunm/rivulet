@@ -9,7 +9,7 @@ import zly.rivulet.base.warehouse.WarehouseManager;
 import zly.rivulet.mysql.definer.MySQLDefiner;
 import zly.rivulet.mysql.generator.MysqlGenerator;
 import zly.rivulet.sql.SQLRivuletManager;
-import zly.rivulet.sql.definition.query.SQLBlueprint;
+import zly.rivulet.sql.definition.SQLBlueprint;
 import zly.rivulet.sql.parser.SqlParser;
 
 import javax.sql.DataSource;

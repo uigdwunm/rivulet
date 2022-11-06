@@ -14,6 +14,7 @@ import zly.rivulet.sql.assigner.SQLQueryResultAssigner;
 import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
+import zly.rivulet.sql.definition.SQLBlueprint;
 import zly.rivulet.sql.definition.query.main.*;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
 import zly.rivulet.sql.definition.query.operate.AndOperateDefinition;
@@ -39,8 +40,6 @@ import java.util.stream.Collectors;
 
 public class SqlQueryDefinition extends SQLBlueprint implements QueryFromMeta, SQLSingleValueElementDefinition {
 
-    private final RivuletFlag flag = RivuletFlag.QUERY;
-
     private SelectDefinition selectDefinition;
 
     private FromDefinition fromDefinition;
@@ -64,7 +63,7 @@ public class SqlQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
     private final SQLAliasManager.AliasFlag aliasFlag = SQLAliasManager.createAlias();
 
     public SqlQueryDefinition(SqlParserPortableToolbox toolbox, WholeDesc wholeDesc) {
-        super(flag, wholeDesc);
+        super(RivuletFlag.QUERY, wholeDesc);
         SqlQueryMetaDesc<?, ?> metaDesc = (SqlQueryMetaDesc<?, ?>) wholeDesc;
         this.paramReceiptManager = toolbox.getParamReceiptManager();
 
@@ -125,7 +124,7 @@ public class SqlQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
     }
 
     public SqlQueryDefinition(SqlParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta, SQLFieldMeta primaryKey) {
-        super(flag, null);
+        super(RivuletFlag.QUERY, null);
         Class<?> modelClass = sqlModelMeta.getModelClass();
         this.aliasManager = new SQLAliasManager(toolbox.getConfigProperties());
         // 生成queryProxyNode
@@ -162,7 +161,7 @@ public class SqlQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
     }
 
     public SqlQueryDefinition() {
-        super(flag, null);
+        super(RivuletFlag.QUERY, null);
     }
 
     @Override
@@ -233,7 +232,7 @@ public class SqlQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
 
     @Override
     public RivuletFlag getFlag() {
-        return this.flag;
+        return RivuletFlag.QUERY;
     }
 
     @Override

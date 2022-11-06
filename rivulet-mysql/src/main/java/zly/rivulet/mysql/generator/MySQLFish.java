@@ -1,9 +1,6 @@
 package zly.rivulet.mysql.generator;
 
-import zly.rivulet.base.definition.Blueprint;
-import zly.rivulet.base.generator.Fish;
-import zly.rivulet.base.generator.statement.Statement;
-import zly.rivulet.sql.definition.query.SQLBlueprint;
+import zly.rivulet.sql.definition.SQLBlueprint;
 import zly.rivulet.sql.generator.SQLFish;
 import zly.rivulet.sql.generator.statement.SqlStatement;
 

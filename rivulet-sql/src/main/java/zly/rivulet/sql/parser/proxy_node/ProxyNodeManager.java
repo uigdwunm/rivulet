@@ -73,11 +73,11 @@ public final class ProxyNodeManager {
 
     public QueryProxyNode getOrCreateQueryProxyNode(
         SqlParserPortableToolbox toolbox,
-        SqlUpdateMetaDesc<?> metaDesc
+        RivuletDesc rivuletDesc,
+        Class<?> fromModelClass
     ) {
-        RivuletDesc rivuletDesc = metaDesc.getAnnotation();
         if (rivuletDesc == null) {
-            return new QueryProxyNode(toolbox, metaDesc.getMainFrom());
+            return new QueryProxyNode(toolbox, fromModelClass);
         }
 
         QueryProxyNode queryProxyNode = this.queryProxyNodeMap.get(rivuletDesc.value());
@@ -85,7 +85,7 @@ public final class ProxyNodeManager {
             return queryProxyNode;
         }
 
-        queryProxyNode = new QueryProxyNode(toolbox, metaDesc.getMainFrom());
+        queryProxyNode = new QueryProxyNode(toolbox, fromModelClass);
         this.queryProxyNodeMap.put(rivuletDesc.value(), queryProxyNode);
         return queryProxyNode;
     }

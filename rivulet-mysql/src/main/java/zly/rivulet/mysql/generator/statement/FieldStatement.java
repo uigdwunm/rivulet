@@ -8,7 +8,7 @@ import zly.rivulet.sql.definition.field.FieldDefinition;
 import zly.rivulet.sql.parser.SQLAliasManager;
 import zly.rivulet.sql.generator.SqlStatementFactory;
 
-public class FieldStatement implements SingleValueElementStatement {
+public class FieldStatement extends SingleValueElementStatement {
 
     private final FieldMeta fieldMeta;
 

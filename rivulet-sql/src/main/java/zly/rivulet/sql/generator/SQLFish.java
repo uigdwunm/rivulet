@@ -2,7 +2,7 @@ package zly.rivulet.sql.generator;
 
 import zly.rivulet.base.generator.Fish;
 import zly.rivulet.base.generator.statement.Statement;
-import zly.rivulet.sql.definition.query.SQLBlueprint;
+import zly.rivulet.sql.definition.SQLBlueprint;
 import zly.rivulet.sql.generator.statement.SqlStatement;
 
 public class SQLFish implements Fish {

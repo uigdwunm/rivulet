@@ -6,7 +6,7 @@ import zly.rivulet.base.generator.Fish;
 import zly.rivulet.base.generator.statement.Statement;
 import zly.rivulet.base.utils.collector.FixedLengthStatementCollector;
 import zly.rivulet.mysql.discriber.function.MySQLFunction;
-import zly.rivulet.mysql.util.FormatStatementCollector;
+import zly.rivulet.mysql.util.MySQLFormatStatementCollector;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.base.warehouse.DefaultWarehouseManager;
 import zly.rivulet.mysql.MySQLRivuletManager;
@@ -56,7 +56,7 @@ public class App {
                 ).build()
             );
         Statement statement = test.getStatement();
-        FormatStatementCollector formatStatementCollector = new FormatStatementCollector();
+        MySQLFormatStatementCollector formatStatementCollector = new MySQLFormatStatementCollector();
         statement.collectStatement(formatStatementCollector);
         System.out.println(formatStatementCollector);
 
@@ -82,7 +82,7 @@ public class App {
         );
 
         statement = test.getStatement();
-        formatStatementCollector = new FormatStatementCollector();
+        formatStatementCollector = new MySQLFormatStatementCollector();
         System.out.println(formatStatementCollector);
 
         collector = new FixedLengthStatementCollector(1000);

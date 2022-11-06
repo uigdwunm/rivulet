@@ -8,7 +8,7 @@ import zly.rivulet.sql.generator.SqlStatementFactory;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AndOperateStatement implements OperateStatement {
+public class AndOperateStatement extends OperateStatement {
 
     private final List<OperateStatement> subOperateList;
 

@@ -8,22 +8,18 @@ public class FixedLengthStatementCollector implements StatementCollector {
 
     private int index = 0;
 
-    private static final char leftBracket = '(';
-
-    private static final char rightBracket = ')';
-
     public FixedLengthStatementCollector(int length) {
         this.value = new char[length];
     }
 
     @Override
     public StatementCollector leftBracket() {
-        return this.append(leftBracket);
+        return this.append(Constant.LEFT_BRACKET);
     }
 
     @Override
     public StatementCollector rightBracket() {
-        return this.append(rightBracket);
+        return this.append(Constant.RIGHT_BRACKET);
     }
 
     @Override

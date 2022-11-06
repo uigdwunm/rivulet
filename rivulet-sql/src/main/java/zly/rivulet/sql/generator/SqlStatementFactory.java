@@ -26,28 +26,30 @@ public class SqlStatementFactory {
         DEFINITION_RUN_CREATOR_MAP.put(clazz, statementRunCreator);
     }
 
-    public SqlStatement getOrCreate(Definition definition, SQLGenerateToolbox SQLGenerateToolbox) {
-        Definition replaceDefinition = SQLGenerateToolbox.getReplaceDefinition(definition.getClass());
+    public SqlStatement getOrCreate(Definition definition, SQLGenerateToolbox toolbox) {
+        Definition replaceDefinition = toolbox.getReplaceDefinition(definition.getClass());
         if (replaceDefinition != null) {
             definition = replaceDefinition;
         } else {
             // 如果存在replaceDefinition，那一定没有缓存，不存在才需要查下
-            SqlStatement statement = (SqlStatement) SQLGenerateToolbox.getBlueprint().getStatement(definition);
+            SqlStatement statement = toolbox.getBlueprint().getStatement(definition);
             if (statement != null) {
                 // 缓存查到了
                 return statement;
             }
         }
         StatementRunCreator statementRunCreator = DEFINITION_RUN_CREATOR_MAP.get(definition.getClass());
-        return statementRunCreator.create(definition, SQLGenerateToolbox);
+        return statementRunCreator.create(definition, toolbox);
     }
 
-    public SqlStatement warmUp(Definition definition, RelationSwitch soleFlag, WarmUpToolbox initHelper) {
+    public SqlStatement warmUp(Definition definition, RelationSwitch soleFlag, WarmUpToolbox toolbox) {
         StatementInitCreator statementInitCreator = DEFINITION_WARM_UP_CREATOR_MAP.get(definition.getClass());
-        SqlStatement sqlStatement = statementInitCreator.create(definition, soleFlag, initHelper);
+        SqlStatement sqlStatement = statementInitCreator.create(definition, soleFlag, toolbox);
         if (soleFlag.isEnable()) {
             // 唯一，可以缓存
-            initHelper.getSqlBlueprint().putStatement(definition, sqlStatement);
+            toolbox.getSqlBlueprint().putStatement(definition, sqlStatement);
+            // 生成缓存
+            sqlStatement.initCache();
         }
 
         return sqlStatement;

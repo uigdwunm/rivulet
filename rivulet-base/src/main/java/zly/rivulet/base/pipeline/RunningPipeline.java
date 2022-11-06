@@ -9,21 +9,15 @@ public class RunningPipeline {
 
     private BeforeGenerateNode beforeGenerateNode;
 
-    private BeforeExecuteNode beforeExecuteNode;
+    private final DistributeNode distributeNode;
 
-    private AfterExecuteNode afterExecuteNode;
-
-    private final Generator generator;
-
-    public RunningPipeline(Generator generator) {
-        this.generator = generator;
-        this.beforeGenerateNode = new FinalGenerateNode();
-        this.beforeExecuteNode = new DistributeExecuteNode();
-        this.afterExecuteNode = new FinalExecuteNode();
+    public RunningPipeline(DistributeNode distributeNode) {
+        this.beforeGenerateNode = distributeNode;
+        this.distributeNode = distributeNode;
     }
 
-    public Object go(Blueprint blueprint, ParamManager paramManager, Executor executor) {
-        return beforeGenerateNode.handle(blueprint, paramManager, executor);
+    public Object go(Blueprint blueprint, ParamManager paramManager, Class<?> returnType) {
+        return beforeGenerateNode.handle(blueprint, paramManager, returnType);
     }
 
     public void addBeforeGenerateNode(BeforeGenerateNode beforeGenerateNode) {
@@ -32,34 +26,24 @@ public class RunningPipeline {
     }
 
     public void addBeforeExecuteNode(BeforeExecuteNode beforeExecuteNode) {
-        beforeExecuteNode.setNext(this.beforeExecuteNode);
-        this.beforeExecuteNode = beforeExecuteNode;
+        beforeExecuteNode.setNext(distributeNode.beforeExecuteNode);
+        distributeNode.beforeExecuteNode = beforeExecuteNode;
     }
 
     public void addAfterExecuteNode(AfterExecuteNode afterExecuteNode) {
-        afterExecuteNode.setNext(this.afterExecuteNode);
-        this.afterExecuteNode = afterExecuteNode;
+        afterExecuteNode.setNext(distributeNode.afterExecuteNode);
+        distributeNode.afterExecuteNode = afterExecuteNode;
     }
 
+    protected final class FinalExecuteNode extends BeforeExecuteNode {
 
-    private final class FinalGenerateNode extends BeforeGenerateNode {
-        @Override
-        public Object handle(Blueprint blueprint, ParamManager paramManager, RunningPipeline.Executor executor) {
-            Fish fish = generator.generate(blueprint, paramManager);
-            // 执行
-            Object result = beforeExecuteNode.handle(blueprint, fish, executor);
-            return afterExecuteNode.handle(fish, result);
-        }
-    }
-
-    private final class DistributeExecuteNode extends BeforeExecuteNode {
         @Override
         public Object handle(Blueprint blueprint, Fish fish, RunningPipeline.Executor executor) {
             return executor.exec(fish);
         }
     }
 
-    private final class FinalExecuteNode extends AfterExecuteNode {
+    protected final class FinishedNode extends AfterExecuteNode {
         @Override
         public Object handle(Fish fish, Object result) {
             return result;

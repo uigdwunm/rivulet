@@ -5,7 +5,7 @@ import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.definition.Definition;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
-import zly.rivulet.sql.definition.query.SQLBlueprint;
+import zly.rivulet.sql.definition.SQLBlueprint;
 import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 

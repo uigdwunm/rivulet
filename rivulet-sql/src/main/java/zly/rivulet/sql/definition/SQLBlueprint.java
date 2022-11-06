@@ -1,4 +1,4 @@
-package zly.rivulet.sql.definition.query;
+package zly.rivulet.sql.definition;
 
 import zly.rivulet.base.definer.annotations.RivuletDesc;
 import zly.rivulet.base.definer.enums.RivuletFlag;
