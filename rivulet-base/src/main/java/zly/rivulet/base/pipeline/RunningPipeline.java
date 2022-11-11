@@ -5,30 +5,27 @@ import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.generator.Fish;
 import zly.rivulet.base.generator.Generator;
 import zly.rivulet.base.generator.param_manager.ParamManager;
-import zly.rivulet.base.generator.param_manager.for_model_meta.ModelBatchParamManager;
-import zly.rivulet.base.utils.ClassUtils;
-import zly.rivulet.base.utils.TwofoldConcurrentHashMap;
 
 import java.sql.Connection;
-import java.util.Collection;
+import java.util.function.Supplier;
 
 public class RunningPipeline {
 
-    private final Generator generator;
+    protected final Generator generator;
     private BeforeGenerateNode beforeGenerateNode;
 
     protected BeforeExecuteNode beforeExecuteNode;
 
     protected AfterExecuteNode afterExecuteNode;
 
-    private final DistributeNode distributeNode;
+    private final DistributePivot distributePivot;
 
-    public RunningPipeline(Generator generator) {
+    public RunningPipeline(Generator generator, DistributePivot distributePivot) {
         this.generator = generator;
-        this.distributeNode = new DistributeNode();
-        this.beforeGenerateNode = this.distributeNode;
+        this.beforeGenerateNode = new FinalGenerateNode();
         this.beforeExecuteNode = new FinalExecuteNode();
         this.afterExecuteNode = new FinishedNode();
+        this.distributePivot = distributePivot;
     }
 
     public Object go(Blueprint blueprint, ParamManager paramManager, Class<?> returnType, Connection connection) {
@@ -50,46 +47,28 @@ public class RunningPipeline {
         this.afterExecuteNode = afterExecuteNode;
     }
 
-    public class DistributeNode extends BeforeGenerateNode {
+    public void registerExecutePlan(RivuletFlag rivuletFlag, Class<?> returnType, ExecutePlan executePlan) {
+        executePlan.setRunningPipeline(this);
+        this.distributePivot.registerExecutePlan(rivuletFlag, returnType, executePlan);
+    }
 
-        private TwofoldConcurrentHashMap<RivuletFlag, Class<?>, BeforeGenerateNode> map = new TwofoldConcurrentHashMap<>();
-
+    private class FinalGenerateNode extends BeforeGenerateNode {
         @Override
         public Object handle(Blueprint blueprint, ParamManager paramManager, Class<?> returnType, Connection connection) {
-            RivuletFlag flag = blueprint.getFlag();
-            BeforeGenerateNode generateNode = map.get(flag, returnType);
-            if (generateNode != null) {
-                // 自定义了中转节点的
-                return generateNode.handle(blueprint, paramManager, returnType, connection);
-            }
-
-            if (RivuletFlag.QUERY.equals(flag)) {
-                if (ClassUtils.isExtend(Collection.class, returnType)) {
-                    // 批量查询
-                    return ;
-                } else {
-                    // 单个查询
-                    return ;
-                }
-            } else if (RivuletFlag.INSERT.equals(flag) && paramManager instanceof ModelBatchParamManager) {
-                // 批量插入
-                return ;
-            } else {
-                // 普通插入、更新、删除
-                return ;
-            }
+            // 进入分发，并执行
+            return distributePivot.distribute(blueprint, paramManager, returnType, connection);
         }
     }
 
-    protected final class FinalExecuteNode extends BeforeExecuteNode {
+    private final class FinalExecuteNode extends BeforeExecuteNode {
 
         @Override
-        public Object handle(Blueprint blueprint, Fish fish, Executor executor) {
-            return executor.exec(fish);
+        public Object handle(Fish fish, Supplier<Object> executor) {
+            return executor.get();
         }
     }
 
-    protected final class FinishedNode extends AfterExecuteNode {
+    private final class FinishedNode extends AfterExecuteNode {
         @Override
         public Object handle(Fish fish, Object result) {
             return result;

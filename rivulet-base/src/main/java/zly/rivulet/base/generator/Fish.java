@@ -1,5 +1,6 @@
 package zly.rivulet.base.generator;
 
+import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.generator.statement.Statement;
 
 /**
@@ -11,4 +12,6 @@ import zly.rivulet.base.generator.statement.Statement;
 public interface Fish {
 
     Statement getStatement();
+
+    Blueprint getBlueprint();
 }

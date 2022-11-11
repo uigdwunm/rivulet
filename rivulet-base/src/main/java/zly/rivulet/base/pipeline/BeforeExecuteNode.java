@@ -1,16 +1,17 @@
 package zly.rivulet.base.pipeline;
 
 
-import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.generator.Fish;
+
+import java.util.function.Supplier;
 
 public abstract class BeforeExecuteNode {
     BeforeExecuteNode next;
 
-    public abstract Object handle(Blueprint blueprint, Fish fish, Executor executor);
+    public abstract Object handle(Fish fish, Supplier<Object> executor);
 
-    protected Object nextHandle(Blueprint blueprint, Fish fish, Executor executor) {
-        return next.handle(blueprint, fish, executor);
+    protected Object nextHandle(Fish fish, Supplier<Object> executor) {
+        return next.handle(fish, executor);
     }
 
     void setNext(BeforeExecuteNode next) {

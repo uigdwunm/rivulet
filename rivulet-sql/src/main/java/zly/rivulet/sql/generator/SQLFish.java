@@ -1,5 +1,6 @@
 package zly.rivulet.sql.generator;
 
+import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.generator.Fish;
 import zly.rivulet.base.generator.statement.Statement;
 import zly.rivulet.sql.definition.SQLBlueprint;
@@ -26,6 +27,11 @@ public class SQLFish implements Fish {
     @Override
     public Statement getStatement() {
         return this.statement;
+    }
+
+    @Override
+    public Blueprint getBlueprint() {
+        return blueprint;
     }
 
     public int getLength() {
