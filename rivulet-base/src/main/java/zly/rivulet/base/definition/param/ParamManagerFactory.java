@@ -32,7 +32,7 @@ public class ParamManagerFactory {
         return new ModelMetaParamManager(modelMetaParamParser, model);
     }
 
-    public ParamManager getBatchByModelMeta(ModelMeta modelMeta, List<Object> models) {
+    public ParamManager getBatchByModelMeta(ModelMeta modelMeta, Collection<Object> models) {
         Map<String, Function<Object, Object>> modelMetaParamParser = this.modelType_modelMetaParamParser_map.get(modelMeta.getModelClass());
         if (modelMetaParamParser == null) {
             modelMetaParamParser = CommonParamManagerCreatorHelper.createModelMetaParamParser(modelMeta);

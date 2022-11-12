@@ -12,29 +12,25 @@ import java.util.function.Supplier;
 public class RunningPipeline {
 
     protected final Generator generator;
-    private BeforeGenerateNode beforeGenerateNode;
+    private BeforeDistributeNode beforeDistributeNode;
 
     protected BeforeExecuteNode beforeExecuteNode;
 
     protected AfterExecuteNode afterExecuteNode;
 
-    private final DistributePivot distributePivot;
-
-    public RunningPipeline(Generator generator, DistributePivot distributePivot) {
+    public RunningPipeline(Generator generator) {
         this.generator = generator;
-        this.beforeGenerateNode = new FinalGenerateNode();
         this.beforeExecuteNode = new FinalExecuteNode();
         this.afterExecuteNode = new FinishedNode();
-        this.distributePivot = distributePivot;
     }
 
-    public Object go(Blueprint blueprint, ParamManager paramManager, Class<?> returnType, Connection connection) {
-        return beforeGenerateNode.handle(blueprint, paramManager, returnType, connection);
+    public Object go(Blueprint blueprint, ParamManager paramManager, ResultInfo resultInfo, Connection connection) {
+        return beforeDistributeNode.handle(blueprint, paramManager, resultInfo, connection);
     }
 
-    public void addBeforeGenerateNode(BeforeGenerateNode beforeGenerateNode) {
-        beforeGenerateNode.setNext(this.beforeGenerateNode);
-        this.beforeGenerateNode = beforeGenerateNode;
+    public void addBeforeGenerateNode(BeforeDistributeNode beforeDistributeNode) {
+        beforeDistributeNode.setNext(this.beforeDistributeNode);
+        this.beforeDistributeNode = beforeDistributeNode;
     }
 
     public void addBeforeExecuteNode(BeforeExecuteNode beforeExecuteNode) {
@@ -50,14 +46,6 @@ public class RunningPipeline {
     public void registerExecutePlan(RivuletFlag rivuletFlag, Class<?> returnType, ExecutePlan executePlan) {
         executePlan.setRunningPipeline(this);
         this.distributePivot.registerExecutePlan(rivuletFlag, returnType, executePlan);
-    }
-
-    private class FinalGenerateNode extends BeforeGenerateNode {
-        @Override
-        public Object handle(Blueprint blueprint, ParamManager paramManager, Class<?> returnType, Connection connection) {
-            // 进入分发，并执行
-            return distributePivot.distribute(blueprint, paramManager, returnType, connection);
-        }
     }
 
     private final class FinalExecuteNode extends BeforeExecuteNode {

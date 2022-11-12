@@ -3,14 +3,13 @@ package zly.rivulet.sql;
 import zly.rivulet.base.DefaultOperation;
 import zly.rivulet.base.RivuletManager;
 import zly.rivulet.base.definer.ModelMeta;
-import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.exception.ExecuteException;
 import zly.rivulet.base.exception.ParseException;
 import zly.rivulet.base.generator.Generator;
 import zly.rivulet.base.generator.param_manager.ParamManager;
-import zly.rivulet.base.utils.ClassUtils;
+import zly.rivulet.base.pipeline.ResultInfo;
 import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.collector.FixedLengthStatementCollector;
 import zly.rivulet.base.utils.collector.StatementCollector;
@@ -67,24 +66,11 @@ public abstract class SQLRivuletManager extends RivuletManager {
         // 判断是，返回单值还是list，传入不同的executor
         Class<?> returnType = proxyMethod.getReturnType();
         try (Connection connection = this.getConnection()) {
-            if (RivuletFlag.QUERY.equals(sqlBlueprint.getFlag())) {
-                if (ClassUtils.isExtend(Collection.class, returnType)) {
-                    // 结果是集合类型
-                    // 推断并创建集合容器
-                    Collection<Object> collection = collectionInstanceCreator.create(returnType);
-                    return this.executeQueryMany(connection, sqlBlueprint, paramManager, collection);
-                } else {
-                    // 单个结果
-                    return this.executeQueryOne(connection, sqlBlueprint, paramManager);
-                }
-            } else {
-                // 增删改操作
-                return this.executeUpdate(connection, sqlBlueprint, paramManager);
-            }
+            // 执行
+            return runningPipeline.go(sqlBlueprint, paramManager, ResultInfo.of(returnType), connection);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     /**
@@ -105,7 +91,7 @@ public abstract class SQLRivuletManager extends RivuletManager {
         if (blueprint instanceof SqlQueryDefinition) {
             try (Connection connection = this.getConnection()) {
                 // 单个查询
-                return (T) this.executeQueryOne(connection, (SQLBlueprint) blueprint, paramManager);
+                return (T) runningPipeline.go(blueprint, paramManager, ResultInfo.of(blueprint.getReturnType()), connection);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -160,63 +146,6 @@ public abstract class SQLRivuletManager extends RivuletManager {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-    }
-
-
-    private Object executeQueryOne(Connection connection, SQLBlueprint sqlBlueprint, ParamManager paramManager) {
-        return runningPipeline.go(sqlBlueprint, paramManager, fish -> {
-            SQLFish sqlFish = (SQLFish) fish;
-            StatementCollector collector = new FixedLengthStatementCollector(sqlFish.getLength());
-            sqlFish.getStatement().collectStatement(collector);
-            try {
-                PreparedStatement statement = connection.prepareStatement(collector.toString());
-                ResultSet resultSet = statement.executeQuery(collector.toString());
-                SQLQueryResultAssigner assigner = (SQLQueryResultAssigner) sqlBlueprint.getAssigner();
-                return assigner.getValue(resultSet, 0);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        });
-    }
-
-    private Object executeQueryMany(Connection connection, SQLBlueprint sqlBlueprint, ParamManager paramManager, Collection<Object> collection) {
-        return runningPipeline.go(sqlBlueprint, paramManager, fish -> {
-            SQLFish sqlFish = (SQLFish) fish;
-            StatementCollector collector = new FixedLengthStatementCollector(sqlFish.getLength());
-            sqlFish.getStatement().collectStatement(collector);
-            try {
-                PreparedStatement statement = connection.prepareStatement(collector.toString());
-                SQLQueryResultAssigner assigner = (SQLQueryResultAssigner) sqlBlueprint.getAssigner();
-
-                // 执行查询
-                ResultSet resultSet = statement.executeQuery(collector.toString());
-
-                // 拼装结果
-                while (resultSet.next()) {
-                    collection.add(assigner.getValue(resultSet, 0));
-                }
-                // 回收资源
-                resultSet.close();
-
-                return collection;
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        });
-    }
-
-    private int executeUpdate(Connection connection, SQLBlueprint sqlBlueprint, ParamManager paramManager) {
-        return (int) runningPipeline.go(sqlBlueprint, paramManager, fish -> {
-            SQLFish sqlFish = (SQLFish) fish;
-            StatementCollector collector = new FixedLengthStatementCollector(sqlFish.getLength());
-            sqlFish.getStatement().collectStatement(collector);
-            try {
-                PreparedStatement statement = connection.prepareStatement(collector.toString());
-                return statement.executeUpdate(collector.toString());
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        });
     }
 
     protected int[] executeBatchUpdate(Connection connection, SQLBlueprint sqlBlueprint, ParamManager paramManager, boolean isLast) {

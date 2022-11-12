@@ -147,4 +147,9 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
     public RivuletFlag getFlag() {
         return RivuletFlag.QUERY;
     }
+
+    @Override
+    public Class<?> getReturnType() {
+        return selectModel;
+    }
 }

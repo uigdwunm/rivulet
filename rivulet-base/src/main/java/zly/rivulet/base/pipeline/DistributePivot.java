@@ -11,7 +11,7 @@ public abstract class DistributePivot {
 
     private TwofoldConcurrentHashMap<RivuletFlag, Class<?>, ExecutePlan> executePlanMap = new TwofoldConcurrentHashMap<>();
 
-    public abstract Object distribute(Blueprint blueprint, ParamManager paramManager, Class<?> returnType, Connection connection);
+    public abstract Object distribute(Blueprint blueprint, ParamManager paramManager, ResultInfo resultInfo, Connection connection);
 
     public void registerExecutePlan(RivuletFlag rivuletFlag, Class<?> returnType, ExecutePlan executePlan) {
         this.executePlanMap.put(rivuletFlag, returnType, executePlan);

@@ -12,4 +12,6 @@ public interface WholeDesc extends Desc {
     void setAnnotation(RivuletDesc anno);
 
     RivuletFlag getFlag();
+
+    Class<?> getReturnType();
 }

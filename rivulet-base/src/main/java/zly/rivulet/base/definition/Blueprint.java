@@ -25,4 +25,6 @@ public interface Blueprint extends Definition {
     boolean isWarmUp();
 
     void finishWarmUp();
+
+    Class<?> getReturnType();
 }

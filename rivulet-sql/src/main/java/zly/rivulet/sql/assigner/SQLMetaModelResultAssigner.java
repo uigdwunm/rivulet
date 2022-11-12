@@ -14,30 +14,6 @@ public class SQLMetaModelResultAssigner extends SQLQueryResultAssigner {
      **/
     private final View<SetMapping<Object, Object>> fieldAssignerList;
 
-//    public ModelAbstractSQLQueryResultAssigner(ModelProxyNode modelProxyNode) {
-//        super(assigner, modelProxyNode.getFromModelClass());
-//        SQLModelMeta modelMeta = modelProxyNode.getModelMeta();
-//        QueryProxyNode parentNode = modelProxyNode.getParentNode();
-//        List<SetMapping<Object, Object>> fieldAssignerList = new ArrayList<>();
-//        for (FieldMeta sqlFieldMeta : modelMeta.getFieldMetaList()) {
-//            Field field = sqlFieldMeta.getField();
-//            field.setAccessible(true);
-//            SetMapping<Object, Object> assigner = (outerContainer, o) -> {
-//                try {
-//                    field.set(outerContainer, o);
-//                } catch (IllegalAccessException e) {
-//                    throw new RuntimeException(e);
-//                }
-//            };
-//            fieldAssignerList.add(assigner);
-//            FieldDefinition fieldDefinition = new FieldDefinition(parentNode.getAliasFlag(), modelMeta, sqlFieldMeta);
-//            SQLAliasManager.AliasFlag aliasFlag = SQLAliasManager.createFieldAlias(sqlFieldMeta.getFieldName());
-//            parentNode.addSelectNode(new FieldProxyNode(parentNode, aliasFlag));
-//            modelProxyNode.addMappingDefinition(new MapDefinition(fieldDefinition, parentNode.getAliasFlag(), aliasFlag));
-//        }
-//        this.fieldAssignerList = View.create(fieldAssignerList);
-//    }
-
     public SQLMetaModelResultAssigner(Class<?> selectModel, List<SetMapping<Object, Object>> setMappingList) {
         super(selectModel);
         this.fieldAssignerList = View.create(setMappingList);

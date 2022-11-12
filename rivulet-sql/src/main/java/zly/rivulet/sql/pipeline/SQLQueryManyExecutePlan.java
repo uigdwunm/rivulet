@@ -4,6 +4,7 @@ import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.generator.Fish;
 import zly.rivulet.base.generator.param_manager.ParamManager;
 import zly.rivulet.base.pipeline.ExecutePlan;
+import zly.rivulet.base.pipeline.ResultInfo;
 import zly.rivulet.base.utils.collector.FixedLengthStatementCollector;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.sql.assigner.SQLQueryResultAssigner;
@@ -13,10 +14,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 
-public class queryManyExecutePlan extends ExecutePlan {
+public class SQLQueryManyExecutePlan extends ExecutePlan {
+
     @Override
-    public Object plan(Blueprint blueprint, ParamManager paramManager, Class<?> returnType, Connection connection) {
+    public Object plan(Blueprint blueprint, ParamManager paramManager, ResultInfo resultInfo, Connection connection) {
         Fish fish = super.getGenerator().generate(blueprint, paramManager);
         return super.beforeAndExecute(
             fish,
@@ -30,15 +33,16 @@ public class queryManyExecutePlan extends ExecutePlan {
 
                     // 执行查询
                     ResultSet resultSet = statement.executeQuery(collector.toString());
+                    Collection<Object> resultCollection = (Collection<Object>) resultInfo.getResultContainer();
 
                     // 拼装结果
                     while (resultSet.next()) {
-                        collection.add(assigner.getValue(resultSet, 0));
+                        resultCollection.add(assigner.getValue(resultSet, 0));
                     }
                     // 回收资源
                     resultSet.close();
 
-                    return collection;
+                    return resultCollection;
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }

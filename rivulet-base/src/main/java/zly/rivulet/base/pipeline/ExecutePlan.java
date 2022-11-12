@@ -6,14 +6,13 @@ import zly.rivulet.base.generator.Generator;
 import zly.rivulet.base.generator.param_manager.ParamManager;
 
 import java.sql.Connection;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public abstract class ExecutePlan {
 
     private RunningPipeline runningPipeline;
 
-    public abstract Object plan(Blueprint blueprint, ParamManager paramManager, Class<?> returnType, Connection connection);
+    public abstract Object plan(Blueprint blueprint, ParamManager paramManager, ResultInfo resultInfo, Connection connection);
 
     final void setRunningPipeline(RunningPipeline runningPipeline) {
         this.runningPipeline = runningPipeline;

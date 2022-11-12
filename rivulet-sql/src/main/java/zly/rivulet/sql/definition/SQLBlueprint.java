@@ -98,4 +98,9 @@ public abstract class SQLBlueprint implements Blueprint {
     public RivuletFlag getFlag() {
         return flag;
     }
+
+    @Override
+    public Class<?> getReturnType() {
+        return wholeDesc.getReturnType();
+    }
 }

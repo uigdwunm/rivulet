@@ -4,6 +4,7 @@ import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.definer.ModelMeta;
 import zly.rivulet.base.exception.ExecuteException;
 import zly.rivulet.base.generator.param_manager.ParamManager;
+import zly.rivulet.base.pipeline.ResultInfo;
 import zly.rivulet.base.utils.CollectionUtils;
 import zly.rivulet.base.warehouse.WarehouseManager;
 import zly.rivulet.mysql.definer.MySQLDefiner;
@@ -15,10 +16,7 @@ import zly.rivulet.sql.parser.SqlParser;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MySQLRivuletManager extends SQLRivuletManager {
@@ -55,6 +53,10 @@ public class MySQLRivuletManager extends SQLRivuletManager {
 
         MySQLRivuletProperties rivuletProperties = this.getRivuletProperties();
         try (Connection connection = this.getConnection()) {
+
+            ParamManager paramManager = paramManagerFactory.getBatchByModelMeta(modelMeta, (Collection<Object>) models);
+            return (List<Integer>) runningPipeline.go(sqlBlueprint, paramManager, ResultInfo.of(List.class, new LinkedList<>()), connection);
+
 
             List<Integer> result = new ArrayList<>();
             List<Object> subList = new ArrayList<>(rivuletProperties.getBatchInsertOneStatementMax());

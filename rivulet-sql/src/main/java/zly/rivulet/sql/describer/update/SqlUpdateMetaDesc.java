@@ -54,6 +54,11 @@ public class SqlUpdateMetaDesc<T> implements WholeDesc {
         return RivuletFlag.UPDATE;
     }
 
+    @Override
+    public Class<?> getReturnType() {
+        return Integer.class;
+    }
+
     public Class<T> getModel() {
         return model;
     }
