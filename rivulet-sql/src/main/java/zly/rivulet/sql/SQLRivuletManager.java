@@ -1,29 +1,28 @@
 package zly.rivulet.sql;
 
-import zly.rivulet.base.DefaultOperation;
 import zly.rivulet.base.RivuletManager;
 import zly.rivulet.base.definer.ModelMeta;
+import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.exception.ExecuteException;
 import zly.rivulet.base.exception.ParseException;
 import zly.rivulet.base.generator.Generator;
 import zly.rivulet.base.generator.param_manager.ParamManager;
-import zly.rivulet.base.pipeline.ResultInfo;
+import zly.rivulet.base.pipeline.ExecutePlan;
+import zly.rivulet.base.utils.ClassUtils;
 import zly.rivulet.base.utils.Constant;
-import zly.rivulet.base.utils.collector.FixedLengthStatementCollector;
-import zly.rivulet.base.utils.collector.StatementCollector;
+import zly.rivulet.base.utils.TwofoldConcurrentHashMap;
 import zly.rivulet.base.warehouse.WarehouseManager;
-import zly.rivulet.sql.assigner.SQLQueryResultAssigner;
 import zly.rivulet.sql.definition.SQLBlueprint;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
-import zly.rivulet.sql.generator.SQLFish;
+import zly.rivulet.sql.pipeline.SQLQueryManyExecutePlan;
+import zly.rivulet.sql.pipeline.SQLQueryOneExecutePlan;
+import zly.rivulet.sql.pipeline.SQLUpdateOneExecutePlan;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Method;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,7 +30,9 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class SQLRivuletManager extends RivuletManager {
+
     private final DataSource dataSource;
+    private final TwofoldConcurrentHashMap<RivuletFlag, Class<?>, ExecutePlan> rivuletFlagClassExecutePlanMap;
 
     protected SQLRivuletManager(
         Generator generator,
@@ -39,14 +40,22 @@ public abstract class SQLRivuletManager extends RivuletManager {
         DataSource dataSource
     ) {
         super(generator.getParser(), generator, generator.getProperties(), generator.getConvertorManager(), warehouseManager);
+        rivuletFlagClassExecutePlanMap = new TwofoldConcurrentHashMap<>();
         this.dataSource = dataSource;
     }
-
-    protected abstract Connection getConnection() throws SQLException;
 
     @Override
     public Blueprint parse(WholeDesc wholeDesc) {
         return parser.parseByDesc(wholeDesc);
+    }
+
+    @Override
+    public Object exec(Method proxyMethod, Object[] args) {
+        try (Connection connection = dataSource.getConnection()) {
+            this.exec(connection, proxyMethod, args);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -55,22 +64,42 @@ public abstract class SQLRivuletManager extends RivuletManager {
      * @author zhaolaiyuan
      * Date 2022/9/6 8:46
      **/
-    @Override
-    public Object exec(Method proxyMethod, Object[] args) {
+    public Object exec(Connection connection, Method proxyMethod, Object[] args) {
         SQLBlueprint sqlBlueprint = (SQLBlueprint) mapperMethod_FinalDefinition_Map.get(proxyMethod);
         if (sqlBlueprint == null) {
             // 没有预先定义方法
             throw ParseException.undefinedMethod();
         }
         ParamManager paramManager = paramManagerFactory.getByProxyMethod(sqlBlueprint, proxyMethod, args);
-        // 判断是，返回单值还是list，传入不同的executor
-        Class<?> returnType = proxyMethod.getReturnType();
-        try (Connection connection = this.getConnection()) {
-            // 执行
-            return runningPipeline.go(sqlBlueprint, paramManager, ResultInfo.of(returnType), connection);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        // 执行
+        ExecutePlan executePlan = this.createExecutePlan(sqlBlueprint.getFlag(), proxyMethod.getReturnType(), connection);
+        return runningPipeline.go(sqlBlueprint, paramManager, executePlan);
+    }
+
+    protected ExecutePlan createExecutePlan(RivuletFlag rivuletFlag, Class<?> returnType, Connection connection) {
+        ExecutePlan executePlan = rivuletFlagClassExecutePlanMap.get(rivuletFlag, returnType);
+        if (executePlan != null) {
+            return executePlan;
         }
+        if (RivuletFlag.QUERY.equals(rivuletFlag)) {
+            if (ClassUtils.isExtend(Collection.class, returnType)) {
+                Collection<Object> collection = super.collectionInstanceCreator.create(returnType);
+                return new SQLQueryManyExecutePlan(connection, collection);
+            } else {
+                return new SQLQueryOneExecutePlan(connection);
+            }
+//            } else if (RivuletFlag.INSERT.equals(sqlBlueprint.getFlag()) && paramManager instanceof ModelBatchParamManager) {
+//                // 批量插入
+//                MySQLRivuletProperties rivuletProperties = this.getRivuletProperties();
+//                executePlan = new MySQLBatchInsertExecutePlan(rivuletProperties, connection);
+        } else {
+            return new SQLUpdateOneExecutePlan(connection);
+        }
+    }
+
+
+    public void registerExecutePlan(RivuletFlag rivuletFlag, Class<?> returnType, ExecutePlan executePlan) {
+        this.rivuletFlagClassExecutePlanMap.put(rivuletFlag, returnType, executePlan);
     }
 
     /**
@@ -88,13 +117,18 @@ public abstract class SQLRivuletManager extends RivuletManager {
 
     @Override
     public <T> T queryOneByBlueprint(Blueprint blueprint, ParamManager paramManager) {
+        try (Connection connection = dataSource.getConnection()) {
+            return this.queryOneByBlueprint(connection, blueprint, paramManager);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public <T> T queryOneByBlueprint(Connection connection, Blueprint blueprint, ParamManager paramManager) {
         if (blueprint instanceof SqlQueryDefinition) {
-            try (Connection connection = this.getConnection()) {
-                // 单个查询
-                return (T) runningPipeline.go(blueprint, paramManager, ResultInfo.of(blueprint.getReturnType()), connection);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+            // 单个查询
+            SQLQueryOneExecutePlan sqlQueryOneExecutePlan = new SQLQueryOneExecutePlan(connection);
+            return runningPipeline.go(blueprint, paramManager, sqlQueryOneExecutePlan);
         } else {
             throw ExecuteException.execError("执行类型不匹配，此处仅支持执行sql类查询方法");
         }
@@ -116,11 +150,13 @@ public abstract class SQLRivuletManager extends RivuletManager {
     @Override
     public <T> void queryManyByBlueprint(Blueprint blueprint, ParamManager paramManager, Collection<T> resultContainer) {
         if (blueprint instanceof SqlQueryDefinition) {
-            try (Connection connection = this.getConnection()) {
+            Connection connection = this.getConnection();
+            try {
                 // 批量查询
-                this.executeQueryMany(connection, (SQLBlueprint) blueprint, paramManager, (Collection<Object>) resultContainer);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+                SQLQueryManyExecutePlan executePlan = new SQLQueryManyExecutePlan(connection, (Collection<Object>) resultContainer);
+                this.runningPipeline.go(blueprint, paramManager, executePlan);
+            } finally {
+                this.closeConnection(connection);
             }
         } else {
             throw ExecuteException.execError("执行类型不匹配，此处仅支持执行sql类查询方法");
@@ -141,139 +177,13 @@ public abstract class SQLRivuletManager extends RivuletManager {
         SQLBlueprint blueprint = (SQLBlueprint) parser.parseInsertByMeta(modelMeta);
 
         ParamManager paramManager = paramManagerFactory.getByModelMeta(modelMeta, obj);
-        try (Connection connection = this.getConnection()) {
-            return this.executeUpdate(connection, blueprint, paramManager);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        Connection connection = this.getConnection();
+        try {
+            SQLUpdateOneExecutePlan executePlan = new SQLUpdateOneExecutePlan(connection);
+            return runningPipeline.go(blueprint, paramManager, executePlan);
+        } finally {
+            this.closeConnection(connection);
         }
     }
 
-    protected int[] executeBatchUpdate(Connection connection, SQLBlueprint sqlBlueprint, ParamManager paramManager, boolean isLast) {
-        return (int[]) runningPipeline.go(sqlBlueprint, paramManager, fish -> {
-            SQLFish sqlFish = (SQLFish) fish;
-            StatementCollector collector = new FixedLengthStatementCollector(sqlFish.getLength());
-            sqlFish.getStatement().collectStatement(collector);
-            try {
-                PreparedStatement statement = connection.prepareStatement(collector.toString());
-                statement.addBatch();
-
-                if (isLast) {
-                    return statement.executeBatch();
-                } else {
-                    return null;
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        });
-    }
-
-    public class Transaction implements DefaultOperation {
-        private final Connection connection;
-
-        private volatile boolean isClosed = false;
-
-        private Transaction(Connection connection) {
-            this.connection = connection;
-            try {
-                // 关闭自动提交
-                connection.setAutoCommit(false);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        public void commit() {
-            try {
-                connection.commit();
-                this.isClosed = true;
-                connection.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        @Override
-        public Blueprint parse(WholeDesc wholeDesc) {
-            return null;
-        }
-
-        @Override
-        public <T> T queryOneByDescKey(String descKey, Map<String, Object> params) {
-            return null;
-        }
-
-        @Override
-        public <T> T queryOneByBlueprint(Blueprint blueprint, ParamManager paramManager) {
-            return null;
-        }
-
-        @Override
-        public <T, I> T queryById(I id, Class<T> modelClass) {
-            return null;
-        }
-
-        @Override
-        public <T> void queryManyByDescKey(String descKey, Map<String, Object> params, Collection<T> resultContainer) {
-
-        }
-
-        @Override
-        public <T> void queryManyByBlueprint(Blueprint blueprint, ParamManager paramManager, Collection<T> resultContainer) {
-
-        }
-
-        @Override
-        public <T, I> List<T> queryByIds(Collection<I> ids, Class<T> modelClass) {
-            return null;
-        }
-
-        public <T> int insertOne(T obj) {
-            if (isClosed) {
-                throw new IllegalStateException("事物已提交, 无法再操作");
-            }
-            Class<?> clazz = obj.getClass();
-            ModelMeta modelMeta = definer.createOrGetModelMeta(clazz);
-            SQLBlueprint blueprint = (SQLBlueprint) parser.parseInsertByMeta(modelMeta);
-
-            ParamManager paramManager = paramManagerFactory.getByModelMeta(modelMeta, new Object[]{obj});
-            return executeUpdate(connection, blueprint, paramManager);
-        }
-
-        @Override
-        public <T> int updateOneById(T obj) {
-            return 0;
-        }
-
-        @Override
-        public <T> int batchUpdateById(Collection<T> obj) {
-            return 0;
-        }
-
-        @Override
-        public int updateByDescKey(String descKey, Map<String, Object> params) {
-            return 0;
-        }
-
-        @Override
-        public int updateByBlueprint(Blueprint blueprint, Map<String, Object> params) {
-            return 0;
-        }
-
-        @Override
-        public <T, I> int deleteById(I id, Class<T> modelClass) {
-            return 0;
-        }
-
-        @Override
-        public <T, I> int deleteByIds(Collection<I> ids, Class<T> modelClass) {
-            return 0;
-        }
-
-        @Override
-        public int deleteByBlueprint(Blueprint blueprint, Map<String, Object> params) {
-            return 0;
-        }
-
-    }
 }

@@ -1,22 +1,23 @@
 package zly.rivulet.base.pipeline;
 
-import zly.rivulet.base.definer.enums.RivuletFlag;
+import zly.rivulet.base.RivuletProperties;
 import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.generator.Fish;
 import zly.rivulet.base.generator.Generator;
 import zly.rivulet.base.generator.param_manager.ParamManager;
 
-import java.sql.Connection;
 import java.util.function.Supplier;
 
 public class RunningPipeline {
 
     protected final Generator generator;
-    private BeforeDistributeNode beforeDistributeNode;
+
+    private BeforeGenerateNode beforeGenerateNode;
 
     protected BeforeExecuteNode beforeExecuteNode;
 
     protected AfterExecuteNode afterExecuteNode;
+
 
     public RunningPipeline(Generator generator) {
         this.generator = generator;
@@ -24,13 +25,24 @@ public class RunningPipeline {
         this.afterExecuteNode = new FinishedNode();
     }
 
-    public Object go(Blueprint blueprint, ParamManager paramManager, ResultInfo resultInfo, Connection connection) {
-        return beforeDistributeNode.handle(blueprint, paramManager, resultInfo, connection);
+    protected void initDistributePivotNode(GeneratePivotNode... nodes) {
+        GeneratePivotNode node0 = nodes[0];
+        this.beforeGenerateNode = node0;
+        // 把node串成链
+        for (GeneratePivotNode node : nodes) {
+            node0.setNext(node);
+            node0 = node;
+        }
+
     }
 
-    public void addBeforeGenerateNode(BeforeDistributeNode beforeDistributeNode) {
-        beforeDistributeNode.setNext(this.beforeDistributeNode);
-        this.beforeDistributeNode = beforeDistributeNode;
+    public <T> T go(Blueprint blueprint, ParamManager paramManager, ExecutePlan executePlan) {
+        return (T) beforeGenerateNode.handle(blueprint, paramManager, executePlan);
+    }
+
+    public void addBeforeDistributeNode(BeforeGenerateNode beforeGenerateNode) {
+        beforeGenerateNode.setNext(this.beforeGenerateNode);
+        this.beforeGenerateNode = beforeGenerateNode;
     }
 
     public void addBeforeExecuteNode(BeforeExecuteNode beforeExecuteNode) {
@@ -43,16 +55,20 @@ public class RunningPipeline {
         this.afterExecuteNode = afterExecuteNode;
     }
 
-    public void registerExecutePlan(RivuletFlag rivuletFlag, Class<?> returnType, ExecutePlan executePlan) {
-        executePlan.setRunningPipeline(this);
-        this.distributePivot.registerExecutePlan(rivuletFlag, returnType, executePlan);
+    private final class FinalGenerateNode extends BeforeGenerateNode {
+
+        @Override
+        public Object handle(Blueprint blueprint, ParamManager paramManager, ExecutePlan executePlan) {
+            return executePlan.plan(generator, beforeExecuteNode);
+        }
     }
 
     private final class FinalExecuteNode extends BeforeExecuteNode {
 
         @Override
         public Object handle(Fish fish, Supplier<Object> executor) {
-            return executor.get();
+            Object result = executor.get();
+            return afterExecuteNode.handle(fish, result);
         }
     }
 

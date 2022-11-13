@@ -10,6 +10,7 @@ import zly.rivulet.base.generator.Generator;
 import zly.rivulet.base.generator.param_manager.for_proxy_method.ForTestParamManager;
 import zly.rivulet.base.parser.Parser;
 import zly.rivulet.base.pipeline.RunningPipeline;
+import zly.rivulet.base.utils.CollectionInstanceCreator;
 import zly.rivulet.base.warehouse.WarehouseManager;
 
 import java.lang.reflect.Method;
@@ -35,6 +36,8 @@ public abstract class RivuletManager implements DefaultOperation {
     protected final ParamManagerFactory paramManagerFactory;
 
     protected final Map<Method, Blueprint> mapperMethod_FinalDefinition_Map = new ConcurrentHashMap<>();
+
+    protected final CollectionInstanceCreator collectionInstanceCreator = new CollectionInstanceCreator();
 
     protected RivuletManager(
         Parser parser,

@@ -24,4 +24,8 @@ public class ModelBatchParamManager implements ParamManager {
     public Collection<Object> getModelParamList() {
         return modelParamList;
     }
+
+    public ModelBatchParamManager createSubModelBatchParamManager(Collection<Object> subModelParamList) {
+        return new ModelBatchParamManager(subModelParamList, this.modelMetaParamParserMap);
+    }
 }
