@@ -1,5 +1,6 @@
 package zly.rivulet.sql;
 
+import zly.rivulet.base.DefaultOperation;
 import zly.rivulet.base.RivuletManager;
 import zly.rivulet.base.definer.ModelMeta;
 import zly.rivulet.base.definer.enums.RivuletFlag;
@@ -9,6 +10,7 @@ import zly.rivulet.base.exception.ExecuteException;
 import zly.rivulet.base.exception.ParseException;
 import zly.rivulet.base.generator.Generator;
 import zly.rivulet.base.generator.param_manager.ParamManager;
+import zly.rivulet.base.generator.param_manager.for_proxy_method.SimpleParamManager;
 import zly.rivulet.base.pipeline.ExecutePlan;
 import zly.rivulet.base.utils.ClassUtils;
 import zly.rivulet.base.utils.Constant;
@@ -24,10 +26,7 @@ import javax.sql.DataSource;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class SQLRivuletManager extends RivuletManager {
 
@@ -52,7 +51,7 @@ public abstract class SQLRivuletManager extends RivuletManager {
     @Override
     public Object exec(Method proxyMethod, Object[] args) {
         try (Connection connection = dataSource.getConnection()) {
-            this.exec(connection, proxyMethod, args);
+            return this.exec(connection, proxyMethod, args);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -88,10 +87,6 @@ public abstract class SQLRivuletManager extends RivuletManager {
             } else {
                 return new SQLQueryOneExecutePlan(connection);
             }
-//            } else if (RivuletFlag.INSERT.equals(sqlBlueprint.getFlag()) && paramManager instanceof ModelBatchParamManager) {
-//                // 批量插入
-//                MySQLRivuletProperties rivuletProperties = this.getRivuletProperties();
-//                executePlan = new MySQLBatchInsertExecutePlan(rivuletProperties, connection);
         } else {
             return new SQLUpdateOneExecutePlan(connection);
         }
@@ -113,6 +108,19 @@ public abstract class SQLRivuletManager extends RivuletManager {
         } else {
             throw ExecuteException.execError("执行类型不匹配，此处仅支持执行查询方法");
         }
+    }
+
+    public <T> T queryOneByDescKey(Connection connection, String descKey, Map<String, Object> params) {
+        Blueprint blueprint = parser.parseByKey(descKey);
+        if (blueprint instanceof SqlQueryDefinition) {
+            return this.queryOneByBlueprint(connection, blueprint, params);
+        } else {
+            throw ExecuteException.execError("执行类型不匹配，此处仅支持执行查询方法");
+        }
+    }
+
+    public  <T> T queryOneByBlueprint(Connection connection, Blueprint blueprint, Map<String, Object> params) {
+        return this.queryOneByBlueprint(connection, blueprint, new SimpleParamManager(params));
     }
 
     @Override
@@ -141,23 +149,43 @@ public abstract class SQLRivuletManager extends RivuletManager {
         return this.queryOneByBlueprint(blueprint, Collections.singletonMap(Constant.MAIN_ID, id));
     }
 
+    public <T, I> T queryById(Connection connection, I id, Class<T> modelClass) {
+        ModelMeta modelMeta = definer.createOrGetModelMeta(modelClass);
+        Blueprint blueprint = this.parser.parseSelectByMeta(modelMeta);
+        return this.queryOneByBlueprint(connection, blueprint, Collections.singletonMap(Constant.MAIN_ID, id));
+    }
+
     @Override
     public <T> void queryManyByDescKey(String descKey, Map<String, Object> params, Collection<T> resultContainer) {
         Blueprint blueprint = parser.parseByKey(descKey);
         this.queryManyByBlueprint(blueprint, params, resultContainer);
     }
 
+    public <T> void queryManyByDescKey(Connection connection, String descKey, Map<String, Object> params, Collection<T> resultContainer) {
+        Blueprint blueprint = parser.parseByKey(descKey);
+        this.queryManyByBlueprint(connection, blueprint, params, resultContainer);
+    }
+
+    public  <T> void queryManyByBlueprint(Connection connection, Blueprint blueprint, Map<String, Object> params, Collection<T> resultContainer) {
+        this.queryManyByBlueprint(connection, blueprint, new SimpleParamManager(params), resultContainer);
+    }
+
+
     @Override
     public <T> void queryManyByBlueprint(Blueprint blueprint, ParamManager paramManager, Collection<T> resultContainer) {
+        try (Connection connection = dataSource.getConnection()) {
+            // 批量查询
+            this.queryManyByBlueprint(connection, blueprint, paramManager, resultContainer);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public <T> void queryManyByBlueprint(Connection connection, Blueprint blueprint, ParamManager paramManager, Collection<T> resultContainer) {
         if (blueprint instanceof SqlQueryDefinition) {
-            Connection connection = this.getConnection();
-            try {
-                // 批量查询
-                SQLQueryManyExecutePlan executePlan = new SQLQueryManyExecutePlan(connection, (Collection<Object>) resultContainer);
-                this.runningPipeline.go(blueprint, paramManager, executePlan);
-            } finally {
-                this.closeConnection(connection);
-            }
+            // 批量查询
+            SQLQueryManyExecutePlan executePlan = new SQLQueryManyExecutePlan(connection, (Collection<Object>) resultContainer);
+            this.runningPipeline.go(blueprint, paramManager, executePlan);
         } else {
             throw ExecuteException.execError("执行类型不匹配，此处仅支持执行sql类查询方法");
         }
@@ -170,20 +198,158 @@ public abstract class SQLRivuletManager extends RivuletManager {
         return this.queryManyByBlueprint(blueprint, Collections.singletonMap(Constant.MAIN_IDS, ids));
     }
 
+    public <T, I> List<T> queryByIds(Connection connection, Collection<I> ids, Class<T> modelClass) {
+        ModelMeta modelMeta = definer.createOrGetModelMeta(modelClass);
+        Blueprint blueprint = this.parser.parseSelectByMeta(modelMeta);
+        return this.queryManyByBlueprint(connection, blueprint, Collections.singletonMap(Constant.MAIN_IDS, ids));
+    }
+
+    public <T> List<T> queryManyByBlueprint(Connection connection, Blueprint blueprint, Map<String, Object> params) {
+        List<T> list = new LinkedList<>();
+        this.queryManyByBlueprint(connection, blueprint, params, list);
+        return list;
+    }
+
     @Override
     public <T> int insertOne(T obj) {
+        try (Connection connection = dataSource.getConnection()) {
+            return this.insertOne(connection, obj);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public <T> int insertOne(Connection connection, T obj) {
         Class<?> clazz = obj.getClass();
         ModelMeta modelMeta = definer.createOrGetModelMeta(clazz);
         SQLBlueprint blueprint = (SQLBlueprint) parser.parseInsertByMeta(modelMeta);
 
         ParamManager paramManager = paramManagerFactory.getByModelMeta(modelMeta, obj);
-        Connection connection = this.getConnection();
-        try {
-            SQLUpdateOneExecutePlan executePlan = new SQLUpdateOneExecutePlan(connection);
-            return runningPipeline.go(blueprint, paramManager, executePlan);
-        } finally {
-            this.closeConnection(connection);
+        SQLUpdateOneExecutePlan executePlan = new SQLUpdateOneExecutePlan(connection);
+        return runningPipeline.go(blueprint, paramManager, executePlan);
+    }
+
+    @Override
+    public <T> List<Integer> batchInsert(Collection<T> batchModel, Class<T> dOModelClass) {
+        try (Connection connection = dataSource.getConnection()) {
+            return this.batchInsert(connection, batchModel, dOModelClass);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
+    public abstract <T> List<Integer> batchInsert(Connection connection, Collection<T> batchModel, Class<T> dOModelClass);
+
+    public class Transaction implements DefaultOperation {
+        private final Connection connection;
+
+        private final SQLRivuletManager sqlRivuletManager;
+
+        private volatile boolean isClosed = false;
+
+        private Transaction(Connection connection, SQLRivuletManager sqlRivuletManager) {
+            this.connection = connection;
+            this.sqlRivuletManager = sqlRivuletManager;
+            try {
+                // 关闭自动提交
+                connection.setAutoCommit(false);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        public void commit() {
+            try {
+                connection.commit();
+                this.isClosed = true;
+                connection.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        @Override
+        public Blueprint parse(WholeDesc wholeDesc) {
+            return sqlRivuletManager.parse(wholeDesc);
+        }
+
+        @Override
+        public <T> T queryOneByDescKey(String descKey, Map<String, Object> params) {
+            return sqlRivuletManager.queryOneByDescKey(connection, descKey, params);
+        }
+
+        @Override
+        public <T> T queryOneByBlueprint(Blueprint blueprint, ParamManager paramManager) {
+            return sqlRivuletManager.queryOneByBlueprint(connection, blueprint, paramManager);
+        }
+
+        @Override
+        public <T, I> T queryById(I id, Class<T> modelClass) {
+            return sqlRivuletManager.queryById(connection, id, modelClass);
+        }
+
+        @Override
+        public <T> void queryManyByDescKey(String descKey, Map<String, Object> params, Collection<T> resultContainer) {
+            sqlRivuletManager.queryManyByDescKey(connection, descKey, params, resultContainer);
+
+        }
+
+        @Override
+        public <T> void queryManyByBlueprint(Blueprint blueprint, ParamManager paramManager, Collection<T> resultContainer) {
+            sqlRivuletManager.queryManyByBlueprint(connection, blueprint, paramManager, resultContainer);
+        }
+
+        @Override
+        public <T, I> List<T> queryByIds(Collection<I> ids, Class<T> modelClass) {
+            return sqlRivuletManager.queryByIds(connection, ids, modelClass);
+        }
+
+        public <T> int insertOne(T obj) {
+            if (isClosed) {
+                throw new IllegalStateException("事物已提交, 无法再操作");
+            }
+            return sqlRivuletManager.insertOne(connection, obj);
+        }
+
+        @Override
+        public <T> List<Integer> batchInsert(Collection<T> batchModel, Class<T> dOModelClass) {
+            return sqlRivuletManager.batchInsert(connection, batchModel, dOModelClass);
+        }
+
+        @Override
+        public <T> int updateOneById(T obj) {
+            return 0;
+        }
+
+        @Override
+        public <T> int batchUpdateById(Collection<T> obj) {
+            return 0;
+        }
+
+        @Override
+        public int updateByDescKey(String descKey, Map<String, Object> params) {
+            return 0;
+        }
+
+        @Override
+        public int updateByBlueprint(Blueprint blueprint, Map<String, Object> params) {
+            return 0;
+        }
+
+        @Override
+        public <T, I> int deleteById(I id, Class<T> modelClass) {
+            return 0;
+        }
+
+        @Override
+        public <T, I> int deleteByIds(Collection<I> ids, Class<T> modelClass) {
+            return 0;
+        }
+
+        @Override
+        public int deleteByBlueprint(Blueprint blueprint, Map<String, Object> params) {
+            return 0;
+        }
+
+    }
 }

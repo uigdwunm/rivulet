@@ -15,7 +15,6 @@ import zly.rivulet.sql.parser.SqlParser;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
@@ -43,23 +42,18 @@ public class MySQLRivuletManager extends SQLRivuletManager {
     }
 
     @Override
-    public <T> List<Integer> batchInsert(Collection<T> models, Class<T> dOModelClass) {
+    public <T> List<Integer> batchInsert(Connection connection, Collection<T> models, Class<T> dOModelClass) {
         if (CollectionUtils.isEmpty(models)) {
             throw ExecuteException.execError("没有需要插入的数据");
         }
         ModelMeta modelMeta = definer.createOrGetModelMeta(dOModelClass);
         SQLBlueprint sqlBlueprint = (SQLBlueprint) parser.parseInsertByMeta(modelMeta);
 
-
         MySQLRivuletProperties rivuletProperties = this.getRivuletProperties();
-        try (Connection connection = this.getConnection()) {
-            MySQLBatchInsertExecutePlan executePlan = new MySQLBatchInsertExecutePlan(rivuletProperties, connection);
+        MySQLBatchInsertExecutePlan executePlan = new MySQLBatchInsertExecutePlan(rivuletProperties, connection);
 
-            ParamManager paramManager = paramManagerFactory.getBatchByModelMeta(modelMeta, (Collection<Object>) models);
-            return runningPipeline.go(sqlBlueprint, paramManager, executePlan);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        ParamManager paramManager = paramManagerFactory.getBatchByModelMeta(modelMeta, (Collection<Object>) models);
+        return runningPipeline.go(sqlBlueprint, paramManager, executePlan);
     }
 
     public MySQLRivuletProperties getRivuletProperties() {
