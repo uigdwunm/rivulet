@@ -5,6 +5,7 @@ import zly.rivulet.base.generator.Fish;
 import zly.rivulet.base.generator.Generator;
 import zly.rivulet.base.generator.param_manager.ParamManager;
 import zly.rivulet.base.generator.param_manager.for_model_meta.ModelBatchParamManager;
+import zly.rivulet.base.generator.param_manager.for_proxy_method.CommonParamManager;
 import zly.rivulet.base.pipeline.BeforeExecuteNode;
 import zly.rivulet.base.pipeline.ExecutePlan;
 import zly.rivulet.base.utils.collector.FixedLengthStatementCollector;
@@ -21,14 +22,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MySQLBatchInsertExecutePlan extends ExecutePlan {
+public class MySQLBatchUpdateExecutePlan extends ExecutePlan {
 
     private final Connection connection;
 
-    private final MySQLRivuletProperties rivuletProperties;
-
-    public MySQLBatchInsertExecutePlan(MySQLRivuletProperties rivuletProperties, Connection connection) {
-        this.rivuletProperties = rivuletProperties;
+    public MySQLBatchUpdateExecutePlan(Connection connection) {
         this.connection = connection;
     }
 
@@ -37,31 +35,20 @@ public class MySQLBatchInsertExecutePlan extends ExecutePlan {
         ModelBatchParamManager batchParamManager = (ModelBatchParamManager) paramManager;
         Collection<Object> modelParamList = batchParamManager.getModelParamList();
 
-
-        int batchInsertOneStatementMax = rivuletProperties.getBatchInsertOneStatementMax();
-
         List<Integer> result = new ArrayList<>(modelParamList.size());
-        List<Object> subList = new ArrayList<>(batchInsertOneStatementMax);
-        List<Object> executedList = new ArrayList<>(modelParamList.size());
+        Object last = null;
         for (Object model : modelParamList) {
-            subList.add(model);
-            if (subList.size() == batchInsertOneStatementMax) {
-                executedList.addAll(subList);
-                boolean isLast = executedList.size() == modelParamList.size();
-                ModelBatchParamManager subModelBatchParamManager = batchParamManager.createSubModelBatchParamManager(subList);
-                Fish fish = generator.generate(blueprint, subModelBatchParamManager);
-                int[] ints = this.executeBatchUpdate(beforeExecuteNode, fish, connection, isLast);
-                result.addAll(Arrays.stream(ints).boxed().collect(Collectors.toList()));
-                subList.clear();
-            }
-        }
-        // 剩余收尾
-        if (subList.size() > 0) {
-            ModelBatchParamManager subModelBatchParamManager = batchParamManager.createSubModelBatchParamManager(subList);
-            Fish fish = generator.generate(blueprint, subModelBatchParamManager);
-            int[] ints = this.executeBatchUpdate(beforeExecuteNode, fish, connection, true);
+            CommonParamManager subParamManager = batchParamManager.createCommonParamManager(last);
+            Fish fish = generator.generate(blueprint, subParamManager);
+            int[] ints = this.executeBatchUpdate(beforeExecuteNode, fish, connection, false);
             result.addAll(Arrays.stream(ints).boxed().collect(Collectors.toList()));
+
+            last = model;
         }
+        CommonParamManager subParamManager = batchParamManager.createCommonParamManager(last);
+        Fish fish = generator.generate(blueprint, subParamManager);
+        int[] ints = this.executeBatchUpdate(beforeExecuteNode, fish, connection, true);
+        result.addAll(Arrays.stream(ints).boxed().collect(Collectors.toList()));
 
         return result;
     }
@@ -76,7 +63,6 @@ public class MySQLBatchInsertExecutePlan extends ExecutePlan {
                 try {
                     PreparedStatement statement = connection.prepareStatement(collector.toString());
                     statement.addBatch();
-
                     if (isLast) {
                         return statement.executeBatch();
                     } else {

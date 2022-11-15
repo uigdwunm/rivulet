@@ -240,6 +240,35 @@ public abstract class SQLRivuletManager extends RivuletManager {
 
     public abstract <T> List<Integer> batchInsert(Connection connection, Collection<T> batchModel, Class<T> dOModelClass);
 
+    @Override
+    public <T> int updateOneById(T obj) {
+        try (Connection connection = dataSource.getConnection()) {
+            return this.updateOneById(connection, obj);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private <T> int updateOneById(Connection connection, T obj) {
+        Class<?> clazz = obj.getClass();
+        ModelMeta modelMeta = definer.createOrGetModelMeta(clazz);
+        SQLBlueprint blueprint = (SQLBlueprint) parser.parseUpdateByMeta(modelMeta);
+        ParamManager paramManager = paramManagerFactory.getByModelMeta(modelMeta, obj);
+        SQLUpdateOneExecutePlan executePlan = new SQLUpdateOneExecutePlan(connection);
+        return runningPipeline.go(blueprint, paramManager, executePlan);
+    }
+
+    @Override
+    public <T> int batchUpdateById(Collection<T> obj, Class<T> dOModelClass) {
+        try (Connection connection = dataSource.getConnection()) {
+            return this.batchUpdateById(connection, obj, dOModelClass);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public abstract <T> int batchUpdateById(Connection connection, Collection<T> obj, Class<T> dOModelClass);
+
     public class Transaction implements DefaultOperation {
         private final Connection connection;
 
@@ -318,12 +347,12 @@ public abstract class SQLRivuletManager extends RivuletManager {
 
         @Override
         public <T> int updateOneById(T obj) {
-            return 0;
+            return sqlRivuletManager.updateOneById(connection, obj);
         }
 
         @Override
-        public <T> int batchUpdateById(Collection<T> obj) {
-            return 0;
+        public <T> int batchUpdateById(Collection<T> obj, Class<T> dOModelClass) {
+            return sqlRivuletManager.batchUpdateById(connection, obj, dOModelClass);
         }
 
         @Override

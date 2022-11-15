@@ -6,7 +6,7 @@ import zly.rivulet.sql.definition.insert.ColumnItemDefinition;
 import zly.rivulet.sql.generator.SqlStatementFactory;
 import zly.rivulet.sql.generator.statement.SqlStatement;
 
-public class ColumnItemStatement implements SqlStatement {
+public class ColumnItemStatement extends SqlStatement {
 
     private final SQLFieldMeta sqlFieldMeta;
 
@@ -16,6 +16,11 @@ public class ColumnItemStatement implements SqlStatement {
 
     public SQLFieldMeta getSqlFieldMeta() {
         return sqlFieldMeta;
+    }
+
+    @Override
+    protected int length() {
+        return ;
     }
 
     @Override

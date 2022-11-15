@@ -16,10 +16,11 @@ import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefini
 import zly.rivulet.sql.generator.SqlStatementFactory;
 import zly.rivulet.sql.generator.statement.SqlStatement;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MySQLInsertStatement implements SqlStatement {
+public class MySQLInsertStatement extends SqlStatement {
 
     private final SQLInsertDefinition definition;
 
@@ -38,6 +39,18 @@ public class MySQLInsertStatement implements SqlStatement {
         this.sqlModelMeta = definition.getSqlModelMeta();
         this.columnItemStatements = columnItemStatements;
         this.values = values;
+    }
+
+    @Override
+    protected int length() {
+        return INSERT_INTO.length() + sqlModelMeta.getTableName().length() + 1 +
+            1 +
+            columnItemStatements.stream().map(columnItemStatement -> columnItemStatement.length() + 1).reduce(0, Integer::sum) - 1 +
+            1 +
+            VALUES.length() +
+            values.stream()
+                .flatMap(Collection::stream)
+                .
     }
 
     @Override

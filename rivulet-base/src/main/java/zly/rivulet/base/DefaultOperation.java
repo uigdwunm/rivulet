@@ -115,7 +115,7 @@ public interface DefaultOperation {
     /**
      * 批量通过主键id更新
      **/
-    <T> int batchUpdateById(Collection<T> obj);
+    <T> int batchUpdateById(Collection<T> obj, Class<T> dOModelClass);
 
     /**
      * 通过预解析desc的key, 更新
