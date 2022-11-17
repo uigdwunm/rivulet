@@ -249,7 +249,7 @@ public abstract class SQLRivuletManager extends RivuletManager {
         }
     }
 
-    private <T> int updateOneById(Connection connection, T obj) {
+    public  <T> int updateOneById(Connection connection, T obj) {
         Class<?> clazz = obj.getClass();
         ModelMeta modelMeta = definer.createOrGetModelMeta(clazz);
         SQLBlueprint blueprint = (SQLBlueprint) parser.parseUpdateByMeta(modelMeta);
@@ -268,6 +268,80 @@ public abstract class SQLRivuletManager extends RivuletManager {
     }
 
     public abstract <T> int batchUpdateById(Connection connection, Collection<T> obj, Class<T> dOModelClass);
+
+    @Override
+    public int updateByDescKey(String descKey, Map<String, Object> params) {
+        try (Connection connection = dataSource.getConnection()) {
+            return this.updateByDescKey(connection, descKey, params);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int updateByDescKey(Connection connection, String descKey, Map<String, Object> params) {
+        Blueprint blueprint = parser.parseByKey(descKey);
+        return this.updateByBlueprint(connection, blueprint, params);
+    }
+
+    @Override
+    public int updateByBlueprint(Blueprint blueprint, Map<String, Object> params) {
+        try (Connection connection = dataSource.getConnection()) {
+            return this.updateByBlueprint(connection, blueprint, params);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int updateByBlueprint(Connection connection, Blueprint blueprint, Map<String, Object> params) {
+        SimpleParamManager simpleParamManager = new SimpleParamManager(params);
+        SQLUpdateOneExecutePlan executePlan = new SQLUpdateOneExecutePlan(connection);
+        return runningPipeline.go(blueprint, simpleParamManager, executePlan);
+    }
+
+    @Override
+    public <T, I> int deleteById(I id, Class<T> modelClass) {
+        try (Connection connection = dataSource.getConnection()) {
+            return this.deleteById(connection, id, modelClass);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public <I, T> int deleteById(Connection connection, I id, Class<T> modelClass) {
+        ModelMeta modelMeta = definer.createOrGetModelMeta(modelClass);
+        SQLBlueprint blueprint = (SQLBlueprint) parser.parseDeleteByMeta(modelMeta);
+        return this.deleteByBlueprint(connection, blueprint, Collections.singletonMap(Constant.MAIN_ID, id));
+    }
+
+    @Override
+    public <T, I> int deleteByIds(Collection<I> ids, Class<T> modelClass) {
+        try (Connection connection = dataSource.getConnection()) {
+            return this.deleteByIds(connection, ids, modelClass);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public <I, T> int deleteByIds(Connection connection, Collection<I> ids, Class<T> modelClass) {
+        ModelMeta modelMeta = definer.createOrGetModelMeta(modelClass);
+        SQLBlueprint blueprint = (SQLBlueprint) parser.parseDeleteByMeta(modelMeta);
+        return this.deleteByBlueprint(connection, blueprint, Collections.singletonMap(Constant.MAIN_IDS, ids));
+    }
+
+    @Override
+    public int deleteByBlueprint(Blueprint blueprint, Map<String, Object> params) {
+        try (Connection connection = dataSource.getConnection()) {
+            return this.deleteByBlueprint(connection, blueprint, params);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int deleteByBlueprint(Connection connection, Blueprint blueprint, Map<String, Object> params) {
+        SQLUpdateOneExecutePlan executePlan = new SQLUpdateOneExecutePlan(connection);
+        return runningPipeline.go(blueprint, new SimpleParamManager(params), executePlan);
+    }
+
 
     public class Transaction implements DefaultOperation {
         private final Connection connection;
@@ -297,6 +371,23 @@ public abstract class SQLRivuletManager extends RivuletManager {
             }
         }
 
+        public void rollback() {
+            try {
+                connection.rollback();
+                this.isClosed = true;
+                connection.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        private Connection getConnection() {
+            if (isClosed) {
+                throw new IllegalStateException("事物已提交, 无法再操作");
+            }
+            return this.connection;
+        }
+
         @Override
         public Blueprint parse(WholeDesc wholeDesc) {
             return sqlRivuletManager.parse(wholeDesc);
@@ -304,80 +395,77 @@ public abstract class SQLRivuletManager extends RivuletManager {
 
         @Override
         public <T> T queryOneByDescKey(String descKey, Map<String, Object> params) {
-            return sqlRivuletManager.queryOneByDescKey(connection, descKey, params);
+            return sqlRivuletManager.queryOneByDescKey(this.getConnection(), descKey, params);
         }
 
         @Override
         public <T> T queryOneByBlueprint(Blueprint blueprint, ParamManager paramManager) {
-            return sqlRivuletManager.queryOneByBlueprint(connection, blueprint, paramManager);
+            return sqlRivuletManager.queryOneByBlueprint(this.getConnection(), blueprint, paramManager);
         }
 
         @Override
         public <T, I> T queryById(I id, Class<T> modelClass) {
-            return sqlRivuletManager.queryById(connection, id, modelClass);
+            return sqlRivuletManager.queryById(this.getConnection(), id, modelClass);
         }
 
         @Override
         public <T> void queryManyByDescKey(String descKey, Map<String, Object> params, Collection<T> resultContainer) {
-            sqlRivuletManager.queryManyByDescKey(connection, descKey, params, resultContainer);
+            sqlRivuletManager.queryManyByDescKey(this.getConnection(), descKey, params, resultContainer);
 
         }
 
         @Override
         public <T> void queryManyByBlueprint(Blueprint blueprint, ParamManager paramManager, Collection<T> resultContainer) {
-            sqlRivuletManager.queryManyByBlueprint(connection, blueprint, paramManager, resultContainer);
+            sqlRivuletManager.queryManyByBlueprint(this.getConnection(), blueprint, paramManager, resultContainer);
         }
 
         @Override
         public <T, I> List<T> queryByIds(Collection<I> ids, Class<T> modelClass) {
-            return sqlRivuletManager.queryByIds(connection, ids, modelClass);
+            return sqlRivuletManager.queryByIds(this.getConnection(), ids, modelClass);
         }
 
         public <T> int insertOne(T obj) {
-            if (isClosed) {
-                throw new IllegalStateException("事物已提交, 无法再操作");
-            }
-            return sqlRivuletManager.insertOne(connection, obj);
+            return sqlRivuletManager.insertOne(this.getConnection(), obj);
         }
 
         @Override
         public <T> List<Integer> batchInsert(Collection<T> batchModel, Class<T> dOModelClass) {
-            return sqlRivuletManager.batchInsert(connection, batchModel, dOModelClass);
+            return sqlRivuletManager.batchInsert(this.getConnection(), batchModel, dOModelClass);
         }
 
         @Override
         public <T> int updateOneById(T obj) {
-            return sqlRivuletManager.updateOneById(connection, obj);
+            return sqlRivuletManager.updateOneById(this.getConnection(), obj);
         }
 
         @Override
         public <T> int batchUpdateById(Collection<T> obj, Class<T> dOModelClass) {
-            return sqlRivuletManager.batchUpdateById(connection, obj, dOModelClass);
+            return sqlRivuletManager.batchUpdateById(this.getConnection(), obj, dOModelClass);
         }
 
         @Override
         public int updateByDescKey(String descKey, Map<String, Object> params) {
-            return 0;
+            return sqlRivuletManager.updateByDescKey(this.getConnection(), descKey, params);
         }
 
         @Override
         public int updateByBlueprint(Blueprint blueprint, Map<String, Object> params) {
-            return 0;
+            return sqlRivuletManager.updateByBlueprint(this.getConnection(), blueprint, params);
         }
 
         @Override
         public <T, I> int deleteById(I id, Class<T> modelClass) {
-            return 0;
+            return sqlRivuletManager.deleteById(this.getConnection(), id, modelClass);
         }
 
         @Override
         public <T, I> int deleteByIds(Collection<I> ids, Class<T> modelClass) {
-            return 0;
+            return sqlRivuletManager.deleteByIds(this.getConnection(), ids, modelClass);
         }
 
         @Override
         public int deleteByBlueprint(Blueprint blueprint, Map<String, Object> params) {
-            return 0;
+            return sqlRivuletManager.deleteByBlueprint(this.getConnection(), blueprint, params);
         }
 
     }
