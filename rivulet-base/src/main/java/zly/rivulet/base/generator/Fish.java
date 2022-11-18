@@ -14,4 +14,6 @@ public interface Fish {
     Statement getStatement();
 
     Blueprint getBlueprint();
+
+    int getLength();
 }

@@ -1,6 +1,5 @@
 package zly.rivulet.base.pipeline;
 
-import zly.rivulet.base.RivuletProperties;
 import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.generator.Fish;
 import zly.rivulet.base.generator.Generator;
@@ -23,17 +22,6 @@ public class RunningPipeline {
         this.generator = generator;
         this.beforeExecuteNode = new FinalExecuteNode();
         this.afterExecuteNode = new FinishedNode();
-    }
-
-    protected void initDistributePivotNode(GeneratePivotNode... nodes) {
-        GeneratePivotNode node0 = nodes[0];
-        this.beforeGenerateNode = node0;
-        // 把node串成链
-        for (GeneratePivotNode node : nodes) {
-            node0.setNext(node);
-            node0 = node;
-        }
-
     }
 
     public <T> T go(Blueprint blueprint, ParamManager paramManager, ExecutePlan executePlan) {
@@ -59,7 +47,7 @@ public class RunningPipeline {
 
         @Override
         public Object handle(Blueprint blueprint, ParamManager paramManager, ExecutePlan executePlan) {
-            return executePlan.plan(generator, beforeExecuteNode);
+            return executePlan.plan(blueprint, paramManager, generator, beforeExecuteNode);
         }
     }
 

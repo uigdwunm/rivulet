@@ -1,6 +1,5 @@
 package zly.rivulet.base.generator.param_manager.for_model_meta;
 
-import zly.rivulet.base.definition.param.PathKeyParamReceipt;
 import zly.rivulet.base.generator.param_manager.for_proxy_method.CommonParamManager;
 
 import java.util.Map;
@@ -18,10 +17,8 @@ public class ModelMetaParamManager implements CommonParamManager {
     }
 
     @Override
-    public Object getParam(PathKeyParamReceipt pathKeyParamReceipt) {
-        String pathKey = pathKeyParamReceipt.getPathKey();
+    public Object getParam(String pathKey) {
         Function<Object, Object> modelMetaParamParser = modelMetaParamParserMap.get(pathKey);
         return modelMetaParamParser.apply(model);
     }
-
 }

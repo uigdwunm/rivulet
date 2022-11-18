@@ -12,7 +12,7 @@ public class SQLFish implements Fish {
 
     private final SqlStatement statement;
     // sql长度统计
-    private int length;
+    private final int length;
 
 //    // statment工厂
 //    private final SqlStatementFactory statementFactory;
@@ -22,6 +22,7 @@ public class SQLFish implements Fish {
     protected SQLFish(SQLBlueprint blueprint, SqlStatement statement) {
         this.blueprint = blueprint;
         this.statement = statement;
+        this.length = statement.getLengthOrCache();
     }
 
     @Override
@@ -34,6 +35,7 @@ public class SQLFish implements Fish {
         return blueprint;
     }
 
+    @Override
     public int getLength() {
         return length;
     }
