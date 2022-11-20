@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
-public class SQLCustomStatement implements SqlStatement {
+public class SQLCustomStatement extends SqlStatement {
 
     private final List<CustomSingleValueWrap> singleValueList;
 
@@ -24,6 +24,11 @@ public class SQLCustomStatement implements SqlStatement {
     ) {
         this.singleValueList = singleValueList;
         this.customCollect = customCollect;
+    }
+
+    @Override
+    protected int length() {
+        return 0;
     }
 
     @Override

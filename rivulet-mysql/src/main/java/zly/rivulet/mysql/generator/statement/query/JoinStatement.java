@@ -9,7 +9,7 @@ import zly.rivulet.sql.parser.SQLAliasManager;
 import zly.rivulet.sql.generator.SqlStatementFactory;
 import zly.rivulet.sql.generator.statement.SqlStatement;
 
-public class JoinStatement implements SqlStatement {
+public class JoinStatement extends SqlStatement {
     private final QueryFromStatement queryFrom;
 
     private final String alias;
@@ -46,6 +46,15 @@ public class JoinStatement implements SqlStatement {
     }
 
     @Override
+    protected int length() {
+        return joinType.getPrefix().length() + 1 +
+            queryFrom.singleValueLength() +
+            (StringUtil.isNotBlank(alias) ? AS.length() + alias.length() : 0) +
+            (operateStatement != null ? ON.length() + operateStatement.getLengthOrCache() : 0)
+            ;
+    }
+
+    @Override
     public void collectStatement(StatementCollector collector) {
         collector.append(this.joinType.getPrefix()).space();
         this.queryFrom.singleCollectStatement(collector);
@@ -56,7 +65,7 @@ public class JoinStatement implements SqlStatement {
         OperateStatement operateStatement = this.operateStatement;
         if (operateStatement != null) {
             collector.append(ON);
-            operateStatement.collectStatement(collector);
+            collector.append(operateStatement);
         }
     }
 

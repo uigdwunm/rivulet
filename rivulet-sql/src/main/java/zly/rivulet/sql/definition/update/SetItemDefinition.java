@@ -57,4 +57,8 @@ public class SetItemDefinition extends AbstractDefinition {
     public SingleValueElementDefinition getValueDefinition() {
         return valueDefinition;
     }
+
+    public MapDefinition getFieldMap() {
+        return fieldMap;
+    }
 }

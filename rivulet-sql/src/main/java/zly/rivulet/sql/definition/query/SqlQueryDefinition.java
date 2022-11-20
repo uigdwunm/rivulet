@@ -160,38 +160,17 @@ public class SqlQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
         this.aliasManager.init(queryProxyNode);
     }
 
-    public SqlQueryDefinition() {
-        super(RivuletFlag.QUERY, null);
-    }
-
-    @Override
-    public SqlQueryDefinition forAnalyze() {
-        SqlQueryDefinition sqlQueryDefinition = new SqlQueryDefinition();
-        sqlQueryDefinition.selectDefinition = selectDefinition.forAnalyze();
-        sqlQueryDefinition.fromDefinition = fromDefinition.forAnalyze();
-        // TODO 这里要注意
-        sqlQueryDefinition.aliasManager = aliasManager;
-
-        if (whereDefinition != null) {
-            sqlQueryDefinition.whereDefinition = whereDefinition.forAnalyze();
-        }
-        if (groupDefinition != null) {
-            sqlQueryDefinition.groupDefinition = groupDefinition.forAnalyze();
-        }
-        if (havingDefinition != null) {
-            sqlQueryDefinition.havingDefinition = havingDefinition.forAnalyze();
-        }
-        if (orderByDefinition != null) {
-            sqlQueryDefinition.orderByDefinition = orderByDefinition.forAnalyze();
-        }
-        if (skit != null) {
-            sqlQueryDefinition.skit = skit.forAnalyze();
-        }
-        if (limit != null) {
-            sqlQueryDefinition.limit = limit.forAnalyze();
-        }
-
-        return sqlQueryDefinition;
+    public SqlQueryDefinition(WholeDesc wholeDesc, SelectDefinition selectDefinition, FromDefinition fromDefinition, WhereDefinition whereDefinition, GroupDefinition groupDefinition, HavingDefinition havingDefinition, OrderByDefinition orderByDefinition, SkitDefinition skit, LimitDefinition limit, SQLQueryResultAssigner assigner) {
+        super(RivuletFlag.QUERY, wholeDesc);
+        this.selectDefinition = selectDefinition;
+        this.fromDefinition = fromDefinition;
+        this.whereDefinition = whereDefinition;
+        this.groupDefinition = groupDefinition;
+        this.havingDefinition = havingDefinition;
+        this.orderByDefinition = orderByDefinition;
+        this.skit = skit;
+        this.limit = limit;
+        this.assigner = assigner;
     }
 
     public SelectDefinition getSelectDefinition() {
@@ -244,4 +223,27 @@ public class SqlQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
         return this.aliasFlag;
     }
 
+    @Override
+    public Copier copier() {
+        return null;
+    }
+
+    public class Copier implements Definition.Copier {
+
+        @Override
+        public SqlQueryDefinition copy() {
+            return new SqlQueryDefinition(
+                wholeDesc,
+                selectDefinition,
+                fromDefinition,
+                whereDefinition,
+                groupDefinition,
+                havingDefinition,
+                orderByDefinition,
+                skit,
+                limit,
+                assigner
+            );
+        }
+    }
 }

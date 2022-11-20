@@ -8,4 +8,6 @@ public abstract class SingleValueElementStatement extends SqlStatement {
     public void singleCollectStatement(StatementCollector collector) {
         collectStatement(collector);
     }
+
+    public abstract int singleValueLength();
 }

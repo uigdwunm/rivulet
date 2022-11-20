@@ -19,6 +19,11 @@ public class SQLParamStatement extends SingleValueElementStatement {
     }
 
     @Override
+    protected int length() {
+        return value.length();
+    }
+
+    @Override
     public void collectStatement(StatementCollector collector) {
         collector.append(value);
     }

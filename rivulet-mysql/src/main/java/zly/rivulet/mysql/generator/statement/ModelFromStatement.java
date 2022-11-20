@@ -5,7 +5,7 @@ import zly.rivulet.mysql.definer.MySQLModelMeta;
 import zly.rivulet.mysql.generator.statement.query.QueryFromStatement;
 import zly.rivulet.sql.generator.SqlStatementFactory;
 
-public class ModelFromStatement implements QueryFromStatement {
+public class ModelFromStatement extends QueryFromStatement {
 
     private final MySQLModelMeta mySQLModelMeta;
 
@@ -14,6 +14,11 @@ public class ModelFromStatement implements QueryFromStatement {
     public ModelFromStatement(MySQLModelMeta mySQLModelMeta, String tableName) {
         this.mySQLModelMeta = mySQLModelMeta;
         this.tableName = tableName;
+    }
+
+    @Override
+    protected int length() {
+        return tableName.length();
     }
 
     @Override

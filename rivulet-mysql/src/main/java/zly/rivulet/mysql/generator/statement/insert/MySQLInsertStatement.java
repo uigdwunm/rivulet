@@ -8,7 +8,6 @@ import zly.rivulet.base.utils.View;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.statement.SingleValueElementStatement;
 import zly.rivulet.mysql.generator.statement.param.SQLParamStatement;
-import zly.rivulet.mysql.generator.statement.query.MySqlQueryStatement;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.insert.ColumnItemDefinition;
 import zly.rivulet.sql.definition.insert.SQLInsertDefinition;
@@ -16,7 +15,6 @@ import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefini
 import zly.rivulet.sql.generator.SqlStatementFactory;
 import zly.rivulet.sql.generator.statement.SqlStatement;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,14 +41,30 @@ public class MySQLInsertStatement extends SqlStatement {
 
     @Override
     protected int length() {
-        return INSERT_INTO.length() + sqlModelMeta.getTableName().length() + 1 +
-            1 +
-            columnItemStatements.stream().map(columnItemStatement -> columnItemStatement.length() + 1).reduce(0, Integer::sum) - 1 +
-            1 +
-            VALUES.length() +
-            values.stream()
-                .flatMap(Collection::stream)
-                .
+        int length = 0;
+        length += INSERT_INTO.length() + sqlModelMeta.getTableName().length() + 1;
+
+        length += 1;
+
+        length += columnItemStatements.size() - 1;
+        for (ColumnItemStatement columnItemStatement : columnItemStatements) {
+            length += columnItemStatement.getLengthOrCache();
+        }
+
+        length += 1;
+
+        length += VALUES.length();
+
+        length += values.size() - 1;
+        for (List<SingleValueElementStatement> singleValueElementStatementList : values) {
+            length += 1;
+            length += singleValueElementStatementList.size() - 1;
+            for (SingleValueElementStatement singleValueElementStatement : singleValueElementStatementList) {
+                length += singleValueElementStatement.getLengthOrCache();
+            }
+            length += 1;
+        }
+        return length;
     }
 
     @Override

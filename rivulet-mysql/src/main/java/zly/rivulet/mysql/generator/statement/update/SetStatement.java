@@ -10,7 +10,7 @@ import zly.rivulet.sql.generator.statement.SqlStatement;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SetStatement implements SqlStatement {
+public class SetStatement extends SqlStatement {
 
     private final SetDefinition setDefinition;
 
@@ -21,6 +21,11 @@ public class SetStatement implements SqlStatement {
     public SetStatement(SetDefinition setDefinition, View<SetItemStatement> setItemStatementView) {
         this.setDefinition = setDefinition;
         this.setItemStatementView = setItemStatementView;
+    }
+
+    @Override
+    protected int length() {
+        return SET.length() + (setItemStatementView.size() - 1) + setItemStatementView.stream().map(SetItemStatement::getLengthOrCache).reduce(0, Integer::sum);
     }
 
     @Override

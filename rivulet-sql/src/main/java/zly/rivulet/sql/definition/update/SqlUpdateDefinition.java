@@ -31,8 +31,6 @@ import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 public class SqlUpdateDefinition extends SQLBlueprint {
 
-    private final RivuletFlag flag = RivuletFlag.UPDATE;
-
     private FromDefinition fromDefinition;
 
     private SetDefinition setDefinition;
@@ -42,7 +40,7 @@ public class SqlUpdateDefinition extends SQLBlueprint {
     private SQLUpdateResultAssigner assigner;
 
     public SqlUpdateDefinition(SqlParserPortableToolbox toolbox, WholeDesc wholeDesc) {
-        super(flag, wholeDesc);
+        super(RivuletFlag.UPDATE, wholeDesc);
         SqlUpdateMetaDesc<?> metaDesc = (SqlUpdateMetaDesc<?>) wholeDesc;
         this.aliasManager = new SQLAliasManager(toolbox.getConfigProperties());
         Class<?> mainFrom = metaDesc.getMainFrom();
@@ -52,7 +50,7 @@ public class SqlUpdateDefinition extends SQLBlueprint {
         }
         // 获取QueryProxyNode
         ProxyNodeManager proxyModelManager = toolbox.getSqlPreParser().getProxyModelManager();
-        QueryProxyNode queryProxyNode = proxyModelManager.getOrCreateQueryProxyNode(toolbox, metaDesc);
+        QueryProxyNode queryProxyNode = proxyModelManager.getOrCreateQueryProxyNode(toolbox, metaDesc.getAnnotation(), metaDesc.getMainFrom());
         toolbox.setQueryProxyNode(queryProxyNode);
 
         this.fromDefinition = new FromDefinition(toolbox);
@@ -70,7 +68,7 @@ public class SqlUpdateDefinition extends SQLBlueprint {
     }
 
     public SqlUpdateDefinition(SqlParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta, SQLFieldMeta primaryKey) {
-        super(flag, null);
+        super(RivuletFlag.UPDATE, null);
         Class<?> mainFrom = sqlModelMeta.getModelClass();
         if (ClassUtils.isExtend(QueryComplexModel.class, mainFrom)) {
             // 仅支持单表更新
@@ -109,7 +107,7 @@ public class SqlUpdateDefinition extends SQLBlueprint {
 
     @Override
     public RivuletFlag getFlag() {
-        return flag;
+        return RivuletFlag.UPDATE;
     }
 
     @Override

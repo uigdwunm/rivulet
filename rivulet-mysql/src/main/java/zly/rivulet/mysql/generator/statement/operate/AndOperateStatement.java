@@ -20,6 +20,11 @@ public class AndOperateStatement extends OperateStatement {
 
 
     @Override
+    protected int length() {
+        return 0;
+    }
+
+    @Override
     public void collectStatement(StatementCollector collector) {
         for (OperateStatement operateStatement : collector.createJoiner(AND_CONNECTOR, subOperateList)) {
             if (operateStatement instanceof AndOperateStatement || operateStatement instanceof OrOperateStatement) {

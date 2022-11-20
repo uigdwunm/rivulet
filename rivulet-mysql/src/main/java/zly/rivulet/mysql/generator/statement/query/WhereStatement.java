@@ -6,7 +6,7 @@ import zly.rivulet.sql.definition.query.main.WhereDefinition;
 import zly.rivulet.sql.generator.SqlStatementFactory;
 import zly.rivulet.sql.generator.statement.SqlStatement;
 
-public class WhereStatement implements SqlStatement {
+public class WhereStatement extends SqlStatement {
 
     private final OperateStatement operateStatement;
 
@@ -17,9 +17,14 @@ public class WhereStatement implements SqlStatement {
     }
 
     @Override
+    protected int length() {
+        return WHERE.length() + operateStatement.getLengthOrCache();
+    }
+
+    @Override
     public void collectStatement(StatementCollector collector) {
         collector.append(WHERE);
-        operateStatement.collectStatement(collector);
+        collector.append(operateStatement);
     }
 
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {

@@ -20,7 +20,7 @@ public class ColumnItemStatement extends SqlStatement {
 
     @Override
     protected int length() {
-        return ;
+        return sqlFieldMeta.getOriginName().length();
     }
 
     @Override

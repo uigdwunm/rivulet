@@ -16,7 +16,7 @@ public abstract class AbstractDefinition implements Definition, Checked {
     /**
      * 检测这个语句是否需要存在
      **/
-    private final CheckCondition checkCondition;
+    protected final CheckCondition checkCondition;
 
     protected AbstractDefinition(CheckCondition checkCondition, ParamReceiptManager paramReceiptManager) {
         if (paramReceiptManager != null) {
