@@ -1,6 +1,7 @@
 package zly.rivulet.sql.definition.query.main;
 
 import zly.rivulet.base.definition.AbstractDefinition;
+import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.sql.definer.QueryComplexModel;
 import zly.rivulet.sql.definer.meta.QueryFromMeta;
@@ -18,11 +19,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class FromDefinition extends AbstractDefinition {
-    private QueryFromMeta mainFrom;
+    private final QueryFromMeta mainFrom;
 
-    private SQLAliasManager.AliasFlag mainFromAliasFlag;
+    private final SQLAliasManager.AliasFlag mainFromAliasFlag;
 
-    private List<JoinRelationDefinition> joinRelations;
+    private final List<JoinRelationDefinition> joinRelations;
+
+    private FromDefinition(CheckCondition checkCondition, QueryFromMeta mainFrom, SQLAliasManager.AliasFlag mainFromAliasFlag, List<JoinRelationDefinition> joinRelations) {
+        super(checkCondition, null);
+        this.mainFrom = mainFrom;
+        this.mainFromAliasFlag = mainFromAliasFlag;
+        this.joinRelations = joinRelations;
+    }
 
     public FromDefinition(SqlParserPortableToolbox toolbox) {
         super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
@@ -72,7 +80,38 @@ public class FromDefinition extends AbstractDefinition {
     }
 
     @Override
-    public FromDefinition forAnalyze() {
-        return null;
+    public Copier copier() {
+        return new Copier(this.mainFrom, this.mainFromAliasFlag, this.joinRelations);
+    }
+
+    public class Copier implements Definition.Copier {
+        private QueryFromMeta mainFrom;
+
+        private SQLAliasManager.AliasFlag mainFromAliasFlag;
+
+        private List<JoinRelationDefinition> joinRelations;
+
+        public Copier(QueryFromMeta mainFrom, SQLAliasManager.AliasFlag mainFromAliasFlag, List<JoinRelationDefinition> joinRelations) {
+            this.mainFrom = mainFrom;
+            this.mainFromAliasFlag = mainFromAliasFlag;
+            this.joinRelations = joinRelations;
+        }
+
+        public void setMainFrom(QueryFromMeta mainFrom) {
+            this.mainFrom = mainFrom;
+        }
+
+        public void setMainFromAliasFlag(SQLAliasManager.AliasFlag mainFromAliasFlag) {
+            this.mainFromAliasFlag = mainFromAliasFlag;
+        }
+
+        public void setJoinRelations(List<JoinRelationDefinition> joinRelations) {
+            this.joinRelations = joinRelations;
+        }
+
+        @Override
+        public FromDefinition copy() {
+            return new FromDefinition(checkCondition, mainFrom, mainFromAliasFlag, joinRelations);
+        }
     }
 }

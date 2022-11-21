@@ -31,11 +31,17 @@ import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 public class SqlDeleteDefinition extends SQLBlueprint {
 
-    private FromDefinition fromDefinition;
+    private final FromDefinition fromDefinition;
 
-    private WhereDefinition whereDefinition;
+    private final WhereDefinition whereDefinition;
 
-    private SQLUpdateResultAssigner assigner;
+    private final SQLUpdateResultAssigner assigner = new SQLUpdateResultAssigner();
+
+    private SqlDeleteDefinition(WholeDesc wholeDesc, FromDefinition fromDefinition, WhereDefinition whereDefinition) {
+        super(RivuletFlag.DELETE, wholeDesc);
+        this.fromDefinition = fromDefinition;
+        this.whereDefinition = whereDefinition;
+    }
 
     public SqlDeleteDefinition(SqlParserPortableToolbox toolbox, WholeDesc wholeDesc) {
         super(RivuletFlag.DELETE, wholeDesc);
@@ -56,11 +62,12 @@ public class SqlDeleteDefinition extends SQLBlueprint {
         ConditionContainer<?, ?> whereConditionContainer = metaDesc.getWhereConditionContainer();
         if (whereConditionContainer != null) {
             this.whereDefinition = new WhereDefinition(toolbox, whereConditionContainer);
+        } else {
+            this.whereDefinition = null;
         }
 
         this.paramReceiptManager = toolbox.getParamReceiptManager();
         this.aliasManager.init(queryProxyNode);
-        this.assigner = new SQLUpdateResultAssigner();
     }
 
     public SqlDeleteDefinition(SqlParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta, SQLFieldMeta primaryKey) {
@@ -109,12 +116,6 @@ public class SqlDeleteDefinition extends SQLBlueprint {
         return this.assigner;
     }
 
-
-    @Override
-    public Definition forAnalyze() {
-        return null;
-    }
-
     @Override
     public SQLAliasManager getAliasManager() {
         return this.aliasManager;
@@ -124,15 +125,29 @@ public class SqlDeleteDefinition extends SQLBlueprint {
         return fromDefinition;
     }
 
-    public void setFromDefinition(FromDefinition fromDefinition) {
-        this.fromDefinition = fromDefinition;
-    }
-
-    public void setWhereDefinition(WhereDefinition whereDefinition) {
-        this.whereDefinition = whereDefinition;
-    }
-
     public WhereDefinition getWhereDefinition() {
         return whereDefinition;
+    }
+
+    @Override
+    public Copier copier() {
+        return new Copier(this.fromDefinition, this.whereDefinition);
+    }
+
+    public class Copier implements Definition.Copier {
+
+        private FromDefinition fromDefinition;
+
+        private WhereDefinition whereDefinition;
+
+        public Copier(FromDefinition fromDefinition, WhereDefinition whereDefinition) {
+            this.fromDefinition = fromDefinition;
+            this.whereDefinition = whereDefinition;
+        }
+
+        @Override
+        public SqlDeleteDefinition copy() {
+            return new SqlDeleteDefinition(wholeDesc, this.fromDefinition, this.whereDefinition);
+        }
     }
 }

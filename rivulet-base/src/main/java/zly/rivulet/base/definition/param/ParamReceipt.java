@@ -14,9 +14,4 @@ public interface ParamReceipt extends SingleValueElementDefinition {
     Class<?> getType();
 
     Convertor<?, ?> getConvertor();
-
-    @Override
-    default ParamReceipt forAnalyze() {
-        return this;
-    }
 }

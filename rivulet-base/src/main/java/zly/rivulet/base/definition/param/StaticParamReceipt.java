@@ -1,6 +1,7 @@
 package zly.rivulet.base.definition.param;
 
 import zly.rivulet.base.convertor.Convertor;
+import zly.rivulet.base.definition.Definition;
 
 public class StaticParamReceipt implements ParamReceipt {
 
@@ -46,5 +47,24 @@ public class StaticParamReceipt implements ParamReceipt {
     @Override
     public Convertor<?, ?> getConvertor() {
         return this.convertor;
+    }
+
+    @Override
+    public Copier copier() {
+        return null;
+    }
+
+    public class Copier implements Definition.Copier {
+
+        private final StaticParamReceipt paramReceipt;
+
+        public Copier(StaticParamReceipt paramReceipt) {
+            this.paramReceipt = paramReceipt;
+        }
+
+        @Override
+        public StaticParamReceipt copy() {
+            return paramReceipt;
+        }
     }
 }

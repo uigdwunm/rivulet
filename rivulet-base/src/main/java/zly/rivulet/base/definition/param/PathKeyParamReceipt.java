@@ -1,6 +1,7 @@
 package zly.rivulet.base.definition.param;
 
 import zly.rivulet.base.convertor.Convertor;
+import zly.rivulet.base.definition.Definition;
 
 public class PathKeyParamReceipt implements ParamReceipt {
 
@@ -40,5 +41,24 @@ public class PathKeyParamReceipt implements ParamReceipt {
 
     public String getPathKey() {
         return pathKey;
+    }
+
+    @Override
+    public Copier copier() {
+        return new Copier(this);
+    }
+
+    public class Copier implements Definition.Copier {
+
+        private final PathKeyParamReceipt pathKeyParamReceipt;
+
+        public Copier(PathKeyParamReceipt pathKeyParamReceipt) {
+            this.pathKeyParamReceipt = pathKeyParamReceipt;
+        }
+
+        @Override
+        public PathKeyParamReceipt copy() {
+            return pathKeyParamReceipt;
+        }
     }
 }
