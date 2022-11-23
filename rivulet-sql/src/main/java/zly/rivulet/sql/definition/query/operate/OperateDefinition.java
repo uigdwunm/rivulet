@@ -9,7 +9,4 @@ public abstract class OperateDefinition extends AbstractDefinition {
         super(checkCondition, paramReceiptManager);
     }
 
-    @Override
-    public abstract OperateDefinition forAnalyze();
-
 }

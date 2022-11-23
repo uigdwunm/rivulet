@@ -1,6 +1,7 @@
 package zly.rivulet.sql.definition.query.main;
 
 import zly.rivulet.base.definition.AbstractContainerDefinition;
+import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.sql.definition.query.operate.OperateDefinition;
 import zly.rivulet.sql.describer.condition.ConditionContainer;
@@ -10,8 +11,8 @@ public class WhereDefinition extends AbstractContainerDefinition {
 
     private final OperateDefinition operateDefinition;
 
-    private WhereDefinition(OperateDefinition operateDefinition) {
-        super(CheckCondition.IS_TRUE, null);
+    private WhereDefinition(CheckCondition checkCondition, OperateDefinition operateDefinition) {
+        super(checkCondition, null);
         this.operateDefinition = operateDefinition;
     }
 
@@ -30,8 +31,25 @@ public class WhereDefinition extends AbstractContainerDefinition {
     }
 
     @Override
-    public WhereDefinition forAnalyze() {
-        return new WhereDefinition(operateDefinition.forAnalyze());
+    public Copier copier() {
+        return new Copier(this.operateDefinition);
     }
 
+    public class Copier implements Definition.Copier {
+
+        private OperateDefinition operateDefinition;
+
+        public Copier(OperateDefinition operateDefinition) {
+            this.operateDefinition = operateDefinition;
+        }
+
+        public void setOperateDefinition(OperateDefinition operateDefinition) {
+            this.operateDefinition = operateDefinition;
+        }
+
+        @Override
+        public WhereDefinition copy() {
+            return new WhereDefinition(checkCondition, operateDefinition);
+        }
+    }
 }

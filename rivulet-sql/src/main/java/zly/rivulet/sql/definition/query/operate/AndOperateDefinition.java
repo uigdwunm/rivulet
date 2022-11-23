@@ -1,5 +1,6 @@
 package zly.rivulet.sql.definition.query.operate;
 
+import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.sql.describer.condition.Condition;
@@ -15,6 +16,11 @@ import java.util.stream.Stream;
 public class AndOperateDefinition extends OperateDefinition {
 
     private final List<OperateDefinition> operateDefinitionList;
+
+    private AndOperateDefinition(CheckCondition checkCondition, List<OperateDefinition> operateDefinitionList) {
+        super(checkCondition, null);
+        this.operateDefinitionList = operateDefinitionList;
+    }
 
     public AndOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
         super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamReceiptManager());
@@ -47,7 +53,25 @@ public class AndOperateDefinition extends OperateDefinition {
     }
 
     @Override
-    public AndOperateDefinition forAnalyze() {
-        return null;
+    public Copier copier() {
+        return new Copier(this.operateDefinitionList);
+    }
+
+    public class Copier implements Definition.Copier {
+
+        private List<OperateDefinition> operateDefinitionList;
+
+        public Copier(List<OperateDefinition> operateDefinitionList) {
+            this.operateDefinitionList = operateDefinitionList;
+        }
+
+        public void setOperateDefinitionList(List<OperateDefinition> operateDefinitionList) {
+            this.operateDefinitionList = operateDefinitionList;
+        }
+
+        @Override
+        public AndOperateDefinition copy() {
+            return new AndOperateDefinition(checkCondition, operateDefinitionList);
+        }
     }
 }
