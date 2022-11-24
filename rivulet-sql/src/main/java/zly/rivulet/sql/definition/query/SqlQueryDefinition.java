@@ -87,9 +87,9 @@ public class SqlQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
             this.groupDefinition = new GroupDefinition(toolbox, groupFieldList);
             this.subDefinitionList.add(this.groupDefinition);
         }
-        List<? extends Condition<?, ?>> havingItemList = metaDesc.getHavingItemList();
-        if (CollectionUtils.isNotEmpty(havingItemList)) {
-            this.havingDefinition = new HavingDefinition(toolbox, havingItemList);
+        ConditionContainer<?, ?> havingConditionContainer = metaDesc.getHavingConditionContainer();
+        if (havingConditionContainer != null) {
+            this.havingDefinition = new HavingDefinition(toolbox, havingConditionContainer);
             this.subDefinitionList.add(this.havingDefinition);
         }
         List<? extends SortItem<?, ?>> orderItemList = metaDesc.getOrderItemList();

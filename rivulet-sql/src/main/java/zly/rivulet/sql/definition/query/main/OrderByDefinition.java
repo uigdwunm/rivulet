@@ -41,7 +41,7 @@ public class OrderByDefinition extends AbstractDefinition {
 
         private List<SortItemDefinition> sortItemDefinitionList;
 
-        public Copier(List<SortItemDefinition> sortItemDefinitionList) {
+        private Copier(List<SortItemDefinition> sortItemDefinitionList) {
             this.sortItemDefinitionList = sortItemDefinitionList;
         }
 

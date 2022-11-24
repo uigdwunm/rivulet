@@ -1,13 +1,11 @@
 package zly.rivulet.sql.describer.query;
 
 import zly.rivulet.base.definition.Definition;
-import zly.rivulet.base.describer.custom.CustomDesc;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.param.Param;
+import zly.rivulet.sql.describer.condition.ConditionContainer;
 import zly.rivulet.sql.describer.custom.SQLPartCustomDesc;
 import zly.rivulet.sql.describer.query.builder.SelectByBuilder;
-import zly.rivulet.sql.describer.condition.Condition;
-import zly.rivulet.sql.describer.condition.ConditionContainer;
 import zly.rivulet.sql.describer.query.desc.Mapping;
 import zly.rivulet.sql.describer.query.desc.SortItem;
 
@@ -48,7 +46,7 @@ public class QueryBuilder<F, S> {
     /**
      * having查询子项
      **/
-    protected List<Condition<F, ?>> havingItemList;
+    protected ConditionContainer<?, ?> havingConditionContainer;
 
     /**
      * order排序子项
@@ -81,7 +79,7 @@ public class QueryBuilder<F, S> {
             this.mappedItemList,
             this.whereConditionContainer,
             this.groupFieldList,
-            this.havingItemList,
+            this.havingConditionContainer,
             this.orderItemList,
             this.skit,
             this.limit,

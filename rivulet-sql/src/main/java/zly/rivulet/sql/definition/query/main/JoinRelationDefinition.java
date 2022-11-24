@@ -15,13 +15,21 @@ import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
 
 public class JoinRelationDefinition extends AbstractDefinition {
 
-    private QueryFromMeta joinModel;
+    private final QueryFromMeta joinModel;
 
-    private OperateDefinition operateContainerDefinition;
+    private final OperateDefinition operateContainerDefinition;
 
-    private SQLAliasManager.AliasFlag aliasFlag;
+    private final SQLAliasManager.AliasFlag aliasFlag;
 
-    private JoinType joinType;
+    private final JoinType joinType;
+
+    private JoinRelationDefinition(CheckCondition checkCondition, QueryFromMeta joinModel, OperateDefinition operateContainerDefinition, SQLAliasManager.AliasFlag aliasFlag, JoinType joinType) {
+        super(checkCondition, null);
+        this.joinModel = joinModel;
+            this.operateContainerDefinition = operateContainerDefinition;
+            this.aliasFlag = aliasFlag;
+            this.joinType = joinType;
+        }
 
     public JoinRelationDefinition(SqlParserPortableToolbox toolbox, ComplexDescriber.Relation<?> desc) {
         super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
@@ -53,7 +61,41 @@ public class JoinRelationDefinition extends AbstractDefinition {
     }
 
     @Override
-    public Definition forAnalyze() {
-        return null;
+    public Copier copier() {
+        return new Copier(joinModel, operateContainerDefinition, aliasFlag ,joinType);
+    }
+
+    public class Copier implements Definition.Copier {
+        private QueryFromMeta joinModel;
+
+        private OperateDefinition operateContainerDefinition;
+
+        private SQLAliasManager.AliasFlag aliasFlag;
+
+        private JoinType joinType;
+
+        private Copier(QueryFromMeta joinModel, OperateDefinition operateContainerDefinition, SQLAliasManager.AliasFlag aliasFlag, JoinType joinType) {
+            this.joinModel = joinModel;
+            this.operateContainerDefinition = operateContainerDefinition;
+            this.aliasFlag = aliasFlag;
+            this.joinType = joinType;
+        }
+
+        public void setJoinModel(QueryFromMeta joinModel) {
+            this.joinModel = joinModel;
+        }
+
+        public void setOperateContainerDefinition(OperateDefinition operateContainerDefinition) {
+            this.operateContainerDefinition = operateContainerDefinition;
+        }
+
+        public void setJoinType(JoinType joinType) {
+            this.joinType = joinType;
+        }
+
+        @Override
+        public JoinRelationDefinition copy() {
+            return new JoinRelationDefinition(checkCondition, joinModel, operateContainerDefinition, aliasFlag, joinType);
+        }
     }
 }

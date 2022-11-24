@@ -5,16 +5,13 @@ import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.base.describer.WholeDesc;
-import zly.rivulet.base.describer.custom.CustomDesc;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.sql.describer.condition.Condition;
 import zly.rivulet.sql.describer.condition.ConditionContainer;
 import zly.rivulet.sql.describer.custom.SQLPartCustomDesc;
 import zly.rivulet.sql.describer.query.desc.Mapping;
 import zly.rivulet.sql.describer.query.desc.SortItem;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +47,7 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
     /**
      * having查询子项
      **/
-    protected final List<Condition<F, ?>> havingItemList;
+    protected final ConditionContainer<?, ?> havingConditionContainer;
 
     /**
      * order排序子项
@@ -79,13 +76,13 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
      **/
 //    protected final boolean isHaveNativeStatement;
 
-    public SqlQueryMetaDesc(Class<F> modelFrom, Class<S> selectModel, List<Mapping<F, S, ?>> mappedItemList, ConditionContainer<?, ?> whereConditionContainer, List<FieldMapping<F, ?>> groupFieldList, List<Condition<F, ?>> havingItemList, List<SortItem<F, ?>> orderItemList, Param<Integer> skit, Param<Integer> limit, Map<Class<? extends Definition>, Param<SQLPartCustomDesc>> customStatementMap) {
+    public SqlQueryMetaDesc(Class<F> modelFrom, Class<S> selectModel, List<Mapping<F, S, ?>> mappedItemList, ConditionContainer<?, ?> whereConditionContainer, List<FieldMapping<F, ?>> groupFieldList, ConditionContainer<?, ?> havingConditionContainer, List<SortItem<F, ?>> orderItemList, Param<Integer> skit, Param<Integer> limit, Map<Class<? extends Definition>, Param<SQLPartCustomDesc>> customStatementMap) {
         this.modelFrom = modelFrom;
         this.selectModel = selectModel;
         this.mappedItemList = mappedItemList;
         this.whereConditionContainer = whereConditionContainer;
         this.groupFieldList = groupFieldList;
-        this.havingItemList = havingItemList;
+        this.havingConditionContainer = havingConditionContainer;
         this.orderItemList = orderItemList;
         this.skit = skit;
         this.limit = limit;
@@ -112,8 +109,8 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
         return groupFieldList;
     }
 
-    public List<Condition<F, ?>> getHavingItemList() {
-        return havingItemList;
+    public ConditionContainer<?, ?> getHavingConditionContainer() {
+        return havingConditionContainer;
     }
 
     public List<SortItem<F, ?>> getOrderItemList() {

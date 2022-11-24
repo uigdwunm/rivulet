@@ -1,20 +1,46 @@
 package zly.rivulet.sql.definition.query.main;
 
 import zly.rivulet.base.definition.AbstractDefinition;
+import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
-import zly.rivulet.sql.describer.condition.Condition;
+import zly.rivulet.sql.definition.query.operate.OperateDefinition;
+import zly.rivulet.sql.describer.condition.ConditionContainer;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
-
-import java.util.List;
 
 public class HavingDefinition extends AbstractDefinition {
 
-    public HavingDefinition(SqlParserPortableToolbox sqlPreParseHelper, List<? extends Condition<?,?>> havingItemList) {
-        super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamReceiptManager());
+    private final OperateDefinition operateDefinition;
+
+    private HavingDefinition(CheckCondition checkCondition, OperateDefinition operateDefinition) {
+        super(checkCondition, null);
+        this.operateDefinition = operateDefinition;
+    }
+
+    public HavingDefinition(SqlParserPortableToolbox toolbox, ConditionContainer<?, ?> havingConditionContainer) {
+        super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
+        this.operateDefinition = havingConditionContainer.getOperate().createDefinition(toolbox, havingConditionContainer);
     }
 
     @Override
-    public HavingDefinition forAnalyze() {
-        return null;
+    public Copier copier() {
+        return new Copier(this.operateDefinition);
+    }
+
+    public class Copier implements Definition.Copier {
+
+        private OperateDefinition operateDefinition;
+
+        private Copier(OperateDefinition operateDefinition) {
+            this.operateDefinition = operateDefinition;
+        }
+
+        public void setOperateDefinition(OperateDefinition operateDefinition) {
+            this.operateDefinition = operateDefinition;
+        }
+
+        @Override
+        public HavingDefinition copy() {
+            return new HavingDefinition(checkCondition, operateDefinition);
+        }
     }
 }
