@@ -303,7 +303,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
                         null,
                         sqlQueryMetaDesc.getWhereConditionContainer(),
                         sqlQueryMetaDesc.getGroupFieldList(),
-                        sqlQueryMetaDesc.getHavingItemList(),
+                        sqlQueryMetaDesc.getHavingConditionContainer(),
                         sqlQueryMetaDesc.getOrderItemList(),
                         sqlQueryMetaDesc.getSkit(),
                         sqlQueryMetaDesc.getLimit(),

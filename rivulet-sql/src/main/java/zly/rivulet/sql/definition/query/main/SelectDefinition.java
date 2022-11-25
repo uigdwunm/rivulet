@@ -1,11 +1,11 @@
 package zly.rivulet.sql.definition.query.main;
 
 import zly.rivulet.base.definition.AbstractContainerDefinition;
+import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.utils.View;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
-import zly.rivulet.sql.parser.SQLAliasManager;
 import zly.rivulet.sql.parser.proxy_node.CommonSelectNode;
 import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
@@ -28,6 +28,11 @@ public class SelectDefinition extends AbstractContainerDefinition {
 
     private final View<MapDefinition> mappingDefinitionList;
 
+    private SelectDefinition(CheckCondition checkCondition, Class<?> selectModel, View<MapDefinition> mappingDefinitionList) {
+        super(checkCondition, null);
+        this.selectModel = selectModel;
+        this.mappingDefinitionList = mappingDefinitionList;
+    }
 
     public SelectDefinition(SqlParserPortableToolbox toolbox, Class<?> selectModel, QueryProxyNode queryProxyNode) {
         super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
@@ -47,16 +52,41 @@ public class SelectDefinition extends AbstractContainerDefinition {
 
     }
 
-    @Override
-    public SelectDefinition forAnalyze() {
-        return null;
-    }
-
     public View<MapDefinition> getMapDefinitionList() {
         return mappingDefinitionList;
     }
 
     public Class<?> getSelectModel() {
         return selectModel;
+    }
+
+    @Override
+    public Copier copier() {
+        return new Copier(selectModel, mappingDefinitionList);
+    }
+
+    public class Copier implements Definition.Copier {
+
+        private Class<?> selectModel;
+
+        private View<MapDefinition> mappingDefinitionList;
+
+        private Copier(Class<?> selectModel, View<MapDefinition> mappingDefinitionList) {
+            this.selectModel = selectModel;
+            this.mappingDefinitionList = mappingDefinitionList;
+        }
+
+        public void setSelectModel(Class<?> selectModel) {
+            this.selectModel = selectModel;
+        }
+
+        public void setMappingDefinitionList(View<MapDefinition> mappingDefinitionList) {
+            this.mappingDefinitionList = mappingDefinitionList;
+        }
+
+        @Override
+        public Definition copy() {
+            return new SelectDefinition(checkCondition, selectModel, mappingDefinitionList);
+        }
     }
 }
