@@ -21,6 +21,12 @@ public class SetItemDefinition extends AbstractDefinition {
 
     private final SingleValueElementDefinition valueDefinition;
 
+    private SetItemDefinition(CheckCondition checkCondition, MapDefinition fieldMap, SingleValueElementDefinition valueDefinition) {
+        super(checkCondition, null);
+        this.fieldMap = fieldMap;
+        this.valueDefinition = valueDefinition;
+    }
+
     public SetItemDefinition(SqlParserPortableToolbox toolbox, MapDefinition fieldMap, Param<?> param) {
         super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
 
@@ -49,16 +55,41 @@ public class SetItemDefinition extends AbstractDefinition {
 
 
 
-    @Override
-    public Definition forAnalyze() {
-        return null;
-    }
-
     public SingleValueElementDefinition getValueDefinition() {
         return valueDefinition;
     }
 
     public MapDefinition getFieldMap() {
         return fieldMap;
+    }
+
+    @Override
+    public Copier copier() {
+        return new Copier(fieldMap, valueDefinition);
+    }
+
+    public class Copier implements Definition.Copier {
+
+        private MapDefinition fieldMap;
+
+        private SingleValueElementDefinition valueDefinition;
+
+        public Copier(MapDefinition fieldMap, SingleValueElementDefinition valueDefinition) {
+            this.fieldMap = fieldMap;
+            this.valueDefinition = valueDefinition;
+        }
+
+        public void setFieldMap(MapDefinition fieldMap) {
+            this.fieldMap = fieldMap;
+        }
+
+        public void setValueDefinition(SingleValueElementDefinition valueDefinition) {
+            this.valueDefinition = valueDefinition;
+        }
+
+        @Override
+        public SetItemDefinition copy() {
+            return new SetItemDefinition(checkCondition, fieldMap, valueDefinition);
+        }
     }
 }

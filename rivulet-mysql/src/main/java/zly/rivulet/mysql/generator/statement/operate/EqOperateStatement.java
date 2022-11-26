@@ -19,10 +19,15 @@ public class EqOperateStatement extends OperateStatement {
     }
 
     @Override
+    protected int length() {
+        return leftValue.getLengthOrCache() + 1 + rightValue.getLengthOrCache();
+    }
+
+    @Override
     public void collectStatement(StatementCollector collector) {
-        leftValue.singleCollectStatement(collector);
+        collector.append(leftValue);
         collector.append(Constant.EQ);
-        rightValue.singleCollectStatement(collector);
+        collector.append(rightValue);
     }
 
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {

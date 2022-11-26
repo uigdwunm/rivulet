@@ -97,15 +97,15 @@ public class MySQLInsertStatement extends SqlStatement {
                 List<ColumnItemStatement> columnItemStatements = sqlInsertDefinition.getColumnItemDefinitionList().stream()
                     .map(columnItemDefinition -> (ColumnItemStatement) sqlStatementFactory.warmUp(columnItemDefinition, soleFlag.subSwitch(), toolbox))
                     .collect(Collectors.toList());
-                List<List<SQLSingleValueElementDefinition>> values = sqlInsertDefinition.getValues();
+//                List<List<SQLSingleValueElementDefinition>> values = sqlInsertDefinition.getValues();
                 List<List<SingleValueElementStatement>> valuesStatement = null;
-                if (CollectionUtils.isNotEmpty(values)) {
-                    valuesStatement = values.stream()
-                        .map(subValues -> subValues.stream()
-                            .map(sqlSingleValueElementDefinition -> (SingleValueElementStatement) sqlStatementFactory.warmUp(sqlSingleValueElementDefinition, soleFlag.subSwitch(), toolbox))
-                            .collect(Collectors.toList())).collect(Collectors.toList());
-
-                }
+//                if (CollectionUtils.isNotEmpty(values)) {
+//                    valuesStatement = values.stream()
+//                        .map(subValues -> subValues.stream()
+//                            .map(sqlSingleValueElementDefinition -> (SingleValueElementStatement) sqlStatementFactory.warmUp(sqlSingleValueElementDefinition, soleFlag.subSwitch(), toolbox))
+//                            .collect(Collectors.toList())).collect(Collectors.toList());
+//
+//                }
                 return new MySQLInsertStatement(sqlInsertDefinition, View.create(columnItemStatements), valuesStatement);
             },
             (definition, toolbox) -> {
@@ -116,23 +116,31 @@ public class MySQLInsertStatement extends SqlStatement {
                     .map(columnItemDefinition -> (ColumnItemStatement) sqlStatementFactory.getOrCreate(columnItemDefinition, toolbox))
                     .collect(Collectors.toList());
 
-                List<List<SQLSingleValueElementDefinition>> values = sqlInsertDefinition.getValues();
-                List<List<SingleValueElementStatement>> valuesStatement;
-                if (CollectionUtils.isNotEmpty(values)) {
-                    valuesStatement = values.stream()
-                        .map(subValues -> subValues.stream()
-                            .map(sqlSingleValueElementDefinition -> (SingleValueElementStatement) sqlStatementFactory.getOrCreate(sqlSingleValueElementDefinition, toolbox))
-                            .collect(Collectors.toList())).collect(Collectors.toList());
-                } else {
-                    ModelBatchParamManager batchParamManager = toolbox.getBatchParamManager();
-                    valuesStatement = batchParamManager.getModelParamList().stream()
+//                List<List<SQLSingleValueElementDefinition>> values = sqlInsertDefinition.getValues();
+//                List<List<SingleValueElementStatement>> valuesStatement;
+//                if (CollectionUtils.isNotEmpty(values)) {
+//                    valuesStatement = values.stream()
+//                        .map(subValues -> subValues.stream()
+//                            .map(sqlSingleValueElementDefinition -> (SingleValueElementStatement) sqlStatementFactory.getOrCreate(sqlSingleValueElementDefinition, toolbox))
+//                            .collect(Collectors.toList())).collect(Collectors.toList());
+//                } else {
+//                    ModelBatchParamManager batchParamManager = toolbox.getBatchParamManager();
+//                    valuesStatement = batchParamManager.getModelParamList().stream()
+//                        .map(model -> {
+//                            CommonParamManager subParamManager = batchParamManager.createCommonParamManager(model);
+//                            return columnItemDefinitionList.stream()
+//                                .map(columnItemDefinition -> (SingleValueElementStatement) new SQLParamStatement(subParamManager.getStatement(columnItemDefinition.getForModelMetaParamReceipt())))
+//                                .collect(Collectors.toList());
+//                        }).collect(Collectors.toList());
+//                }
+                ModelBatchParamManager batchParamManager = toolbox.getBatchParamManager();
+                List<List<SingleValueElementStatement>> valuesStatement = batchParamManager.getModelParamList().stream()
                         .map(model -> {
                             CommonParamManager subParamManager = batchParamManager.createCommonParamManager(model);
                             return columnItemDefinitionList.stream()
                                 .map(columnItemDefinition -> (SingleValueElementStatement) new SQLParamStatement(subParamManager.getStatement(columnItemDefinition.getForModelMetaParamReceipt())))
                                 .collect(Collectors.toList());
                         }).collect(Collectors.toList());
-                }
                 return new MySQLInsertStatement(sqlInsertDefinition, View.create(columnItemStatements), valuesStatement);
             }
         );

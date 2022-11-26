@@ -3,14 +3,14 @@ package zly.rivulet.mysql.generator.statement.query;
 import zly.rivulet.base.utils.CollectionUtils;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.sql.definition.query.main.FromDefinition;
-import zly.rivulet.sql.parser.SQLAliasManager;
 import zly.rivulet.sql.generator.SqlStatementFactory;
 import zly.rivulet.sql.generator.statement.SqlStatement;
+import zly.rivulet.sql.parser.SQLAliasManager;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class FromStatement implements SqlStatement {
+public class FromStatement extends SqlStatement {
 
     private final FromDefinition definition;
 
@@ -30,9 +30,23 @@ public class FromStatement implements SqlStatement {
     }
 
     @Override
+    protected int length() {
+        int length = 0;
+        length += FROM.length();
+        length += this.mainFrom.getLengthOrCache();
+        length += 1 + this.mainFromAlias.length();
+        length += 1;
+        if (CollectionUtils.isNotEmpty(this.joinStatementList)) {
+            length += joinStatementList.size() - 1;
+            length += joinStatementList.stream().map(JoinStatement::getLengthOrCache).reduce(0, Integer::sum);
+        }
+        return length;
+    }
+
+    @Override
     public void collectStatement(StatementCollector collector) {
         collector.append(FROM);
-        this.mainFrom.collectStatement(collector);
+        collector.append(this.mainFrom);
         collector.space().append(this.mainFromAlias);
         collector.space();
 

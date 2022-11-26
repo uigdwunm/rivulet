@@ -6,7 +6,6 @@ import zly.rivulet.base.definition.Definition;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.SQLBlueprint;
-import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 import java.util.List;
@@ -16,9 +15,15 @@ public class SQLInsertDefinition extends SQLBlueprint {
 
     private final SQLModelMeta sqlModelMeta;
 
-    private List<ColumnItemDefinition> columnItemDefinitionList;
+    private final List<ColumnItemDefinition> columnItemDefinitionList;
 
-    private List<List<SQLSingleValueElementDefinition>> values;
+//    private final List<List<SQLSingleValueElementDefinition>> values;
+
+    public SQLInsertDefinition(SQLModelMeta sqlModelMeta, List<ColumnItemDefinition> columnItemDefinitionList) {
+        super(RivuletFlag.INSERT, null);
+        this.sqlModelMeta = sqlModelMeta;
+        this.columnItemDefinitionList = columnItemDefinitionList;
+    }
 
     public SQLInsertDefinition(SQLModelMeta sqlModelMeta, SqlParserPortableToolbox toolbox) {
         super(RivuletFlag.INSERT, null);
@@ -36,17 +41,30 @@ public class SQLInsertDefinition extends SQLBlueprint {
         return columnItemDefinitionList;
     }
 
-    public List<List<SQLSingleValueElementDefinition>> getValues() {
-        return values;
-    }
-
     @Override
     public Assigner<?> getAssigner() {
         return null;
     }
 
     @Override
-    public Definition forAnalyze() {
-        return null;
+    public Copier copier() {
+        return new Copier(sqlModelMeta, columnItemDefinitionList);
+    }
+
+    public class Copier implements Definition.Copier {
+
+        private final SQLModelMeta sqlModelMeta;
+
+        private final List<ColumnItemDefinition> columnItemDefinitionList;
+
+        public Copier(SQLModelMeta sqlModelMeta, List<ColumnItemDefinition> columnItemDefinitionList) {
+            this.sqlModelMeta = sqlModelMeta;
+            this.columnItemDefinitionList = columnItemDefinitionList;
+        }
+
+        @Override
+        public SQLInsertDefinition copy() {
+            return new SQLInsertDefinition(sqlModelMeta, columnItemDefinitionList);
+        }
     }
 }

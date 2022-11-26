@@ -21,6 +21,11 @@ public class SetDefinition extends AbstractContainerDefinition {
 
     private final View<SetItemDefinition> setItemDefinitionView;
 
+    private SetDefinition(CheckCondition checkCondition, List<SetItemDefinition> setItemDefinitionList) {
+        super(checkCondition, null);
+        this.setItemDefinitionView = View.create(setItemDefinitionList);
+    }
+
     public SetDefinition(SqlParserPortableToolbox toolbox, List<? extends Mapping<?, ?, ?>> mappedItemList) {
         super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
         List<SetItemDefinition> list = mappedItemList.stream()
@@ -44,12 +49,30 @@ public class SetDefinition extends AbstractContainerDefinition {
         this.setItemDefinitionView = View.create(list);
     }
 
-    @Override
-    public Definition forAnalyze() {
-        return null;
-    }
-
     public View<SetItemDefinition> getSetItemDefinitionView() {
         return setItemDefinitionView;
+    }
+
+    @Override
+    public Copier copier() {
+        return new Copier(setItemDefinitionView.stream().collect(Collectors.toList()));
+    }
+
+    public class Copier implements Definition.Copier {
+
+        private final List<SetItemDefinition> setItemDefinitionList;
+
+        private Copier(List<SetItemDefinition> setItemDefinitionList) {
+            this.setItemDefinitionList = setItemDefinitionList;
+        }
+
+        public List<SetItemDefinition> getSetItemDefinitionList() {
+            return setItemDefinitionList;
+        }
+
+        @Override
+        public SetDefinition copy() {
+            return new SetDefinition(checkCondition, setItemDefinitionList);
+        }
     }
 }

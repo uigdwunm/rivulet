@@ -5,9 +5,9 @@ import zly.rivulet.base.utils.StringUtil;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.statement.SingleValueElementStatement;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
-import zly.rivulet.sql.parser.SQLAliasManager;
 import zly.rivulet.sql.generator.SqlStatementFactory;
 import zly.rivulet.sql.generator.statement.SqlStatement;
+import zly.rivulet.sql.parser.SQLAliasManager;
 
 public class MapStatement extends SingleValueElementStatement {
 
@@ -38,6 +38,30 @@ public class MapStatement extends SingleValueElementStatement {
     @Override
     public void singleCollectStatement(StatementCollector collector) {
         collector.append(referenceAlias).append(Constant.POINT_CHAR).append(this.alias);
+    }
+
+    @Override
+    public int singleValueLength() {
+        return referenceAlias.length() + 1 + this.alias.length();
+    }
+
+    @Override
+    protected int length() {
+        int length = 0;
+        if (value instanceof MySqlQueryStatement) {
+            length += 1;
+            length += value.singleValueLength();
+            length += 1;
+            length += 1 + Constant.AS.length() + 1;
+            length += this.alias.length();
+        } else if (StringUtil.isNotBlank(this.referenceAlias)) {
+            length += value.singleValueLength();
+            length += 1 + Constant.AS.length();
+            length += this.alias.length();
+        } else {
+            length += value.singleValueLength();
+        }
+        return length;
     }
 
     @Override

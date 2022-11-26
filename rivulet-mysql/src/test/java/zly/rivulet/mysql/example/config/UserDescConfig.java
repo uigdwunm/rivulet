@@ -26,10 +26,8 @@ public class UserDescConfig {
             )
             .where(
                 Condition.equalTo(User::getId, Param.of(Long.class, "id", SqlParamCheckType.PLACEHOLDER)),
-                Condition.equalTo(User::getName, User::getCode),
                 Condition.or(
-                    Condition.equalTo(User::getId, Param.of(Long.class, "id", SqlParamCheckType.PLACEHOLDER)),
-                    Condition.equalTo(User::getName, User::getCode)
+                    Condition.equalTo(User::getId, Param.of(Long.class, "id", SqlParamCheckType.PLACEHOLDER))
                 )
             ).build();
     }
@@ -58,10 +56,8 @@ public class UserDescConfig {
                 Mapping.of(UserJoinVO::setProvinceName, joinDO -> joinDO.getProvinceDO().getName())
             ).where(
                 Condition.equalTo(joinDO -> joinDO.getUserDO().getId(), Param.of(Long.class, "aa.id", SqlParamCheckType.PLACEHOLDER)),
-                Condition.equalTo(joinDO -> joinDO.getUserDO().getName(), joinDO -> joinDO.getUserDO().getCode()),
                 Condition.or(
-                    Condition.equalTo(joinDO -> joinDO.getUserDO().getId(), Param.of(Long.class, "aa.id", SqlParamCheckType.PLACEHOLDER)),
-                    Condition.equalTo(joinDO -> joinDO.getUserDO().getName(), joinDO -> joinDO.getUserDO().getCode())
+                    Condition.equalTo(joinDO -> joinDO.getUserDO().getId(), Param.of(Long.class, "aa.id", SqlParamCheckType.PLACEHOLDER))
                 )
             ).build();
     }

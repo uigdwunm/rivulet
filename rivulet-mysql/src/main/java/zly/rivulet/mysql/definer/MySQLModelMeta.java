@@ -81,7 +81,21 @@ public class MySQLModelMeta extends SQLModelMeta {
     }
 
     @Override
-    public Definition forAnalyze() {
-        return this;
+    public Copier copier() {
+        return new Copier(this);
+    }
+
+    public class Copier implements Definition.Copier {
+
+        private final MySQLModelMeta mySQLModelMeta;
+
+        private Copier(MySQLModelMeta mySQLModelMeta) {
+            this.mySQLModelMeta = mySQLModelMeta;
+        }
+
+        @Override
+        public Definition copy() {
+            return this.mySQLModelMeta;
+        }
     }
 }

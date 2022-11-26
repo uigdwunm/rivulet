@@ -1,5 +1,6 @@
 package zly.rivulet.mysql.util;
 
+import zly.rivulet.base.generator.statement.Statement;
 import zly.rivulet.base.utils.ArrayUtils;
 import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.collector.StatementCollector;
@@ -97,6 +98,12 @@ public class MySQLFormatStatementCollector implements StatementCollector {
         if (BEFORE_APPEND_LINE.contains(str)) {
             this.line();
         }
+        return this;
+    }
+
+    @Override
+    public StatementCollector append(Statement statement) {
+        statement.collectStatementOrCache(this);
         return this;
     }
 

@@ -9,7 +9,7 @@ import zly.rivulet.sql.generator.statement.SqlStatement;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SelectStatement implements SqlStatement {
+public class SelectStatement extends SqlStatement {
 
     private final SelectDefinition selectDefinition;
 
@@ -20,6 +20,13 @@ public class SelectStatement implements SqlStatement {
     public SelectStatement(SelectDefinition selectDefinition, List<MapStatement> mapStatementList) {
         this.selectDefinition = selectDefinition;
         this.mapStatementList = mapStatementList;
+    }
+
+    @Override
+    protected int length() {
+        return SELECT.length() +
+            mapStatementList.size() - 1 +
+            mapStatementList.stream().map(MapStatement::getLengthOrCache).reduce(0, Integer::sum);
     }
 
     @Override

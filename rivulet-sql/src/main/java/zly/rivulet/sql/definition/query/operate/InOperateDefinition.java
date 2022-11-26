@@ -1,5 +1,6 @@
 package zly.rivulet.sql.definition.query.operate;
 
+import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
 import zly.rivulet.base.describer.SingleValueElementDesc;
@@ -11,9 +12,16 @@ import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 public class InOperateDefinition extends OperateDefinition {
 
-    private SingleValueElementDefinition leftElement;
+    private final SingleValueElementDefinition leftElement;
 
-    private SingleValueElementDefinition rightElement;
+    private final SingleValueElementDefinition rightElement;
+
+    private InOperateDefinition(CheckCondition checkCondition, SingleValueElementDefinition leftElement, SingleValueElementDefinition rightElement) {
+        super(checkCondition, null);
+        this.leftElement = leftElement;
+        this.rightElement = rightElement;
+
+    }
 
     public InOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
         this(sqlPreParseHelper, (ConditionElement<?, ?>) condition);
@@ -44,7 +52,31 @@ public class InOperateDefinition extends OperateDefinition {
     }
 
     @Override
-    public InOperateDefinition forAnalyze() {
-        return null;
+    public Copier copier() {
+        return new Copier(leftElement, rightElement);
+    }
+
+    public class Copier implements Definition.Copier {
+        private SingleValueElementDefinition leftElement;
+
+        private SingleValueElementDefinition rightElement;
+
+        private Copier(SingleValueElementDefinition leftElement, SingleValueElementDefinition rightElement) {
+            this.leftElement = leftElement;
+            this.rightElement = rightElement;
+        }
+
+        public void setLeftElement(SingleValueElementDefinition leftElement) {
+            this.leftElement = leftElement;
+        }
+
+        public void setRightElement(SingleValueElementDefinition rightElement) {
+            this.rightElement = rightElement;
+        }
+
+        @Override
+        public InOperateDefinition copy() {
+            return new InOperateDefinition(checkCondition, leftElement, rightElement);
+        }
     }
 }

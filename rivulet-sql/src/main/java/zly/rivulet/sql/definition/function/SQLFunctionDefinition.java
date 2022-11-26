@@ -11,16 +11,12 @@ import java.util.stream.Collectors;
 public class SQLFunctionDefinition extends SQLCustomDefinition implements SingleValueElementDefinition {
 
     public SQLFunctionDefinition(SqlParserPortableToolbox toolbox, Function<?, ?> sqlFunction) {
-        super(toolbox);
-        super.customCollect = sqlFunction.getCustomCollect();
-        super.singleValueList = sqlFunction.getSingleValueList().stream()
+        super(
+            sqlFunction.getSingleValueList().stream()
             .map(toolbox::parseSingleValueForCondition)
-            .collect(Collectors.toList());
+            .collect(Collectors.toList()),
+            sqlFunction.getCustomCollect()
+        );
 
-    }
-
-    @Override
-    public Definition forAnalyze() {
-        return null;
     }
 }

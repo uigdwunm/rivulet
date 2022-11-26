@@ -18,18 +18,34 @@ public class OrOperateStatement extends OperateStatement {
     }
 
     @Override
+    protected int length() {
+        int length = 0;
+        length += subOperateList.size() * OR_CONNECTOR.length() - 1;
+        for (OperateStatement operateStatement : subOperateList) {
+            if (operateStatement instanceof AndOperateStatement || operateStatement instanceof OrOperateStatement) {
+                length += 1;
+                length += operateStatement.getLengthOrCache();
+                length += 1;
+            } else {
+                length += operateStatement.getLengthOrCache();
+            }
+            length += 1;
+        }
+        return length;
+    }
+
+    @Override
     public void collectStatement(StatementCollector collector) {
         for (OperateStatement operateStatement : collector.createJoiner(OR_CONNECTOR, subOperateList)) {
             if (operateStatement instanceof AndOperateStatement || operateStatement instanceof OrOperateStatement) {
                 collector.leftBracket();
-                operateStatement.collectStatement(collector);
+                collector.append(operateStatement);
                 collector.rightBracket();
             } else {
-                operateStatement.collectStatement(collector);
+                collector.append(operateStatement);
             }
             collector.space();
         }
-
     }
 
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {

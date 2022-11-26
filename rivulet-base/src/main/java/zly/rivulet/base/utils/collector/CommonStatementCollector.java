@@ -81,7 +81,7 @@ public class CommonStatementCollector implements StatementCollector {
 
     @Override
     public StatementCollector append(Statement statement) {
-        statement.collectStatement(this);
+        statement.collectStatementOrCache(this);
         return this;
     }
 

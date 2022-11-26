@@ -5,10 +5,9 @@ import zly.rivulet.mysql.example.model.address.Province;
 import zly.rivulet.mysql.example.model.user.User;
 import zly.rivulet.mysql.example.vo.UserVO;
 import zly.rivulet.sql.definer.QueryComplexModel;
-import zly.rivulet.sql.definer.annotations.SQLModelJoin;
 import zly.rivulet.sql.definer.annotations.SQLSubQuery;
-import zly.rivulet.sql.describer.join.ComplexDescriber;
 import zly.rivulet.sql.describer.condition.JoinCondition;
+import zly.rivulet.sql.describer.join.ComplexDescriber;
 
 public class JoinQueryDO implements QueryComplexModel {
 
@@ -32,7 +31,6 @@ public class JoinQueryDO implements QueryComplexModel {
             )
         );
         complexDescriber.leftJoin(province).on(JoinCondition.equalTo(city::getProvinceCode, province::getCode));
-        complexDescriber.leftJoin(userFriend).on(JoinCondition.equalTo(userFriend::getId, user::getFriendId));
 
         return complexDescriber;
     }

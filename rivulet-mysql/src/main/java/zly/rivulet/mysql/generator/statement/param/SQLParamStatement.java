@@ -1,6 +1,5 @@
 package zly.rivulet.mysql.generator.statement.param;
 
-import zly.rivulet.base.generator.param_manager.ParamManager;
 import zly.rivulet.base.convertor.Convertor;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.describer.param.StaticParam;
@@ -53,5 +52,10 @@ public class SQLParamStatement extends SingleValueElementStatement {
                 return new SQLParamStatement(value);
             }
         );
+    }
+
+    @Override
+    public int singleValueLength() {
+        return this.length();
     }
 }

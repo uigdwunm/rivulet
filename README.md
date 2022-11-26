@@ -72,3 +72,7 @@ sql,为什么解析复杂嵌套的desc时不能把已解析的blueprint缓存起
 3，如果是完全自定义语句，只提供解析param的服务，不能再提供SingleValue的解析了。
 
 由于2的存在，要在参数绑定时解析singleValue，所以要保存QueryProxyNode
+
+
+遗留的坑
+definion 中用到 list 相关的属性得改造成view，是个大坑

@@ -80,7 +80,20 @@ public final class MySQLFieldMeta extends SQLFieldMeta {
     }
 
     @Override
-    public Definition forAnalyze() {
-        return this;
+    public Copier copier() {
+        return new Copier(this);
+    }
+
+    public class Copier implements Definition.Copier {
+        private final MySQLFieldMeta mySQLFieldMeta;
+
+        public Copier(MySQLFieldMeta mySQLFieldMeta) {
+            this.mySQLFieldMeta = mySQLFieldMeta;
+        }
+
+        @Override
+        public MySQLFieldMeta copy() {
+            return mySQLFieldMeta;
+        }
     }
 }

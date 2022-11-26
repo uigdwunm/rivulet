@@ -31,17 +31,27 @@ import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 public class SqlUpdateDefinition extends SQLBlueprint {
 
-    private FromDefinition fromDefinition;
+    private final SqlUpdateMetaDesc<?> metaDesc;
 
-    private SetDefinition setDefinition;
+    private final FromDefinition fromDefinition;
 
-    private WhereDefinition whereDefinition;
+    private final SetDefinition setDefinition;
 
-    private SQLUpdateResultAssigner assigner;
+    private final WhereDefinition whereDefinition;
+
+    private final SQLUpdateResultAssigner assigner = new SQLUpdateResultAssigner();
+
+    private SqlUpdateDefinition(SqlUpdateMetaDesc<?> metaDesc, FromDefinition fromDefinition, SetDefinition setDefinition, WhereDefinition whereDefinition) {
+        super(RivuletFlag.UPDATE, metaDesc);
+        this.metaDesc = metaDesc;
+        this.fromDefinition = fromDefinition;
+        this.setDefinition = setDefinition;
+        this.whereDefinition = whereDefinition;
+    }
 
     public SqlUpdateDefinition(SqlParserPortableToolbox toolbox, WholeDesc wholeDesc) {
         super(RivuletFlag.UPDATE, wholeDesc);
-        SqlUpdateMetaDesc<?> metaDesc = (SqlUpdateMetaDesc<?>) wholeDesc;
+        this.metaDesc = (SqlUpdateMetaDesc<?>) wholeDesc;
         this.aliasManager = new SQLAliasManager(toolbox.getConfigProperties());
         Class<?> mainFrom = metaDesc.getMainFrom();
         if (ClassUtils.isExtend(QueryComplexModel.class, mainFrom)) {
@@ -60,15 +70,17 @@ public class SqlUpdateDefinition extends SQLBlueprint {
         ConditionContainer<?, ?> whereConditionContainer = metaDesc.getWhereConditionContainer();
         if (whereConditionContainer != null) {
             this.whereDefinition = new WhereDefinition(toolbox, whereConditionContainer);
+        } else {
+            this.whereDefinition = null;
         }
 
         this.paramReceiptManager = toolbox.getParamReceiptManager();
         this.aliasManager.init(queryProxyNode);
-        this.assigner = new SQLUpdateResultAssigner();
     }
 
     public SqlUpdateDefinition(SqlParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta, SQLFieldMeta primaryKey) {
         super(RivuletFlag.UPDATE, null);
+        this.metaDesc = null;
         Class<?> mainFrom = sqlModelMeta.getModelClass();
         if (ClassUtils.isExtend(QueryComplexModel.class, mainFrom)) {
             // 仅支持单表更新
@@ -115,12 +127,6 @@ public class SqlUpdateDefinition extends SQLBlueprint {
         return this.assigner;
     }
 
-
-    @Override
-    public Definition forAnalyze() {
-        return null;
-    }
-
     @Override
     public SQLAliasManager getAliasManager() {
         return this.aliasManager;
@@ -130,23 +136,55 @@ public class SqlUpdateDefinition extends SQLBlueprint {
         return fromDefinition;
     }
 
-    public void setFromDefinition(FromDefinition fromDefinition) {
-        this.fromDefinition = fromDefinition;
-    }
-
-    public void setSetDefinition(SetDefinition setDefinition) {
-        this.setDefinition = setDefinition;
-    }
-
-    public void setWhereDefinition(WhereDefinition whereDefinition) {
-        this.whereDefinition = whereDefinition;
-    }
-
     public SetDefinition getSetDefinition() {
         return setDefinition;
     }
 
     public WhereDefinition getWhereDefinition() {
         return whereDefinition;
+    }
+
+    @Override
+    public Copier copier() {
+        return null;
+    }
+
+    public class Copier implements Definition.Copier {
+
+        private SqlUpdateMetaDesc<?> metaDesc;
+
+        private FromDefinition fromDefinition;
+
+        private SetDefinition setDefinition;
+
+        private WhereDefinition whereDefinition;
+
+        private Copier(SqlUpdateMetaDesc<?> metaDesc, FromDefinition fromDefinition, SetDefinition setDefinition, WhereDefinition whereDefinition) {
+            this.metaDesc = metaDesc;
+            this.fromDefinition = fromDefinition;
+            this.setDefinition = setDefinition;
+            this.whereDefinition = whereDefinition;
+        }
+
+        public void setMetaDesc(SqlUpdateMetaDesc<?> metaDesc) {
+            this.metaDesc = metaDesc;
+        }
+
+        public void setFromDefinition(FromDefinition fromDefinition) {
+            this.fromDefinition = fromDefinition;
+        }
+
+        public void setSetDefinition(SetDefinition setDefinition) {
+            this.setDefinition = setDefinition;
+        }
+
+        public void setWhereDefinition(WhereDefinition whereDefinition) {
+            this.whereDefinition = whereDefinition;
+        }
+
+        @Override
+        public SqlUpdateDefinition copy() {
+            return new SqlUpdateDefinition(metaDesc, fromDefinition, setDefinition, whereDefinition);
+        }
     }
 }

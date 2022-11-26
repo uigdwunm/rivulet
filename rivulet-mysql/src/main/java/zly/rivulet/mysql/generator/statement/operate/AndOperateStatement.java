@@ -21,7 +21,19 @@ public class AndOperateStatement extends OperateStatement {
 
     @Override
     protected int length() {
-        return 0;
+        int length = 0;
+        length += subOperateList.size() * AND_CONNECTOR.length() - 1;
+        for (OperateStatement operateStatement : subOperateList) {
+            if (operateStatement instanceof AndOperateStatement || operateStatement instanceof OrOperateStatement) {
+                length += 1;
+                length += operateStatement.getLengthOrCache();
+                length += 1;
+            } else {
+                length += operateStatement.getLengthOrCache();
+            }
+            length += 1;
+        }
+        return length;
     }
 
     @Override

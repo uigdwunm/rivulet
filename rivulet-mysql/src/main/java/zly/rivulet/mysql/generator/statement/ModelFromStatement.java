@@ -39,4 +39,9 @@ public class ModelFromStatement extends QueryFromStatement {
             }
         );
     }
+
+    @Override
+    public int singleValueLength() {
+        return this.length();
+    }
 }

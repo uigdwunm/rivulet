@@ -10,7 +10,7 @@ import zly.rivulet.sql.generator.statement.SqlStatement;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MySqlQueryStatement implements QueryFromStatement {
+public class MySqlQueryStatement extends QueryFromStatement {
 
     private final SqlQueryDefinition definition;
 
@@ -30,6 +30,19 @@ public class MySqlQueryStatement implements QueryFromStatement {
         collector.leftBracket();
         this.collectStatement(collector);
         collector.rightBracket();
+    }
+
+    @Override
+    public int singleValueLength() {
+        return 1 + this.length() +1;
+    }
+
+    @Override
+    protected int length() {
+        int length = 0;
+        length += this.subStatementList.size() - 1;
+        length += this.subStatementList.stream().map(SqlStatement::getLengthOrCache).reduce(0, Integer::sum);
+        return length;
     }
 
     @Override

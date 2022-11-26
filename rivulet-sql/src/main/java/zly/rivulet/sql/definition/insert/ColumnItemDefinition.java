@@ -14,6 +14,12 @@ public class ColumnItemDefinition extends AbstractDefinition {
 
     private final ParamReceipt forModelMetaParamReceipt;
 
+    private ColumnItemDefinition(CheckCondition checkCondition, SQLFieldMeta sqlFieldMeta, ParamReceipt forModelMetaParamReceipt) {
+        super(checkCondition, null);
+        this.sqlFieldMeta = sqlFieldMeta;
+        this.forModelMetaParamReceipt = forModelMetaParamReceipt;
+    }
+
     protected ColumnItemDefinition(SqlParserPortableToolbox toolbox, SQLFieldMeta fieldMeta) {
         super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
         this.forModelMetaParamReceipt = toolbox.getParamReceiptManager().registerParam(
@@ -35,7 +41,32 @@ public class ColumnItemDefinition extends AbstractDefinition {
     }
 
     @Override
-    public Definition forAnalyze() {
-        return null;
+    public Copier copier() {
+        return new Copier(sqlFieldMeta, forModelMetaParamReceipt);
+    }
+
+    public class Copier implements Definition.Copier {
+
+        private SQLFieldMeta sqlFieldMeta;
+
+        private ParamReceipt forModelMetaParamReceipt;
+
+        public Copier(SQLFieldMeta sqlFieldMeta, ParamReceipt forModelMetaParamReceipt) {
+            this.sqlFieldMeta = sqlFieldMeta;
+            this.forModelMetaParamReceipt = forModelMetaParamReceipt;
+        }
+
+        public void setSqlFieldMeta(SQLFieldMeta sqlFieldMeta) {
+            this.sqlFieldMeta = sqlFieldMeta;
+        }
+
+        public void setForModelMetaParamReceipt(ParamReceipt forModelMetaParamReceipt) {
+            this.forModelMetaParamReceipt = forModelMetaParamReceipt;
+        }
+
+        @Override
+        public ColumnItemDefinition copy() {
+            return new ColumnItemDefinition(checkCondition, sqlFieldMeta, forModelMetaParamReceipt);
+        }
     }
 }

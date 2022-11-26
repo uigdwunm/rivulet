@@ -12,7 +12,6 @@ import zly.rivulet.base.generator.param_manager.for_proxy_method.CommonParamMana
 import zly.rivulet.base.parser.Parser;
 import zly.rivulet.base.utils.RelationSwitch;
 import zly.rivulet.mysql.MySQLRivuletProperties;
-import zly.rivulet.mysql.generator.statement.FieldStatement;
 import zly.rivulet.mysql.generator.statement.ModelFromStatement;
 import zly.rivulet.mysql.generator.statement.operate.AndOperateStatement;
 import zly.rivulet.mysql.generator.statement.operate.EqOperateStatement;
@@ -21,10 +20,10 @@ import zly.rivulet.mysql.generator.statement.param.SQLParamStatement;
 import zly.rivulet.mysql.generator.statement.query.*;
 import zly.rivulet.sql.definition.SQLBlueprint;
 import zly.rivulet.sql.describer.custom.SQLPartCustomDesc;
-import zly.rivulet.sql.generator.toolbox.SQLGenerateToolbox;
-import zly.rivulet.sql.generator.toolbox.WarmUpToolbox;
 import zly.rivulet.sql.generator.SqlStatementFactory;
 import zly.rivulet.sql.generator.statement.SqlStatement;
+import zly.rivulet.sql.generator.toolbox.SQLGenerateToolbox;
+import zly.rivulet.sql.generator.toolbox.WarmUpToolbox;
 import zly.rivulet.sql.parser.SqlParser;
 
 import java.util.Map;
@@ -109,7 +108,6 @@ public class MysqlGenerator implements Generator {
         SelectStatement.registerToFactory(sqlStatementFactory);
         ModelFromStatement.registerToFactory(sqlStatementFactory);
         MapStatement.registerToFactory(sqlStatementFactory);
-        FieldStatement.registerToFactory(sqlStatementFactory);
 
         FromStatement.registerToFactory(sqlStatementFactory);
         JoinStatement.registerToFactory(sqlStatementFactory);
