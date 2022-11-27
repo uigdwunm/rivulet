@@ -13,6 +13,7 @@ import zly.rivulet.base.parser.Parser;
 import zly.rivulet.base.utils.RelationSwitch;
 import zly.rivulet.mysql.MySQLRivuletProperties;
 import zly.rivulet.mysql.generator.statement.ModelFromStatement;
+import zly.rivulet.mysql.generator.statement.MySQLFieldStatement;
 import zly.rivulet.mysql.generator.statement.operate.AndOperateStatement;
 import zly.rivulet.mysql.generator.statement.operate.EqOperateStatement;
 import zly.rivulet.mysql.generator.statement.operate.OrOperateStatement;
@@ -107,6 +108,7 @@ public class MysqlGenerator implements Generator {
         MySqlQueryStatement.registerToFactory(sqlStatementFactory);
         SelectStatement.registerToFactory(sqlStatementFactory);
         ModelFromStatement.registerToFactory(sqlStatementFactory);
+        MySQLFieldStatement.registerToFactory(sqlStatementFactory);
         MapStatement.registerToFactory(sqlStatementFactory);
 
         FromStatement.registerToFactory(sqlStatementFactory);

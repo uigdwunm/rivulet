@@ -26,6 +26,11 @@ public class ModelFromStatement extends QueryFromStatement {
         collector.append(tableName);
     }
 
+    @Override
+    public int singleValueLength() {
+        return this.length();
+    }
+
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
             MySQLModelMeta.class,
@@ -38,10 +43,5 @@ public class ModelFromStatement extends QueryFromStatement {
                 return new ModelFromStatement(mySQLModelMeta, mySQLModelMeta.getTableName());
             }
         );
-    }
-
-    @Override
-    public int singleValueLength() {
-        return this.length();
     }
 }

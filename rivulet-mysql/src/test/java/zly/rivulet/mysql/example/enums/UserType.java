@@ -1,6 +1,6 @@
 package zly.rivulet.mysql.example.enums;
 
-import zly.rivulet.sql.support.TEnum;
+import zly.rivulet.base.support.TEnum;
 
 public enum UserType implements TEnum<Integer> {
     VISITOR(0, "游客"),

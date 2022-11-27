@@ -3,7 +3,14 @@ package zly.rivulet.mysql.definer.annotations.type.numeric;
 import zly.rivulet.base.utils.BooleanEnum;
 import zly.rivulet.mysql.definer.outerType.ExactNumericType;
 
-public @interface MySQLSmallInt {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+@interface MySQLSmallInt {
     int maximumDisplayWidth() default 1;
 
     BooleanEnum unSigned() default BooleanEnum.DEFAULT;

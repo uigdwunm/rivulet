@@ -2,7 +2,6 @@ package zly.rivulet.mysql.generator.statement.insert;
 
 import zly.rivulet.base.generator.param_manager.for_model_meta.ModelBatchParamManager;
 import zly.rivulet.base.generator.param_manager.for_proxy_method.CommonParamManager;
-import zly.rivulet.base.utils.CollectionUtils;
 import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.View;
 import zly.rivulet.base.utils.collector.StatementCollector;
@@ -11,7 +10,7 @@ import zly.rivulet.mysql.generator.statement.param.SQLParamStatement;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.insert.ColumnItemDefinition;
 import zly.rivulet.sql.definition.insert.SQLInsertDefinition;
-import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
+import zly.rivulet.sql.describer.param.SqlParamCheckType;
 import zly.rivulet.sql.generator.SqlStatementFactory;
 import zly.rivulet.sql.generator.statement.SqlStatement;
 
@@ -138,7 +137,7 @@ public class MySQLInsertStatement extends SqlStatement {
                         .map(model -> {
                             CommonParamManager subParamManager = batchParamManager.createCommonParamManager(model);
                             return columnItemDefinitionList.stream()
-                                .map(columnItemDefinition -> (SingleValueElementStatement) new SQLParamStatement(subParamManager.getStatement(columnItemDefinition.getForModelMetaParamReceipt())))
+                                .map(columnItemDefinition -> (SingleValueElementStatement) new SQLParamStatement(subParamManager.getStatement(columnItemDefinition.getForModelMetaParamReceipt()), SqlParamCheckType.NATURE))
                                 .collect(Collectors.toList());
                         }).collect(Collectors.toList());
                 return new MySQLInsertStatement(sqlInsertDefinition, View.create(columnItemStatements), valuesStatement);

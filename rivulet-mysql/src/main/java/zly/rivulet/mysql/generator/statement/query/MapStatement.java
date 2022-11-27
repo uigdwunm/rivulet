@@ -70,14 +70,16 @@ public class MapStatement extends SingleValueElementStatement {
             collector.leftBracket();
             value.singleCollectStatement(collector);
             collector.rightBracket();
-            collector.space().append(Constant.AS).space();
-            collector.append(this.alias);
         } else if (StringUtil.isNotBlank(this.referenceAlias)) {
             value.singleCollectStatement(collector);
-            collector.space().append(Constant.AS);
-            collector.append(this.alias);
         } else {
             value.singleCollectStatement(collector);
+        }
+
+        if (StringUtil.isNotBlank(this.alias)) {
+            collector.space().append(Constant.AS);
+            collector.append(this.alias);
+
         }
     }
 

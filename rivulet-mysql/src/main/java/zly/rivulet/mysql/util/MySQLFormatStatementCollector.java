@@ -7,10 +7,11 @@ import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.statement.operate.AndOperateStatement;
 import zly.rivulet.mysql.generator.statement.operate.OrOperateStatement;
 import zly.rivulet.sql.definition.query.join.SQLJoinType;
+import zly.rivulet.sql.utils.collector.SQLStatementCollector;
 
 import java.util.*;
 
-public class MySQLFormatStatementCollector implements StatementCollector {
+public class MySQLFormatStatementCollector implements SQLStatementCollector {
     /**
      * Description 需要在前面插入行的
      *
@@ -181,6 +182,11 @@ public class MySQLFormatStatementCollector implements StatementCollector {
     @Override
     public <T> JoinHelper<T> createJoiner(String connector, Iterable<T> collection) {
         return new JoinHelper<>(connector, collection.iterator());
+    }
+
+    @Override
+    public void collectPlaceholderParam(Object param) {
+        // do nothing
     }
 
 

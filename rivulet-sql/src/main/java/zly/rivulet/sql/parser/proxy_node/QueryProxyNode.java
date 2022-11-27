@@ -75,6 +75,8 @@ public class QueryProxyNode implements SelectNode, FromNode {
         Class<?> fromModelClass = sqlQueryMetaDesc.getMainFrom();
         Class<?> selectModelClass = sqlQueryMetaDesc.getSelectModel();
         List<? extends Mapping<?, ?, ?>> mappedItemList = sqlQueryMetaDesc.getMappedItemList();
+        // 先把当前的node塞进去，下面会用到
+        toolbox.setQueryProxyNode(this);
 
         // 根据from模型和select方式的不同，有多种解析路径
         if (ClassUtils.isExtend(QueryComplexModel.class, fromModelClass)) {
@@ -366,7 +368,8 @@ public class QueryProxyNode implements SelectNode, FromNode {
     public MapDefinition getFieldDefinitionFromThreadLocal(FieldMapping<?, ?> fieldMapping, Object proxyModel) {
         ((FieldMapping<Object, Object>) fieldMapping).getMapping(proxyModel);
         // 多了一层，丢弃掉
-        return (MapDefinition) THREAD_LOCAL.get().getValueDefinition();
+//        return (MapDefinition) THREAD_LOCAL.get().getValueDefinition();
+        return THREAD_LOCAL.get();
     }
 
     public MapDefinition getFieldDefinitionFromThreadLocal(JoinFieldMapping<?> fieldMapping, Object proxyModel) {

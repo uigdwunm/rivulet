@@ -4,17 +4,23 @@ import zly.rivulet.base.convertor.Convertor;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.describer.param.StaticParam;
 import zly.rivulet.base.generator.param_manager.for_proxy_method.CommonParamManager;
+import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.statement.SingleValueElementStatement;
 import zly.rivulet.sql.definition.param.SQLParamReceipt;
+import zly.rivulet.sql.describer.param.SqlParamCheckType;
 import zly.rivulet.sql.generator.SqlStatementFactory;
+import zly.rivulet.sql.utils.collector.SQLStatementCollector;
 
 public class SQLParamStatement extends SingleValueElementStatement {
 
     private final String value;
 
-    public SQLParamStatement(String value) {
+    private final SqlParamCheckType sqlParamCheckType;
+
+    public SQLParamStatement(String value, SqlParamCheckType sqlParamCheckType) {
         this.value = value;
+        this.sqlParamCheckType = sqlParamCheckType;
     }
 
     @Override
@@ -24,7 +30,16 @@ public class SQLParamStatement extends SingleValueElementStatement {
 
     @Override
     public void collectStatement(StatementCollector collector) {
-        collector.append(value);
+        switch (sqlParamCheckType) {
+            case PLACEHOLDER:
+                collector.append(Constant.QUESTION_MARK);
+                SQLStatementCollector sqlStatementCollector = (SQLStatementCollector) collector;
+                sqlStatementCollector.collectPlaceholderParam(value);
+                return;
+            case NATURE:
+                collector.append(value);
+                return;
+        }
     }
 
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
@@ -38,18 +53,18 @@ public class SQLParamStatement extends SingleValueElementStatement {
                     Convertor<Object, ?> convertor = (Convertor<Object, ?>) sqlParamDefinition.getConvertor();
                     String value = convertor.convertToStatement(staticParam.getValue());
 
-                    return new SQLParamStatement(value);
+                    return new SQLParamStatement(value, sqlParamDefinition.getSqlParamCheckType());
                 } else {
                     // 参数是可变的，标记唯一性不可用
                     soleFlag.invalid();
-                    return new SQLParamStatement(null);
+                    return new SQLParamStatement(null, sqlParamDefinition.getSqlParamCheckType());
                 }
             },
             (definition, helper) -> {
                 SQLParamReceipt sqlParamDefinition = (SQLParamReceipt) definition;
                 CommonParamManager paramManager = helper.getParamManager();
                 String value = paramManager.getStatement(sqlParamDefinition);
-                return new SQLParamStatement(value);
+                return new SQLParamStatement(value, sqlParamDefinition.getSqlParamCheckType());
             }
         );
     }

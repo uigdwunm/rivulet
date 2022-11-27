@@ -1,4 +1,4 @@
-package zly.rivulet.sql.support;
+package zly.rivulet.base.support;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
