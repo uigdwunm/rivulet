@@ -1,5 +1,6 @@
 package zly.rivulet.mysql.example.model;
 
+import zly.rivulet.base.definer.annotations.PrimaryKey;
 import zly.rivulet.mysql.definer.annotations.type.date.MySQLDate;
 import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLBigInt;
 import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLTinyInt;
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 @SqlTable("t_person")
 public class PersonDO {
 
+    @PrimaryKey
     @SqlColumn("id")
     @MySQLBigInt
     private long id;
@@ -59,5 +61,15 @@ public class PersonDO {
 
     public void setGender(boolean gender) {
         this.gender = gender;
+    }
+
+    @Override
+    public String toString() {
+        return "PersonDO{" +
+            "id=" + id +
+            ", birthday=" + birthday +
+            ", name='" + name + '\'' +
+            ", gender=" + gender +
+            '}';
     }
 }

@@ -13,6 +13,14 @@ import zly.rivulet.sql.describer.query.desc.Mapping;
 @RivuletDescConfig
 public class PersonDescConfig {
 
+    @RivuletDesc("queryById")
+    public static SqlQueryMetaDesc<PersonDO, PersonDO> queryById() {
+        return QueryBuilder.query(PersonDO.class, PersonDO.class)
+            .where(
+                Condition.equalTo(PersonDO::getId, Param.of(Long.class, "id", SqlParamCheckType.PLACEHOLDER))
+            ).build();
+    }
+
     @RivuletDesc("sdf")
     public static SqlQueryMetaDesc<PersonDO, PersonDO> queryPerson() {
         return QueryBuilder.query(PersonDO.class, PersonDO.class)
