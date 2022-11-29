@@ -23,6 +23,8 @@ public final class Constant {
     public static final String AS = "AS ";
     public static final char EQ = '=';
 
+    public static final String IN = "IN";
+
 
     /**
      * 模型解析方式时，主键id key的名称

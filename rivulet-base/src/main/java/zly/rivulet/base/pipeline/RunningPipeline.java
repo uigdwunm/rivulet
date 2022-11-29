@@ -13,13 +13,14 @@ public class RunningPipeline {
 
     private BeforeGenerateNode beforeGenerateNode;
 
-    protected BeforeExecuteNode beforeExecuteNode;
+    private BeforeExecuteNode beforeExecuteNode;
 
-    protected AfterExecuteNode afterExecuteNode;
+    private AfterExecuteNode afterExecuteNode;
 
 
     public RunningPipeline(Generator generator) {
         this.generator = generator;
+        this.beforeGenerateNode = new FinalGenerateNode();
         this.beforeExecuteNode = new FinalExecuteNode();
         this.afterExecuteNode = new FinishedNode();
     }

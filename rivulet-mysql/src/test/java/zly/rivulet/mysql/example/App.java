@@ -20,7 +20,7 @@ public class App {
     public static DataSource createDataSource() {
 //        Class.forName("com.mysql.jdbc.Driver");
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:mysql://rm-bp1gxi8j1cqn60o50xo.rwlb.rds.aliyuncs.com:3306/tt_database");
+        config.setJdbcUrl("jdbc:mysql://rm-bp1gxi8j1cqn60o50xo.rwlb.rds.aliyuncs.com:3306/tt_database?autoReconnect=true&useSSL=false");
         config.setUsername("v587");
         config.setPassword("v587V%*&");
         config.addDataSourceProperty("cachePrepStmts", "true");

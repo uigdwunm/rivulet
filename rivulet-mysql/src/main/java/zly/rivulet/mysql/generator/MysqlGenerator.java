@@ -10,12 +10,14 @@ import zly.rivulet.base.generator.Generator;
 import zly.rivulet.base.generator.param_manager.ParamManager;
 import zly.rivulet.base.generator.param_manager.for_proxy_method.CommonParamManager;
 import zly.rivulet.base.parser.Parser;
+import zly.rivulet.base.utils.MapUtils;
 import zly.rivulet.base.utils.RelationSwitch;
 import zly.rivulet.mysql.MySQLRivuletProperties;
 import zly.rivulet.mysql.generator.statement.ModelFromStatement;
 import zly.rivulet.mysql.generator.statement.MySQLFieldStatement;
 import zly.rivulet.mysql.generator.statement.operate.AndOperateStatement;
 import zly.rivulet.mysql.generator.statement.operate.EqOperateStatement;
+import zly.rivulet.mysql.generator.statement.operate.InOperateStatement;
 import zly.rivulet.mysql.generator.statement.operate.OrOperateStatement;
 import zly.rivulet.mysql.generator.statement.param.SQLParamStatement;
 import zly.rivulet.mysql.generator.statement.query.*;
@@ -78,9 +80,11 @@ public class MysqlGenerator implements Generator {
             // 仅支持非批量的替换
             // 在这里把custom要替换的Definition放到toolbox中
             Map<Class<? extends Definition>, ParamReceipt> customStatementMap = sqlBlueprint.getCustomStatementMap();
-            for (Map.Entry<Class<? extends Definition>, ParamReceipt> entry : customStatementMap.entrySet()) {
-                SQLPartCustomDesc sqlPartCustomDesc = (SQLPartCustomDesc) commonParamManager.getParam(entry.getValue());
-                toolbox.putReplaceDefinition(entry.getKey(), sqlParser.parseCustom(sqlBlueprint.getRivuletKey(), sqlPartCustomDesc));
+            if (MapUtils.isNotEmpty(customStatementMap)) {
+                for (Map.Entry<Class<? extends Definition>, ParamReceipt> entry : customStatementMap.entrySet()) {
+                    SQLPartCustomDesc sqlPartCustomDesc = (SQLPartCustomDesc) commonParamManager.getParam(entry.getValue());
+                    toolbox.putReplaceDefinition(entry.getKey(), sqlParser.parseCustom(sqlBlueprint.getRivuletKey(), sqlPartCustomDesc));
+                }
             }
         }
         SqlStatement rootStatement = sqlStatementFactory.getOrCreate(sqlBlueprint, toolbox);
@@ -116,6 +120,7 @@ public class MysqlGenerator implements Generator {
 
         WhereStatement.registerToFactory(sqlStatementFactory);
         EqOperateStatement.registerToFactory(sqlStatementFactory);
+        InOperateStatement.registerToFactory(sqlStatementFactory);
         AndOperateStatement.registerToFactory(sqlStatementFactory);
         OrOperateStatement.registerToFactory(sqlStatementFactory);
     }
