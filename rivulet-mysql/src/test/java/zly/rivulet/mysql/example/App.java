@@ -32,6 +32,7 @@ public class App {
     }
 
     public static void main(String[] args) {
+        Class<? super Long> superclass = long.class.getSuperclass();
         DefaultWarehouseManager defaultWarehouseManager = new DefaultWarehouseManager("zly.rivulet.mysql");
         // todo beanManager配置扫包
         MySQLRivuletManager rivuletManager = new MySQLRivuletManager(
@@ -40,7 +41,7 @@ public class App {
             defaultWarehouseManager,
             createDataSource()
         );
-        PersonDO personDO = rivuletManager.queryById(1, PersonDO.class);
+        PersonDO personDO = rivuletManager.queryById(1L, PersonDO.class);
         System.out.println(personDO);
 
 

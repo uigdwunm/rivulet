@@ -66,6 +66,21 @@ public @interface MySQLBigInt {
                     }
                 }
             );
+
+            convertorManager.register(
+                new Convertor<Long, MySQLBigInt.Type>(long.class, Type.class) {
+
+                    @Override
+                    public Long convertToJavaType(Object outerValue) {
+                        return null;
+                    }
+
+                    @Override
+                    public String convertToStatement(Long innerValue) {
+                        return innerValue.toString();
+                    }
+                }
+            );
         }
 
     }

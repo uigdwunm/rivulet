@@ -33,9 +33,33 @@ public abstract class MySQLSelfTypeConvertor<T> extends Convertor<T, SelfType> {
             }
         );
         convertorManager.register(
+            new MySQLSelfTypeConvertor<Integer>(int.class) {
+                @Override
+                public String convertToStatement(Integer innerValue) {
+                    if (innerValue == null) {
+                        return MySQLConstant.MYSQL_NULL;
+                    }
+                    return innerValue.toString();
+                }
+            }
+
+        );
+        convertorManager.register(
             new MySQLSelfTypeConvertor<Integer>(Integer.class) {
                 @Override
                 public String convertToStatement(Integer innerValue) {
+                    if (innerValue == null) {
+                        return MySQLConstant.MYSQL_NULL;
+                    }
+                    return innerValue.toString();
+                }
+            }
+
+        );
+        convertorManager.register(
+            new MySQLSelfTypeConvertor<Long>(long.class) {
+                @Override
+                public String convertToStatement(Long innerValue) {
                     if (innerValue == null) {
                         return MySQLConstant.MYSQL_NULL;
                     }

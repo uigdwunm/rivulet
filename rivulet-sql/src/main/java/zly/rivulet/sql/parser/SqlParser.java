@@ -169,8 +169,8 @@ public class SqlParser implements Parser {
             if (primaryFieldMeta.size() != 1) {
                 throw ParseException.noAvailablePrimaryKey();
             }
-            SqlParserPortableToolbox sqlPreParseHelper = new SqlParserPortableToolbox(this);
-            blueprint = new SqlQueryDefinition(sqlPreParseHelper, (SQLModelMeta) modelMeta, primaryFieldMeta.get(0));
+            SqlParserPortableToolbox toolbox = new SqlParserPortableToolbox(this);
+            blueprint = new SqlQueryDefinition(toolbox, (SQLModelMeta) modelMeta, primaryFieldMeta.get(0));
         }
         return blueprint;
     }

@@ -133,8 +133,8 @@ public class SqlQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
         toolbox.setQueryProxyNode(queryProxyNode);
         this.fromDefinition = new FromDefinition(toolbox);
         this.selectDefinition = new SelectDefinition(toolbox, modelClass, queryProxyNode);
-        Param<? extends SQLFieldMeta> mainIdParam = Param.of(primaryKey.getClass(), Constant.MAIN_ID, SqlParamCheckType.NATURE);
-        Param<? extends SQLFieldMeta> mainIdsParam = Param.of(primaryKey.getClass(), Constant.MAIN_IDS, SqlParamCheckType.NATURE);
+        Param<?> mainIdParam = Param.of(primaryKey.getFieldType(), Constant.MAIN_ID, SqlParamCheckType.NATURE);
+        Param<?> mainIdsParam = Param.of(primaryKey.getFieldType(), Constant.MAIN_IDS, SqlParamCheckType.NATURE);
         FromNode fromNode = queryProxyNode.getFromNodeList().get(0);
         this.whereDefinition = new WhereDefinition(
             toolbox,

@@ -26,7 +26,7 @@ public final class MySQLFieldMeta extends SQLFieldMeta {
 
     public MySQLFieldMeta(Field field, String columnName, OriginOuterType originOuterType, String comment, String defaultValue, boolean isPrimary) {
         this.fieldName = field.getName();
-        this.fieldType = field.getDeclaringClass();
+        this.fieldType = field.getType();
         this.columnName = columnName;
         this.originOuterType = originOuterType;
         this.comment = comment;
