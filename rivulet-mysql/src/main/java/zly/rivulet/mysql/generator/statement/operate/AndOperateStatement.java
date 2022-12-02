@@ -22,7 +22,7 @@ public class AndOperateStatement extends OperateStatement {
     @Override
     protected int length() {
         int length = 0;
-        length += subOperateList.size() * AND_CONNECTOR.length() - 1;
+        length += (subOperateList.size() - 1) * AND_CONNECTOR.length();
         for (OperateStatement operateStatement : subOperateList) {
             if (operateStatement instanceof AndOperateStatement || operateStatement instanceof OrOperateStatement) {
                 length += 1;

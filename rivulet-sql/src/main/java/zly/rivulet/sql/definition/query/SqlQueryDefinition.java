@@ -163,6 +163,7 @@ public class SqlQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
         this.paramReceiptManager = toolbox.getParamReceiptManager();
         this.customStatementMap = null;
         this.aliasManager.init(queryProxyNode);
+        this.assigner = queryProxyNode.getAssigner();
     }
 
     public SqlQueryDefinition(WholeDesc wholeDesc, SelectDefinition selectDefinition, FromDefinition fromDefinition, WhereDefinition whereDefinition, GroupDefinition groupDefinition, HavingDefinition havingDefinition, OrderByDefinition orderByDefinition, SkitDefinition skit, LimitDefinition limit, SQLQueryResultAssigner assigner) {

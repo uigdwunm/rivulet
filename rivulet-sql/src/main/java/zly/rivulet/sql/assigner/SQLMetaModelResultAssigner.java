@@ -22,13 +22,16 @@ public class SQLMetaModelResultAssigner extends SQLQueryResultAssigner {
     @Override
     public void assign(Object container, ResultSet resultSet, int indexStart) {
         int size = fieldAssignerList.size();
-        for (int i = 0; i < size; i++) {
-            SetMapping<Object, Object> setMapping = fieldAssignerList.get(i);
-            try {
-                setMapping.setMapping(container, resultSet.getObject(indexStart + i + 1));
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+        try {
+            // TODO 暂时先放在这
+            resultSet.next();
+            for (int i = 0; i < size; i++) {
+                SetMapping<Object, Object> setMapping = fieldAssignerList.get(i);
+                Object object = resultSet.getObject(indexStart + i + 1);
+                setMapping.setMapping(container, object);
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
