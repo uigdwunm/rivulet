@@ -8,4 +8,8 @@ package zly.rivulet.base.definer.outerType;
  * Date 2022/6/3 9:25
  **/
 public class SelfType implements OriginOuterType {
+    @Override
+    public Class<?> getOuterType() {
+        return null;
+    }
 }

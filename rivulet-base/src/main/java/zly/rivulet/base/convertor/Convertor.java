@@ -1,42 +1,28 @@
 package zly.rivulet.base.convertor;
 
-import zly.rivulet.base.definer.outerType.OriginOuterType;
+import zly.rivulet.base.utils.ClassUtils;
 
-public abstract class Convertor<T, O extends OriginOuterType> {
-    private final Class<T> javaType;
+public abstract class Convertor<O, T> {
+    private final Class<O> originType;
 
-    private final Class<O> originOuterType;
+    private final Class<T> targetType;
 
-    public Convertor(Class<T> javaType, Class<O> originOuterType) {
-        this.javaType = javaType;
-        this.originOuterType = originOuterType;
+    public Convertor(Class<O> originType, Class<T> targetType) {
+        this.originType = originType;
+        this.targetType = targetType;
     }
 
-    /**
-     * Description 查询结果转化成java类型
-     *
-     * @author zhaolaiyuan
-     * Date 2021/10/30 10:21
-     **/
-    public abstract T convertToJavaType(Object outerValue);
-
-    /**
-     * Description 转化成外部类型，因为外部类型多为语句，所以就是string类型
-     *
-     * @author zhaolaiyuan
-     * Date 2021/10/30 10:20
-     **/
-    public abstract String convertToStatement(T innerValue);
+    public abstract T convert(O originData);
 
     public boolean checkJavaType(Object innerValue) {
-        return javaType.isAssignableFrom(innerValue.getClass());
+        return ClassUtils.isExtend(originType, innerValue.getClass());
     }
 
-    public final Class<T> getJavaType() {
-        return javaType;
+    public Class<O> getOriginType() {
+        return originType;
     }
 
-    public final Class<O> getOriginOuterType() {
-        return originOuterType;
+    public Class<T> getTargetType() {
+        return targetType;
     }
 }

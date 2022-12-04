@@ -1,14 +1,29 @@
 package zly.rivulet.base.convertor;
 
 import zly.rivulet.base.definer.outerType.OriginOuterType;
+import zly.rivulet.base.definer.outerType.SelfType;
+import zly.rivulet.base.utils.TwofoldConcurrentHashMap;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class ConvertorManager {
 
-    private final Map<String, Convertor<?, ?>> CONVERTER_MAP = new ConcurrentHashMap<>();
+    /**
+     * Description 一般用于查询结果转换成java类型时,就是 jdbc的type转换成java模型的type
+     *
+     * @author zhaolaiyuan
+     * Date 2022/12/4 12:40
+     **/
+    private final TwofoldConcurrentHashMap<Class<?>, Class<?> , Convertor<?, ?>> resultConvertorMap = new TwofoldConcurrentHashMap<>();
+
+    /**
+     * Description java类型转换成语句时的convertor
+     *
+     * @author zhaolaiyuan
+     * Date 2022/12/4 12:39
+     **/
+    private final TwofoldConcurrentHashMap<Class<?>, Class<? extends OriginOuterType> , StatementConvertor<?>> statementConvertorMap = new TwofoldConcurrentHashMap<>();
 
     private static final Map<Class<?>, Class<?>> BOXCLASS_MAP = new HashMap<>();
     static {
@@ -23,25 +38,41 @@ public class ConvertorManager {
         BOXCLASS_MAP.put(Void.TYPE, Void.class);
     }
 
-    public synchronized <T1, T2 extends OriginOuterType> void register(Convertor<T1, T2> convertor) {
-        String key = getKey(convertor.getJavaType(), convertor.getOriginOuterType());
-
-        CONVERTER_MAP.put(key, convertor);
+    public <T1, T2> void register(Convertor<T1, T2> convertor) {
+        Class<T2> targetType = convertor.getTargetType();
+        resultConvertorMap.put(convertor.getOriginType(), targetType, convertor);
     }
 
-    public <T1, T2 extends OriginOuterType> Convertor<T1, T2> get(Class<T1> javaType, OriginOuterType outerType) {
-        return get(javaType, outerType.getClass());
+    public <T1> void register(StatementConvertor<T1> statementConvertor) {
+        statementConvertorMap.put(statementConvertor.getOriginType(), statementConvertor.getOriginOuterType(), statementConvertor);
     }
-
-    public <T1, T2 extends OriginOuterType> Convertor<T1, T2> get(Class<T1> javaType, Class<?> outerTypeClass) {
-        String key = getKey(javaType, outerTypeClass);
-
-        return (Convertor<T1, T2>) CONVERTER_MAP.get(key);
-    }
-
 
     private static String getKey(Class<?> javaType, Class<?> outerType) {
-        javaType = BOXCLASS_MAP.getOrDefault(javaType, javaType);
         return javaType.getName() + '_' + outerType.getName();
+    }
+
+    public <T1, T2> Convertor<T1, T2> getResultConvertor(Class<T1> javaType, Class<T2> targetType) {
+        return (Convertor<T1, T2>) resultConvertorMap.get(javaType, targetType);
+    }
+
+
+    /**
+     * Description 获取转换成语句的convertor,没有意向类型时用这个
+     *
+     * @author zhaolaiyuan
+     * Date 2022/12/4 12:04
+     **/
+    public <T1> StatementConvertor<T1> getStatementConvertor(Class<T1> javaType) {
+        return this.getStatementConvertor(javaType, SelfType.class);
+    }
+
+    /**
+     * Description 获取转换成语句的convertor
+     *
+     * @author zhaolaiyuan
+     * Date 2022/12/4 12:04
+     **/
+    public <T1, T2 extends OriginOuterType> StatementConvertor<T1> getStatementConvertor(Class<T1> javaType, Class<T2> targetType) {
+        return (StatementConvertor<T1>) statementConvertorMap.get(javaType, targetType);
     }
 }
