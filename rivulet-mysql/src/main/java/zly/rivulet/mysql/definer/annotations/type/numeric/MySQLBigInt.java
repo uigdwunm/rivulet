@@ -48,7 +48,7 @@ public @interface MySQLBigInt {
         public static void registerConvertors(ConvertorManager convertorManager) {
             /*----------- 语句转换器 ------------*/
             convertorManager.register(
-                new StatementConvertor<BigInteger>(BigInteger.class, Type.class) {
+                new StatementConvertor<BigInteger>(Type.class) {
                     @Override
                     public String convert(BigInteger originData) {
                         return originData.toString();
@@ -56,7 +56,7 @@ public @interface MySQLBigInt {
                 }
             );
             convertorManager.register(
-                new StatementConvertor<Long>(Long.class, Type.class) {
+                new StatementConvertor<Long>(Type.class) {
                     @Override
                     public String convert(Long originData) {
                         return originData.toString();
@@ -64,44 +64,10 @@ public @interface MySQLBigInt {
                 }
             );
             convertorManager.register(
-                new StatementConvertor<Integer>(Integer.class, Type.class) {
+                new StatementConvertor<Integer>(Type.class) {
                     @Override
                     public String convert(Integer originData) {
                         return originData.toString();
-                    }
-                }
-            );
-
-            /*--------- 结果转换器 当前MySQLBight可能被jdbc转换成两种类型BigInteger 和 Long-----------*/
-            convertorManager.register(
-                new Convertor<Long, Long>(Long.class, Long.class) {
-                    @Override
-                    public Long convert(Long originData) {
-                        return originData;
-                    }
-                }
-            );
-            convertorManager.register(
-                new Convertor<BigInteger, BigInteger>(BigInteger.class, BigInteger.class) {
-                    @Override
-                    public BigInteger convert(BigInteger originData) {
-                        return originData;
-                    }
-                }
-            );
-            convertorManager.register(
-                new Convertor<Long, BigInteger>(Long.class, BigInteger.class) {
-                    @Override
-                    public BigInteger convert(Long originData) {
-                        return new BigInteger(originData.toString());
-                    }
-                }
-            );
-            convertorManager.register(
-                new Convertor<BigInteger, Long>(BigInteger.class, Long.class) {
-                    @Override
-                    public Long convert(BigInteger originData) {
-                        return originData.longValueExact();
                     }
                 }
             );

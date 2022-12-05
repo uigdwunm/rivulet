@@ -38,6 +38,10 @@ public class ConvertorManager {
         BOXCLASS_MAP.put(Void.TYPE, Void.class);
     }
 
+    public void init() {
+        DefaultResultConvertor.registerDefault(this);
+    }
+
     public <T1, T2> void register(Convertor<T1, T2> convertor) {
         Class<T2> targetType = convertor.getTargetType();
         resultConvertorMap.put(convertor.getOriginType(), targetType, convertor);

@@ -6,8 +6,7 @@ public abstract class StatementConvertor<O> extends Convertor<O, String> {
 
     private Class<? extends OriginOuterType> originOuterType;
 
-    public StatementConvertor(Class<O> originType, Class<? extends OriginOuterType> originOuterType) {
-        super(originType, String.class);
+    public StatementConvertor(Class<? extends OriginOuterType> originOuterType) {
         this.originOuterType = originOuterType;
     }
 
