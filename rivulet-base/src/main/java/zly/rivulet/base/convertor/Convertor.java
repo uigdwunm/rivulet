@@ -22,6 +22,11 @@ public abstract class Convertor<O, T> {
         }
     }
 
+    public Convertor(Class<O> originType, Class<T> targetType) {
+        this.originType = originType;
+        this.targetType = targetType;
+    }
+
     public abstract T convert(O originData);
 
     public boolean checkJavaType(Object innerValue) {

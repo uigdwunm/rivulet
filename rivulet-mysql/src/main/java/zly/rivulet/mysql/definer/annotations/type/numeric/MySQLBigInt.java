@@ -1,10 +1,10 @@
 package zly.rivulet.mysql.definer.annotations.type.numeric;
 
-import zly.rivulet.base.convertor.Convertor;
 import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.convertor.StatementConvertor;
 import zly.rivulet.base.utils.BooleanEnum;
 import zly.rivulet.mysql.definer.outerType.ExactNumericType;
+import zly.rivulet.base.convertor.DefaultResultConvertor;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -45,6 +45,16 @@ public @interface MySQLBigInt {
             return this.jdbcType;
         }
 
+        /**
+         * Description 这里是语句转换器(指sql语句传入参数如何转换成语句的一部分)
+         *
+         * 结果转换器默认值看这里(指查询的结果如果转换为模型中适配的类型):
+         * @see DefaultResultConvertor#registerBigIntegerConvertor(ConvertorManager)
+         * @see DefaultResultConvertor#registerLongConvertor(ConvertorManager)
+         *
+         * @author zhaolaiyuan
+         * Date 2022/12/6 8:54
+         **/
         public static void registerConvertors(ConvertorManager convertorManager) {
             /*----------- 语句转换器 ------------*/
             convertorManager.register(

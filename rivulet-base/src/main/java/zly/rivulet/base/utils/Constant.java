@@ -40,4 +40,5 @@ public final class Constant {
     public static final String ZERO_STR = "0";
     public static final String ONE_STR = "1";
     public static final String QUESTION_MARK = "?";
+    public static final Long LONG_ZERO = 0L;
 }

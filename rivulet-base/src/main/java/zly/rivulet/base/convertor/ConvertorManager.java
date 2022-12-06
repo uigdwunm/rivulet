@@ -15,7 +15,7 @@ public class ConvertorManager {
      * @author zhaolaiyuan
      * Date 2022/12/4 12:40
      **/
-    private final TwofoldConcurrentHashMap<Class<?>, Class<?> , Convertor<?, ?>> resultConvertorMap = new TwofoldConcurrentHashMap<>();
+    private final TwofoldConcurrentHashMap<Class<?>, Class<?> , Convertor<?, ?>> resultConvertorMap;
 
     /**
      * Description java类型转换成语句时的convertor
@@ -23,19 +23,14 @@ public class ConvertorManager {
      * @author zhaolaiyuan
      * Date 2022/12/4 12:39
      **/
-    private final TwofoldConcurrentHashMap<Class<?>, Class<? extends OriginOuterType> , StatementConvertor<?>> statementConvertorMap = new TwofoldConcurrentHashMap<>();
+    private final TwofoldConcurrentHashMap<Class<?>, Class<? extends OriginOuterType> , StatementConvertor<?>> statementConvertorMap;
 
-    private static final Map<Class<?>, Class<?>> BOXCLASS_MAP = new HashMap<>();
-    static {
-        BOXCLASS_MAP.put(Boolean.TYPE, Boolean.class);
-        BOXCLASS_MAP.put(Character.TYPE, Character.class);
-        BOXCLASS_MAP.put(Byte.TYPE, Byte.class);
-        BOXCLASS_MAP.put(Short.TYPE, Short.class);
-        BOXCLASS_MAP.put(Integer.TYPE, Integer.class);
-        BOXCLASS_MAP.put(Long.TYPE, Long.class);
-        BOXCLASS_MAP.put(Float.TYPE, Float.class);
-        BOXCLASS_MAP.put(Double.TYPE, Double.class);
-        BOXCLASS_MAP.put(Void.TYPE, Void.class);
+    public ConvertorManager() {
+        this.resultConvertorMap = new TwofoldConcurrentHashMap<>();
+        this.statementConvertorMap = new TwofoldConcurrentHashMap<>();
+
+        // 初始化转换器
+        this.init();
     }
 
     public void init() {
