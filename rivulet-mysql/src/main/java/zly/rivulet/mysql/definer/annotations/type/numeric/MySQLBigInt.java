@@ -3,11 +3,13 @@ package zly.rivulet.mysql.definer.annotations.type.numeric;
 import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.convertor.StatementConvertor;
 import zly.rivulet.base.utils.BooleanEnum;
+import zly.rivulet.base.utils.Constant;
 import zly.rivulet.mysql.definer.outerType.ExactNumericType;
 import zly.rivulet.base.convertor.DefaultResultConvertor;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 @Retention(RetentionPolicy.RUNTIME)
@@ -66,7 +68,23 @@ public @interface MySQLBigInt {
                 }
             );
             convertorManager.register(
+                new StatementConvertor<BigDecimal>(Type.class) {
+                    @Override
+                    public String convert(BigDecimal originData) {
+                        return originData.toBigIntegerExact().toString();
+                    }
+                }
+            );
+            convertorManager.register(
                 new StatementConvertor<Long>(Type.class) {
+                    @Override
+                    public String convert(Long originData) {
+                        return originData.toString();
+                    }
+                }
+            );
+            convertorManager.register(
+                new StatementConvertor<Long>(long.class, Type.class) {
                     @Override
                     public String convert(Long originData) {
                         return originData.toString();
@@ -81,7 +99,54 @@ public @interface MySQLBigInt {
                     }
                 }
             );
-
+            convertorManager.register(
+                new StatementConvertor<Integer>(int.class, Type.class) {
+                    @Override
+                    public String convert(Integer originData) {
+                        return originData.toString();
+                    }
+                }
+            );
+            convertorManager.register(
+                new StatementConvertor<Byte>(Type.class) {
+                    @Override
+                    public String convert(Byte originData) {
+                        return originData.toString();
+                    }
+                }
+            );
+            convertorManager.register(
+                new StatementConvertor<Byte>(byte.class, Type.class) {
+                    @Override
+                    public String convert(Byte originData) {
+                        return originData.toString();
+                    }
+                }
+            );
+            convertorManager.register(
+                new StatementConvertor<Boolean>(Type.class) {
+                    @Override
+                    public String convert(Boolean originData) {
+                        return originData ? Constant.ONE_STR : Constant.ZERO_STR;
+                    }
+                }
+            );
+            convertorManager.register(
+                new StatementConvertor<Boolean>(boolean.class, Type.class) {
+                    @Override
+                    public String convert(Boolean originData) {
+                        return originData ? Constant.ONE_STR : Constant.ZERO_STR;
+                    }
+                }
+            );
+            convertorManager.register(
+                new StatementConvertor<String>(Type.class) {
+                    @Override
+                    public String convert(String originData) {
+                        return originData;
+                    }
+                }
+            );
         }
     }
 }
