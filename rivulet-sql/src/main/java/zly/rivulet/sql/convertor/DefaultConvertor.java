@@ -1,15 +1,60 @@
-package zly.rivulet.base.convertor;
+package zly.rivulet.sql.convertor;
 
+import zly.rivulet.base.convertor.Convertor;
+import zly.rivulet.base.convertor.ConvertorManager;
+import zly.rivulet.base.convertor.StatementConvertor;
 import zly.rivulet.base.utils.Constant;
+import zly.rivulet.sql.utils.SQLConstant;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-public class DefaultResultConvertor {
+public class DefaultConvertor {
     public static void registerDefault(ConvertorManager convertorManager) {
+        // 注册语句转换器(用于将入参转换成语句)
+        registerStatementConvertor(convertorManager);
+
+        // 注册结果转换器(用于将查询结果转换成语句)
         registerBigIntegerConvertor(convertorManager);
         registerLongConvertor(convertorManager);
+    }
 
+    private static void registerStatementConvertor(ConvertorManager convertorManager) {
+        convertorManager.register(
+            new StatementConvertor<String>() {
+                @Override
+                public String convert(String originData) {
+                    return "'" + originData + "'";
+                }
+            }
+        );
+        convertorManager.register(
+            new StatementConvertor<Integer>() {
+                @Override
+                public String convert(Integer originData) {
+                    if (originData == null) {
+                        return SQLConstant.NULL_STATEMENT;
+                    }
+                    return originData.toString();
+                }
+            }
+        );
+        convertorManager.register(
+            new StatementConvertor<Integer>(int.class) {
+                @Override
+                public String convert(Integer originData) {
+                    if (originData == null) {
+                        return SQLConstant.NULL_STATEMENT;
+                    }
+                    return originData.toString();
+                }
+            }
+        );
+
+        convertorManager.register(
+            new StatementConvertor<Long>() {
+            }
+        );
     }
 
     public static void registerBigIntegerConvertor(ConvertorManager convertorManager) {

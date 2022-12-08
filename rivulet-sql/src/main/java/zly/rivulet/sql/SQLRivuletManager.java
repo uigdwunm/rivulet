@@ -16,6 +16,7 @@ import zly.rivulet.base.utils.ClassUtils;
 import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.TwofoldConcurrentHashMap;
 import zly.rivulet.base.warehouse.WarehouseManager;
+import zly.rivulet.sql.convertor.DefaultConvertor;
 import zly.rivulet.sql.definition.SQLBlueprint;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.pipeline.SQLQueryManyExecutePlan;
@@ -41,6 +42,9 @@ public abstract class SQLRivuletManager extends RivuletManager {
         super(generator.getParser(), generator, generator.getProperties(), generator.getConvertorManager(), warehouseManager);
         rivuletFlagClassExecutePlanMap = new TwofoldConcurrentHashMap<>();
         this.dataSource = dataSource;
+
+        // 注册默认的转换器
+        DefaultConvertor.registerDefault(generator.getConvertorManager());
     }
 
     @Override

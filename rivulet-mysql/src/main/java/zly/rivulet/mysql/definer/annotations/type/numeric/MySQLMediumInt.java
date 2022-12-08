@@ -17,6 +17,8 @@ public @interface MySQLMediumInt {
 
         private final long maxValue;
 
+        private final Class<?> jdbcType;
+
         public Type(int maximumDisplayWidth, BooleanEnum unSigned, BooleanEnum zerofill) {
             super(maximumDisplayWidth, unSigned, zerofill);
             if (this.unSigned) {
@@ -26,6 +28,12 @@ public @interface MySQLMediumInt {
                 this.minValue = -8388608;
                 this.maxValue = 8388607;
             }
+            this.jdbcType = Integer.class;
+        }
+
+        @Override
+        public Class<?> getOuterType() {
+            return null;
         }
     }
 }

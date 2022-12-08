@@ -54,12 +54,6 @@ public abstract class RivuletManager implements DefaultOperation {
         this.convertorManager = convertorManager;
         this.warehouseManager = warehouseManager;
         this.paramManagerFactory = new ParamManagerFactory();
-
-        // 解析
-        this.preParseAll();
-
-        // 预热
-        this.warmUpAll();
     }
 
     /**

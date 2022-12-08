@@ -1,11 +1,8 @@
 package zly.rivulet.base.convertor;
 
-import zly.rivulet.base.definer.outerType.OriginOuterType;
-import zly.rivulet.base.definer.outerType.SelfType;
 import zly.rivulet.base.utils.TwofoldConcurrentHashMap;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ConvertorManager {
 
@@ -23,19 +20,13 @@ public class ConvertorManager {
      * @author zhaolaiyuan
      * Date 2022/12/4 12:39
      **/
-    private final TwofoldConcurrentHashMap<Class<?>, Class<? extends OriginOuterType> , StatementConvertor<?>> statementConvertorMap;
+    private final ConcurrentHashMap<Class<?>, StatementConvertor<?>> statementConvertorMap;
 
     public ConvertorManager() {
         this.resultConvertorMap = new TwofoldConcurrentHashMap<>();
-        this.statementConvertorMap = new TwofoldConcurrentHashMap<>();
-
-        // 初始化转换器
-        this.init();
+        this.statementConvertorMap = new ConcurrentHashMap<>();
     }
 
-    public void init() {
-        DefaultResultConvertor.registerDefault(this);
-    }
 
     public <T1, T2> void register(Convertor<T1, T2> convertor) {
         Class<T2> targetType = convertor.getTargetType();
@@ -43,7 +34,7 @@ public class ConvertorManager {
     }
 
     public <T1> void register(StatementConvertor<T1> statementConvertor) {
-        statementConvertorMap.put(statementConvertor.getOriginType(), statementConvertor.getOriginOuterType(), statementConvertor);
+        statementConvertorMap.put(statementConvertor.getOriginType(), statementConvertor);
     }
 
     private static String getKey(Class<?> javaType, Class<?> outerType) {
@@ -54,24 +45,13 @@ public class ConvertorManager {
         return (Convertor<T1, T2>) resultConvertorMap.get(javaType, targetType);
     }
 
-
-    /**
-     * Description 获取转换成语句的convertor,没有意向类型时用这个
-     *
-     * @author zhaolaiyuan
-     * Date 2022/12/4 12:04
-     **/
-    public <T1> StatementConvertor<T1> getStatementConvertor(Class<T1> javaType) {
-        return this.getStatementConvertor(javaType, SelfType.class);
-    }
-
     /**
      * Description 获取转换成语句的convertor
      *
      * @author zhaolaiyuan
      * Date 2022/12/4 12:04
      **/
-    public <T1, T2 extends OriginOuterType> StatementConvertor<T1> getStatementConvertor(Class<T1> javaType, Class<T2> targetType) {
-        return (StatementConvertor<T1>) statementConvertorMap.get(javaType, targetType);
+    public <T1> StatementConvertor<T1> getStatementConvertor(Class<T1> javaType) {
+        return (StatementConvertor<T1>) statementConvertorMap.get(javaType);
     }
 }

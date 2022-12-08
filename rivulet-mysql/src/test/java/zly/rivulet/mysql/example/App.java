@@ -40,6 +40,8 @@ public class App {
             defaultWarehouseManager,
             createDataSource()
         );
+        rivuletManager.preParseAll();
+        rivuletManager.warmUpAll();
         PersonDO personDO = rivuletManager.queryById(1L, PersonDO.class);
         System.out.println(personDO);
 
