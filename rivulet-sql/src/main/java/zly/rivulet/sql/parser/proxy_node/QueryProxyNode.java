@@ -1,5 +1,6 @@
 package zly.rivulet.sql.parser.proxy_node;
 
+import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.definer.FieldMeta;
 import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.base.describer.WholeDesc;
@@ -75,6 +76,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
         Class<?> fromModelClass = sqlQueryMetaDesc.getMainFrom();
         Class<?> selectModelClass = sqlQueryMetaDesc.getSelectModel();
         List<? extends Mapping<?, ?, ?>> mappedItemList = sqlQueryMetaDesc.getMappedItemList();
+        ConvertorManager convertorManager = toolbox.getSqlPreParser().getConvertorManager();
         // 先把当前的node塞进去，下面会用到
         toolbox.setQueryProxyNode(this);
 
@@ -91,9 +93,9 @@ public class QueryProxyNode implements SelectNode, FromNode {
                 // 通过指定好的映射解析
                 selectNodeList = this.parseSelectNodeListByMappedItemList(toolbox, proxyModel, mappedItemList);
                 // 生成赋值器
-                assigner = this.parseAssignerByMappedItemList(selectModelClass, mappedItemList);
+                assigner = this.parseAssignerByMappedItemList(convertorManager, selectModelClass, mappedItemList);
             } else if (fromModelClass.equals(selectModelClass)) {
-                PairReturn<List<SelectNode>, SQLQueryResultAssigner> pairReturn = this.parseSelectNodeListAndAssignerByComplexModel(fromNodeList, selectModelClass, fromNodeFieldMap);
+                PairReturn<List<SelectNode>, SQLQueryResultAssigner> pairReturn = this.parseSelectNodeListAndAssignerByComplexModel(convertorManager, fromNodeList, selectModelClass, fromNodeFieldMap);
                 selectNodeList = pairReturn.getLeft();
                 assigner = pairReturn.getRight();
             } else {
@@ -116,9 +118,9 @@ public class QueryProxyNode implements SelectNode, FromNode {
                 // 通过指定好的映射解析
                 selectNodeList = this.parseSelectNodeListByMappedItemList(toolbox, proxyModel, mappedItemList);
                 // 生成赋值器
-                assigner = this.parseAssignerByMappedItemList(selectModelClass, mappedItemList);
+                assigner = this.parseAssignerByMappedItemList(convertorManager, selectModelClass, mappedItemList);
             } else if (fromModelClass.equals(selectModelClass)) {
-                PairReturn<List<SelectNode>, SQLQueryResultAssigner> pairReturn = this.parseSelectNodeListAndAssignerByMetaModel(metaModelProxyNode);
+                PairReturn<List<SelectNode>, SQLQueryResultAssigner> pairReturn = this.parseSelectNodeListAndAssignerByMetaModel(convertorManager, metaModelProxyNode);
                 selectNodeList = pairReturn.getLeft();
                 assigner = pairReturn.getRight();
             } else {
@@ -139,12 +141,14 @@ public class QueryProxyNode implements SelectNode, FromNode {
         this.sqlQueryDefinition = null;
 
         // from是表模型
-        ProxyNodeManager proxyModelManager = toolbox.getSqlPreParser().getProxyModelManager();
+        SqlParser sqlPreParser = toolbox.getSqlPreParser();
+        ProxyNodeManager proxyModelManager = sqlPreParser.getProxyModelManager();
+        ConvertorManager convertorManager = sqlPreParser.getConvertorManager();
         MetaModelProxyNode metaModelProxyNode = proxyModelManager.getOrCreateProxyMetaModel(sqlModelMeta);
         this.proxyModel = metaModelProxyNode.getProxyModel();
         this.fromNodeList = Collections.singletonList(metaModelProxyNode);
 
-        PairReturn<List<SelectNode>, SQLQueryResultAssigner> pairReturn = this.parseSelectNodeListAndAssignerByMetaModel(metaModelProxyNode);
+        PairReturn<List<SelectNode>, SQLQueryResultAssigner> pairReturn = this.parseSelectNodeListAndAssignerByMetaModel(convertorManager, metaModelProxyNode);
         selectNodeList = pairReturn.getLeft();
         assigner = pairReturn.getRight();
     }
@@ -173,6 +177,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
     }
 
     private PairReturn<List<SelectNode>, SQLQueryResultAssigner> parseSelectNodeListAndAssignerByComplexModel(
+        ConvertorManager convertorManager,
         List<FromNode> fromNodeList,
         Class<?> selectModelClass,
         Map<FromNode, Field> fromNodeFieldMap
@@ -184,7 +189,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
             SQLQueryResultAssigner fromItemAssigner;
             if (fromNode instanceof MetaModelProxyNode) {
                 MetaModelProxyNode metaModelProxyNode = (MetaModelProxyNode) fromNode;
-                PairReturn<List<SelectNode>, SQLQueryResultAssigner> pairReturn = this.parseSelectNodeListAndAssignerByMetaModel(metaModelProxyNode);
+                PairReturn<List<SelectNode>, SQLQueryResultAssigner> pairReturn = this.parseSelectNodeListAndAssignerByMetaModel(convertorManager, metaModelProxyNode);
                 selectNodeList.addAll(pairReturn.getLeft());
                 // 生成模型的赋值器
                 fromItemAssigner = pairReturn.getRight();
@@ -216,7 +221,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
         return PairReturn.of(selectNodeList, assigner);
     }
 
-    private PairReturn<List<SelectNode>, SQLQueryResultAssigner> parseSelectNodeListAndAssignerByMetaModel(MetaModelProxyNode metaModelProxyNode) {
+    private PairReturn<List<SelectNode>, SQLQueryResultAssigner> parseSelectNodeListAndAssignerByMetaModel(ConvertorManager convertorManager, MetaModelProxyNode metaModelProxyNode) {
         List<SelectNode> selectNodeList = new ArrayList<>();
         SQLModelMeta queryFromMeta = metaModelProxyNode.getQueryFromMeta();
         List<SetMapping<Object, Object>> setMappingList = new ArrayList<>();
@@ -237,7 +242,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
             });
         }
         // 生成模型的赋值器
-        SQLMetaModelResultAssigner assigner = new SQLMetaModelResultAssigner(queryFromMeta.getModelClass(), setMappingList);
+        SQLMetaModelResultAssigner assigner = new SQLMetaModelResultAssigner(convertorManager, queryFromMeta.getModelClass(), setMappingList);
         return PairReturn.of(selectNodeList, assigner);
     }
 
@@ -378,11 +383,11 @@ public class QueryProxyNode implements SelectNode, FromNode {
         return (MapDefinition) THREAD_LOCAL.get().getValueDefinition();
     }
 
-    private SQLQueryResultAssigner parseAssignerByMappedItemList(Class<?> selectModelClass, List<? extends Mapping<?, ?, ?>> mappedItemList) {
+    private SQLQueryResultAssigner parseAssignerByMappedItemList(ConvertorManager convertorManager, Class<?> selectModelClass, List<? extends Mapping<?, ?, ?>> mappedItemList) {
         List<SetMapping<Object, Object>> mappingList = mappedItemList.stream()
             .map(mapping -> (SetMapping<Object, Object>) mapping.getMappingField())
             .collect(Collectors.toList());
-        return new SQLMetaModelResultAssigner(selectModelClass, mappingList);
+        return new SQLMetaModelResultAssigner(convertorManager, selectModelClass, mappingList);
     }
 
     @Override

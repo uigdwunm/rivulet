@@ -1,6 +1,7 @@
 package zly.rivulet.base.definition.param;
 
 import zly.rivulet.base.convertor.Convertor;
+import zly.rivulet.base.convertor.StatementConvertor;
 import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
 
 /**
@@ -13,5 +14,5 @@ public interface ParamReceipt extends SingleValueElementDefinition {
 
     Class<?> getType();
 
-    Convertor<?, ?> getConvertor();
+    StatementConvertor<Object> getConvertor();
 }

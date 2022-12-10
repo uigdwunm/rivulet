@@ -27,6 +27,8 @@ public @interface MySQLTinyInt {
 
         private final long maxValue;
 
+        private final Class<?> jdbcType = Integer.class;
+
         public Type(MySQLTinyInt mySQLTinyInt) {
             super(mySQLTinyInt.maximumDisplayWidth(), mySQLTinyInt.unSigned(), mySQLTinyInt.zerofill());
             if (this.unSigned) {
@@ -38,26 +40,9 @@ public @interface MySQLTinyInt {
             }
         }
 
-        public static void registerConvertors(ConvertorManager convertorManager) {
-            new Convertor<Boolean, Type>(Boolean.class, Type.class) {
-
-                @Override
-                public Boolean convertToJavaType(Object outerValue) {
-                    if (outerValue == null) {
-                        return null;
-                    }
-                    Integer value = (Integer) outerValue;
-                    return value > 0;
-                }
-
-                @Override
-                public String convertToStatement(Boolean innerValue) {
-                    if (innerValue == null) {
-                        return null;
-                    }
-                    return innerValue ? Constant.ONE_STR : Constant.ZERO_STR;
-                }
-            };
+        @Override
+        public Class<?> getOuterType() {
+            return jdbcType;
         }
     }
 }

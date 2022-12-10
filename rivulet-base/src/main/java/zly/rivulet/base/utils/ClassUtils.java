@@ -3,8 +3,11 @@ package zly.rivulet.base.utils;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
+import zly.rivulet.base.exception.UnbelievableException;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
@@ -50,5 +53,14 @@ public class ClassUtils {
             }
         });
         return enhancer.create();
+    }
+
+    public static Type[] getClassGenericTypes(Class<?> clazz) {
+        Type t = clazz.getGenericSuperclass();
+        if (t instanceof ParameterizedType) {
+            return  ((ParameterizedType) t).getActualTypeArguments();
+        } else {
+            throw UnbelievableException.unknownType();
+        }
     }
 }

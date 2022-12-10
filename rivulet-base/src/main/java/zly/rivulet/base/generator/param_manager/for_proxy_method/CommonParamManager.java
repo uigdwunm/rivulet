@@ -1,6 +1,7 @@
 package zly.rivulet.base.generator.param_manager.for_proxy_method;
 
 import zly.rivulet.base.convertor.Convertor;
+import zly.rivulet.base.convertor.StatementConvertor;
 import zly.rivulet.base.definition.param.ParamReceipt;
 import zly.rivulet.base.definition.param.PathKeyParamReceipt;
 import zly.rivulet.base.definition.param.StaticParamReceipt;
@@ -26,11 +27,11 @@ public interface CommonParamManager extends ParamManager {
 
     default String getStatement(ParamReceipt paramReceipt) {
         Object param = this.getParam(paramReceipt);
-        Convertor<Object, ?> convertor = (Convertor<Object, ?>) paramReceipt.getConvertor();
+        StatementConvertor<Object> convertor = paramReceipt.getConvertor();
         if (!convertor.checkJavaType(param)) {
             throw ParseException.errorParamType(paramReceipt, param);
         }
-        return convertor.convertToStatement(param);
+        return convertor.convert(param);
     }
 
 }

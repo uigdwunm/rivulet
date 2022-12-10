@@ -24,7 +24,7 @@ public class DefaultConvertor {
             new StatementConvertor<String>() {
                 @Override
                 public String convert(String originData) {
-                    return "'" + originData + "'";
+                    return originData;
                 }
             }
         );
@@ -53,6 +53,24 @@ public class DefaultConvertor {
 
         convertorManager.register(
             new StatementConvertor<Long>() {
+                @Override
+                public String convert(Long originData) {
+                    if (originData == null) {
+                        return SQLConstant.NULL_STATEMENT;
+                    }
+                    return originData.toString();
+                }
+            }
+        );
+        convertorManager.register(
+            new StatementConvertor<Long>(long.class) {
+                @Override
+                public String convert(Long originData) {
+                    if (originData == null) {
+                        return SQLConstant.NULL_STATEMENT;
+                    }
+                    return originData.toString();
+                }
             }
         );
     }

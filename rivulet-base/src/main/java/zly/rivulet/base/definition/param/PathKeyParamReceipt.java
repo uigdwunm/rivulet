@@ -1,6 +1,7 @@
 package zly.rivulet.base.definition.param;
 
 import zly.rivulet.base.convertor.Convertor;
+import zly.rivulet.base.convertor.StatementConvertor;
 import zly.rivulet.base.definition.Definition;
 
 public class PathKeyParamReceipt implements ParamReceipt {
@@ -21,12 +22,12 @@ public class PathKeyParamReceipt implements ParamReceipt {
      * @author zhaolaiyuan
      * Date 2022/8/29 8:23
      **/
-    private final Convertor<?, ?> convertor;
+    private final StatementConvertor<Object> convertor;
 
-    public PathKeyParamReceipt(String pathKey, Class<?> type, Convertor<?, ?> convertor) {
+    public PathKeyParamReceipt(String pathKey, Class<?> type, StatementConvertor<?> convertor) {
         this.pathKey = pathKey;
         this.type = type;
-        this.convertor = convertor;
+        this.convertor = (StatementConvertor<Object>) convertor;
     }
 
     @Override
@@ -35,7 +36,7 @@ public class PathKeyParamReceipt implements ParamReceipt {
     }
 
     @Override
-    public Convertor<?, ?> getConvertor() {
+    public StatementConvertor<Object> getConvertor() {
         return this.convertor;
     }
 

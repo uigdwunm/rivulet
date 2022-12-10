@@ -1,6 +1,7 @@
 package zly.rivulet.base.definition.param;
 
 import zly.rivulet.base.convertor.Convertor;
+import zly.rivulet.base.convertor.StatementConvertor;
 import zly.rivulet.base.definition.Definition;
 
 public class StaticParamReceipt implements ParamReceipt {
@@ -27,12 +28,12 @@ public class StaticParamReceipt implements ParamReceipt {
      * @author zhaolaiyuan
      * Date 2022/8/29 8:23
      **/
-    private final Convertor<?, ?> convertor;
+    private final StatementConvertor<Object> convertor;
 
-    public StaticParamReceipt(Object paramValue, Convertor<?, ?> convertor) {
+    public StaticParamReceipt(Object paramValue, StatementConvertor<?> convertor) {
         this.paramValue = paramValue;
         this.type = paramValue.getClass();
-        this.convertor = convertor;
+        this.convertor = (StatementConvertor<Object>) convertor;
     }
 
     public Object getParamValue() {
@@ -45,7 +46,7 @@ public class StaticParamReceipt implements ParamReceipt {
     }
 
     @Override
-    public Convertor<?, ?> getConvertor() {
+    public StatementConvertor<Object> getConvertor() {
         return this.convertor;
     }
 

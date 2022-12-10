@@ -21,36 +21,9 @@ public @interface MySQLDatetime {
         public Type(MySQLDatetime mySQLDate) {
         }
 
-        public static void registerConvertors(ConvertorManager convertorManager) {
-            convertorManager.register(
-                new Convertor<Date, Type>(Date.class, Type.class) {
-
-                    @Override
-                    public Date convertToJavaType(Object outerValue) {
-                        return (Date) outerValue;
-                    }
-
-                    @Override
-                    public String convertToStatement(Date innerValue) {
-                        return null;
-                    }
-                }
-            );
-
-            convertorManager.register(
-                new Convertor<LocalDateTime, Type>(LocalDateTime.class, Type.class) {
-
-                    @Override
-                    public LocalDateTime convertToJavaType(Object outerValue) {
-                        return null;
-                    }
-
-                    @Override
-                    public String convertToStatement(LocalDateTime innerValue) {
-                        return null;
-                    }
-                }
-            );
+        @Override
+        public Class<?> getOuterType() {
+            return LocalDateTime.class;
         }
     }
 }

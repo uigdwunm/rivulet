@@ -18,19 +18,9 @@ public @interface MySQLVarchar {
             super(mySQLInt.length());
         }
 
-        public static void registerConvertors(ConvertorManager convertorManager) {
-            convertorManager.register(new Convertor<String, Type>(String.class, Type.class) {
-                @Override
-                public String convertToJavaType(Object outerValue) {
-                    // TODO
-                    return null;
-                }
-
-                @Override
-                public String convertToStatement(String innerValue) {
-                    return "'" + innerValue + "'";
-                }
-            });
+        @Override
+        public Class<?> getOuterType() {
+            return String.class;
         }
     }
 }

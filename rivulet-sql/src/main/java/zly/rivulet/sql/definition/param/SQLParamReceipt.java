@@ -1,6 +1,7 @@
 package zly.rivulet.sql.definition.param;
 
 import zly.rivulet.base.convertor.Convertor;
+import zly.rivulet.base.convertor.StatementConvertor;
 import zly.rivulet.base.definition.param.PathKeyParamReceipt;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.describer.param.StandardParam;
@@ -13,7 +14,7 @@ public class SQLParamReceipt extends PathKeyParamReceipt {
     // 拼接方式
     private final SqlParamCheckType sqlParamCheckType;
 
-    public SQLParamReceipt(StandardParam<?> paramDesc, Convertor<?, ?> convertor) {
+    public SQLParamReceipt(StandardParam<?> paramDesc, StatementConvertor<?> convertor) {
         super(paramDesc.getPathKey(), paramDesc.getParamType(), convertor);
         this.originDesc = paramDesc;
         if (paramDesc.getParamCheckType() != null) {

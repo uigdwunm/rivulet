@@ -23,6 +23,8 @@ import java.lang.annotation.Target;
 
         private final int maxValue;
 
+        private final Class<?> jdbcType;
+
         public Type(int maximumDisplayWidth, BooleanEnum unSigned, BooleanEnum zerofill) {
             super(maximumDisplayWidth, unSigned, zerofill);
             if (this.unSigned) {
@@ -32,6 +34,12 @@ import java.lang.annotation.Target;
                 this.minValue = -32768;
                 this.maxValue = 32767;
             }
+            this.jdbcType = Integer.class;
+        }
+
+        @Override
+        public Class<?> getOuterType() {
+            return jdbcType;
         }
     }
 }

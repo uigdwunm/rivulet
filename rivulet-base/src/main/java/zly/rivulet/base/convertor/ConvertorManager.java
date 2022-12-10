@@ -41,8 +41,8 @@ public class ConvertorManager {
         return javaType.getName() + '_' + outerType.getName();
     }
 
-    public <T1, T2> Convertor<T1, T2> getResultConvertor(Class<T1> javaType, Class<T2> targetType) {
-        return (Convertor<T1, T2>) resultConvertorMap.get(javaType, targetType);
+    public <T1, T2> Convertor<T1, T2> getResultConvertor(Class<T1> originType, Class<T2> targetType) {
+        return (Convertor<T1, T2>) resultConvertorMap.get(originType, targetType);
     }
 
     /**

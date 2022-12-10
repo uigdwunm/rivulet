@@ -2,8 +2,8 @@ package zly.rivulet.base.parser;
 
 import zly.rivulet.base.convertor.Convertor;
 import zly.rivulet.base.convertor.ConvertorManager;
+import zly.rivulet.base.convertor.StatementConvertor;
 import zly.rivulet.base.definer.FieldMeta;
-import zly.rivulet.base.definer.outerType.SelfType;
 import zly.rivulet.base.definition.param.ParamReceipt;
 import zly.rivulet.base.definition.param.StaticParamReceipt;
 import zly.rivulet.base.describer.param.Param;
@@ -31,17 +31,17 @@ public abstract class ParamReceiptManager {
     }
 
     public ParamReceipt registerParam(Param<?> paramDesc) {
-        Convertor<?, ?> convertor = convertorManager.get(paramDesc.getParamType(), SelfType.class);
+        StatementConvertor<?> convertor = convertorManager.getStatementConvertor(paramDesc.getParamType());
         return this.registerParam(paramDesc, convertor);
     }
 
     public ParamReceipt registerParam(Param<?> paramDesc, FieldMeta fieldMeta) {
         // 类型转换器
-        Convertor<?, ?> convertor = convertorManager.get(paramDesc.getParamType(), fieldMeta.getOriginOuterType());
+        StatementConvertor<?> convertor = convertorManager.getStatementConvertor(paramDesc.getParamType());
         return this.registerParam(paramDesc, convertor);
     }
 
-    private ParamReceipt registerParam(Param<?> paramDesc, Convertor<?, ?> convertor) {
+    private ParamReceipt registerParam(Param<?> paramDesc, StatementConvertor<?> convertor) {
         ParamReceipt paramReceipt;
         if (paramDesc instanceof StaticParam) {
             StaticParam<?> staticParam = (StaticParam<?>) paramDesc;
@@ -57,7 +57,7 @@ public abstract class ParamReceiptManager {
 
     }
 
-    protected abstract ParamReceipt createParamDefinition(StandardParam<?> paramDesc, Convertor<?, ?> convertor);
+    protected abstract ParamReceipt createParamDefinition(StandardParam<?> paramDesc, StatementConvertor<?> convertor);
 
     public List<ParamReceipt> getAllParamReceiptList() {
         return allParamReceiptList;
