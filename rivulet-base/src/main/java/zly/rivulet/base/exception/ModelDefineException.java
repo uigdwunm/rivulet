@@ -25,4 +25,8 @@ public class ModelDefineException extends RuntimeException {
     public static ModelDefineException loseType(Class<?> clazz, Field field) {
         return new ModelDefineException("映射字段定义缺少类型");
     }
+
+    public static ModelDefineException unKnowType() {
+        return new ModelDefineException("未知的类型");
+    }
 }

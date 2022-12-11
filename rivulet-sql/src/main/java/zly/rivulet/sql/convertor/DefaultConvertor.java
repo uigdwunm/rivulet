@@ -20,7 +20,7 @@ public class DefaultConvertor {
     }
 
     private static void registerStatementConvertor(ConvertorManager convertorManager) {
-        convertorManager.register(
+        convertorManager.registerStatementConvertor(
             new StatementConvertor<String>() {
                 @Override
                 public String convert(String originData) {
@@ -28,7 +28,7 @@ public class DefaultConvertor {
                 }
             }
         );
-        convertorManager.register(
+        convertorManager.registerStatementConvertor(
             new StatementConvertor<Integer>() {
                 @Override
                 public String convert(Integer originData) {
@@ -39,7 +39,7 @@ public class DefaultConvertor {
                 }
             }
         );
-        convertorManager.register(
+        convertorManager.registerStatementConvertor(
             new StatementConvertor<Integer>(int.class) {
                 @Override
                 public String convert(Integer originData) {
@@ -51,7 +51,7 @@ public class DefaultConvertor {
             }
         );
 
-        convertorManager.register(
+        convertorManager.registerStatementConvertor(
             new StatementConvertor<Long>() {
                 @Override
                 public String convert(Long originData) {
@@ -62,7 +62,7 @@ public class DefaultConvertor {
                 }
             }
         );
-        convertorManager.register(
+        convertorManager.registerStatementConvertor(
             new StatementConvertor<Long>(long.class) {
                 @Override
                 public String convert(Long originData) {
@@ -75,9 +75,9 @@ public class DefaultConvertor {
         );
     }
 
-    public static void registerBigIntegerConvertor(ConvertorManager convertorManager) {
+    private static void registerBigIntegerConvertor(ConvertorManager convertorManager) {
         // to self
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<BigInteger, BigInteger>() {
                 @Override
                 public BigInteger convert(BigInteger originData) {
@@ -86,7 +86,7 @@ public class DefaultConvertor {
             }
         );
         // to long
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<BigInteger, Long>(BigInteger.class, long.class) {
                 @Override
                 public Long convert(BigInteger originData) {
@@ -94,7 +94,7 @@ public class DefaultConvertor {
                 }
             }
         );
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<BigInteger, Long>() {
                 @Override
                 public Long convert(BigInteger originData) {
@@ -103,7 +103,7 @@ public class DefaultConvertor {
             }
         );
         // to int
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<BigInteger, Integer>(BigInteger.class, int.class) {
                 @Override
                 public Integer convert(BigInteger originData) {
@@ -111,7 +111,7 @@ public class DefaultConvertor {
                 }
             }
         );
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<BigInteger, Integer>() {
                 @Override
                 public Integer convert(BigInteger originData) {
@@ -120,7 +120,7 @@ public class DefaultConvertor {
             }
         );
         // to byte
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<BigInteger, Byte>(BigInteger.class, byte.class) {
                 @Override
                 public Byte convert(BigInteger originData) {
@@ -128,7 +128,7 @@ public class DefaultConvertor {
                 }
             }
         );
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<BigInteger, Byte>() {
                 @Override
                 public Byte convert(BigInteger originData) {
@@ -137,7 +137,7 @@ public class DefaultConvertor {
             }
         );
         // to double
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<BigInteger, Double>(BigInteger.class, double.class) {
                 @Override
                 public Double convert(BigInteger originData) {
@@ -145,7 +145,7 @@ public class DefaultConvertor {
                 }
             }
         );
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<BigInteger, Double>() {
                 @Override
                 public Double convert(BigInteger originData) {
@@ -154,7 +154,7 @@ public class DefaultConvertor {
             }
         );
         // to float
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<BigInteger, Float>(BigInteger.class, float.class) {
                 @Override
                 public Float convert(BigInteger originData) {
@@ -162,7 +162,7 @@ public class DefaultConvertor {
                 }
             }
         );
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<BigInteger, Float>() {
                 @Override
                 public Float convert(BigInteger originData) {
@@ -171,7 +171,7 @@ public class DefaultConvertor {
             }
         );
         // to boolean
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<BigInteger, Boolean>(BigInteger.class, boolean.class) {
                 @Override
                 public Boolean convert(BigInteger originData) {
@@ -179,7 +179,7 @@ public class DefaultConvertor {
                 }
             }
         );
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<BigInteger, Boolean>() {
                 @Override
                 public Boolean convert(BigInteger originData) {
@@ -188,7 +188,7 @@ public class DefaultConvertor {
             }
         );
         // to string
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<BigInteger, String>() {
                 @Override
                 public String convert(BigInteger originData) {
@@ -197,7 +197,7 @@ public class DefaultConvertor {
             }
         );
         // to BigDecimal
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<BigInteger, BigDecimal>() {
                 @Override
                 public BigDecimal convert(BigInteger originData) {
@@ -207,9 +207,9 @@ public class DefaultConvertor {
         );
     }
 
-    public static void registerLongConvertor(ConvertorManager convertorManager) {
+    private static void registerLongConvertor(ConvertorManager convertorManager) {
         // to self
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<Long, Long>() {
                 @Override
                 public Long convert(Long originData) {
@@ -217,7 +217,7 @@ public class DefaultConvertor {
                 }
             }
         );
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<Long, Long>(Long.class, long.class) {
                 @Override
                 public Long convert(Long originData) {
@@ -226,7 +226,7 @@ public class DefaultConvertor {
             }
         );
         // to int
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<Long, Integer>(Long.class, int.class) {
                 @Override
                 public Integer convert(Long originData) {
@@ -234,7 +234,7 @@ public class DefaultConvertor {
                 }
             }
         );
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<Long, Integer>() {
                 @Override
                 public Integer convert(Long originData) {
@@ -243,7 +243,7 @@ public class DefaultConvertor {
             }
         );
         // to byte
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<Long, Byte>(Long.class, byte.class) {
                 @Override
                 public Byte convert(Long originData) {
@@ -251,7 +251,7 @@ public class DefaultConvertor {
                 }
             }
         );
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<Long, Byte>() {
                 @Override
                 public Byte convert(Long originData) {
@@ -260,7 +260,7 @@ public class DefaultConvertor {
             }
         );
         // to double
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<Long, Double>(Long.class, double.class) {
                 @Override
                 public Double convert(Long originData) {
@@ -268,7 +268,7 @@ public class DefaultConvertor {
                 }
             }
         );
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<Long, Double>() {
                 @Override
                 public Double convert(Long originData) {
@@ -277,7 +277,7 @@ public class DefaultConvertor {
             }
         );
         // to float
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<Long, Float>(Long.class, float.class) {
                 @Override
                 public Float convert(Long originData) {
@@ -285,7 +285,7 @@ public class DefaultConvertor {
                 }
             }
         );
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<Long, Float>() {
                 @Override
                 public Float convert(Long originData) {
@@ -294,7 +294,7 @@ public class DefaultConvertor {
             }
         );
         // to boolean
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<Long, Boolean>(Long.class, boolean.class) {
                 @Override
                 public Boolean convert(Long originData) {
@@ -302,7 +302,7 @@ public class DefaultConvertor {
                 }
             }
         );
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<Long, Boolean>() {
                 @Override
                 public Boolean convert(Long originData) {
@@ -311,7 +311,7 @@ public class DefaultConvertor {
             }
         );
         // to string
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<Long, String>() {
                 @Override
                 public String convert(Long originData) {
@@ -320,7 +320,7 @@ public class DefaultConvertor {
             }
         );
         // to BigDecimal
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<Long, BigDecimal>() {
                 @Override
                 public BigDecimal convert(Long originData) {
@@ -329,7 +329,7 @@ public class DefaultConvertor {
             }
         );
         // to BigInteger
-        convertorManager.register(
+        convertorManager.registerResultConvertor(
             new Convertor<Long, BigInteger>(Long.class, BigInteger.class) {
                 @Override
                 public BigInteger convert(Long originData) {

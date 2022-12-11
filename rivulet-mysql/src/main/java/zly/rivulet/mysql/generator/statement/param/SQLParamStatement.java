@@ -1,6 +1,5 @@
 package zly.rivulet.mysql.generator.statement.param;
 
-import zly.rivulet.base.convertor.Convertor;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.describer.param.StaticParam;
 import zly.rivulet.base.generator.param_manager.for_proxy_method.CommonParamManager;
@@ -50,8 +49,7 @@ public class SQLParamStatement extends SingleValueElementStatement {
                 Param<?> originDesc = sqlParamDefinition.getOriginDesc();
                 if (originDesc instanceof StaticParam) {
                     StaticParam<?> staticParam = (StaticParam<?>) originDesc;
-                    Convertor<Object, ?> convertor = (Convertor<Object, ?>) sqlParamDefinition.getConvertor();
-                    String value = convertor.convertToStatement(staticParam.getValue());
+                    String value = sqlParamDefinition.getConvertor().convert(staticParam.getValue());
 
                     return new SQLParamStatement(value, sqlParamDefinition.getSqlParamCheckType());
                 } else {

@@ -1,8 +1,11 @@
 package zly.rivulet.base.convertor;
 
+import zly.rivulet.base.exception.ModelDefineException;
+import zly.rivulet.base.utils.ClassUtils;
 import zly.rivulet.base.utils.TwofoldConcurrentHashMap;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ConvertorManager {
 
@@ -22,19 +25,32 @@ public class ConvertorManager {
      **/
     private final ConcurrentHashMap<Class<?>, StatementConvertor<?>> statementConvertorMap;
 
+    /**
+     * Description java类型转换成语句时的convertor，这里是判断是否子类的转换器，挨个试，找到后存到上面的map里
+     *
+     * @author zhaolaiyuan
+     * Date 2022/12/4 12:39
+     **/
+    private final CopyOnWriteArrayList<StatementConvertor<?>> superClassConvertor;
+
     public ConvertorManager() {
         this.resultConvertorMap = new TwofoldConcurrentHashMap<>();
         this.statementConvertorMap = new ConcurrentHashMap<>();
+        this.superClassConvertor = new CopyOnWriteArrayList<>();
     }
 
 
-    public <T1, T2> void register(Convertor<T1, T2> convertor) {
-        Class<T2> targetType = convertor.getTargetType();
-        resultConvertorMap.put(convertor.getOriginType(), targetType, convertor);
+    public <T1, T2> void registerResultConvertor(Convertor<T1, T2> convertor) {
+        resultConvertorMap.put(convertor.getOriginType(), convertor.getTargetType(), convertor);
     }
 
-    public <T1> void register(StatementConvertor<T1> statementConvertor) {
+    public <T1> void registerStatementConvertor(StatementConvertor<T1> statementConvertor) {
         statementConvertorMap.put(statementConvertor.getOriginType(), statementConvertor);
+    }
+
+    public <T1, T2> void registerSuperClassConvertor(StatementConvertor<T1> statementConvertor, Convertor<T1, T2> resultConvertor) {
+        this.superClassConvertor.add(statementConvertor);
+        resultConvertorMap.put(resultConvertor.getOriginType(), resultConvertor.getTargetType(), resultConvertor);
     }
 
     private static String getKey(Class<?> javaType, Class<?> outerType) {
@@ -52,6 +68,15 @@ public class ConvertorManager {
      * Date 2022/12/4 12:04
      **/
     public <T1> StatementConvertor<T1> getStatementConvertor(Class<T1> javaType) {
-        return (StatementConvertor<T1>) statementConvertorMap.get(javaType);
+        StatementConvertor<?> statementConvertor = statementConvertorMap.get(javaType);
+        if (statementConvertor != null) {
+            return (StatementConvertor<T1>) statementConvertor;
+        }
+        for (StatementConvertor<?> convertor : superClassConvertor) {
+            if (ClassUtils.isExtend(convertor.getOriginType(), javaType)) {
+                return (StatementConvertor<T1>) convertor;
+            }
+        }
+        throw ModelDefineException.unKnowType();
     }
 }
