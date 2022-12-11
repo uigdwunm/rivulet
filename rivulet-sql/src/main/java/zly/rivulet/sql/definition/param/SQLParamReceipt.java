@@ -1,6 +1,5 @@
 package zly.rivulet.sql.definition.param;
 
-import zly.rivulet.base.convertor.Convertor;
 import zly.rivulet.base.convertor.StatementConvertor;
 import zly.rivulet.base.definition.param.PathKeyParamReceipt;
 import zly.rivulet.base.describer.param.Param;

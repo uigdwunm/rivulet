@@ -8,6 +8,11 @@ import zly.rivulet.base.definer.outerType.OriginOuterType;
 import zly.rivulet.base.exception.ModelDefineException;
 import zly.rivulet.base.utils.StringUtil;
 import zly.rivulet.base.utils.View;
+import zly.rivulet.mysql.definer.annotations.type.date.MySQLDate;
+import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLBigInt;
+import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLInt;
+import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLTinyInt;
+import zly.rivulet.mysql.definer.annotations.type.string.MySQLVarchar;
 import zly.rivulet.sql.convertor.DefaultConvertor;
 import zly.rivulet.sql.definer.SqlDefiner;
 import zly.rivulet.sql.definer.annotations.SqlColumn;
@@ -63,7 +68,14 @@ public class MySQLDefiner extends SqlDefiner {
 
     @Override
     protected void initTypeConvertor() {
+
         DefaultConvertor.registerDefault(convertorManager);
+
+        annotation_TypeCreator_Map.put(MySQLInt.class, anno -> new MySQLInt.Type((MySQLInt) anno));
+        annotation_TypeCreator_Map.put(MySQLVarchar.class, anno -> new MySQLVarchar.Type((MySQLVarchar) anno));
+        annotation_TypeCreator_Map.put(MySQLBigInt.class, anno -> new MySQLBigInt.Type((MySQLBigInt) anno));
+        annotation_TypeCreator_Map.put(MySQLDate.class, anno -> new MySQLDate.Type((MySQLDate) anno));
+        annotation_TypeCreator_Map.put(MySQLTinyInt.class, anno -> new MySQLTinyInt.Type((MySQLTinyInt) anno));
     }
 
     private MySQLFieldMeta parseFieldMeta(Class<?> clazz, Field field) {

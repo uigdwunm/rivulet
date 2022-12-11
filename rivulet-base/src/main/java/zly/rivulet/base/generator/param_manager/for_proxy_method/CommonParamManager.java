@@ -1,6 +1,5 @@
 package zly.rivulet.base.generator.param_manager.for_proxy_method;
 
-import zly.rivulet.base.convertor.Convertor;
 import zly.rivulet.base.convertor.StatementConvertor;
 import zly.rivulet.base.definition.param.ParamReceipt;
 import zly.rivulet.base.definition.param.PathKeyParamReceipt;

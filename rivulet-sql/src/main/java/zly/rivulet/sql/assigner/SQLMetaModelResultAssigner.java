@@ -1,6 +1,6 @@
 package zly.rivulet.sql.assigner;
 
-import zly.rivulet.base.convertor.Convertor;
+import zly.rivulet.base.convertor.ResultConvertor;
 import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.describer.field.SetMapping;
 import zly.rivulet.base.utils.ClassUtils;
@@ -38,8 +38,8 @@ public class SQLMetaModelResultAssigner extends SQLQueryResultAssigner {
                 FieldAssignerWrap fieldAssignerWrap = fieldAssignerWrapList.get(i);
                 SetMapping<Object, Object> setMapping = fieldAssignerWrap.getSetMapping();
                 Object result = resultSet.getObject(indexStart + i + 1);
-                Convertor<Object, Object> convertor = fieldAssignerWrap.getConvertor(result.getClass());
-                setMapping.setMapping(container, convertor.convert(result));
+                ResultConvertor<Object, Object> resultConvertor = fieldAssignerWrap.getConvertor(result.getClass());
+                setMapping.setMapping(container, resultConvertor.convert(result));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -58,19 +58,19 @@ public class SQLMetaModelResultAssigner extends SQLQueryResultAssigner {
 
         private final ConvertorManager convertorManager;
 
-        private Convertor<Object, Object> convertor;
+        private ResultConvertor<Object, Object> resultConvertor;
 
         private FieldAssignerWrap(SetMapping<Object, Object> setMapping, ConvertorManager convertorManager) {
             this.setMapping = setMapping;
             this.convertorManager = convertorManager;
         }
 
-        public Convertor<Object, Object> getConvertor(Class<?> originType) {
-            if (this.convertor == null) {
+        public ResultConvertor<Object, Object> getConvertor(Class<?> originType) {
+            if (this.resultConvertor == null) {
                 Type[] classGenericTypes = ClassUtils.getClassGenericTypes(setMapping.getClass());
-                this.convertor = convertorManager.getResultConvertor((Class)originType, (Class)classGenericTypes[1]);
+                this.resultConvertor = convertorManager.getResultConvertor((Class)originType, (Class)classGenericTypes[1]);
             }
-            return this.convertor;
+            return this.resultConvertor;
 
         }
 

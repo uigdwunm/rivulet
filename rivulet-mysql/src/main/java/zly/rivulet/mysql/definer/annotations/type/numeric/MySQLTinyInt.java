@@ -1,9 +1,6 @@
 package zly.rivulet.mysql.definer.annotations.type.numeric;
 
-import zly.rivulet.base.convertor.Convertor;
-import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.utils.BooleanEnum;
-import zly.rivulet.base.utils.Constant;
 import zly.rivulet.mysql.definer.outerType.ExactNumericType;
 
 import java.lang.annotation.ElementType;

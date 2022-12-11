@@ -1,7 +1,5 @@
 package zly.rivulet.mysql.definer.annotations.type.string;
 
-import zly.rivulet.base.convertor.Convertor;
-import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.mysql.definer.outerType.VariableStringType;
 
 import java.lang.annotation.Retention;

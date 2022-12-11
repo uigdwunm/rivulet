@@ -7,6 +7,7 @@ import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.param.Param;
+import zly.rivulet.base.utils.ClassUtils;
 import zly.rivulet.base.utils.CollectionUtils;
 import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.MapUtils;
@@ -133,8 +134,8 @@ public class SqlQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
         toolbox.setQueryProxyNode(queryProxyNode);
         this.fromDefinition = new FromDefinition(toolbox);
         this.selectDefinition = new SelectDefinition(toolbox, modelClass, queryProxyNode);
-        Param<?> mainIdParam = Param.of(primaryKey.getFieldType(), Constant.MAIN_ID, SqlParamCheckType.NATURE);
-        Param<?> mainIdsParam = Param.of(primaryKey.getFieldType(), Constant.MAIN_IDS, SqlParamCheckType.NATURE);
+        Param<?> mainIdParam = Param.of(ClassUtils.toBoxType(primaryKey.getFieldType()), Constant.MAIN_ID, SqlParamCheckType.NATURE);
+        Param<?> mainIdsParam = Param.of(ClassUtils.toBoxType(primaryKey.getFieldType()), Constant.MAIN_IDS, SqlParamCheckType.NATURE);
         FromNode fromNode = queryProxyNode.getFromNodeList().get(0);
         this.whereDefinition = new WhereDefinition(
             toolbox,

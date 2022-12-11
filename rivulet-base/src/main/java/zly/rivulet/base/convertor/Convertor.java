@@ -2,20 +2,16 @@ package zly.rivulet.base.convertor;
 
 import zly.rivulet.base.utils.ClassUtils;
 
-import java.lang.reflect.Type;
-
 public abstract class Convertor<O, T> {
-    private final Class<O> originType;
+    protected Class<O> originType;
 
-    private final Class<T> targetType;
+    protected Class<T> targetType;
 
-    public Convertor() {
-        Type[] classGenericTypes = ClassUtils.getClassGenericTypes(this.getClass());
-        this.originType = (Class<O>) classGenericTypes[0];
-        this.targetType = (Class<T>) classGenericTypes[1];
+    protected Convertor() {
+        // 子类填值，必须填
     }
 
-    public Convertor(Class<O> originType, Class<T> targetType) {
+    protected Convertor(Class<O> originType, Class<T> targetType) {
         this.originType = originType;
         this.targetType = targetType;
     }

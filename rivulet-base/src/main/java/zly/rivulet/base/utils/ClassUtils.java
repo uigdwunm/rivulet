@@ -8,10 +8,28 @@ import zly.rivulet.base.exception.UnbelievableException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 public class ClassUtils {
+
+    private static final Map<Class<?>, Class<?>> baseBoxTypeMap = new HashMap<>();
+
+    static {
+        baseBoxTypeMap.put(Byte.TYPE, Byte.class);
+        baseBoxTypeMap.put(Integer.TYPE, Integer.class);
+        baseBoxTypeMap.put(Long.TYPE, Long.class);
+        baseBoxTypeMap.put(Float.TYPE, Float.class);
+        baseBoxTypeMap.put(Double.TYPE, Double.class);
+        baseBoxTypeMap.put(Character.TYPE, Character.class);
+        baseBoxTypeMap.put(Boolean.TYPE, Boolean.class);
+    }
+
+    public static Class<?> toBoxType(Class<?> fieldType) {
+        return baseBoxTypeMap.getOrDefault(fieldType, fieldType);
+    }
 
     public static boolean isExtend(Class<?> fatherClass, Class<?> childClass) {
         return fatherClass.isAssignableFrom(childClass);
@@ -63,4 +81,5 @@ public class ClassUtils {
             throw UnbelievableException.unknownType();
         }
     }
+
 }

@@ -1,6 +1,5 @@
 package zly.rivulet.base.parser;
 
-import zly.rivulet.base.convertor.Convertor;
 import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.convertor.StatementConvertor;
 import zly.rivulet.base.definer.FieldMeta;

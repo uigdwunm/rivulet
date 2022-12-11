@@ -3,15 +3,10 @@ package zly.rivulet.mysql.example;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import zly.rivulet.base.convertor.ConvertorManager;
-import zly.rivulet.base.generator.Fish;
-import zly.rivulet.base.generator.statement.Statement;
 import zly.rivulet.base.warehouse.DefaultWarehouseManager;
 import zly.rivulet.mysql.MySQLRivuletManager;
 import zly.rivulet.mysql.MySQLRivuletProperties;
-import zly.rivulet.mysql.example.config.PersonDescConfig;
 import zly.rivulet.mysql.example.model.PersonDO;
-import zly.rivulet.mysql.util.MySQLFormatStatementCollector;
-import zly.rivulet.sql.utils.collector.SQLCommonStatementCollector;
 
 import javax.sql.DataSource;
 
@@ -20,7 +15,7 @@ public class App {
     public static DataSource createDataSource() {
 //        Class.forName("com.mysql.jdbc.Driver");
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:mysql://rm-bp1gxi8j1cqn60o50xo.rwlb.rds.aliyuncs.com:3306/tt_database?autoReconnect=true&useSSL=false");
+        config.setJdbcUrl("jdbc:mysql://rm-bp1kms1f90gguo416po.rwlb.rds.aliyuncs.com:3306/tt_database?autoReconnect=true&useSSL=false");
         config.setUsername("v587");
         config.setPassword("v587V%*&");
         config.addDataSourceProperty("cachePrepStmts", "true");

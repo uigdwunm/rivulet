@@ -15,7 +15,7 @@ public class ConvertorManager {
      * @author zhaolaiyuan
      * Date 2022/12/4 12:40
      **/
-    private final TwofoldConcurrentHashMap<Class<?>, Class<?> , Convertor<?, ?>> resultConvertorMap;
+    private final TwofoldConcurrentHashMap<Class<?>, Class<?> , ResultConvertor<?, ?>> resultConvertorMap;
 
     /**
      * Description java类型转换成语句时的convertor
@@ -40,15 +40,15 @@ public class ConvertorManager {
     }
 
 
-    public <T1, T2> void registerResultConvertor(Convertor<T1, T2> convertor) {
-        resultConvertorMap.put(convertor.getOriginType(), convertor.getTargetType(), convertor);
+    public <T1, T2> void registerResultConvertor(ResultConvertor<T1, T2> resultConvertor) {
+        resultConvertorMap.put(resultConvertor.getOriginType(), resultConvertor.getTargetType(), resultConvertor);
     }
 
     public <T1> void registerStatementConvertor(StatementConvertor<T1> statementConvertor) {
         statementConvertorMap.put(statementConvertor.getOriginType(), statementConvertor);
     }
 
-    public <T1, T2> void registerSuperClassConvertor(StatementConvertor<T1> statementConvertor, Convertor<T1, T2> resultConvertor) {
+    public <T1, T2> void registerSuperClassConvertor(StatementConvertor<T1> statementConvertor, ResultConvertor<T1, T2> resultConvertor) {
         this.superClassConvertor.add(statementConvertor);
         resultConvertorMap.put(resultConvertor.getOriginType(), resultConvertor.getTargetType(), resultConvertor);
     }
@@ -57,8 +57,8 @@ public class ConvertorManager {
         return javaType.getName() + '_' + outerType.getName();
     }
 
-    public <T1, T2> Convertor<T1, T2> getResultConvertor(Class<T1> originType, Class<T2> targetType) {
-        return (Convertor<T1, T2>) resultConvertorMap.get(originType, targetType);
+    public <T1, T2> ResultConvertor<T1, T2> getResultConvertor(Class<T1> originType, Class<T2> targetType) {
+        return (ResultConvertor<T1, T2>) resultConvertorMap.get(originType, targetType);
     }
 
     /**
