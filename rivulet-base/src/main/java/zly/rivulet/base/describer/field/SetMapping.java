@@ -35,4 +35,45 @@ public interface SetMapping<S, F> extends Serializable {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * Description 解析出当前要转换的目标类型
+     *
+     * @author zhaolaiyuan
+     * Date 2022/8/16 8:51
+     **/
+    default Class<?> parseTargetGenericType() {
+        try {
+            Method method = this.getClass().getDeclaredMethod("writeReplace");
+            method.setAccessible(Boolean.TRUE);
+            SerializedLambda lambda = (SerializedLambda) method.invoke(this);
+            String implMethodSignature = lambda.getImplMethodSignature();
+            String targetGenericTypeName = parseTargetGenericTypeName(implMethodSignature);
+            return Class.forName(targetGenericTypeName);
+        } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static String parseTargetGenericTypeName(String implMethodSignature) {
+        char[] chars = implMethodSignature.toCharArray();
+        int start = -1;
+        int end = -1;
+        for (int i = 0; i < chars.length; i++) {
+            char c = chars[i];
+            if (c == ';') {
+                if (start == -1) {
+                    // 另外过掉 ';'  和  'L'
+                    start = i + 1 + 1;
+                } else {
+                    end = i;
+                    break;
+                }
+            } else if (start != -1 && c == '/') {
+                chars[i] = '.';
+            }
+        }
+        return new String(chars, start, end - start);
+    }
+
 }

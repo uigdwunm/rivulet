@@ -67,8 +67,7 @@ public class SQLMetaModelResultAssigner extends SQLQueryResultAssigner {
 
         public ResultConvertor<Object, Object> getConvertor(Class<?> originType) {
             if (this.resultConvertor == null) {
-                Type[] classGenericTypes = ClassUtils.getClassGenericTypes(setMapping.getClass());
-                this.resultConvertor = convertorManager.getResultConvertor((Class)originType, (Class)classGenericTypes[1]);
+                this.resultConvertor = convertorManager.getResultConvertor((Class)originType, setMapping.parseTargetGenericType());
             }
             return this.resultConvertor;
 
