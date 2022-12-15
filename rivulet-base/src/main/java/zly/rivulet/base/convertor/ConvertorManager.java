@@ -58,7 +58,11 @@ public class ConvertorManager {
     }
 
     public <T1, T2> ResultConvertor<T1, T2> getResultConvertor(Class<T1> originType, Class<T2> targetType) {
-        return (ResultConvertor<T1, T2>) resultConvertorMap.get(originType, targetType);
+        ResultConvertor<?, ?> resultConvertor = resultConvertorMap.get(originType, targetType);
+        if (resultConvertor == null) {
+            throw ModelDefineException.unKnowType();
+        }
+        return (ResultConvertor<T1, T2>) resultConvertor;
     }
 
     /**

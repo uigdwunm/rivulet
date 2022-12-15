@@ -13,7 +13,7 @@ import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLBigInt;
 import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLInt;
 import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLTinyInt;
 import zly.rivulet.mysql.definer.annotations.type.string.MySQLVarchar;
-import zly.rivulet.sql.convertor.DefaultConvertor;
+import zly.rivulet.sql.convertor.SQLDefaultConvertor;
 import zly.rivulet.sql.definer.SqlDefiner;
 import zly.rivulet.sql.definer.annotations.SqlColumn;
 import zly.rivulet.sql.definer.annotations.SqlTable;
@@ -69,7 +69,7 @@ public class MySQLDefiner extends SqlDefiner {
     @Override
     protected void initTypeConvertor() {
 
-        DefaultConvertor.registerDefault(convertorManager);
+        SQLDefaultConvertor.registerDefault(convertorManager);
 
         annotation_TypeCreator_Map.put(MySQLInt.class, anno -> new MySQLInt.Type((MySQLInt) anno));
         annotation_TypeCreator_Map.put(MySQLVarchar.class, anno -> new MySQLVarchar.Type((MySQLVarchar) anno));

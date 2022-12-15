@@ -8,15 +8,19 @@ import zly.rivulet.sql.utils.SQLConstant;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDate;
 
-public class DefaultConvertor {
+public class SQLDefaultConvertor {
     public static void registerDefault(ConvertorManager convertorManager) {
         // 注册语句转换器(用于将入参转换成语句)
         registerStatementConvertor(convertorManager);
 
         // 注册结果转换器(用于将查询结果转换成语句)
+        registerStringConvertor(convertorManager);
         registerBigIntegerConvertor(convertorManager);
         registerLongConvertor(convertorManager);
+        registerIntegerConvertor(convertorManager);
+        registerDateConvertor(convertorManager);
     }
 
     private static void registerStatementConvertor(ConvertorManager convertorManager) {
@@ -70,6 +74,19 @@ public class DefaultConvertor {
                         return SQLConstant.NULL_STATEMENT;
                     }
                     return originData.toString();
+                }
+            }
+        );
+
+    }
+
+    private static void registerStringConvertor(ConvertorManager convertorManager) {
+        // to self
+        convertorManager.registerResultConvertor(
+            new ResultConvertor<String, String>() {
+                @Override
+                public String convert(String originData) {
+                    return originData;
                 }
             }
         );
@@ -337,5 +354,31 @@ public class DefaultConvertor {
                 }
             }
         );
+    }
+
+    private static void registerIntegerConvertor(ConvertorManager convertorManager) {
+        convertorManager.registerResultConvertor(
+            new ResultConvertor<Integer, Boolean>(Integer.class, boolean.class) {
+                @Override
+                public Boolean convert(Integer originData) {
+                    if (originData == null) {
+                        return null;
+                    }
+                    return originData > 0;
+                }
+            }
+        );
+    }
+
+    private static void registerDateConvertor(ConvertorManager convertorManager) {
+        convertorManager.registerResultConvertor(
+            new ResultConvertor<java.sql.Date, LocalDate>() {
+                @Override
+                public LocalDate convert(java.sql.Date originData) {
+                    return originData.toLocalDate();
+                }
+            }
+        );
+
     }
 }

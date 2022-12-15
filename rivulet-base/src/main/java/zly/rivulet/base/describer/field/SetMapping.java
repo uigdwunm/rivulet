@@ -2,6 +2,7 @@ package zly.rivulet.base.describer.field;
 
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -47,9 +48,14 @@ public interface SetMapping<S, F> extends Serializable {
             Method method = this.getClass().getDeclaredMethod("writeReplace");
             method.setAccessible(Boolean.TRUE);
             SerializedLambda lambda = (SerializedLambda) method.invoke(this);
-            String implMethodSignature = lambda.getImplMethodSignature();
-            String targetGenericTypeName = parseTargetGenericTypeName(implMethodSignature);
-            return Class.forName(targetGenericTypeName);
+            if (lambda.getCapturedArgCount() > 0) {
+                Field field = (Field) lambda.getCapturedArg(0);
+                return field.getType();
+            } else {
+                String implMethodSignature = lambda.getImplMethodSignature();
+                String targetGenericTypeName = parseTargetGenericTypeName(implMethodSignature);
+                return Class.forName(targetGenericTypeName);
+            }
         } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
