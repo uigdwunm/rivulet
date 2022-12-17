@@ -60,7 +60,7 @@ public class ConvertorManager {
     public <T1, T2> ResultConvertor<T1, T2> getResultConvertor(Class<T1> originType, Class<T2> targetType) {
         ResultConvertor<?, ?> resultConvertor = resultConvertorMap.get(originType, targetType);
         if (resultConvertor == null) {
-            throw ModelDefineException.unKnowType();
+            throw ModelDefineException.noMatchResultConvertor(originType, targetType);
         }
         return (ResultConvertor<T1, T2>) resultConvertor;
     }
@@ -81,6 +81,6 @@ public class ConvertorManager {
                 return (StatementConvertor<T1>) convertor;
             }
         }
-        throw ModelDefineException.unKnowType();
+        throw ModelDefineException.noMatchStatementConvertor(javaType);
     }
 }

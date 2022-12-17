@@ -29,4 +29,12 @@ public class ModelDefineException extends RuntimeException {
     public static ModelDefineException unKnowType() {
         return new ModelDefineException("未知的类型");
     }
+
+    public static ModelDefineException noMatchResultConvertor(Class<?> originType, Class<?> targetType) {
+        return new ModelDefineException("没找到匹配的结果转换器,fromType=" + originType.getName() + ", targetType=" + targetType.getName());
+    }
+
+    public static ModelDefineException noMatchStatementConvertor(Class<?> javaType) {
+        return new ModelDefineException("没找到匹配的语句转换器,javaType=" + javaType.getName());
+    }
 }
