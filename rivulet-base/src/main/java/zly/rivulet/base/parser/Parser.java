@@ -7,14 +7,9 @@ import zly.rivulet.base.describer.WholeDesc;
 
 public interface Parser {
 
-    /**
-     * Description 预解析，传入自定义的描述语句，和绑定的方法
-     * @author zhaolaiyuan
-     * Date 2021/12/5 12:06
-     **/
-    Blueprint parseByKey(String key);
+    Blueprint parse(WholeDesc wholeDesc);
 
-    Blueprint parseByDesc(WholeDesc wholeDesc);
+    void addAnalyzer(Analyzer analyzer);
 
     Blueprint parseInsertByMeta(ModelMeta modelMeta);
 

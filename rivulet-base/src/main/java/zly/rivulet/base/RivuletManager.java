@@ -71,7 +71,8 @@ public abstract class RivuletManager implements DefaultOperation {
             Method method = entry.getValue();
 
             // 解析definition
-            Blueprint blueprint = parser.parseByKey(key);
+            WholeDesc wholeDesc = warehouseManager.getWholeDesc(key);
+            Blueprint blueprint = parser.parse(wholeDesc);
             // 参数绑定设计图
             paramManagerFactory.registerProxyMethod(blueprint, method);
             // 方法绑定设计图
@@ -95,7 +96,15 @@ public abstract class RivuletManager implements DefaultOperation {
     public abstract Object exec(Method proxyMethod, Object[] args);
 
     public Fish testParse(WholeDesc wholeDesc) {
-        Blueprint blueprint = parser.parseByDesc(wholeDesc);
+        Blueprint blueprint = parser.parse(wholeDesc);
         return generator.generate(blueprint, new ForTestParamManager());
+    }
+
+    public RunningPipeline getRunningPipeline() {
+        return runningPipeline;
+    }
+
+    public Parser getParser() {
+        return parser;
     }
 }

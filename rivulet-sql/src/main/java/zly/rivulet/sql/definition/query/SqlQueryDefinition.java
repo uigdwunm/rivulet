@@ -7,6 +7,7 @@ import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.param.Param;
+import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.base.utils.ClassUtils;
 import zly.rivulet.base.utils.CollectionUtils;
 import zly.rivulet.base.utils.Constant;
@@ -167,17 +168,52 @@ public class SqlQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
         this.assigner = queryProxyNode.getAssigner();
     }
 
-    public SqlQueryDefinition(WholeDesc wholeDesc, SelectDefinition selectDefinition, FromDefinition fromDefinition, WhereDefinition whereDefinition, GroupDefinition groupDefinition, HavingDefinition havingDefinition, OrderByDefinition orderByDefinition, SkitDefinition skit, LimitDefinition limit, SQLQueryResultAssigner assigner) {
+    public SqlQueryDefinition(
+        WholeDesc wholeDesc,
+        SelectDefinition selectDefinition,
+        FromDefinition fromDefinition,
+        WhereDefinition whereDefinition,
+        GroupDefinition groupDefinition,
+        HavingDefinition havingDefinition,
+        OrderByDefinition orderByDefinition,
+        SkitDefinition skit,
+        LimitDefinition limit,
+        SQLQueryResultAssigner assigner,
+        ParamReceiptManager paramReceiptManager,
+        SQLAliasManager aliasManager
+    ) {
         super(RivuletFlag.QUERY, wholeDesc);
         this.selectDefinition = selectDefinition;
+        this.subDefinitionList.add(selectDefinition);
         this.fromDefinition = fromDefinition;
-        this.whereDefinition = whereDefinition;
-        this.groupDefinition = groupDefinition;
-        this.havingDefinition = havingDefinition;
-        this.orderByDefinition = orderByDefinition;
-        this.skit = skit;
-        this.limit = limit;
+        this.subDefinitionList.add(fromDefinition);
+        if (whereDefinition != null) {
+            this.whereDefinition = whereDefinition;
+            this.subDefinitionList.add(whereDefinition);
+        }
+        if (groupDefinition != null) {
+            this.groupDefinition = groupDefinition;
+            this.subDefinitionList.add(groupDefinition);
+        }
+        if (havingDefinition != null) {
+            this.havingDefinition = havingDefinition;
+            this.subDefinitionList.add(havingDefinition);
+        }
+        if (orderByDefinition != null) {
+            this.orderByDefinition = orderByDefinition;
+            this.subDefinitionList.add(orderByDefinition);
+        }
+        if (skit != null) {
+            this.skit = skit;
+            this.subDefinitionList.add(skit);
+        }
+        if (limit != null) {
+            this.limit = limit;
+            this.subDefinitionList.add(limit);
+        }
         this.assigner = assigner;
+        this.paramReceiptManager = paramReceiptManager;
+        this.aliasManager = aliasManager;
     }
 
     public SelectDefinition getSelectDefinition() {
@@ -232,24 +268,80 @@ public class SqlQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
 
     @Override
     public Copier copier() {
-        return null;
+        return new Copier();
     }
 
     public class Copier implements Definition.Copier {
+
+        private SelectDefinition.Copier selectDefinitionCopier;
+
+        private FromDefinition.Copier fromDefinitionCopier;
+
+        private WhereDefinition.Copier whereDefinitionCopier;
+
+        private GroupDefinition.Copier groupDefinitionCopier;
+
+        private HavingDefinition.Copier havingDefinitionCopier;
+
+        private OrderByDefinition.Copier orderByDefinitionCopier;
+
+        private SkitDefinition.Copier skitCopier;
+
+        private LimitDefinition.Copier limitCopier;
+
+        private SQLAliasManager.Copier aliasManagerCopier;
+
+        public void setSelectDefinitionCopier(SelectDefinition.Copier selectDefinitionCopier) {
+            this.selectDefinitionCopier = selectDefinitionCopier;
+        }
+
+        public void setFromDefinitionCopier(FromDefinition.Copier fromDefinitionCopier) {
+            this.fromDefinitionCopier = fromDefinitionCopier;
+        }
+
+        public void setWhereDefinitionCopier(WhereDefinition.Copier whereDefinitionCopier) {
+            this.whereDefinitionCopier = whereDefinitionCopier;
+        }
+
+        public void setGroupDefinitionCopier(GroupDefinition.Copier groupDefinitionCopier) {
+            this.groupDefinitionCopier = groupDefinitionCopier;
+        }
+
+        public void setHavingDefinitionCopier(HavingDefinition.Copier havingDefinitionCopier) {
+            this.havingDefinitionCopier = havingDefinitionCopier;
+        }
+
+        public void setOrderByDefinitionCopier(OrderByDefinition.Copier orderByDefinitionCopier) {
+            this.orderByDefinitionCopier = orderByDefinitionCopier;
+        }
+
+        public void setSkitCopier(SkitDefinition.Copier skitCopier) {
+            this.skitCopier = skitCopier;
+        }
+
+        public void setLimitCopier(LimitDefinition.Copier limitCopier) {
+            this.limitCopier = limitCopier;
+        }
+
+        public void setAliasManagerCopier(SQLAliasManager.Copier aliasManagerCopier) {
+            this.aliasManagerCopier = aliasManagerCopier;
+        }
 
         @Override
         public SqlQueryDefinition copy() {
             return new SqlQueryDefinition(
                 wholeDesc,
-                selectDefinition,
-                fromDefinition,
-                whereDefinition,
-                groupDefinition,
-                havingDefinition,
-                orderByDefinition,
-                skit,
-                limit,
-                assigner
+                selectDefinitionCopier != null ? selectDefinitionCopier.copy() : selectDefinition,
+                fromDefinitionCopier != null ? fromDefinitionCopier.copy() : fromDefinition,
+                whereDefinitionCopier != null ? whereDefinitionCopier.copy() : whereDefinition,
+                groupDefinitionCopier != null ? groupDefinitionCopier.copy() : groupDefinition,
+                havingDefinitionCopier != null ? havingDefinitionCopier.copy() : havingDefinition,
+                orderByDefinitionCopier != null ? orderByDefinitionCopier.copy() : orderByDefinition,
+                skitCopier != null ? skitCopier.copy() : skit,
+                limitCopier != null ? limitCopier.copy() : limit,
+                assigner,
+                paramReceiptManager,
+                aliasManagerCopier != null ? aliasManagerCopier.copy() : aliasManager
             );
         }
     }

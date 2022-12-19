@@ -14,6 +14,7 @@ import zly.rivulet.sql.describer.param.SqlParamCheckType;
 import zly.rivulet.sql.generator.SqlStatementFactory;
 import zly.rivulet.sql.generator.statement.SqlStatement;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -96,16 +97,9 @@ public class MySQLInsertStatement extends SqlStatement {
                 List<ColumnItemStatement> columnItemStatements = sqlInsertDefinition.getColumnItemDefinitionList().stream()
                     .map(columnItemDefinition -> (ColumnItemStatement) sqlStatementFactory.warmUp(columnItemDefinition, soleFlag.subSwitch(), toolbox))
                     .collect(Collectors.toList());
-//                List<List<SQLSingleValueElementDefinition>> values = sqlInsertDefinition.getValues();
-                List<List<SingleValueElementStatement>> valuesStatement = null;
-//                if (CollectionUtils.isNotEmpty(values)) {
-//                    valuesStatement = values.stream()
-//                        .map(subValues -> subValues.stream()
-//                            .map(sqlSingleValueElementDefinition -> (SingleValueElementStatement) sqlStatementFactory.warmUp(sqlSingleValueElementDefinition, soleFlag.subSwitch(), toolbox))
-//                            .collect(Collectors.toList())).collect(Collectors.toList());
-//
-//                }
-                return new MySQLInsertStatement(sqlInsertDefinition, View.create(columnItemStatements), valuesStatement);
+                // 新增参数无法预定义，这里缓存必定失效
+                soleFlag.invalid();
+                return new MySQLInsertStatement(sqlInsertDefinition, View.create(columnItemStatements), null);
             },
             (definition, toolbox) -> {
                 SQLInsertDefinition sqlInsertDefinition = (SQLInsertDefinition) definition;
@@ -132,14 +126,23 @@ public class MySQLInsertStatement extends SqlStatement {
 //                                .collect(Collectors.toList());
 //                        }).collect(Collectors.toList());
 //                }
-                ModelBatchParamManager batchParamManager = toolbox.getBatchParamManager();
-                List<List<SingleValueElementStatement>> valuesStatement = batchParamManager.getModelParamList().stream()
+                CommonParamManager paramManager = toolbox.getParamManager();
+                List<List<SingleValueElementStatement>> valuesStatement;
+                if (paramManager != null) {
+                    List<SingleValueElementStatement> singleValueElementStatementList = columnItemDefinitionList.stream()
+                        .map(columnItemDefinition -> (SingleValueElementStatement) new SQLParamStatement(paramManager.getStatement(columnItemDefinition.getForModelMetaParamReceipt()), SqlParamCheckType.NATURE))
+                        .collect(Collectors.toList());
+                    valuesStatement = Collections.singletonList(singleValueElementStatementList);
+                } else {
+                    ModelBatchParamManager batchParamManager = toolbox.getBatchParamManager();
+                    valuesStatement = batchParamManager.getModelParamList().stream()
                         .map(model -> {
                             CommonParamManager subParamManager = batchParamManager.createCommonParamManager(model);
                             return columnItemDefinitionList.stream()
                                 .map(columnItemDefinition -> (SingleValueElementStatement) new SQLParamStatement(subParamManager.getStatement(columnItemDefinition.getForModelMetaParamReceipt()), SqlParamCheckType.NATURE))
                                 .collect(Collectors.toList());
                         }).collect(Collectors.toList());
+                }
                 return new MySQLInsertStatement(sqlInsertDefinition, View.create(columnItemStatements), valuesStatement);
             }
         );

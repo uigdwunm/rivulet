@@ -8,6 +8,7 @@ import zly.rivulet.base.definer.annotations.RivuletDesc;
 import zly.rivulet.base.definer.annotations.RivuletDescConfig;
 import zly.rivulet.base.definer.annotations.RivuletMapper;
 import zly.rivulet.base.describer.WholeDesc;
+import zly.rivulet.base.exception.DescDefineException;
 import zly.rivulet.base.utils.LoadUtil;
 
 import java.lang.reflect.InvocationTargetException;
@@ -70,7 +71,11 @@ public class DefaultWarehouseManager implements WarehouseManager {
 
     @Override
     public WholeDesc getWholeDesc(String key) {
-        return this.key_wholeDesc_map.get(key);
+        WholeDesc wholeDesc = this.key_wholeDesc_map.get(key);
+        if (wholeDesc == null) {
+            throw DescDefineException.noMatchDescKey();
+        }
+        return wholeDesc;
     }
 
     @Override

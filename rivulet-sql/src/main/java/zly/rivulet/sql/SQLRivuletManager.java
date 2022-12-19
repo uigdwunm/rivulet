@@ -49,7 +49,7 @@ public abstract class SQLRivuletManager extends RivuletManager {
 
     @Override
     public Blueprint parse(WholeDesc wholeDesc) {
-        return parser.parseByDesc(wholeDesc);
+        return parser.parse(wholeDesc);
     }
 
     @Override
@@ -106,7 +106,9 @@ public abstract class SQLRivuletManager extends RivuletManager {
      **/
     @Override
     public <T> T queryOneByDescKey(String descKey, Map<String, Object> params) {
-        Blueprint blueprint = parser.parseByKey(descKey);
+        // 解析definition
+        WholeDesc wholeDesc = warehouseManager.getWholeDesc(descKey);
+        Blueprint blueprint = parser.parse(wholeDesc);
         if (blueprint instanceof SqlQueryDefinition) {
             return this.queryOneByBlueprint(blueprint, params);
         } else {
@@ -115,7 +117,9 @@ public abstract class SQLRivuletManager extends RivuletManager {
     }
 
     public <T> T queryOneByDescKey(Connection connection, String descKey, Map<String, Object> params) {
-        Blueprint blueprint = parser.parseByKey(descKey);
+        // 解析definition
+        WholeDesc wholeDesc = warehouseManager.getWholeDesc(descKey);
+        Blueprint blueprint = parser.parse(wholeDesc);
         if (blueprint instanceof SqlQueryDefinition) {
             return this.queryOneByBlueprint(connection, blueprint, params);
         } else {
@@ -161,12 +165,16 @@ public abstract class SQLRivuletManager extends RivuletManager {
 
     @Override
     public <T> void queryManyByDescKey(String descKey, Map<String, Object> params, Collection<T> resultContainer) {
-        Blueprint blueprint = parser.parseByKey(descKey);
+        // 解析definition
+        WholeDesc wholeDesc = warehouseManager.getWholeDesc(descKey);
+        Blueprint blueprint = parser.parse(wholeDesc);
         this.queryManyByBlueprint(blueprint, params, resultContainer);
     }
 
     public <T> void queryManyByDescKey(Connection connection, String descKey, Map<String, Object> params, Collection<T> resultContainer) {
-        Blueprint blueprint = parser.parseByKey(descKey);
+        // 解析definition
+        WholeDesc wholeDesc = warehouseManager.getWholeDesc(descKey);
+        Blueprint blueprint = parser.parse(wholeDesc);
         this.queryManyByBlueprint(connection, blueprint, params, resultContainer);
     }
 
@@ -283,7 +291,9 @@ public abstract class SQLRivuletManager extends RivuletManager {
     }
 
     public int updateByDescKey(Connection connection, String descKey, Map<String, Object> params) {
-        Blueprint blueprint = parser.parseByKey(descKey);
+        // 解析definition
+        WholeDesc wholeDesc = warehouseManager.getWholeDesc(descKey);
+        Blueprint blueprint = parser.parse(wholeDesc);
         return this.updateByBlueprint(connection, blueprint, params);
     }
 

@@ -9,6 +9,7 @@ import zly.rivulet.sql.utils.SQLConstant;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class SQLDefaultConvertor {
     public static void registerDefault(ConvertorManager convertorManager) {
@@ -28,7 +29,7 @@ public class SQLDefaultConvertor {
             new StatementConvertor<String>() {
                 @Override
                 public String convert(String originData) {
-                    return originData;
+                    return "'" + originData + "'";
                 }
             }
         );
@@ -74,6 +75,39 @@ public class SQLDefaultConvertor {
                         return SQLConstant.NULL_STATEMENT;
                     }
                     return originData.toString();
+                }
+            }
+        );
+        convertorManager.registerStatementConvertor(
+            new StatementConvertor<Boolean>() {
+                @Override
+                public String convert(Boolean originData) {
+                    if (originData == null) {
+                        return SQLConstant.NULL_STATEMENT;
+                    }
+                    return originData.toString();
+                }
+            }
+        );
+        convertorManager.registerStatementConvertor(
+            new StatementConvertor<Boolean>(boolean.class) {
+                @Override
+                public String convert(Boolean originData) {
+                    if (originData == null) {
+                        return SQLConstant.NULL_STATEMENT;
+                    }
+                    return originData.toString();
+                }
+            }
+        );
+        convertorManager.registerStatementConvertor(
+            new StatementConvertor<LocalDate>() {
+                @Override
+                public String convert(LocalDate originData) {
+                    if (originData == null) {
+                        return SQLConstant.NULL_STATEMENT;
+                    }
+                    return "'" + DateTimeFormatter.ISO_LOCAL_DATE.format(originData) + "'";
                 }
             }
         );

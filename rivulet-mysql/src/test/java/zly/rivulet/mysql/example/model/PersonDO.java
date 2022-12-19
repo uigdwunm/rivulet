@@ -16,7 +16,7 @@ public class PersonDO {
     @PrimaryKey
     @SqlColumn("id")
     @MySQLBigInt
-    private long id;
+    private Long id;
 
     @SqlColumn("birthday")
     @MySQLDate

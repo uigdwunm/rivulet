@@ -3,6 +3,7 @@ package zly.rivulet.base.utils.collector;
 import zly.rivulet.base.generator.statement.Statement;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 
 /**
@@ -39,6 +40,9 @@ public interface StatementCollector {
     StatementCollector append(Statement statement);
 
     default <T> Iterable<T> createJoiner(String connector, Iterable<T> collection) {
+        if (collection == null) {
+            return Collections.emptyList();
+        }
         return new JoinHelper<>(connector, collection.iterator(), this);
     }
 

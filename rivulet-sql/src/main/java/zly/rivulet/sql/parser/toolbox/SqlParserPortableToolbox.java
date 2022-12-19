@@ -73,7 +73,7 @@ public class SqlParserPortableToolbox implements ParserPortableToolbox {
             return queryProxyNode.getFieldDefinitionFromThreadLocal((FieldMapping<?, ?>) singleValueElementDesc, proxyModel);
         } else if (singleValueElementDesc instanceof SqlQueryMetaDesc) {
             // 子查询类型的select
-            sqlPreParser.parseByDesc((WholeDesc) singleValueElementDesc, this);
+            sqlPreParser.parse((WholeDesc) singleValueElementDesc, this);
             QueryProxyNode subQueryProxyNode = this.popQueryProxyNode();
             return new MapDefinition(
                 subQueryProxyNode.getQuerySelectMeta(),
@@ -114,7 +114,7 @@ public class SqlParserPortableToolbox implements ParserPortableToolbox {
             return queryProxyNode.getFieldDefinitionFromThreadLocal(joinFieldMapping, queryProxyNode.getProxyModel());
         } else if (singleValueElementDesc instanceof SqlQueryMetaDesc) {
             SqlParser sqlPreParser = this.getSqlPreParser();
-            SqlQueryDefinition sqlQueryDefinition = (SqlQueryDefinition) sqlPreParser.parseByDesc((SqlQueryMetaDesc<?, ?>) singleValueElementDesc, this);
+            SqlQueryDefinition sqlQueryDefinition = (SqlQueryDefinition) sqlPreParser.parse((SqlQueryMetaDesc<?, ?>) singleValueElementDesc, this);
             QueryProxyNode subQueryNode = this.popQueryProxyNode();
             queryProxyNode.addConditionSubQuery(subQueryNode);
             return sqlQueryDefinition;

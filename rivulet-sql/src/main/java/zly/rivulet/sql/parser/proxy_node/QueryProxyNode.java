@@ -11,6 +11,7 @@ import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.utils.ClassUtils;
 import zly.rivulet.base.utils.CollectionUtils;
 import zly.rivulet.base.utils.PairReturn;
+import zly.rivulet.base.warehouse.WarehouseManager;
 import zly.rivulet.sql.assigner.SQLContainerResultAssigner;
 import zly.rivulet.sql.assigner.SQLMetaModelResultAssigner;
 import zly.rivulet.sql.assigner.SQLQueryResultAssigner;
@@ -292,8 +293,9 @@ public class QueryProxyNode implements SelectNode, FromNode {
         // 这个注解表示当前字段代表一个子查询，value是key
         SQLSubQuery sqlSubQuery = field.getAnnotation(SQLSubQuery.class);
         if (sqlSubQuery != null) {
+            WarehouseManager warehouseManager = sqlParser.getWarehouseManager();
             // 解析子查询
-            WholeDesc wholeDesc = sqlParser.getWholeDesc(sqlSubQuery.value());
+            WholeDesc wholeDesc = warehouseManager.getWholeDesc(sqlSubQuery.value());
             // 校验下
             if (wholeDesc instanceof SqlQueryMetaDesc) {
                 SqlQueryMetaDesc<Object, Object> sqlQueryMetaDesc = (SqlQueryMetaDesc<Object, Object>) wholeDesc;
@@ -321,7 +323,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
                 throw SQLDescDefineException.mustQueryKey(sqlSubQuery.value(), fieldType);
             }
             // 解析子查询
-            sqlParser.parseByDesc(wholeDesc, toolbox);
+            sqlParser.parse(wholeDesc, toolbox);
             return toolbox.popQueryProxyNode();
         } else {
             SqlDefiner sqlDefiner = sqlParser.getDefiner();

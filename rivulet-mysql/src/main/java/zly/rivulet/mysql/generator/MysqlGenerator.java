@@ -15,12 +15,18 @@ import zly.rivulet.base.utils.RelationSwitch;
 import zly.rivulet.mysql.MySQLRivuletProperties;
 import zly.rivulet.mysql.generator.statement.ModelFromStatement;
 import zly.rivulet.mysql.generator.statement.MySQLFieldStatement;
+import zly.rivulet.mysql.generator.statement.delete.MySQLDeleteStatement;
+import zly.rivulet.mysql.generator.statement.insert.ColumnItemStatement;
+import zly.rivulet.mysql.generator.statement.insert.MySQLInsertStatement;
 import zly.rivulet.mysql.generator.statement.operate.AndOperateStatement;
 import zly.rivulet.mysql.generator.statement.operate.EqOperateStatement;
 import zly.rivulet.mysql.generator.statement.operate.InOperateStatement;
 import zly.rivulet.mysql.generator.statement.operate.OrOperateStatement;
 import zly.rivulet.mysql.generator.statement.param.SQLParamStatement;
 import zly.rivulet.mysql.generator.statement.query.*;
+import zly.rivulet.mysql.generator.statement.update.MySQLUpdateStatement;
+import zly.rivulet.mysql.generator.statement.update.SetItemStatement;
+import zly.rivulet.mysql.generator.statement.update.SetStatement;
 import zly.rivulet.sql.definition.SQLBlueprint;
 import zly.rivulet.sql.describer.custom.SQLPartCustomDesc;
 import zly.rivulet.sql.generator.SqlStatementFactory;
@@ -123,5 +129,15 @@ public class MysqlGenerator implements Generator {
         InOperateStatement.registerToFactory(sqlStatementFactory);
         AndOperateStatement.registerToFactory(sqlStatementFactory);
         OrOperateStatement.registerToFactory(sqlStatementFactory);
+
+        MySQLInsertStatement.registerToFactory(sqlStatementFactory);
+
+        ColumnItemStatement.registerToFactory(sqlStatementFactory);
+
+        MySQLDeleteStatement.registerToFactory(sqlStatementFactory);
+
+        MySQLUpdateStatement.registerToFactory(sqlStatementFactory);
+        SetItemStatement.registerToFactory(sqlStatementFactory);
+        SetStatement.registerToFactory(sqlStatementFactory);
     }
 }

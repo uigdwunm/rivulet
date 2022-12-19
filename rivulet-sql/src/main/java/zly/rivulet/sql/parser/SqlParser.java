@@ -4,14 +4,12 @@ import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.definer.ModelMeta;
 import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.definition.Blueprint;
-import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.describer.custom.CustomDesc;
-import zly.rivulet.base.exception.DescDefineException;
 import zly.rivulet.base.exception.ParseException;
 import zly.rivulet.base.exception.UnbelievableException;
-import zly.rivulet.base.parser.ParamReceiptManager;
+import zly.rivulet.base.parser.Analyzer;
 import zly.rivulet.base.parser.Parser;
 import zly.rivulet.base.utils.TwofoldConcurrentHashMap;
 import zly.rivulet.base.utils.View;
@@ -21,6 +19,7 @@ import zly.rivulet.sql.definer.SqlDefiner;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.SQLCustomDefinition;
+import zly.rivulet.sql.definition.delete.SqlDeleteDefinition;
 import zly.rivulet.sql.definition.insert.SQLInsertDefinition;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.definition.update.SqlUpdateDefinition;
@@ -30,7 +29,9 @@ import zly.rivulet.sql.parser.proxy_node.ProxyNodeManager;
 import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 /**
@@ -52,37 +53,33 @@ public class SqlParser implements Parser {
 
     private final ProxyNodeManager proxyNodeManager = new ProxyNodeManager();
 
+    private final List<Analyzer> analyzerList = new CopyOnWriteArrayList<>();
+
     private final TwofoldConcurrentHashMap<ModelMeta, RivuletFlag, Blueprint> modelMetaFlagBlueprintMap = new TwofoldConcurrentHashMap<>();
 
     public SqlParser(WarehouseManager warehouseManager, SqlDefiner definer, SqlRivuletProperties configProperties, ConvertorManager convertorManager) {
-        this.warehouseManager = warehouseManager;
         this.configProperties = configProperties;
         this.convertorManager = convertorManager;
         this.definer = definer;
-    }
-
-    public WholeDesc getWholeDesc(String key) {
-        return warehouseManager.getWholeDesc(key);
+        this.warehouseManager = warehouseManager;
     }
 
     @Override
-    public Blueprint parseByKey(String key) {
-        WholeDesc wholeDesc = this.getWholeDesc(key);
-        if (wholeDesc == null) {
-            throw DescDefineException.noMatchDescKey();
+    public Blueprint parse(WholeDesc wholeDesc) {
+        SqlParserPortableToolbox sqlPreParseHelper = new SqlParserPortableToolbox(this);
+        Blueprint blueprint = this.parse(wholeDesc, sqlPreParseHelper);
+        blueprint = this.analyze(blueprint);
+        return blueprint;
+    }
+
+    private Blueprint analyze(Blueprint blueprint) {
+        for (Analyzer analyzer : analyzerList) {
+            blueprint = analyzer.analyze(blueprint);
         }
-
-        SqlParserPortableToolbox sqlPreParseHelper = new SqlParserPortableToolbox(this);
-        return this.parseByDesc(wholeDesc, sqlPreParseHelper);
+        return blueprint;
     }
 
-    @Override
-    public Blueprint parseByDesc(WholeDesc wholeDesc) {
-        SqlParserPortableToolbox sqlPreParseHelper = new SqlParserPortableToolbox(this);
-        return this.parseByDesc(wholeDesc, sqlPreParseHelper);
-    }
-
-    public Blueprint parseByDesc(WholeDesc wholeDesc, SqlParserPortableToolbox toolbox) {
+    public Blueprint parse(WholeDesc wholeDesc, SqlParserPortableToolbox toolbox) {
         // 检查有没有循环嵌套的子查询，并保存当前desc，后续解析继续检查
         toolbox.checkSubQueryCycle(wholeDesc);
 
@@ -91,13 +88,13 @@ public class SqlParser implements Parser {
             // 查询方法
             blueprint = new SqlQueryDefinition(toolbox, wholeDesc);
 //        } else if () {
-//            // 新增
+//            // 新增不支持自定义desc操作
         } else if (wholeDesc instanceof SqlUpdateMetaDesc) {
             // 修改
             blueprint = new SqlUpdateDefinition(toolbox, wholeDesc);
 
 //        } else if () {
-//            // 删除
+//            // 删除不支持自定义desc操作
 
         } else {
             throw UnbelievableException.unknownType();
@@ -109,6 +106,10 @@ public class SqlParser implements Parser {
         return blueprint;
     }
 
+    @Override
+    public void addAnalyzer(Analyzer analyzer) {
+        analyzerList.add(analyzer);
+    }
 
     @Override
     public Blueprint parseInsertByMeta(ModelMeta modelMeta) {
@@ -122,6 +123,7 @@ public class SqlParser implements Parser {
             }
             SqlParserPortableToolbox toolbox = new SqlParserPortableToolbox(this);
             blueprint = new SQLInsertDefinition(sqlModelMeta, toolbox);
+            blueprint = this.analyze(blueprint);
             modelMetaFlagBlueprintMap.put(modelMeta, flag, blueprint);
         }
         return blueprint;
@@ -138,6 +140,7 @@ public class SqlParser implements Parser {
             }
             SqlParserPortableToolbox toolbox = new SqlParserPortableToolbox(this);
             blueprint = new SqlUpdateDefinition(toolbox, (SQLModelMeta) modelMeta, primaryFieldMeta.get(0));
+            blueprint = this.analyze(blueprint);
             modelMetaFlagBlueprintMap.put(modelMeta, flag, blueprint);
         }
         return blueprint;
@@ -152,9 +155,9 @@ public class SqlParser implements Parser {
             if (primaryFieldMeta.size() != 1) {
                 throw ParseException.noAvailablePrimaryKey();
             }
-            SqlParserPortableToolbox sqlPreParseHelper = new SqlParserPortableToolbox(this);
-            // TODO
-//            blueprint = ;
+            SqlParserPortableToolbox toolbox = new SqlParserPortableToolbox(this);
+            blueprint = new SqlDeleteDefinition(toolbox, (SQLModelMeta) modelMeta, primaryFieldMeta.get(0));
+            blueprint = this.analyze(blueprint);
             modelMetaFlagBlueprintMap.put(modelMeta, flag, blueprint);
         }
         return blueprint;
@@ -171,6 +174,7 @@ public class SqlParser implements Parser {
             }
             SqlParserPortableToolbox toolbox = new SqlParserPortableToolbox(this);
             blueprint = new SqlQueryDefinition(toolbox, (SQLModelMeta) modelMeta, primaryFieldMeta.get(0));
+            blueprint = this.analyze(blueprint);
         }
         return blueprint;
     }
@@ -198,5 +202,9 @@ public class SqlParser implements Parser {
 
     public ProxyNodeManager getProxyModelManager() {
         return proxyNodeManager;
+    }
+
+    public WarehouseManager getWarehouseManager() {
+        return warehouseManager;
     }
 }

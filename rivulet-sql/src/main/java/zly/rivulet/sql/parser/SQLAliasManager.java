@@ -9,17 +9,15 @@ import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
 import zly.rivulet.sql.parser.proxy_node.SelectNode;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 public class SQLAliasManager {
 
-    private final Map<AliasFlag, String> aliasMap = new HashMap<>();
+    private final SqlRivuletProperties configProperties;
 
-    private final Map<AliasFlag, String> shortAliasMap = new HashMap<>();
+    private final Map<AliasFlag, String> aliasMap;
 
-    private final Set<AliasFlag> allAliasSet = new HashSet<>();
+    private final Map<AliasFlag, String> shortAliasMap;
 
     /**
      * 查询中存在子查询的情况，对这类可能存在嵌套的，则把表别名的嵌套关系保留起来
@@ -27,9 +25,7 @@ public class SQLAliasManager {
      * 这里只有表别名，没有字段别名
      * 最外层的表别名是没有对应的父查询的
      **/
-    private final Map<AliasFlag, AliasFlag> aliasToParentAlias = new HashMap<>();
-
-    private final SqlRivuletProperties configProperties;
+//    private final Map<AliasFlag, AliasFlag> aliasToParentAlias = new HashMap<>();
 
     /**
      * Description 检测用，所有别名全部加载后丢弃
@@ -37,18 +33,16 @@ public class SQLAliasManager {
      * @author zhaolaiyuan
      * Date 2022/10/7 19:58
      **/
-    private Map<String, Integer> repeatAlias = new HashMap<>();
-
-    /**
-     * Description 检测用，所有别名全部加载完丢弃
-     *
-     * @author zhaolaiyuan
-     * Date 2022/10/7 19:59
-     **/
-    private Set<String> forceAliasCheck = new HashSet<>();
+    private final Map<String, Integer> repeatAlias = new HashMap<>();
 
     public SQLAliasManager(SqlRivuletProperties configProperties) {
+        this(configProperties, new HashMap<>(), new HashMap<>());
+    }
+
+    private SQLAliasManager(SqlRivuletProperties configProperties, Map<AliasFlag, String> aliasMap, Map<AliasFlag, String> shortAliasMap) {
         this.configProperties = configProperties;
+        this.aliasMap = aliasMap;
+        this.shortAliasMap = shortAliasMap;
     }
 
     public void init(QueryProxyNode queryProxyNode) {
@@ -60,19 +54,19 @@ public class SQLAliasManager {
         if (proxyNode instanceof QueryProxyNode) {
             QueryProxyNode queryProxyNode = (QueryProxyNode) proxyNode;
             for (FromNode fromNode : queryProxyNode.getFromNodeList()) {
-                allAliasSet.add(fromNode.getAliasFlag());
-                aliasToParentAlias.put(fromNode.getAliasFlag(), queryProxyNode.getAliasFlag());
+                aliasMap.putIfAbsent(fromNode.getAliasFlag(), null);
+//                aliasToParentAlias.put(fromNode.getAliasFlag(), queryProxyNode.getAliasFlag());
                 this.collect(fromNode);
             }
             for (SelectNode selectNode : queryProxyNode.getSelectNodeList()) {
-                allAliasSet.add(selectNode.getAliasFlag());
-                aliasToParentAlias.put(selectNode.getAliasFlag(), queryProxyNode.getAliasFlag());
+                aliasMap.putIfAbsent(selectNode.getAliasFlag(), null);
+//                aliasToParentAlias.put(selectNode.getAliasFlag(), queryProxyNode.getAliasFlag());
                 this.collect(selectNode);
             }
 
             for (QueryProxyNode whereNode : queryProxyNode.getConditionSubQueryList()) {
-                allAliasSet.add(whereNode.getAliasFlag());
-                aliasToParentAlias.put(whereNode.getAliasFlag(), queryProxyNode.getAliasFlag());
+                aliasMap.putIfAbsent(whereNode.getAliasFlag(), null);
+//                aliasToParentAlias.put(whereNode.getAliasFlag(), queryProxyNode.getAliasFlag());
                 this.collect(whereNode);
             }
 
@@ -80,7 +74,7 @@ public class SQLAliasManager {
     }
 
     private void initAlias() {
-        for (AliasFlag aliasFlag : allAliasSet) {
+        for (AliasFlag aliasFlag : aliasMap.keySet()) {
             // 保存并生成短别名
             this.suggestAlias(aliasFlag, aliasFlag.getSuggestAlias());
         }
@@ -88,7 +82,13 @@ public class SQLAliasManager {
 
     public void forceAlias(AliasFlag aliasFlag, String forceAlias) {
         // 强制指定的别名，这里检查下
-        if (!forceAliasCheck.add(forceAlias)) {
+        int repeatCount = repeatAlias.compute(forceAlias, (k, v) -> {
+            if (v == null) {
+                return 0;
+            }
+            return v + 1;
+        });
+        if (repeatCount > 0) {
             throw SQLDescDefineException.forceAliasRepeat(forceAlias);
         }
         aliasMap.put(aliasFlag, forceAlias);
@@ -107,7 +107,7 @@ public class SQLAliasManager {
             return v + 1;
         });
 
-        if (repeatCount == 0) {
+        if (repeatCount == 0 && this.aliasMap.get(aliasFlag) == null) {
             this.aliasMap.put(aliasFlag, alias);
         } else {
             this.aliasMap.put(aliasFlag, alias + '_' + repeatCount);
@@ -177,6 +177,10 @@ public class SQLAliasManager {
         }
     }
 
+    public SQLAliasManager.Copier copier() {
+        return new SQLAliasManager.Copier(aliasMap, shortAliasMap);
+    }
+
     /**
      * Description 一个独立查询对象的唯一标识
      *
@@ -204,6 +208,46 @@ public class SQLAliasManager {
 
         public String getSuggestAlias() {
             return suggestAlias;
+        }
+    }
+
+
+    public class Copier {
+
+        private final Map<AliasFlag, String> aliasMap;
+
+        private final Map<AliasFlag, String> shortAliasMap;
+
+        private Copier(Map<AliasFlag, String> aliasMap, Map<AliasFlag, String> shortAliasMap) {
+            this.aliasMap = aliasMap;
+            this.shortAliasMap = shortAliasMap;
+        }
+
+
+        /**
+         * Description 删掉某个别名，通常是为了做一些优化，让语句好看一点
+         *
+         * @author zhaolaiyuan
+         * Date 2022/12/18 12:08
+         **/
+        public void removeAlias(AliasFlag aliasFlag) {
+            if (aliasFlag == null) {
+                return;
+            }
+            shortAliasMap.remove(aliasFlag);
+            aliasMap.remove(aliasFlag);
+        }
+
+        public void putAlias(AliasFlag aliasFlag, String alias) {
+            this.aliasMap.put(aliasFlag, alias);
+        }
+
+        public void putShortAlias(AliasFlag aliasFlag, String alias) {
+            this.aliasMap.put(aliasFlag, alias);
+        }
+
+        public SQLAliasManager copy() {
+            return new SQLAliasManager(configProperties, aliasMap, shortAliasMap);
         }
     }
 }

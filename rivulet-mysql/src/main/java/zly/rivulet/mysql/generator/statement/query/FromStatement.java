@@ -1,6 +1,7 @@
 package zly.rivulet.mysql.generator.statement.query;
 
 import zly.rivulet.base.utils.CollectionUtils;
+import zly.rivulet.base.utils.StringUtil;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.sql.definition.query.main.FromDefinition;
 import zly.rivulet.sql.generator.SqlStatementFactory;
@@ -34,7 +35,9 @@ public class FromStatement extends SqlStatement {
         int length = 0;
         length += FROM.length();
         length += this.mainFrom.getLengthOrCache();
-        length += 1 + this.mainFromAlias.length();
+        if (StringUtil.isNotBlank(this.mainFromAlias)) {
+            length += 1 + this.mainFromAlias.length();
+        }
         length += 1;
         if (CollectionUtils.isNotEmpty(this.joinStatementList)) {
             length += joinStatementList.size() - 1;
@@ -47,7 +50,9 @@ public class FromStatement extends SqlStatement {
     public void collectStatement(StatementCollector collector) {
         collector.append(FROM);
         collector.append(this.mainFrom);
-        collector.space().append(this.mainFromAlias);
+        if (StringUtil.isNotBlank(this.mainFromAlias)) {
+            collector.space().append(this.mainFromAlias);
+        }
         collector.space();
 
         if (CollectionUtils.isEmpty(this.joinStatementList)) {

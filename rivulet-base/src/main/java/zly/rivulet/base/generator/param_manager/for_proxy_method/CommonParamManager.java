@@ -27,9 +27,9 @@ public interface CommonParamManager extends ParamManager {
     default String getStatement(ParamReceipt paramReceipt) {
         Object param = this.getParam(paramReceipt);
         StatementConvertor<Object> convertor = paramReceipt.getConvertor();
-        if (!convertor.checkJavaType(param)) {
-            throw ParseException.errorParamType(paramReceipt, param);
-        }
+//        if (!convertor.checkJavaType(param)) {
+//            throw ParseException.errorParamType(paramReceipt, param);
+//        }
         return convertor.convert(param);
     }
 

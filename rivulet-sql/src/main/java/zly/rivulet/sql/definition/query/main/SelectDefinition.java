@@ -85,7 +85,7 @@ public class SelectDefinition extends AbstractContainerDefinition {
         }
 
         @Override
-        public Definition copy() {
+        public SelectDefinition copy() {
             return new SelectDefinition(checkCondition, selectModel, mappingDefinitionList);
         }
     }

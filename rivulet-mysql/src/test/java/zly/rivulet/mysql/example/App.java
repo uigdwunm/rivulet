@@ -3,12 +3,26 @@ package zly.rivulet.mysql.example;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import zly.rivulet.base.convertor.ConvertorManager;
+import zly.rivulet.base.definition.Blueprint;
+import zly.rivulet.base.generator.Fish;
+import zly.rivulet.base.generator.statement.Statement;
+import zly.rivulet.base.parser.Parser;
+import zly.rivulet.base.pipeline.BeforeExecuteNode;
+import zly.rivulet.base.pipeline.RunningPipeline;
+import zly.rivulet.base.utils.collector.CommonStatementCollector;
 import zly.rivulet.base.warehouse.DefaultWarehouseManager;
 import zly.rivulet.mysql.MySQLRivuletManager;
 import zly.rivulet.mysql.MySQLRivuletProperties;
 import zly.rivulet.mysql.example.model.PersonDO;
+import zly.rivulet.sql.describer.query.QueryBuilder;
+import zly.rivulet.sql.parser.analyzer.DefaultAnalyzer;
 
 import javax.sql.DataSource;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Supplier;
 
 public class App {
 
@@ -35,10 +49,37 @@ public class App {
             defaultWarehouseManager,
             createDataSource()
         );
-        rivuletManager.preParseAll();
-        rivuletManager.warmUpAll();
-        PersonDO personDO = rivuletManager.queryById(1L, PersonDO.class);
-        System.out.println(personDO);
+        RunningPipeline runningPipeline = rivuletManager.getRunningPipeline();
+        runningPipeline.addBeforeExecuteNode(new BeforeExecuteNode() {
+            @Override
+            public Object handle(Fish fish, Supplier<Object> executor) {
+                Statement statement = fish.getStatement();
+                CommonStatementCollector commonStatementCollector = new CommonStatementCollector();
+                statement.collectStatementOrCache(commonStatementCollector);
+                System.out.println(commonStatementCollector);
+                return nextHandle(fish, executor);
+            }
+        });
+        Parser parser = rivuletManager.getParser();
+        parser.addAnalyzer(new DefaultAnalyzer());
+        PersonDO p1 = new PersonDO();
+        p1.setName("李小兰");
+        p1.setBirthday(LocalDate.of(2022, Month.AUGUST, 12));
+        p1.setGender(false);
+
+//        int i = rivuletManager.insertOne(p1);
+//        System.out.println(i);
+        System.out.println("*********************");
+//        PersonDO personDO = rivuletManager.queryById(1L, PersonDO.class);
+//        System.out.println(personDO);
+
+        Blueprint blueprint = parser.parse(
+            QueryBuilder.query(PersonDO.class, PersonDO.class).build()
+        );
+        List<PersonDO> personDOList = rivuletManager.queryManyByBlueprint(blueprint, Collections.emptyMap());
+        for (PersonDO personDO : personDOList) {
+            System.out.println(personDO);
+        }
 
 
 //        Fish test = rivuletManager.testParse(PersonDescConfig.queryPerson());
