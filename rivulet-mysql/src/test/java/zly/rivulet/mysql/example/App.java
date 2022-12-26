@@ -11,7 +11,8 @@ import zly.rivulet.base.pipeline.BeforeExecuteNode;
 import zly.rivulet.base.pipeline.RunningPipeline;
 import zly.rivulet.base.utils.collector.CommonStatementCollector;
 import zly.rivulet.base.warehouse.DefaultWarehouseManager;
-import zly.rivulet.mysql.MySQLRivuletManager;
+import zly.rivulet.mysql.MySQLDataSourceRivuletManager;
+import zly.rivulet.mysql.MySQLRivulet;
 import zly.rivulet.mysql.MySQLRivuletProperties;
 import zly.rivulet.mysql.example.model.PersonDO;
 import zly.rivulet.sql.describer.query.QueryBuilder;
@@ -43,7 +44,7 @@ public class App {
     public static void main(String[] args) {
         DefaultWarehouseManager defaultWarehouseManager = new DefaultWarehouseManager("zly.rivulet.mysql");
         // todo beanManager配置扫包
-        MySQLRivuletManager rivuletManager = new MySQLRivuletManager(
+        MySQLDataSourceRivuletManager rivuletManager = new MySQLDataSourceRivuletManager(
             new MySQLRivuletProperties(),
             new ConvertorManager(),
             defaultWarehouseManager,
@@ -61,6 +62,7 @@ public class App {
             }
         });
         Parser parser = rivuletManager.getParser();
+        MySQLRivulet rivulet = rivuletManager.getRivulet();
         parser.addAnalyzer(new DefaultAnalyzer());
         PersonDO p1 = new PersonDO();
         p1.setName("李小兰");
@@ -76,7 +78,7 @@ public class App {
         Blueprint blueprint = parser.parse(
             QueryBuilder.query(PersonDO.class, PersonDO.class).build()
         );
-        List<PersonDO> personDOList = rivuletManager.queryManyByBlueprint(blueprint, Collections.emptyMap());
+        List<PersonDO> personDOList = rivulet.queryManyByBlueprint(blueprint, Collections.emptyMap());
         for (PersonDO personDO : personDOList) {
             System.out.println(personDO);
         }

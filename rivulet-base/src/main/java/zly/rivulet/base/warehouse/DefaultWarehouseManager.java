@@ -98,7 +98,7 @@ public class DefaultWarehouseManager implements WarehouseManager {
                 // 执行
                 RivuletMapper rivuletMapper = method.getAnnotation(RivuletMapper.class);
                 if (rivuletMapper != null) {
-                    return rivuletManager.exec(method, args);
+                    return rivuletManager.getRivulet().exec(method, args);
                 } else {
                     return methodProxy.invokeSuper(o, args);
                 }

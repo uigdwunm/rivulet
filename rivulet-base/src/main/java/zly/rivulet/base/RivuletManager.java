@@ -17,7 +17,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class RivuletManager implements DefaultOperation {
+public abstract class RivuletManager {
 
     protected final Parser parser;
 
@@ -57,8 +57,16 @@ public abstract class RivuletManager implements DefaultOperation {
     }
 
     /**
+     * Description 获取一个运行时的执行器，可以理解为一个session
+     *
+     * @author zhaolaiyuan
+     * Date 2022/12/25 10:37
+     **/
+    public abstract Rivulet getRivulet();
+
+    /**
      * Description 初始化方法，预创建出所有用到的definition，并按key存储好
-     * 只会在启动时执行一次
+     * 只需要在启动时执行一次
      *
      * @author zhaolaiyuan
      * Date 2022/3/20 10:15
@@ -82,7 +90,7 @@ public abstract class RivuletManager implements DefaultOperation {
 
     /**
      * Description 为所有设计图预热
-     * 只会在启动时执行一次
+     * 只需要在启动时执行一次
      *
      * @author zhaolaiyuan
      * Date 2022/8/9 8:32
@@ -93,9 +101,14 @@ public abstract class RivuletManager implements DefaultOperation {
         }
     }
 
-    public abstract Object exec(Method proxyMethod, Object[] args);
-
     public Fish testParse(WholeDesc wholeDesc) {
+        Blueprint blueprint = parser.parse(wholeDesc);
+        return generator.generate(blueprint, new ForTestParamManager());
+    }
+
+    public Fish testParse(String rivuletKey) {
+        // 解析definition
+        WholeDesc wholeDesc = warehouseManager.getWholeDesc(rivuletKey);
         Blueprint blueprint = parser.parse(wholeDesc);
         return generator.generate(blueprint, new ForTestParamManager());
     }

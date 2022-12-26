@@ -1,7 +1,5 @@
 package zly.rivulet.base.exception;
 
-import zly.rivulet.base.definition.param.ParamReceipt;
-
 public class ExecuteException extends RuntimeException {
 
     private ExecuteException(String msg) {
@@ -15,5 +13,9 @@ public class ExecuteException extends RuntimeException {
 
     public static ExecuteException execError(String s) {
         return new ExecuteException(s);
+    }
+
+    public static ExecuteException rivuletIsClosed() {
+        return new ExecuteException("当前连接已经关闭");
     }
 }
