@@ -79,6 +79,12 @@ public class SqlParser implements Parser {
         return blueprint;
     }
 
+    /**
+     * Description 外部直接调用这个方法，一般是用于嵌套解析中的
+     *
+     * @author zhaolaiyuan
+     * Date 2022/12/31 9:41
+     **/
     public Blueprint parse(WholeDesc wholeDesc, SqlParserPortableToolbox toolbox) {
         // 检查有没有循环嵌套的子查询，并保存当前desc，后续解析继续检查
         toolbox.checkSubQueryCycle(wholeDesc);
@@ -175,6 +181,7 @@ public class SqlParser implements Parser {
             SqlParserPortableToolbox toolbox = new SqlParserPortableToolbox(this);
             blueprint = new SqlQueryDefinition(toolbox, (SQLModelMeta) modelMeta, primaryFieldMeta.get(0));
             blueprint = this.analyze(blueprint);
+            modelMetaFlagBlueprintMap.put(modelMeta, flag, blueprint);
         }
         return blueprint;
     }

@@ -5,7 +5,6 @@ import zly.rivulet.base.definer.ModelMeta;
 import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.definition.param.ParamManagerFactory;
-import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.exception.ParseException;
 import zly.rivulet.base.generator.param_manager.ParamManager;
 import zly.rivulet.base.generator.param_manager.for_proxy_method.SimpleParamManager;
@@ -27,25 +26,22 @@ public abstract class Rivulet {
 
     protected final RunningPipeline runningPipeline;
 
-    protected final WarehouseManager warehouseManager;
-
     protected final ParamManagerFactory paramManagerFactory;
-
-    protected final Map<Method, Blueprint> mapperMethod_FinalDefinition_Map;
 
     protected final CollectionInstanceCreator collectionInstanceCreator;
 
     protected final RivuletProperties rivuletProperties;
 
+    protected final WarehouseManager warehouseManager;
+
     protected Rivulet(RivuletManager rivuletManager) {
         this.parser = rivuletManager.parser;
         this.definer = rivuletManager.definer;
         this.runningPipeline = rivuletManager.runningPipeline;
-        this.warehouseManager = rivuletManager.warehouseManager;
         this.paramManagerFactory = rivuletManager.paramManagerFactory;
-        this.mapperMethod_FinalDefinition_Map = rivuletManager.mapperMethod_FinalDefinition_Map;
         this.collectionInstanceCreator = rivuletManager.collectionInstanceCreator;
         this.rivuletProperties = rivuletManager.configProperties;
+        this.warehouseManager = rivuletManager.warehouseManager;
     }
 
     /**
@@ -55,7 +51,7 @@ public abstract class Rivulet {
      * Date 2022/12/25 12:19
      **/
     public Object exec(Method proxyMethod, Object[] args) {
-        Blueprint sqlBlueprint = mapperMethod_FinalDefinition_Map.get(proxyMethod);
+        Blueprint sqlBlueprint = warehouseManager.getByProxyMethod(proxyMethod);
         if (sqlBlueprint == null) {
             // 没有预先定义方法
             throw ParseException.undefinedMethod();
@@ -75,8 +71,7 @@ public abstract class Rivulet {
      **/
     public <T> T queryOneByDescKey(String descKey, Map<String, Object> params) {
         // 解析definition
-        WholeDesc wholeDesc = warehouseManager.getWholeDesc(descKey);
-        Blueprint blueprint = parser.parse(wholeDesc);
+        Blueprint blueprint = warehouseManager.getByDescKey(descKey);
         return this.queryOneByBlueprint(blueprint, new SimpleParamManager(params));
     }
 
@@ -119,8 +114,7 @@ public abstract class Rivulet {
      **/
     public <T> void queryManyByDescKey(String descKey, Map<String, Object> params, Collection<T> resultContainer) {
         // 解析definition
-        WholeDesc wholeDesc = warehouseManager.getWholeDesc(descKey);
-        Blueprint blueprint = parser.parse(wholeDesc);
+        Blueprint blueprint = warehouseManager.getByDescKey(descKey);
         this.queryManyByBlueprint(blueprint, params, resultContainer);
     }
 
@@ -206,8 +200,7 @@ public abstract class Rivulet {
      **/
     // 通过desc更新
     public int updateByDescKey(String descKey, Map<String, Object> params) {
-        WholeDesc wholeDesc = warehouseManager.getWholeDesc(descKey);
-        Blueprint blueprint = parser.parse(wholeDesc);
+        Blueprint blueprint = warehouseManager.getByDescKey(descKey);
         return this.updateByBlueprint(blueprint, params);
     }
 

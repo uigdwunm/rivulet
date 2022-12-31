@@ -35,8 +35,6 @@ public abstract class RivuletManager {
 
     protected final ParamManagerFactory paramManagerFactory;
 
-    protected final Map<Method, Blueprint> mapperMethod_FinalDefinition_Map = new ConcurrentHashMap<>();
-
     protected final CollectionInstanceCreator collectionInstanceCreator = new CollectionInstanceCreator();
 
     protected RivuletManager(
@@ -73,18 +71,28 @@ public abstract class RivuletManager {
      **/
 
     public void preParseAll() {
+        // 解析所有配置了key的desc
+        Map<String, WholeDesc> allConfiguredDesc = warehouseManager.getAllConfiguredDesc();
+        for (Map.Entry<String, WholeDesc> entry : allConfiguredDesc.entrySet()) {
+            String key = entry.getKey();
+            WholeDesc wholeDesc = entry.getValue();
+
+            Blueprint blueprint = parser.parse(wholeDesc);
+            warehouseManager.putDescKeyBlueprint(key, blueprint);
+        }
+
+        // 将所有关联了代理方法的key与method绑定
         Map<String, Method> allMapperMethod = warehouseManager.getAllMapperMethod();
         for (Map.Entry<String, Method> entry : allMapperMethod.entrySet()) {
             String key = entry.getKey();
             Method method = entry.getValue();
 
-            // 解析definition
-            WholeDesc wholeDesc = warehouseManager.getWholeDesc(key);
-            Blueprint blueprint = parser.parse(wholeDesc);
+            // 获取上面解析好的definition
+            Blueprint blueprint = warehouseManager.getByDescKey(key);
             // 参数绑定设计图
             paramManagerFactory.registerProxyMethod(blueprint, method);
             // 方法绑定设计图
-            mapperMethod_FinalDefinition_Map.put(method, blueprint);
+            warehouseManager.putProxyMethodBlueprint(method, blueprint);
         }
     }
 
@@ -96,7 +104,7 @@ public abstract class RivuletManager {
      * Date 2022/8/9 8:32
      **/
     public void warmUpAll() {
-        for (Blueprint blueprint : mapperMethod_FinalDefinition_Map.values()) {
+        for (Blueprint blueprint : warehouseManager.getAllBlueprint()) {
             generator.warmUp(blueprint);
         }
     }
