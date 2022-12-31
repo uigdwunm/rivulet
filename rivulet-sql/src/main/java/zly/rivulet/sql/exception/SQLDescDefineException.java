@@ -16,12 +16,8 @@ public class SQLDescDefineException extends RuntimeException {
         return new SQLDescDefineException("子查询循环嵌套");
     }
 
-    public static SQLDescDefineException subQueryNotQuery() {
-        return new SQLDescDefineException("嵌套的不是查询语句");
-    }
-
-    public static SQLDescDefineException unknowQueryType() {
-        return new SQLDescDefineException("未知的查询类型");
+    public static SQLDescDefineException unknownQueryType(Class<?> type) {
+        return new SQLDescDefineException("未知的查询类型, 这个type不是预定义的modelMeta，type=" + type.getName());
     }
 
     public static SQLDescDefineException selectAndFromNoMatch() {
@@ -42,9 +38,5 @@ public class SQLDescDefineException extends RuntimeException {
 
     public static SQLDescDefineException mustQueryKey(String value, Class<?> fieldType) {
         return new SQLDescDefineException("必须使用查询key作为子查询" + value);
-    }
-
-    public static SQLDescDefineException partCustomSingleVlaueUnsupport() {
-        return new SQLDescDefineException("部分自定义语句仅能解析FieldMapping及Param类型的singleValue");
     }
 }

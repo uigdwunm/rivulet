@@ -331,7 +331,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
             SQLModelMeta sqlModelMeta = sqlDefiner.createOrGetModelMeta(field.getType());
             if (sqlModelMeta == null) {
                 // 没找到对应的表对象
-                throw SQLDescDefineException.unknowQueryType();
+                throw SQLDescDefineException.unknownQueryType(field.getType());
             }
             ProxyNodeManager proxyModelManager = sqlParser.getProxyModelManager();
             return proxyModelManager.getOrCreateProxyMetaModel(sqlModelMeta);

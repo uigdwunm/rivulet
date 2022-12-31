@@ -1,6 +1,8 @@
 package zly.rivulet.base.exception;
 
-import zly.rivulet.base.definition.param.ParamReceipt;
+import zly.rivulet.base.definer.ModelMeta;
+
+import java.lang.reflect.Method;
 
 public class ParseException extends RuntimeException {
 
@@ -12,34 +14,10 @@ public class ParseException extends RuntimeException {
         super(msg, e);
     }
 
-    public static ParseException undefinedMethod() {
-        return new ParseException("无法执行未定义的方法");
+    public static ParseException noBindingDesc(Method proxyMethod) {
+        return new ParseException("没有绑定desc语句,method=" + proxyMethod.getName());
     }
-
-    public static ParseException noConstructor(Throwable e) {
-        return new ParseException("没有预定义好指定的构造方法", e);
-    }
-
-    public static ParseException newStatementFail(Throwable e) {
-        return new ParseException("实例化statement失败", e);
-    }
-
-    public static ParseException errorParamType(ParamReceipt paramReceipt, Object param) {
-        return new ParseException(String.format("错误的参数类型, paramReceipt=%s, param=%s", paramReceipt, param));
-    }
-
-    public static ParseException failParseParam() {
-        return new ParseException("无法解析参数");
-    }
-
-    /**
-     * 解析有问题，无法执行
-     **/
-    public static ParseException execError(String s) {
-        return new ParseException(s);
-    }
-
-    public static ParseException noAvailablePrimaryKey() {
-        return new ParseException("有且仅有一个主键时，才能以模型方式解析调用");
+    public static ParseException noAvailablePrimaryKey(ModelMeta modelMeta) {
+        return new ParseException("有且仅有一个主键时，才能以模型方式解析调用," + modelMeta.getModelClass().getName() + "对应的模型无法解析。");
     }
 }

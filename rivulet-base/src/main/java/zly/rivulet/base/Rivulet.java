@@ -5,7 +5,6 @@ import zly.rivulet.base.definer.ModelMeta;
 import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.definition.param.ParamManagerFactory;
-import zly.rivulet.base.exception.ParseException;
 import zly.rivulet.base.generator.param_manager.ParamManager;
 import zly.rivulet.base.generator.param_manager.for_proxy_method.SimpleParamManager;
 import zly.rivulet.base.parser.Parser;
@@ -52,10 +51,6 @@ public abstract class Rivulet {
      **/
     public Object exec(Method proxyMethod, Object[] args) {
         Blueprint sqlBlueprint = warehouseManager.getByProxyMethod(proxyMethod);
-        if (sqlBlueprint == null) {
-            // 没有预先定义方法
-            throw ParseException.undefinedMethod();
-        }
         ParamManager paramManager = paramManagerFactory.getByProxyMethod(sqlBlueprint, proxyMethod, args);
         // 执行
         ExecutePlan executePlan = this.createExecutePlan(sqlBlueprint.getFlag(), proxyMethod.getReturnType());

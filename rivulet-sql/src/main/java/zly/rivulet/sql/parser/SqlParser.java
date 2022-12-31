@@ -125,7 +125,7 @@ public class SqlParser implements Parser {
             SQLModelMeta sqlModelMeta = (SQLModelMeta) modelMeta;
             View<SQLFieldMeta> primaryFieldMeta = sqlModelMeta.getPrimaryFieldMeta();
             if (primaryFieldMeta.size() != 1) {
-                throw ParseException.noAvailablePrimaryKey();
+                throw ParseException.noAvailablePrimaryKey(modelMeta);
             }
             SqlParserPortableToolbox toolbox = new SqlParserPortableToolbox(this);
             blueprint = new SQLInsertDefinition(sqlModelMeta, toolbox);
@@ -142,7 +142,7 @@ public class SqlParser implements Parser {
         if (blueprint == null) {
             View<SQLFieldMeta> primaryFieldMeta = ((SQLModelMeta) modelMeta).getPrimaryFieldMeta();
             if (primaryFieldMeta.size() != 1) {
-                throw ParseException.noAvailablePrimaryKey();
+                throw ParseException.noAvailablePrimaryKey(modelMeta);
             }
             SqlParserPortableToolbox toolbox = new SqlParserPortableToolbox(this);
             blueprint = new SqlUpdateDefinition(toolbox, (SQLModelMeta) modelMeta, primaryFieldMeta.get(0));
@@ -159,7 +159,7 @@ public class SqlParser implements Parser {
         if (blueprint == null) {
             View<SQLFieldMeta> primaryFieldMeta = ((SQLModelMeta) modelMeta).getPrimaryFieldMeta();
             if (primaryFieldMeta.size() != 1) {
-                throw ParseException.noAvailablePrimaryKey();
+                throw ParseException.noAvailablePrimaryKey(modelMeta);
             }
             SqlParserPortableToolbox toolbox = new SqlParserPortableToolbox(this);
             blueprint = new SqlDeleteDefinition(toolbox, (SQLModelMeta) modelMeta, primaryFieldMeta.get(0));
@@ -176,7 +176,7 @@ public class SqlParser implements Parser {
         if (blueprint == null) {
             View<SQLFieldMeta> primaryFieldMeta = ((SQLModelMeta) modelMeta).getPrimaryFieldMeta();
             if (primaryFieldMeta.size() != 1) {
-                throw ParseException.noAvailablePrimaryKey();
+                throw ParseException.noAvailablePrimaryKey(modelMeta);
             }
             SqlParserPortableToolbox toolbox = new SqlParserPortableToolbox(this);
             blueprint = new SqlQueryDefinition(toolbox, (SQLModelMeta) modelMeta, primaryFieldMeta.get(0));

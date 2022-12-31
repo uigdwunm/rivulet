@@ -87,7 +87,7 @@ public class DefaultWarehouseManager implements WarehouseManager {
     public WholeDesc getWholeDesc(String key) {
         WholeDesc wholeDesc = this.key_wholeDesc_map.get(key);
         if (wholeDesc == null) {
-            throw DescDefineException.noMatchDescKey();
+            throw DescDefineException.noMatchDescKey(key);
         }
         return wholeDesc;
     }

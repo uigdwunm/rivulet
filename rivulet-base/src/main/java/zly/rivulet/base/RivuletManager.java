@@ -5,6 +5,7 @@ import zly.rivulet.base.definer.Definer;
 import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.definition.param.ParamManagerFactory;
 import zly.rivulet.base.describer.WholeDesc;
+import zly.rivulet.base.exception.ParseException;
 import zly.rivulet.base.generator.Fish;
 import zly.rivulet.base.generator.Generator;
 import zly.rivulet.base.generator.param_manager.for_proxy_method.ForTestParamManager;
@@ -89,6 +90,10 @@ public abstract class RivuletManager {
 
             // 获取上面解析好的definition
             Blueprint blueprint = warehouseManager.getByDescKey(key);
+            if (blueprint == null) {
+                // 没有预先定义方法
+                throw ParseException.noBindingDesc(method);
+            }
             // 参数绑定设计图
             paramManagerFactory.registerProxyMethod(blueprint, method);
             // 方法绑定设计图

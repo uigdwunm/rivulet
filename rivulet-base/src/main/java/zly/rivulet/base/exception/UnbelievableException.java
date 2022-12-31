@@ -28,16 +28,5 @@ public class UnbelievableException extends RuntimeException {
         return new UnbelievableException("无权限访问（不应该出现，已经处理过校验）", e);
     }
 
-    public static UnbelievableException cloneNotSupportedException(Throwable e) {
-        return new UnbelievableException("不支持克隆方法（不应该出现，都已经实现过）", e);
-    }
-
-    public static UnbelievableException unNeedSort() {
-        return new UnbelievableException("这里应该永远不需要排序");
-    }
-
-    public static UnbelievableException nativeClone() {
-        return new UnbelievableException("调用原生的clone方法");
-    }
 
 }
