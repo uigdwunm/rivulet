@@ -14,7 +14,7 @@ import java.sql.Connection;
 import java.util.Collection;
 import java.util.List;
 
-public class MySQLRivulet extends SQLRivulet {
+public abstract class MySQLRivulet extends SQLRivulet {
 
     protected MySQLRivulet(SQLRivuletManager rivuletManager, Connection connection) {
         super(rivuletManager, connection);
@@ -47,7 +47,6 @@ public class MySQLRivulet extends SQLRivulet {
         ModelMeta modelMeta = definer.createOrGetModelMeta(dOModelClass);
         SQLBlueprint sqlBlueprint = (SQLBlueprint) parser.parseUpdateByMeta(modelMeta);
 
-        MySQLRivuletProperties rivuletProperties = this.getRivuletProperties();
         MySQLBatchUpdateExecutePlan executePlan = new MySQLBatchUpdateExecutePlan(super.useConnection());
 
         ParamManager paramManager = paramManagerFactory.getBatchByModelMeta(modelMeta, (Collection<Object>) models);

@@ -11,7 +11,7 @@ import zly.rivulet.base.pipeline.BeforeExecuteNode;
 import zly.rivulet.base.pipeline.RunningPipeline;
 import zly.rivulet.base.utils.collector.CommonStatementCollector;
 import zly.rivulet.base.warehouse.DefaultWarehouseManager;
-import zly.rivulet.mysql.MySQLDataSourceRivuletManager;
+import zly.rivulet.mysql.DefaultMySQLDataSourceRivuletManager;
 import zly.rivulet.mysql.MySQLRivulet;
 import zly.rivulet.mysql.MySQLRivuletProperties;
 import zly.rivulet.mysql.example.model.PersonDO;
@@ -44,7 +44,7 @@ public class App {
     public static void main(String[] args) {
         DefaultWarehouseManager defaultWarehouseManager = new DefaultWarehouseManager("zly.rivulet.mysql");
         // todo beanManager配置扫包
-        MySQLDataSourceRivuletManager rivuletManager = new MySQLDataSourceRivuletManager(
+        DefaultMySQLDataSourceRivuletManager rivuletManager = new DefaultMySQLDataSourceRivuletManager(
             new MySQLRivuletProperties(),
             new ConvertorManager(),
             defaultWarehouseManager,
@@ -69,20 +69,28 @@ public class App {
         p1.setBirthday(LocalDate.of(2022, Month.AUGUST, 12));
         p1.setGender(false);
 
-//        int i = rivuletManager.insertOne(p1);
+//        int i = rivulet.insertOne(p1);
 //        System.out.println(i);
         System.out.println("*********************");
-//        PersonDO personDO = rivuletManager.queryById(1L, PersonDO.class);
-//        System.out.println(personDO);
 
         Blueprint blueprint = parser.parse(
             QueryBuilder.query(PersonDO.class, PersonDO.class).build()
         );
+
         List<PersonDO> personDOList = rivulet.queryManyByBlueprint(blueprint, Collections.emptyMap());
         for (PersonDO personDO : personDOList) {
             System.out.println(personDO);
         }
 
+        PersonDO personDO = personDOList.get(0);
+        System.out.println(personDO);
+        personDO.setBirthday(LocalDate.of(1998, Month.AUGUST, 8));
+        rivulet.updateOneById(personDO);
+
+        personDOList = rivulet.queryManyByBlueprint(blueprint, Collections.emptyMap());
+        for (PersonDO p : personDOList) {
+            System.out.println(p);
+        }
 
 //        Fish test = rivuletManager.testParse(PersonDescConfig.queryPerson());
 //

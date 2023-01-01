@@ -95,8 +95,8 @@ public class SqlUpdateDefinition extends SQLBlueprint {
 
         this.setDefinition = new SetDefinition(toolbox, sqlModelMeta);
 
-        Param<? extends SQLFieldMeta> mainIdParam = Param.of(primaryKey.getClass(), Constant.MAIN_ID, SqlParamCheckType.NATURE);
-        FromNode fromNode = queryProxyNode.getFromNode(0);
+        Param<?> mainIdParam = Param.of(primaryKey.getFieldType(), primaryKey.getFieldName(), SqlParamCheckType.NATURE);
+        FromNode fromNode = queryProxyNode.getFromNodeList().get(0);
         this.whereDefinition = new WhereDefinition(
             toolbox,
             new AndOperateDefinition(

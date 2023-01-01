@@ -29,11 +29,11 @@ public final class Constant {
     /**
      * 模型解析方式时，主键id key的名称
      **/
-    public static final String MAIN_ID = "mainId";
+    public static final String MAIN_ID = "rivulet_mainId";
     /**
      * 模型解析方式时，主键id key的名称
      **/
-    public static final String MAIN_IDS = "mainIds";
+    public static final String MAIN_IDS = "rivulet_mainIds";
     public static final String ASC = "ASC";
 
     public static final String DESC = "DESC";

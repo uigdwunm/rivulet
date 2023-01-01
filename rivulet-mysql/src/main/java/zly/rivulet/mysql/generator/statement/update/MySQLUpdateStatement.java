@@ -35,8 +35,9 @@ public class MySQLUpdateStatement extends SqlStatement {
     @Override
     public void collectStatement(StatementCollector collector) {
         collector.append(UPDATE).append(mySQLModelMeta.getTableName()).space();
-        setStatement.collectStatement(collector);
-        whereStatement.collectStatement(collector);
+        collector.append(setStatement);
+        collector.space();
+        collector.append(whereStatement);
     }
 
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {

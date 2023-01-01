@@ -12,7 +12,7 @@ public class AndOperateStatement extends OperateStatement {
 
     private final List<OperateStatement> subOperateList;
 
-    public static final String AND_CONNECTOR = "AND ";
+    public static final String AND_CONNECTOR = " AND ";
 
     public AndOperateStatement(List<OperateStatement> subOperateList) {
         this.subOperateList = subOperateList;
@@ -46,7 +46,6 @@ public class AndOperateStatement extends OperateStatement {
             } else {
                 operateStatement.collectStatement(collector);
             }
-            collector.space();
         }
 
     }

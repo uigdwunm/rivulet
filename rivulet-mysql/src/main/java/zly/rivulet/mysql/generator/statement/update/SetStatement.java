@@ -45,7 +45,7 @@ public class SetStatement extends SqlStatement {
                     .map(itemDefinition -> sqlStatementFactory.warmUp(itemDefinition, soleFlag.subSwitch(), toolbox))
                     .collect(Collectors.toList());
 
-                return new SetStatement(setDefinition, (View) setItemDefinitionList);
+                return new SetStatement(setDefinition, (View) View.create(setItemDefinitionList));
             },
             (definition, toolbox) -> {
                 SetDefinition setDefinition = (SetDefinition) definition;
@@ -53,7 +53,7 @@ public class SetStatement extends SqlStatement {
                     .map(itemDefinition -> sqlStatementFactory.getOrCreate(itemDefinition, toolbox))
                     .collect(Collectors.toList());
 
-                return new SetStatement(setDefinition, (View) setItemDefinitionList);
+                return new SetStatement(setDefinition, (View) View.create(setItemDefinitionList));
             }
         );
     }

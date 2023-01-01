@@ -84,8 +84,8 @@ public class SqlDeleteDefinition extends SQLBlueprint {
 
         this.fromDefinition = new FromDefinition(toolbox);
 
-        Param<? extends SQLFieldMeta> mainIdParam = Param.of(primaryKey.getClass(), Constant.MAIN_ID, SqlParamCheckType.NATURE);
-        FromNode fromNode = queryProxyNode.getFromNode(0);
+        Param<?> mainIdParam = Param.of(primaryKey.getFieldType(), Constant.MAIN_ID, SqlParamCheckType.NATURE);
+        FromNode fromNode = queryProxyNode.getFromNodeList().get(0);
         this.whereDefinition = new WhereDefinition(
             toolbox,
             new AndOperateDefinition(
