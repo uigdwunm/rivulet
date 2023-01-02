@@ -3,7 +3,7 @@ package zly.rivulet.sql.definition.query.main;
 import zly.rivulet.base.definition.AbstractDefinition;
 import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
-import zly.rivulet.sql.definer.QueryComplexModel;
+import zly.rivulet.sql.describer.join.QueryComplexModel;
 import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.describer.join.ComplexDescriber;

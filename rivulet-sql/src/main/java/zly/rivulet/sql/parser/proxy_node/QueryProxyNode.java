@@ -15,7 +15,7 @@ import zly.rivulet.base.warehouse.WarehouseManager;
 import zly.rivulet.sql.assigner.SQLContainerResultAssigner;
 import zly.rivulet.sql.assigner.SQLMetaModelResultAssigner;
 import zly.rivulet.sql.assigner.SQLQueryResultAssigner;
-import zly.rivulet.sql.definer.QueryComplexModel;
+import zly.rivulet.sql.describer.join.QueryComplexModel;
 import zly.rivulet.sql.definer.SqlDefiner;
 import zly.rivulet.sql.definer.annotations.SQLSubQuery;
 import zly.rivulet.sql.definer.annotations.SqlQueryAlias;
@@ -277,7 +277,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
             fromNodeFieldMap.put(fromNode, field);
 
             // 注入到代理对象字段
-            field.setAccessible(false);
+            field.setAccessible(true);
             try {
                 field.set(proxyModel, fromNode.getProxyModel());
             } catch (IllegalAccessException e) {

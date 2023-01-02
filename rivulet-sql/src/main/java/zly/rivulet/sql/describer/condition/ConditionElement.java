@@ -20,12 +20,36 @@ public class ConditionElement<F, C> implements Condition<F, C>, JoinCondition<F,
      **/
     private final CheckCondition checkCondition;
 
-    @SafeVarargs
-    public ConditionElement(CheckCondition checkCondition, SingleValueElementDesc<F, C> leftFieldMapped, ConditionOperate operate, SingleValueElementDesc<F, C> ... rightFieldMappeds) {
+//    @SafeVarargs
+//    public ConditionElement(CheckCondition checkCondition, SingleValueElementDesc<F, C> leftFieldMapped, ConditionOperate operate, SingleValueElementDesc<F, C> ... rightFieldMappeds) {
+//        this.checkCondition = checkCondition;
+//        this.leftFieldMapped = leftFieldMapped;
+//        this.operate = operate;
+//        this.rightFieldMappeds = rightFieldMappeds;
+//    }
+
+    public ConditionElement(CheckCondition checkCondition, Object leftFieldMapped, ConditionOperate operate) {
         this.checkCondition = checkCondition;
-        this.leftFieldMapped = leftFieldMapped;
+        this.leftFieldMapped = (SingleValueElementDesc<F, C>) leftFieldMapped;
         this.operate = operate;
-        this.rightFieldMappeds = rightFieldMappeds;
+        this.rightFieldMappeds = new SingleValueElementDesc[]{};
+    }
+
+    public ConditionElement(CheckCondition checkCondition, Object leftFieldMapped, ConditionOperate operate, Object rightFieldMapped) {
+        this.checkCondition = checkCondition;
+        this.leftFieldMapped = (SingleValueElementDesc<F, C>) leftFieldMapped;
+        this.operate = operate;
+        SingleValueElementDesc<F, C> rightFieldMapped1 = (SingleValueElementDesc<F, C>) rightFieldMapped;
+        this.rightFieldMappeds = new SingleValueElementDesc[]{rightFieldMapped1};
+    }
+
+    public ConditionElement(CheckCondition checkCondition, Object leftFieldMapped, ConditionOperate operate, Object rightFieldMapped1, Object rightFieldMapped2) {
+        this.checkCondition = checkCondition;
+        this.leftFieldMapped = (SingleValueElementDesc<F, C>) leftFieldMapped;
+        this.operate = operate;
+        SingleValueElementDesc<F, C> rightFieldMapped11 = (SingleValueElementDesc<F, C>) rightFieldMapped1;
+        SingleValueElementDesc<F, C> rightFieldMapped22 = (SingleValueElementDesc<F, C>) rightFieldMapped2;
+        this.rightFieldMappeds = new SingleValueElementDesc[]{rightFieldMapped11, rightFieldMapped22};
     }
 
     public CheckCondition getCheckCondition() {
@@ -43,14 +67,5 @@ public class ConditionElement<F, C> implements Condition<F, C>, JoinCondition<F,
 
     public SingleValueElementDesc<F, C>[] getRightFieldMappeds() {
         return rightFieldMappeds;
-    }
-
-    public static <A extends SingleValueElementDesc<F, C>, F, C> ConditionElement<F, C> equalTo(A leftElement, A rightElement) {
-        return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, ConditionOperate.EQ, rightElement);
-    }
-
-    public static <A extends SingleValueElementDesc<F, C>, F, C> ConditionElement<F, C> equalTo(A leftElement, Param<C> rightElement) {
-        SingleValueElementDesc<F, C> rightElement1 = (SingleValueElementDesc<F, C>) rightElement;
-        return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, ConditionOperate.EQ, rightElement1);
     }
 }

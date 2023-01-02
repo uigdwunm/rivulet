@@ -13,7 +13,7 @@ import javax.sql.DataSource;
 
 public abstract class BaseTest {
 
-    protected SQLRivuletManager rivuletManager;
+    protected static SQLRivuletManager rivuletManager;
 
     public static DataSource createDataSource() {
         HikariConfig config = new HikariConfig();
@@ -28,7 +28,7 @@ public abstract class BaseTest {
     }
 
     @BeforeClass
-    public void createRivuletManager() {
+    public static void createRivuletManager() {
         DefaultWarehouseManager defaultWarehouseManager = new DefaultWarehouseManager("zly.rivulet.mysql");
         rivuletManager = new DefaultMySQLDataSourceRivuletManager(
             new MySQLRivuletProperties(),
