@@ -9,6 +9,7 @@ import zly.rivulet.sql.utils.SQLConstant;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class SQLDefaultConvertor {
@@ -108,6 +109,17 @@ public class SQLDefaultConvertor {
                         return SQLConstant.NULL_STATEMENT;
                     }
                     return "'" + DateTimeFormatter.ISO_LOCAL_DATE.format(originData) + "'";
+                }
+            }
+        );
+        convertorManager.registerStatementConvertor(
+            new StatementConvertor<LocalDateTime>() {
+                @Override
+                public String convert(LocalDateTime originData) {
+                    if (originData == null) {
+                        return SQLConstant.NULL_STATEMENT;
+                    }
+                    return "'" + DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(originData) + "'";
                 }
             }
         );

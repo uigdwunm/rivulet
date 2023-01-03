@@ -380,9 +380,10 @@ public class QueryProxyNode implements SelectNode, FromNode {
     }
 
     public MapDefinition getFieldDefinitionFromThreadLocal(JoinFieldMapping<?> fieldMapping, Object proxyModel) {
-        ((FieldMapping<Object, Object>) fieldMapping).getMapping(proxyModel);
+        ((JoinFieldMapping<Object>) fieldMapping).getMapping();
         // 多了一层，丢弃掉
-        return (MapDefinition) THREAD_LOCAL.get().getValueDefinition();
+//        return (MapDefinition) THREAD_LOCAL.get().getValueDefinition();
+        return THREAD_LOCAL.get();
     }
 
     private SQLQueryResultAssigner parseAssignerByMappedItemList(ConvertorManager convertorManager, Class<?> selectModelClass, List<? extends Mapping<?, ?, ?>> mappedItemList) {

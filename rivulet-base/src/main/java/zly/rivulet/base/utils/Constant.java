@@ -23,6 +23,10 @@ public final class Constant {
     public static final String AS = "AS ";
     public static final char EQ = '=';
 
+    public static final String BETWEEN = " BETWEEN ";
+
+    public static final String AND = " AND ";
+
     public static final String IN = "IN";
 
 

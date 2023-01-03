@@ -12,6 +12,7 @@ import zly.rivulet.mysql.definer.annotations.type.date.MySQLDate;
 import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLBigInt;
 import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLInt;
 import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLTinyInt;
+import zly.rivulet.mysql.definer.annotations.type.string.MySQLChar;
 import zly.rivulet.mysql.definer.annotations.type.string.MySQLVarchar;
 import zly.rivulet.sql.convertor.SQLDefaultConvertor;
 import zly.rivulet.sql.definer.SqlDefiner;
@@ -73,6 +74,7 @@ public class MySQLDefiner extends SqlDefiner {
 
         annotation_TypeCreator_Map.put(MySQLInt.class, anno -> new MySQLInt.Type((MySQLInt) anno));
         annotation_TypeCreator_Map.put(MySQLVarchar.class, anno -> new MySQLVarchar.Type((MySQLVarchar) anno));
+        annotation_TypeCreator_Map.put(MySQLChar.class, anno -> new MySQLChar.Type((MySQLChar) anno));
         annotation_TypeCreator_Map.put(MySQLBigInt.class, anno -> new MySQLBigInt.Type((MySQLBigInt) anno));
         annotation_TypeCreator_Map.put(MySQLDate.class, anno -> new MySQLDate.Type((MySQLDate) anno));
         annotation_TypeCreator_Map.put(MySQLTinyInt.class, anno -> new MySQLTinyInt.Type((MySQLTinyInt) anno));

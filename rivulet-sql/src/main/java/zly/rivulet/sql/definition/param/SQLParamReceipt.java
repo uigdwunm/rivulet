@@ -29,7 +29,7 @@ public class SQLParamReceipt extends PathKeyParamReceipt {
         return sqlParamCheckType;
     }
 
-    public Param<?> getOriginDesc() {
+    public StandardParam<?> getOriginDesc() {
         return this.originDesc;
     }
 

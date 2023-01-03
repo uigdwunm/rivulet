@@ -2,6 +2,10 @@ package zly.rivulet.mysql.definer.annotations.type.string;
 
 import zly.rivulet.mysql.definer.outerType.StringType;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+@Retention(RetentionPolicy.RUNTIME)
 public @interface MySQLText {
 
 

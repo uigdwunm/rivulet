@@ -31,7 +31,7 @@ public class PersonDO {
     private boolean gender;
 
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
