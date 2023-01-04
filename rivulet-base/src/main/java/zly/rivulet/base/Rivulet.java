@@ -5,6 +5,7 @@ import zly.rivulet.base.definer.ModelMeta;
 import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.definition.param.ParamManagerFactory;
+import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.generator.param_manager.ParamManager;
 import zly.rivulet.base.generator.param_manager.for_proxy_method.SimpleParamManager;
 import zly.rivulet.base.parser.Parser;
@@ -41,6 +42,10 @@ public abstract class Rivulet {
         this.collectionInstanceCreator = rivuletManager.collectionInstanceCreator;
         this.rivuletProperties = rivuletManager.configProperties;
         this.warehouseManager = rivuletManager.warehouseManager;
+    }
+
+    public Blueprint parse(WholeDesc wholeDesc) {
+        return parser.parse(wholeDesc);
     }
 
     /**

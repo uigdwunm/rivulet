@@ -52,8 +52,8 @@ public interface SetMapping<S, F> extends Serializable {
                 Field field = (Field) lambda.getCapturedArg(0);
                 return field.getType();
             } else {
-                String implMethodSignature = lambda.getImplMethodSignature();
-                String targetGenericTypeName = parseTargetGenericTypeName(implMethodSignature);
+                String instantiatedMethodType = lambda.getInstantiatedMethodType();
+                String targetGenericTypeName = parseTargetGenericTypeName(instantiatedMethodType);
                 return Class.forName(targetGenericTypeName);
             }
         } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException | ClassNotFoundException e) {
@@ -61,8 +61,8 @@ public interface SetMapping<S, F> extends Serializable {
         }
     }
 
-    static String parseTargetGenericTypeName(String implMethodSignature) {
-        char[] chars = implMethodSignature.toCharArray();
+    static String parseTargetGenericTypeName(String typeStr) {
+        char[] chars = typeStr.toCharArray();
         int start = -1;
         int end = -1;
         for (int i = 0; i < chars.length; i++) {

@@ -92,11 +92,11 @@ public class MySQLFormatStatementCollector implements SQLStatementCollector {
 
     @Override
     public MySQLFormatStatementCollector append(String str) {
-        if (AFTER_APPEND_LINE.contains(str)) {
+        if (BEFORE_APPEND_LINE.contains(str)) {
             this.line();
         }
         currLine.append(str);
-        if (BEFORE_APPEND_LINE.contains(str)) {
+        if (AFTER_APPEND_LINE.contains(str)) {
             this.line();
         }
         return this;

@@ -8,6 +8,7 @@ import zly.rivulet.sql.utils.SQLConstant;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -404,6 +405,17 @@ public class SQLDefaultConvertor {
 
     private static void registerIntegerConvertor(ConvertorManager convertorManager) {
         convertorManager.registerResultConvertor(
+            new ResultConvertor<Integer, Boolean>() {
+                @Override
+                public Boolean convert(Integer originData) {
+                    if (originData == null) {
+                        return null;
+                    }
+                    return originData > 0;
+                }
+            }
+        );
+        convertorManager.registerResultConvertor(
             new ResultConvertor<Integer, Boolean>(Integer.class, boolean.class) {
                 @Override
                 public Boolean convert(Integer originData) {
@@ -422,6 +434,14 @@ public class SQLDefaultConvertor {
                 @Override
                 public LocalDate convert(java.sql.Date originData) {
                     return originData.toLocalDate();
+                }
+            }
+        );
+        convertorManager.registerResultConvertor(
+            new ResultConvertor<java.sql.Timestamp, LocalDateTime>() {
+                @Override
+                public LocalDateTime convert(Timestamp originData) {
+                    return originData.toLocalDateTime();
                 }
             }
         );

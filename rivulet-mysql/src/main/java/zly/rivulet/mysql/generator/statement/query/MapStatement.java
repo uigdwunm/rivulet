@@ -71,6 +71,7 @@ public class MapStatement extends SingleValueElementStatement {
             value.singleCollectStatement(collector);
             collector.rightBracket();
         } else if (StringUtil.isNotBlank(this.referenceAlias)) {
+            collector.append(this.referenceAlias).append(Constant.POINT_CHAR);
             value.singleCollectStatement(collector);
         } else {
             value.singleCollectStatement(collector);
