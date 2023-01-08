@@ -38,6 +38,49 @@ public class CityDO {
     private Integer provinceCode;
 }
 ```
+#### 查询演示
+```java
+public class QueryTest {
+    /**
+     * 预先生成管理器
+     **/
+    public RivuletManager createDefaultRivuletManager() {
+        DefaultWarehouseManager defaultWarehouseManager = new DefaultWarehouseManager("zly.rivulet.mysql");
+        return new DefaultMySQLDataSourceRivuletManager(
+            new MySQLRivuletProperties(),
+            new ConvertorManager(),
+            defaultWarehouseManager,
+            createDataSource()
+        );
+    }
+    
+    /**
+     * 预编写查询逻辑
+     **/
+    @RivuletDesc("queryProvince")
+    public WholeDesc queryProvince() {
+        // 从参数中动态取值
+        Param<Integer> provinceCodeParam = Param.of(Integer.class, "provinceCode", ParamCheckType.NATURE);
+        // 查询语句
+        return QueryBuilder.query(ProvinceDO.class, ProvinceDO.class)
+            .where(Condition.equalTo(CheckCondition.notNull(provinceCodeParam), ProvinceDO::getCode, provinceCodeParam))
+            .build();
+    }
+
+    /**
+     * 执行查询
+     **/
+    public void query() {
+        Rivulet rivulet = createDefaultRivuletManager().getRivulet();
+        HashMap<String, Object> paramMap = new HashMap<>();
+        // 参数
+        paramMap.put("provinceCode", 123);
+        // 查询
+        ProvinceDO provinceDO = rivulet.queryOneByDescKey("queryProvince", paramMap);
+    }
+}
+```
+
 #### 查询映射原DO模型语句
 ```java
 public class Desc {
@@ -45,13 +88,17 @@ public class Desc {
     public WholeDesc queryProvince() {
         // 从参数中动态取值
         Param<Integer> provinceCodeParam = Param.of(Integer.class, "provinceCode", ParamCheckType.NATURE);
-
+        // 查询
         return QueryBuilder.query(ProvinceDO.class, ProvinceDO.class)
             .where(Condition.equalTo(CheckCondition.notNull(provinceCodeParam), ProvinceDO::getCode, provinceCodeParam))
             .build();
     }
 }
 ```
++ 通过QueryBuilder开始编写sql语句
+  + query的第一个对象是From的表对象，第二个对象是查询结果映射
+  + 这里查询对象是ProvinceDO，映射对象也是ProvinceDO，可以设置成不同的，但是要手动映射select
+
 #### 联表查询
 准备一个联表模型，用于表之间的连接关系
 ```java
@@ -90,7 +137,26 @@ public class Desc {
     }
 }
 ```
-
+#### 映射不同的查询结果对象
+```java
+public class Desc {
+    @RivuletDesc("queryCityProvinceJoin2")
+    public WholeDesc queryCityProvinceJoin2() {
+        // 从参数中动态取值
+        Param<Integer> cityCodeParam = Param.of(Integer.class, "cityCode", ParamCheckType.NATURE);
+        // 使用不同的对象映射结果
+        return QueryBuilder.query(CityProvinceJoin.class, CityInfo.class)
+            .select(
+                Mapping.of(CityInfo::setCityCode, x -> x.getCityDO().getCode()),
+                Mapping.of(CityInfo::setCityName, x -> x.getCityDO().getName()),
+                Mapping.of(CityInfo::setProvinceCode, x -> x.getProvinceDO().getCode()),
+                Mapping.of(CityInfo::setProvinceName, x -> x.getProvinceDO().getName())
+            )
+            .where(Condition.equalTo(x -> x.getCityDO().getCode(), cityCodeParam))
+            .build();
+    }
+}
+```
 
 
 

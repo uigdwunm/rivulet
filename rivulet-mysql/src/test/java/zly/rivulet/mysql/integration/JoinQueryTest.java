@@ -4,18 +4,14 @@ import org.junit.Test;
 import zly.rivulet.base.Rivulet;
 import zly.rivulet.base.definer.annotations.RivuletDesc;
 import zly.rivulet.base.definition.Blueprint;
-import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.describer.param.ParamCheckType;
 import zly.rivulet.base.generator.Fish;
-import zly.rivulet.base.generator.statement.Statement;
-import zly.rivulet.base.utils.PrintUtils;
-import zly.rivulet.mysql.model.ProvinceDO;
 import zly.rivulet.mysql.model.join.CityProvinceJoin;
 import zly.rivulet.mysql.model.join.StudentJoinPerson;
+import zly.rivulet.mysql.model.vo.CityInfo;
 import zly.rivulet.mysql.model.vo.StudentVO;
-import zly.rivulet.mysql.util.MySQLFormatStatementCollector;
 import zly.rivulet.mysql.util.MySQLPrintUtils;
 import zly.rivulet.sql.describer.condition.Condition;
 import zly.rivulet.sql.describer.query.QueryBuilder;
@@ -36,6 +32,22 @@ public class JoinQueryTest extends BaseTest {
             .where(
                 Condition.equalTo(x -> x.getCityDO().getCode(), cityCodeParam)
             ).build();
+    }
+
+    @RivuletDesc("queryCityProvinceJoin2")
+    public WholeDesc queryCityProvinceJoin2() {
+        // 从参数中动态取值
+        Param<Integer> cityCodeParam = Param.of(Integer.class, "cityCode", ParamCheckType.NATURE);
+
+        return QueryBuilder.query(CityProvinceJoin.class, CityInfo.class)
+            .select(
+                Mapping.of(CityInfo::setCityCode, x -> x.getCityDO().getCode()),
+                Mapping.of(CityInfo::setCityName, x -> x.getCityDO().getName()),
+                Mapping.of(CityInfo::setProvinceCode, x -> x.getProvinceDO().getCode()),
+                Mapping.of(CityInfo::setProvinceName, x -> x.getProvinceDO().getName())
+            )
+            .where(Condition.equalTo(x -> x.getCityDO().getCode(), cityCodeParam))
+            .build();
     }
 
     @Test
