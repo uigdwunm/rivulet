@@ -7,6 +7,7 @@ import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.param.Param;
+import zly.rivulet.base.describer.param.ParamCheckType;
 import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.base.utils.ClassUtils;
 import zly.rivulet.base.utils.CollectionUtils;
@@ -23,10 +24,8 @@ import zly.rivulet.sql.definition.query.operate.AndOperateDefinition;
 import zly.rivulet.sql.definition.query.operate.EqOperateDefinition;
 import zly.rivulet.sql.definition.query.operate.InOperateDefinition;
 import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
-import zly.rivulet.sql.describer.condition.Condition;
 import zly.rivulet.sql.describer.condition.ConditionContainer;
 import zly.rivulet.sql.describer.custom.SQLPartCustomDesc;
-import zly.rivulet.sql.describer.param.SqlParamCheckType;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.query.desc.SortItem;
 import zly.rivulet.sql.parser.SQLAliasManager;
@@ -135,8 +134,8 @@ public class SqlQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
         toolbox.setQueryProxyNode(queryProxyNode);
         this.fromDefinition = new FromDefinition(toolbox);
         this.selectDefinition = new SelectDefinition(toolbox, modelClass, queryProxyNode);
-        Param<?> mainIdParam = Param.of(ClassUtils.toBoxType(primaryKey.getFieldType()), Constant.MAIN_ID, SqlParamCheckType.NATURE);
-        Param<?> mainIdsParam = Param.of(ClassUtils.toBoxType(primaryKey.getFieldType()), Constant.MAIN_IDS, SqlParamCheckType.NATURE);
+        Param<?> mainIdParam = Param.of(ClassUtils.toBoxType(primaryKey.getFieldType()), Constant.MAIN_ID, ParamCheckType.NATURE);
+        Param<?> mainIdsParam = Param.of(ClassUtils.toBoxType(primaryKey.getFieldType()), Constant.MAIN_IDS, ParamCheckType.NATURE);
         FromNode fromNode = queryProxyNode.getFromNodeList().get(0);
         this.whereDefinition = new WhereDefinition(
             toolbox,

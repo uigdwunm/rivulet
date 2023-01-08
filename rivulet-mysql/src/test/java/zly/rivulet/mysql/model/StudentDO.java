@@ -1,4 +1,4 @@
-package zly.rivulet.mysql.example.model;
+package zly.rivulet.mysql.model;
 
 import zly.rivulet.base.definer.annotations.Comment;
 import zly.rivulet.base.definer.annotations.PrimaryKey;

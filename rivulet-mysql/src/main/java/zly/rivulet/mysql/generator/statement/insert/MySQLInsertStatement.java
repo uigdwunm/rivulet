@@ -1,5 +1,6 @@
 package zly.rivulet.mysql.generator.statement.insert;
 
+import zly.rivulet.base.describer.param.ParamCheckType;
 import zly.rivulet.base.generator.param_manager.for_model_meta.ModelBatchParamManager;
 import zly.rivulet.base.generator.param_manager.for_proxy_method.CommonParamManager;
 import zly.rivulet.base.utils.Constant;
@@ -10,7 +11,6 @@ import zly.rivulet.mysql.generator.statement.param.SQLParamStatement;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.insert.ColumnItemDefinition;
 import zly.rivulet.sql.definition.insert.SQLInsertDefinition;
-import zly.rivulet.sql.describer.param.SqlParamCheckType;
 import zly.rivulet.sql.generator.SqlStatementFactory;
 import zly.rivulet.sql.generator.statement.SqlStatement;
 
@@ -130,7 +130,7 @@ public class MySQLInsertStatement extends SqlStatement {
                 List<List<SingleValueElementStatement>> valuesStatement;
                 if (paramManager != null) {
                     List<SingleValueElementStatement> singleValueElementStatementList = columnItemDefinitionList.stream()
-                        .map(columnItemDefinition -> (SingleValueElementStatement) new SQLParamStatement(paramManager.getStatement(columnItemDefinition.getForModelMetaParamReceipt()), SqlParamCheckType.NATURE))
+                        .map(columnItemDefinition -> (SingleValueElementStatement) new SQLParamStatement(paramManager.getStatement(columnItemDefinition.getForModelMetaParamReceipt()), ParamCheckType.NATURE))
                         .collect(Collectors.toList());
                     valuesStatement = Collections.singletonList(singleValueElementStatementList);
                 } else {
@@ -139,7 +139,7 @@ public class MySQLInsertStatement extends SqlStatement {
                         .map(model -> {
                             CommonParamManager subParamManager = batchParamManager.createCommonParamManager(model);
                             return columnItemDefinitionList.stream()
-                                .map(columnItemDefinition -> (SingleValueElementStatement) new SQLParamStatement(subParamManager.getStatement(columnItemDefinition.getForModelMetaParamReceipt()), SqlParamCheckType.NATURE))
+                                .map(columnItemDefinition -> (SingleValueElementStatement) new SQLParamStatement(subParamManager.getStatement(columnItemDefinition.getForModelMetaParamReceipt()), ParamCheckType.NATURE))
                                 .collect(Collectors.toList());
                         }).collect(Collectors.toList());
                 }

@@ -5,8 +5,8 @@ import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.definition.param.ParamReceipt;
 import zly.rivulet.base.describer.param.Param;
+import zly.rivulet.base.describer.param.ParamCheckType;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
-import zly.rivulet.sql.describer.param.SqlParamCheckType;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 public class ColumnItemDefinition extends AbstractDefinition {
@@ -26,7 +26,7 @@ public class ColumnItemDefinition extends AbstractDefinition {
             Param.of(
                 fieldMeta.getFieldType(),
                 fieldMeta.getFieldName(),
-                SqlParamCheckType.NATURE
+                ParamCheckType.NATURE
             )
         );
         this.sqlFieldMeta = fieldMeta;

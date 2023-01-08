@@ -1,4 +1,4 @@
-package zly.rivulet.mysql.example.model;
+package zly.rivulet.mysql.model;
 
 import zly.rivulet.mysql.definer.annotations.type.date.MySQLDatetime;
 import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLBigInt;

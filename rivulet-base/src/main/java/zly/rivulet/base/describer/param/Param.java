@@ -36,6 +36,10 @@ public abstract class Param<C> implements SingleValueElementDesc<C, C> {
         return paramCheckType;
     }
 
+    public static <C> Param<C> of(Class<C> clazz, String pathKey) {
+        return new StandardParam<>(clazz, pathKey, ParamCheckType.NATURE);
+    }
+
     public static <C> Param<C> of(Class<C> clazz, String pathKey, ParamCheckType paramCheckType) {
         return new StandardParam<>(clazz, pathKey, paramCheckType);
     }

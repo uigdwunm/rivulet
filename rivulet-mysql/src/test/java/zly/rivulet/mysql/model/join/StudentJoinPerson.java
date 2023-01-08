@@ -1,7 +1,7 @@
-package zly.rivulet.mysql.example.model.join;
+package zly.rivulet.mysql.model.join;
 
-import zly.rivulet.mysql.example.model.PersonDO;
-import zly.rivulet.mysql.example.model.StudentDO;
+import zly.rivulet.mysql.model.PersonDO;
+import zly.rivulet.mysql.model.StudentDO;
 import zly.rivulet.sql.describer.condition.JoinCondition;
 import zly.rivulet.sql.describer.join.ComplexDescriber;
 import zly.rivulet.sql.describer.join.QueryComplexModel;

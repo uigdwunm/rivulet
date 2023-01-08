@@ -1,4 +1,99 @@
-# JPAminus
+# rivulet（demo预览版）
+## 特性预览
+### 1、查询
+#### 准备表对象（必须有getter方法，这里节省篇幅省略）
+```java
+@SqlTable("t_province")
+public class ProvinceDO {
+
+    @PrimaryKey
+    @SqlColumn("省份code")
+    @MySQLInt
+    private Integer code;
+
+    @SqlColumn
+    @MySQLVarchar(length = 16)
+    @Comment("省份名称")
+    private String name;
+
+}
+```
+``` java
+@SqlTable("t_city")
+public class CityDO {
+
+    @PrimaryKey
+    @SqlColumn("code")
+    @MySQLInt
+    private Integer code;
+
+    @SqlColumn
+    @MySQLVarchar(length = 16)
+    @Comment("城市名称")
+    private String name;
+
+    @SqlColumn("province_code")
+    @MySQLInt
+    @Comment("所属省份code")
+    private Integer provinceCode;
+}
+```
+#### 查询映射原DO模型语句
+```java
+public class Desc {
+    @RivuletDesc("queryProvince")
+    public WholeDesc queryProvince() {
+        // 从参数中动态取值
+        Param<Integer> provinceCodeParam = Param.of(Integer.class, "provinceCode", ParamCheckType.NATURE);
+
+        return QueryBuilder.query(ProvinceDO.class, ProvinceDO.class)
+            .where(Condition.equalTo(CheckCondition.notNull(provinceCodeParam), ProvinceDO::getCode, provinceCodeParam))
+            .build();
+    }
+}
+```
+#### 联表查询
+准备一个联表模型，用于表之间的连接关系
+```java
+/**
+ * 联表对象需要继承QueryComplexModel
+ **/
+public class CityProvinceJoin implements QueryComplexModel {
+
+    private CityDO cityDO;
+
+    private ProvinceDO provinceDO;
+
+    @Override
+    public ComplexDescriber register() {
+        ComplexDescriber describer = ComplexDescriber.from(cityDO);
+
+        // 联表条件
+        describer.leftJoin(provinceDO).on(JoinCondition.equalTo(provinceDO::getCode, cityDO::getProvinceCode));
+
+        return describer;
+    }
+}
+```
+联表查询语句
+```java
+public class Desc {
+    @RivuletDesc("queryCityProvinceJoin")
+    public WholeDesc queryCityProvinceJoin() {
+        // 从参数中动态取值
+        Param<Integer> cityCodeParam = Param.of(Integer.class, "cityCode", ParamCheckType.NATURE);
+
+        return QueryBuilder.query(CityProvinceJoin.class, CityProvinceJoin.class)
+            .where(
+                Condition.equalTo(x -> x.getCityDO().getCode(), cityCodeParam)
+            ).build();
+    }
+}
+```
+
+
+
+
 一种简单的jpa实现
 
 // TODO sql长度极限怎么处理

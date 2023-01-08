@@ -1,23 +1,21 @@
 package zly.rivulet.mysql.example.config;
 
 import zly.rivulet.base.definer.annotations.RivuletDesc;
-import zly.rivulet.base.definer.annotations.RivuletDescConfig;
 import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.mysql.example.model.PersonDO;
+import zly.rivulet.base.describer.param.ParamCheckType;
+import zly.rivulet.mysql.model.PersonDO;
 import zly.rivulet.sql.describer.condition.Condition;
-import zly.rivulet.sql.describer.param.SqlParamCheckType;
 import zly.rivulet.sql.describer.query.QueryBuilder;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.query.desc.Mapping;
 
-@RivuletDescConfig
 public class PersonDescConfig {
 
     @RivuletDesc("queryById")
     public static SqlQueryMetaDesc<PersonDO, PersonDO> queryById() {
         return QueryBuilder.query(PersonDO.class, PersonDO.class)
             .where(
-                Condition.equalTo(PersonDO::getId, Param.of(Long.class, "id", SqlParamCheckType.PLACEHOLDER))
+                Condition.equalTo(PersonDO::getId, Param.of(Long.class, "id", ParamCheckType.PLACEHOLDER))
             ).build();
     }
 
@@ -29,11 +27,11 @@ public class PersonDescConfig {
                 Mapping.of(PersonDO::setName, PersonDO::getName)
             )
             .where(
-                Condition.equalTo(PersonDO::getGender, Param.of(Boolean.class, "gender", SqlParamCheckType.PLACEHOLDER)),
+                Condition.equalTo(PersonDO::getGender, Param.of(Boolean.class, "gender", ParamCheckType.PLACEHOLDER)),
                 Condition.or(
-                    Condition.equalTo(PersonDO::getId, Param.of(Long.class, "aid", SqlParamCheckType.PLACEHOLDER)),
-                    Condition.equalTo(PersonDO::getId, Param.of(Long.class, "bid", SqlParamCheckType.PLACEHOLDER)),
-                    Condition.equalTo(PersonDO::getId, Param.of(Long.class, "cid", SqlParamCheckType.PLACEHOLDER))
+                    Condition.equalTo(PersonDO::getId, Param.of(Long.class, "aid", ParamCheckType.PLACEHOLDER)),
+                    Condition.equalTo(PersonDO::getId, Param.of(Long.class, "bid", ParamCheckType.PLACEHOLDER)),
+                    Condition.equalTo(PersonDO::getId, Param.of(Long.class, "cid", ParamCheckType.PLACEHOLDER))
                 )
             ).build();
     }

@@ -1,4 +1,4 @@
-package zly.rivulet.mysql.example.model.vo;
+package zly.rivulet.mysql.model.vo;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

@@ -6,10 +6,10 @@ import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.describer.param.Param;
+import zly.rivulet.base.describer.param.ParamCheckType;
 import zly.rivulet.base.utils.ClassUtils;
 import zly.rivulet.base.utils.Constant;
 import zly.rivulet.sql.assigner.SQLUpdateResultAssigner;
-import zly.rivulet.sql.describer.join.QueryComplexModel;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.SQLBlueprint;
@@ -20,7 +20,7 @@ import zly.rivulet.sql.definition.query.operate.AndOperateDefinition;
 import zly.rivulet.sql.definition.query.operate.EqOperateDefinition;
 import zly.rivulet.sql.describer.condition.ConditionContainer;
 import zly.rivulet.sql.describer.delete.SqlDeleteMetaDesc;
-import zly.rivulet.sql.describer.param.SqlParamCheckType;
+import zly.rivulet.sql.describer.join.QueryComplexModel;
 import zly.rivulet.sql.exception.SQLDescDefineException;
 import zly.rivulet.sql.parser.SQLAliasManager;
 import zly.rivulet.sql.parser.SqlParser;
@@ -84,7 +84,7 @@ public class SqlDeleteDefinition extends SQLBlueprint {
 
         this.fromDefinition = new FromDefinition(toolbox);
 
-        Param<?> mainIdParam = Param.of(primaryKey.getFieldType(), Constant.MAIN_ID, SqlParamCheckType.NATURE);
+        Param<?> mainIdParam = Param.of(primaryKey.getFieldType(), Constant.MAIN_ID, ParamCheckType.NATURE);
         FromNode fromNode = queryProxyNode.getFromNodeList().get(0);
         this.whereDefinition = new WhereDefinition(
             toolbox,

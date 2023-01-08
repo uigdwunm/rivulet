@@ -5,7 +5,6 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import zly.rivulet.base.RivuletManager;
 import zly.rivulet.base.definer.annotations.RivuletDesc;
-import zly.rivulet.base.definer.annotations.RivuletDescConfig;
 import zly.rivulet.base.definer.annotations.RivuletMapper;
 import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.describer.WholeDesc;
@@ -54,32 +53,26 @@ public class DefaultWarehouseManager implements WarehouseManager {
      * Date 2022/7/23 11:49
      **/
     private void putInStorage(Class<?> clazz) {
-        RivuletDescConfig rivuletDescConfig = clazz.getAnnotation(RivuletDescConfig.class);
-        if (rivuletDescConfig != null) {
-            // 是配置类
-            try {
-                Object o = clazz.newInstance();
-                for (Method method : clazz.getMethods()) {
-                    RivuletDesc rivuletDesc = method.getAnnotation(RivuletDesc.class);
-                    if (rivuletDesc != null) {
-                        // 是配置类
-                        String key = rivuletDesc.value();
-                        WholeDesc wholeDesc = (WholeDesc) method.invoke(o);
-                        wholeDesc.setAnnotation(rivuletDesc);
-                        key_wholeDesc_map.put(key, wholeDesc);
-                    }
-                }
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            // 可能是代理方法类，挨个检查代理方法
+        try {
+            Object o = null;
             for (Method method : clazz.getMethods()) {
-                RivuletMapper rivuletQueryMapper = method.getAnnotation(RivuletMapper.class);
-                if (rivuletQueryMapper != null) {
+                RivuletDesc rivuletDesc ;
+                RivuletMapper rivuletQueryMapper;
+                if ((rivuletDesc = method.getAnnotation(RivuletDesc.class)) != null) {
+                    // 是配置类
+                    String key = rivuletDesc.value();
+                    if (o == null) {
+                        o = clazz.newInstance();
+                    }
+                    WholeDesc wholeDesc = (WholeDesc) method.invoke(o);
+                    wholeDesc.setAnnotation(rivuletDesc);
+                    key_wholeDesc_map.put(key, wholeDesc);
+                } else if ((rivuletQueryMapper = method.getAnnotation(RivuletMapper.class)) != null) {
                     key_mapper_map.put(rivuletQueryMapper.value(), method);
                 }
             }
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
         }
     }
 

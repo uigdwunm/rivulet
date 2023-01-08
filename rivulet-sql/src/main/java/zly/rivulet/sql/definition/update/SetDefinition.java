@@ -4,11 +4,11 @@ import zly.rivulet.base.definition.AbstractContainerDefinition;
 import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.describer.param.Param;
+import zly.rivulet.base.describer.param.ParamCheckType;
 import zly.rivulet.base.utils.View;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
-import zly.rivulet.sql.describer.param.SqlParamCheckType;
 import zly.rivulet.sql.describer.query.desc.Mapping;
 import zly.rivulet.sql.parser.proxy_node.FromNode;
 import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
@@ -43,7 +43,7 @@ public class SetDefinition extends AbstractContainerDefinition {
                 return new SetItemDefinition(
                     toolbox,
                     new MapDefinition((SQLFieldMeta) fieldMeta, fromNode.getAliasFlag(), null),
-                    Param.of(fieldMeta.getFieldType(), fieldMeta.getFieldName(), SqlParamCheckType.NATURE)
+                    Param.of(fieldMeta.getFieldType(), fieldMeta.getFieldName(), ParamCheckType.NATURE)
                 );
             }).collect(Collectors.toList());
         this.setItemDefinitionView = View.create(list);

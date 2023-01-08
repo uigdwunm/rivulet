@@ -46,6 +46,10 @@ public interface Condition<F, C> {
         return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, ConditionOperate.EQ, rightElement);
     }
 
+    static <F, C> Condition<F, C> equalTo(CheckCondition checkCondition, FieldMapping<F, C> leftElement, Param<C> rightElement) {
+        return new ConditionElement<>(checkCondition, leftElement, ConditionOperate.EQ, rightElement);
+    }
+
     static <F, C> Condition<F, C> between(FieldMapping<F, C> leftElement, Param<C> beforeElement, Param<C> afterElement) {
         return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, ConditionOperate.BETWEEN, beforeElement, afterElement);
     }

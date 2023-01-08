@@ -2,30 +2,29 @@ package zly.rivulet.sql.definition.param;
 
 import zly.rivulet.base.convertor.StatementConvertor;
 import zly.rivulet.base.definition.param.PathKeyParamReceipt;
-import zly.rivulet.base.describer.param.Param;
+import zly.rivulet.base.describer.param.ParamCheckType;
 import zly.rivulet.base.describer.param.StandardParam;
-import zly.rivulet.sql.describer.param.SqlParamCheckType;
 
 public class SQLParamReceipt extends PathKeyParamReceipt {
 
     private final StandardParam<?> originDesc;
 
     // 拼接方式
-    private final SqlParamCheckType sqlParamCheckType;
+    private final ParamCheckType sqlParamCheckType;
 
     public SQLParamReceipt(StandardParam<?> paramDesc, StatementConvertor<?> convertor) {
         super(paramDesc.getPathKey(), paramDesc.getParamType(), convertor);
         this.originDesc = paramDesc;
         if (paramDesc.getParamCheckType() != null) {
-            this.sqlParamCheckType = (SqlParamCheckType) paramDesc.getParamCheckType();
+            this.sqlParamCheckType = (ParamCheckType) paramDesc.getParamCheckType();
         } else {
-            this.sqlParamCheckType = SqlParamCheckType.PLACEHOLDER;
+            this.sqlParamCheckType = ParamCheckType.PLACEHOLDER;
         }
 
 
     }
 
-    public SqlParamCheckType getSqlParamCheckType() {
+    public ParamCheckType getSqlParamCheckType() {
         return sqlParamCheckType;
     }
 

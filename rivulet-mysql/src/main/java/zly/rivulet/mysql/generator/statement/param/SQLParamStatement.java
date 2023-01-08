@@ -1,15 +1,13 @@
 package zly.rivulet.mysql.generator.statement.param;
 
 import zly.rivulet.base.definition.param.StaticParamReceipt;
-import zly.rivulet.base.describer.param.Param;
+import zly.rivulet.base.describer.param.ParamCheckType;
 import zly.rivulet.base.describer.param.StandardParam;
-import zly.rivulet.base.describer.param.StaticParam;
 import zly.rivulet.base.generator.param_manager.for_proxy_method.CommonParamManager;
 import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.statement.SingleValueElementStatement;
 import zly.rivulet.sql.definition.param.SQLParamReceipt;
-import zly.rivulet.sql.describer.param.SqlParamCheckType;
 import zly.rivulet.sql.generator.SqlStatementFactory;
 import zly.rivulet.sql.utils.collector.SQLStatementCollector;
 
@@ -17,9 +15,9 @@ public class SQLParamStatement extends SingleValueElementStatement {
 
     private final String value;
 
-    private final SqlParamCheckType sqlParamCheckType;
+    private final ParamCheckType sqlParamCheckType;
 
-    public SQLParamStatement(String value, SqlParamCheckType sqlParamCheckType) {
+    public SQLParamStatement(String value, ParamCheckType sqlParamCheckType) {
         this.value = value;
         this.sqlParamCheckType = sqlParamCheckType;
     }
@@ -73,7 +71,7 @@ public class SQLParamStatement extends SingleValueElementStatement {
                 StaticParamReceipt staticParamReceipt = (StaticParamReceipt) definition;
                 Object paramValue = staticParamReceipt.getParamValue();
                 String value = staticParamReceipt.getConvertor().convert(paramValue);
-                return new SQLParamStatement(value, SqlParamCheckType.NATURE);
+                return new SQLParamStatement(value, ParamCheckType.NATURE);
             },
             (definition, helper) -> {
                 SQLParamReceipt sqlParamDefinition = (SQLParamReceipt) definition;

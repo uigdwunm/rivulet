@@ -9,7 +9,7 @@ import zly.rivulet.sql.definition.query.main.SelectDefinition;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
 import zly.rivulet.sql.parser.SQLAliasManager;
 
-public class DefaultAnalyzer implements Analyzer {
+public class DefaultSQLAnalyzer implements Analyzer {
     @Override
     public Blueprint analyze(Blueprint blueprint) {
         if (blueprint instanceof SqlQueryDefinition) {

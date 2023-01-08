@@ -113,10 +113,7 @@ public class SQLAliasManager {
             this.aliasMap.put(aliasFlag, alias + '_' + repeatCount);
         }
 
-        String shortAlias = this.generateShortAlias(repeatAlias, repeatCount);
-        while (repeatAlias.containsKey(shortAlias)) {
-            shortAlias = this.generateShortAlias(repeatAlias, ++repeatCount);
-        }
+        String shortAlias = this.generateShortAlias(shortAliasMap);
         shortAliasMap.put(aliasFlag, shortAlias);
     }
 
@@ -127,22 +124,18 @@ public class SQLAliasManager {
      * @author zhaolaiyuan
      * Date 2022/10/6 11:30
      **/
-    private String generateShortAlias(Map<String, Integer> repeatAlias, int repeatCount) {
-        int tableCount = repeatAlias.size();
+    private String generateShortAlias(Map<AliasFlag, String> shortAliasMap) {
+        int tableCount = shortAliasMap.size();
         String shortName;
         if (tableCount < 26) {
-            shortName = String.valueOf((char) (tableCount - 1 + 'a'));
+            shortName = String.valueOf((char) (tableCount + 'a'));
         } else {
             // 最高支持一个查询里有 26*26 个表
             int aa = tableCount / 26;
             int bb = tableCount % 26;
             shortName = "" + (char) aa + (char) bb;
         }
-        if (repeatCount == 0) {
-            return shortName;
-        } else {
-            return shortName + '_' + repeatCount;
-        }
+        return shortName;
 
     }
 

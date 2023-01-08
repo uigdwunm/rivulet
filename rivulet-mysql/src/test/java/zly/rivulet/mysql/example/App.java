@@ -14,9 +14,9 @@ import zly.rivulet.base.warehouse.DefaultWarehouseManager;
 import zly.rivulet.mysql.DefaultMySQLDataSourceRivuletManager;
 import zly.rivulet.mysql.MySQLRivulet;
 import zly.rivulet.mysql.MySQLRivuletProperties;
-import zly.rivulet.mysql.example.model.PersonDO;
+import zly.rivulet.mysql.model.PersonDO;
 import zly.rivulet.sql.describer.query.QueryBuilder;
-import zly.rivulet.sql.parser.analyzer.DefaultAnalyzer;
+import zly.rivulet.sql.parser.analyzer.DefaultSQLAnalyzer;
 
 import javax.sql.DataSource;
 import java.time.LocalDate;
@@ -63,7 +63,7 @@ public class App {
         });
         Parser parser = rivuletManager.getParser();
         MySQLRivulet rivulet = rivuletManager.getRivulet();
-        parser.addAnalyzer(new DefaultAnalyzer());
+        parser.addAnalyzer(new DefaultSQLAnalyzer());
         PersonDO p1 = new PersonDO();
         p1.setName("李小兰");
         p1.setBirthday(LocalDate.of(2022, Month.AUGUST, 12));
