@@ -10,7 +10,7 @@ import zly.rivulet.sql.generator.statement.SqlStatement;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MySqlQueryStatement extends QueryFromStatement {
+public class MySqlQueryStatement extends SqlStatement implements QueryFromStatement {
 
     private final SqlQueryDefinition definition;
 

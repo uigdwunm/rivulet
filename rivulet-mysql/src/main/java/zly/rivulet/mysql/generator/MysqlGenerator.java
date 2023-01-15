@@ -15,6 +15,8 @@ import zly.rivulet.base.utils.RelationSwitch;
 import zly.rivulet.mysql.MySQLRivuletProperties;
 import zly.rivulet.mysql.generator.statement.ModelFromStatement;
 import zly.rivulet.mysql.generator.statement.MySQLFieldStatement;
+import zly.rivulet.mysql.generator.statement.SQLCustomStatement;
+import zly.rivulet.mysql.generator.statement.SQLFunctionStatement;
 import zly.rivulet.mysql.generator.statement.delete.MySQLDeleteStatement;
 import zly.rivulet.mysql.generator.statement.insert.ColumnItemStatement;
 import zly.rivulet.mysql.generator.statement.insert.MySQLInsertStatement;
@@ -112,6 +114,9 @@ public class MysqlGenerator implements Generator {
     private void registerStatement(SqlStatementFactory sqlStatementFactory) {
         SQLParamStatement.registerToFactory(sqlStatementFactory);
 
+        SQLCustomStatement.registerToFactory(sqlStatementFactory);
+        SQLFunctionStatement.registerToFactory(sqlStatementFactory);
+
         MySqlQueryStatement.registerToFactory(sqlStatementFactory);
         SelectStatement.registerToFactory(sqlStatementFactory);
         ModelFromStatement.registerToFactory(sqlStatementFactory);
@@ -127,6 +132,9 @@ public class MysqlGenerator implements Generator {
         InOperateStatement.registerToFactory(sqlStatementFactory);
         AndOperateStatement.registerToFactory(sqlStatementFactory);
         OrOperateStatement.registerToFactory(sqlStatementFactory);
+
+        OrderByStatement.registerToFactory(sqlStatementFactory);
+        SortItemStatement.registerToFactory(sqlStatementFactory);
 
         MySQLInsertStatement.registerToFactory(sqlStatementFactory);
 

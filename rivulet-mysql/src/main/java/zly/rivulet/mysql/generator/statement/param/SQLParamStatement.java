@@ -9,9 +9,10 @@ import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.statement.SingleValueElementStatement;
 import zly.rivulet.sql.definition.param.SQLParamReceipt;
 import zly.rivulet.sql.generator.SqlStatementFactory;
+import zly.rivulet.sql.generator.statement.SqlStatement;
 import zly.rivulet.sql.utils.collector.SQLStatementCollector;
 
-public class SQLParamStatement extends SingleValueElementStatement {
+public class SQLParamStatement extends SqlStatement implements SingleValueElementStatement {
 
     private final String value;
 
@@ -39,6 +40,11 @@ public class SQLParamStatement extends SingleValueElementStatement {
                 collector.append(value);
                 return;
         }
+    }
+
+    @Override
+    public void singleCollectStatement(StatementCollector collector) {
+        collectStatement(collector);
     }
 
     @Override

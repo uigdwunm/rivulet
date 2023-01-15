@@ -9,7 +9,7 @@ import zly.rivulet.sql.generator.SqlStatementFactory;
 import zly.rivulet.sql.generator.statement.SqlStatement;
 import zly.rivulet.sql.parser.SQLAliasManager;
 
-public class MapStatement extends SingleValueElementStatement {
+public class MapStatement extends SqlStatement implements SingleValueElementStatement {
 
     private final SingleValueElementStatement value;
 

@@ -15,7 +15,7 @@ public class PersonDescConfig {
     public static SqlQueryMetaDesc<PersonDO, PersonDO> queryById() {
         return QueryBuilder.query(PersonDO.class, PersonDO.class)
             .where(
-                Condition.equalTo(PersonDO::getId, Param.of(Long.class, "id", ParamCheckType.PLACEHOLDER))
+                Condition.EqualTo.of(PersonDO::getId, Param.of(Long.class, "id", ParamCheckType.PLACEHOLDER))
             ).build();
     }
 
@@ -27,11 +27,11 @@ public class PersonDescConfig {
                 Mapping.of(PersonDO::setName, PersonDO::getName)
             )
             .where(
-                Condition.equalTo(PersonDO::getGender, Param.of(Boolean.class, "gender", ParamCheckType.PLACEHOLDER)),
+                Condition.EqualTo.of(PersonDO::getGender, Param.of(Boolean.class, "gender", ParamCheckType.PLACEHOLDER)),
                 Condition.or(
-                    Condition.equalTo(PersonDO::getId, Param.of(Long.class, "aid", ParamCheckType.PLACEHOLDER)),
-                    Condition.equalTo(PersonDO::getId, Param.of(Long.class, "bid", ParamCheckType.PLACEHOLDER)),
-                    Condition.equalTo(PersonDO::getId, Param.of(Long.class, "cid", ParamCheckType.PLACEHOLDER))
+                    Condition.EqualTo.of(PersonDO::getId, Param.of(Long.class, "aid", ParamCheckType.PLACEHOLDER)),
+                    Condition.EqualTo.of(PersonDO::getId, Param.of(Long.class, "bid", ParamCheckType.PLACEHOLDER)),
+                    Condition.EqualTo.of(PersonDO::getId, Param.of(Long.class, "cid", ParamCheckType.PLACEHOLDER))
                 )
             ).build();
     }

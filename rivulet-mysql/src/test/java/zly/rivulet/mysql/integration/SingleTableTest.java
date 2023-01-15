@@ -13,6 +13,7 @@ import zly.rivulet.base.generator.Fish;
 import zly.rivulet.base.warehouse.DefaultWarehouseManager;
 import zly.rivulet.mysql.DefaultMySQLDataSourceRivuletManager;
 import zly.rivulet.mysql.MySQLRivuletProperties;
+import zly.rivulet.mysql.discriber.function.MySQLFunction;
 import zly.rivulet.mysql.model.PersonDO;
 import zly.rivulet.mysql.model.ProvinceDO;
 import zly.rivulet.mysql.util.MySQLPrintUtils;
@@ -33,12 +34,21 @@ public class SingleTableTest extends BaseTest {
 
         return QueryBuilder.query(PersonDO.class, PersonDO.class)
             .where(
-                Condition.EqualTo.of(PersonDO::getName, Param.staticOf("小明")),
+                Condition.EqualTo.of(MySQLFunction.Arithmetical.add(PersonDO::getId, PersonDO::getId), Param.staticOf(666)),
                 Condition.between(PersonDO::getBirthday, Param.staticOf(start), Param.staticOf(end))
             )
             .orderBy(SortItem.asc(PersonDO::getGender))
             .limit(Param.staticOf(999))
             .build();
+    }
+
+
+    @Test
+    public void query11() {
+        RivuletManager rivuletManager = createDefaultRivuletManager();
+        Fish fish = rivuletManager.testParse("queryPersonTestDesc1");
+        String statement = MySQLPrintUtils.commonPrint(fish);
+        System.out.println(statement);
     }
 
     @RivuletDesc("queryProvince")

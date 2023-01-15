@@ -4,8 +4,9 @@ import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.definer.MySQLModelMeta;
 import zly.rivulet.mysql.generator.statement.query.QueryFromStatement;
 import zly.rivulet.sql.generator.SqlStatementFactory;
+import zly.rivulet.sql.generator.statement.SqlStatement;
 
-public class ModelFromStatement extends QueryFromStatement {
+public class ModelFromStatement extends SqlStatement implements QueryFromStatement {
 
     private final MySQLModelMeta mySQLModelMeta;
 
@@ -24,6 +25,11 @@ public class ModelFromStatement extends QueryFromStatement {
     @Override
     public void collectStatement(StatementCollector collector) {
         collector.append(tableName);
+    }
+
+    @Override
+    public void singleCollectStatement(StatementCollector collector) {
+        collectStatement(collector);
     }
 
     @Override

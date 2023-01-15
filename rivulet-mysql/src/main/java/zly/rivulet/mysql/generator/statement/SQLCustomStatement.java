@@ -39,7 +39,7 @@ public class SQLCustomStatement extends SqlStatement {
     public static class SQLCustomSingleValueWrap implements CustomSingleValueWrap {
         private final SingleValueElementStatement singleValueElementStatement;
 
-        private SQLCustomSingleValueWrap(SingleValueElementStatement singleValueElementStatement) {
+        protected SQLCustomSingleValueWrap(SingleValueElementStatement singleValueElementStatement) {
             this.singleValueElementStatement = singleValueElementStatement;
         }
 
@@ -70,6 +70,5 @@ public class SQLCustomStatement extends SqlStatement {
                 return new SQLCustomStatement(singleValueList, sqlCustomDefinition.getCustomCollect());
             };
         sqlStatementFactory.register(SQLCustomDefinition.class, statementInitCreator, statementRunCreator);
-        sqlStatementFactory.register(SQLFunctionDefinition.class, statementInitCreator, statementRunCreator);
     }
 }

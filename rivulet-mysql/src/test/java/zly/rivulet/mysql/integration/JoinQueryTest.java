@@ -30,7 +30,7 @@ public class JoinQueryTest extends BaseTest {
 
         return QueryBuilder.query(CityProvinceJoin.class, CityProvinceJoin.class)
             .where(
-                Condition.equalTo(x -> x.getCityDO().getCode(), cityCodeParam)
+                Condition.EqualTo.of(x -> x.getCityDO().getCode(), cityCodeParam)
             ).build();
     }
 
@@ -46,7 +46,7 @@ public class JoinQueryTest extends BaseTest {
                 Mapping.of(CityInfo::setProvinceCode, x -> x.getProvinceDO().getCode()),
                 Mapping.of(CityInfo::setProvinceName, x -> x.getProvinceDO().getName())
             )
-            .where(Condition.equalTo(x -> x.getCityDO().getCode(), cityCodeParam))
+            .where(Condition.EqualTo.of(x -> x.getCityDO().getCode(), cityCodeParam))
             .build();
     }
 
