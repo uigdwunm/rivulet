@@ -10,7 +10,7 @@ import zly.rivulet.base.describer.SingleValueElementDesc;
  * @author zhaolaiyuan
  * Date 2021/9/20 11:53
  **/
-public abstract class Param<C> implements SingleValueElementDesc<C, C> {
+public abstract class Param<C> implements SingleValueElementDesc<Void, C> {
 
     private final Class<C> paramType;
 

@@ -4,6 +4,8 @@ import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.param.Param;
+import zly.rivulet.sql.describer.function.Function;
+import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 
 import java.util.Arrays;
 
@@ -20,6 +22,71 @@ public interface Condition<F, C> {
     static <F> ConditionContainer<F, ?> or(Condition<F, ?>... items) {
         return new ConditionContainer.OR<>(Arrays.asList(items));
     }
+
+
+    interface EqualTo {
+
+        static <F, C> Condition<F, C> of(FieldMapping<F, C> leftElement, FieldMapping<F, C> rightElement) {
+            return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, ConditionOperate.EQ, rightElement);
+        }
+
+        static <F, C> Condition<F, C> of(Function<F, C> leftElement, Function<F, C> rightElement) {
+            return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, ConditionOperate.EQ, rightElement);
+        }
+
+        static <F, C> Condition<F, C> of(Function<F, C> leftElement, Param<C> rightElement) {
+            return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, ConditionOperate.EQ, rightElement);
+        }
+
+        static <F, C> Condition<F, C> of(FieldMapping<F, C> leftElement, Function<F, C> rightElement) {
+            return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, ConditionOperate.EQ, rightElement);
+        }
+
+        static <F, C> Condition<F, C> of(FieldMapping<F, C> leftElement, Param<C> rightElement) {
+            return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, ConditionOperate.EQ, rightElement);
+        }
+
+        static <F, C> Condition<F, C> of(FieldMapping<F, C> leftElement, SqlQueryMetaDesc<F, C> rightElement) {
+            return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, ConditionOperate.EQ, rightElement);
+        }
+
+
+        static <F, C> Condition<F, C> of(CheckCondition checkCondition, FieldMapping<F, C> leftElement, FieldMapping<F, C> rightElement) {
+            return new ConditionElement<>(checkCondition, leftElement, ConditionOperate.EQ, rightElement);
+        }
+
+        static <F, C> Condition<F, C> of(CheckCondition checkCondition, Function<F, C> leftElement, Function<F, C> rightElement) {
+            return new ConditionElement<>(checkCondition, leftElement, ConditionOperate.EQ, rightElement);
+        }
+
+        static <F, C> Condition<F, C> of(CheckCondition checkCondition, Function<F, C> leftElement, Param<C> rightElement) {
+            return new ConditionElement<>(checkCondition, leftElement, ConditionOperate.EQ, rightElement);
+        }
+
+        static <F, C> Condition<F, C> of(CheckCondition checkCondition, FieldMapping<F, C> leftElement, Function<F, C> rightElement) {
+            return new ConditionElement<>(checkCondition, leftElement, ConditionOperate.EQ, rightElement);
+        }
+
+        static <F, C> Condition<F, C> of(CheckCondition checkCondition, FieldMapping<F, C> leftElement, Param<C> rightElement) {
+            return new ConditionElement<>(checkCondition, leftElement, ConditionOperate.EQ, rightElement);
+        }
+
+        static <F, C> Condition<F, C> of(CheckCondition checkCondition, FieldMapping<F, C> leftElement, SqlQueryMetaDesc<F, C> rightElement) {
+            return new ConditionElement<>(checkCondition, leftElement, ConditionOperate.EQ, rightElement);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
     static <F, C> Condition<F, C> notNull(SingleValueElementDesc<F, C> leftElement, CheckCondition checkCondition) {
         return new ConditionElement<>(checkCondition, leftElement, ConditionOperate.NOT_NULL);
@@ -38,17 +105,6 @@ public interface Condition<F, C> {
 //        return new Condition<>(CheckCondition.IS_TRUE, leftElement, ConditionOperate.EQ, rightElement1);
 //    }
 
-    static <F, C> Condition<F, C> equalTo(FieldMapping<F, C> leftElement, FieldMapping<F, C> rightElement) {
-        return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, ConditionOperate.EQ, rightElement);
-    }
-
-    static <F, C> Condition<F, C> equalTo(FieldMapping<F, C> leftElement, Param<C> rightElement) {
-        return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, ConditionOperate.EQ, rightElement);
-    }
-
-    static <F, C> Condition<F, C> equalTo(CheckCondition checkCondition, FieldMapping<F, C> leftElement, Param<C> rightElement) {
-        return new ConditionElement<>(checkCondition, leftElement, ConditionOperate.EQ, rightElement);
-    }
 
     static <F, C> Condition<F, C> between(FieldMapping<F, C> leftElement, Param<C> beforeElement, Param<C> afterElement) {
         return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, ConditionOperate.BETWEEN, beforeElement, afterElement);

@@ -33,7 +33,7 @@ public class SingleTableTest extends BaseTest {
 
         return QueryBuilder.query(PersonDO.class, PersonDO.class)
             .where(
-                Condition.equalTo(PersonDO::getName, Param.staticOf("小明")),
+                Condition.EqualTo.of(PersonDO::getName, Param.staticOf("小明")),
                 Condition.between(PersonDO::getBirthday, Param.staticOf(start), Param.staticOf(end))
             )
             .orderBy(SortItem.asc(PersonDO::getGender))
@@ -48,9 +48,8 @@ public class SingleTableTest extends BaseTest {
 
         return QueryBuilder.query(ProvinceDO.class, ProvinceDO.class)
             .where(
-                Condition.equalTo(CheckCondition.notNull(provinceCodeParam), ProvinceDO::getCode, provinceCodeParam)
-            )
-            .build();
+                Condition.EqualTo.of(CheckCondition.notNull(provinceCodeParam), ProvinceDO::getCode, provinceCodeParam)
+            ).build();
     }
 
 
