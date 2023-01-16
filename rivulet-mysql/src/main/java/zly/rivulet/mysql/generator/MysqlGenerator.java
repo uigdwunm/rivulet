@@ -136,6 +136,8 @@ public class MysqlGenerator implements Generator {
         OrderByStatement.registerToFactory(sqlStatementFactory);
         SortItemStatement.registerToFactory(sqlStatementFactory);
 
+        LimitStatement.registerToFactory(sqlStatementFactory);
+
         MySQLInsertStatement.registerToFactory(sqlStatementFactory);
 
         ColumnItemStatement.registerToFactory(sqlStatementFactory);

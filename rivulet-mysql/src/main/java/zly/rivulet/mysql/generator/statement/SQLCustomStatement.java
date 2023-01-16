@@ -45,7 +45,7 @@ public class SQLCustomStatement extends SqlStatement {
 
         @Override
         public void collectSingleValue(StatementCollector collector) {
-            singleValueElementStatement.singleCollectStatement(collector);
+            singleValueElementStatement.collectStatementOrCache(collector);
         }
     }
 

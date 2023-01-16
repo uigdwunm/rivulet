@@ -23,16 +23,6 @@ public class MySQLFieldStatement extends SqlStatement implements SingleValueElem
         collector.append(mySQLFieldMeta.getOriginName());
     }
 
-    @Override
-    public void singleCollectStatement(StatementCollector collector) {
-        collectStatement(collector);
-    }
-
-    @Override
-    public int singleValueLength() {
-        return this.length();
-    }
-
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
             MySQLFieldMeta.class,

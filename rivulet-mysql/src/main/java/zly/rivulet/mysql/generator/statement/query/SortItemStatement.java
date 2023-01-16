@@ -19,12 +19,12 @@ public class SortItemStatement extends SqlStatement {
     }
     @Override
     protected int length() {
-        return value.singleValueLength() + 1 + sortType.name().length();
+        return value.getLengthOrCache() + 1 + sortType.name().length();
     }
 
     @Override
     public void collectStatement(StatementCollector collector) {
-        value.singleCollectStatement(collector);
+        value.collectStatementOrCache(collector);
         collector.space().append(sortType.name());
     }
 

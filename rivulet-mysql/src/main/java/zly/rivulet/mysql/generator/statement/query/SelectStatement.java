@@ -26,14 +26,14 @@ public class SelectStatement extends SqlStatement {
     protected int length() {
         return SELECT.length() +
             mapStatementList.size() - 1 +
-            mapStatementList.stream().map(MapStatement::getLengthOrCache).reduce(0, Integer::sum);
+            mapStatementList.stream().map(MapStatement::selectItemLength).reduce(0, Integer::sum);
     }
 
     @Override
     public void collectStatement(StatementCollector collector) {
         collector.append(SELECT);
         for (MapStatement mapStatement : collector.createJoiner(Constant.COMMA, mapStatementList)) {
-            mapStatement.collectStatement(collector);
+            mapStatement.selectItemCollectStatement(collector);
         }
     }
 

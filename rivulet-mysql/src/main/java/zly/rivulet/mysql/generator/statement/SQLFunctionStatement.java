@@ -2,7 +2,6 @@ package zly.rivulet.mysql.generator.statement;
 
 import zly.rivulet.base.describer.custom.CustomCollector;
 import zly.rivulet.base.describer.custom.CustomSingleValueWrap;
-import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.sql.definition.SQLCustomDefinition;
 import zly.rivulet.sql.definition.function.SQLFunctionDefinition;
 import zly.rivulet.sql.generator.SqlStatementFactory;
@@ -16,16 +15,6 @@ public class SQLFunctionStatement extends SQLCustomStatement implements SingleVa
 
     public SQLFunctionStatement(List<CustomSingleValueWrap> singleValueList, BiConsumer<CustomCollector, List<CustomSingleValueWrap>> customCollect) {
         super(singleValueList, customCollect);
-    }
-
-    @Override
-    public void singleCollectStatement(StatementCollector collector) {
-        super.collectStatement(collector);
-    }
-
-    @Override
-    public int singleValueLength() {
-        return super.length();
     }
 
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {

@@ -36,30 +36,18 @@ public class MapStatement extends SqlStatement implements SingleValueElementStat
     }
 
     @Override
-    public void singleCollectStatement(StatementCollector collector) {
-        collector.append(referenceAlias).append(Constant.POINT_CHAR).append(this.alias);
-    }
-
-    @Override
-    public int singleValueLength() {
-        return referenceAlias.length() + 1 + this.alias.length();
-    }
-
-    @Override
     protected int length() {
         int length = 0;
         if (value instanceof MySqlQueryStatement) {
             length += 1;
-            length += value.singleValueLength();
+            length += value.getLengthOrCache();
             length += 1;
-            length += 1 + Constant.AS.length() + 1;
-            length += this.alias.length();
         } else if (StringUtil.isNotBlank(this.referenceAlias)) {
-            length += value.singleValueLength();
+            length += value.getLengthOrCache();
             length += 1 + Constant.AS.length();
             length += this.alias.length();
         } else {
-            length += value.singleValueLength();
+            length += value.getLengthOrCache();
         }
         return length;
     }
@@ -68,19 +56,31 @@ public class MapStatement extends SqlStatement implements SingleValueElementStat
     public void collectStatement(StatementCollector collector) {
         if (value instanceof MySqlQueryStatement) {
             collector.leftBracket();
-            value.singleCollectStatement(collector);
+            collector.append(value);
             collector.rightBracket();
         } else if (StringUtil.isNotBlank(this.referenceAlias)) {
             collector.append(this.referenceAlias).append(Constant.POINT_CHAR);
-            value.singleCollectStatement(collector);
+            collector.append(value);
         } else {
-            value.singleCollectStatement(collector);
+            collector.append(value);
         }
+    }
+
+    public void selectItemCollectStatement(StatementCollector collector) {
+        collectStatement(collector);
 
         if (StringUtil.isNotBlank(this.alias)) {
             collector.space().append(Constant.AS);
             collector.append(this.alias);
+        }
 
+    }
+
+    protected int selectItemLength() {
+        if (StringUtil.isNotBlank(this.alias)) {
+            return this.length() + 1 + Constant.AS.length() + this.alias.length();
+        } else {
+            return this.length();
         }
     }
 

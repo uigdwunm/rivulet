@@ -27,16 +27,6 @@ public class ModelFromStatement extends SqlStatement implements QueryFromStateme
         collector.append(tableName);
     }
 
-    @Override
-    public void singleCollectStatement(StatementCollector collector) {
-        collectStatement(collector);
-    }
-
-    @Override
-    public int singleValueLength() {
-        return this.length();
-    }
-
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
             MySQLModelMeta.class,

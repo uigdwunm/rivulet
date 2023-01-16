@@ -15,7 +15,7 @@ public class OrderByStatement extends SqlStatement {
 
     private final List<SortItemStatement> sortItemStatementList;
 
-    private final static String ORDER_BY = "ORDER BY";
+    private final static String ORDER_BY = "ORDER BY ";
 
     public OrderByStatement(OrderByDefinition orderByDefinition, List<SortItemStatement> sortItemStatementList) {
         this.orderByDefinition = orderByDefinition;

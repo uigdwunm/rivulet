@@ -42,17 +42,6 @@ public class SQLParamStatement extends SqlStatement implements SingleValueElemen
         }
     }
 
-    @Override
-    public void singleCollectStatement(StatementCollector collector) {
-        collectStatement(collector);
-    }
-
-    @Override
-    public int singleValueLength() {
-        return this.length();
-    }
-
-
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
             SQLParamReceipt.class,

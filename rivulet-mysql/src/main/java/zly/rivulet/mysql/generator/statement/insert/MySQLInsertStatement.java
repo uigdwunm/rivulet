@@ -82,7 +82,7 @@ public class MySQLInsertStatement extends SqlStatement {
         for (List<SingleValueElementStatement> singleValueStatements : collector.createJoiner(Constant.COMMA, values)) {
             collector.leftBracket();
             for (SingleValueElementStatement singleValueStatement : collector.createJoiner(Constant.COMMA, singleValueStatements)) {
-                singleValueStatement.singleCollectStatement(collector);
+                singleValueStatement.collectStatementOrCache(collector);
             }
             collector.rightBracket();
         }

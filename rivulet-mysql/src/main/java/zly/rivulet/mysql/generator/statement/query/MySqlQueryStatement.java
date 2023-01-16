@@ -26,18 +26,6 @@ public class MySqlQueryStatement extends SqlStatement implements QueryFromStatem
     }
 
     @Override
-    public void singleCollectStatement(StatementCollector collector) {
-        collector.leftBracket();
-        this.collectStatement(collector);
-        collector.rightBracket();
-    }
-
-    @Override
-    public int singleValueLength() {
-        return 1 + this.length() +1;
-    }
-
-    @Override
     protected int length() {
         int length = 0;
         length += this.subStatementList.size() - 1;

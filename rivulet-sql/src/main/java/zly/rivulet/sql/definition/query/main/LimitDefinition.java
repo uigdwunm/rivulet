@@ -22,6 +22,10 @@ public class LimitDefinition extends AbstractDefinition {
         this.limit = paramReceiptManager.registerParam(limit);
     }
 
+    public ParamReceipt getLimitParam() {
+        return limit;
+    }
+
     @Override
     public Copier copier() {
         return new Copier(limit);
