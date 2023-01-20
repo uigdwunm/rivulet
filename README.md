@@ -41,7 +41,6 @@ public class CityDO {
 #### 查询演示
 ```java
 public class QueryTest {
-
   /**
    * 预编写查询逻辑
    **/
