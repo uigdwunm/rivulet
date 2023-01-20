@@ -43,6 +43,19 @@ public class CityDO {
 public class QueryTest {
 
   /**
+   * 预编写查询逻辑
+   **/
+  @RivuletDesc("queryProvince")
+  public WholeDesc queryProvince() {
+    // 从参数中动态取值
+    Param<Integer> provinceCodeParam = Param.of(Integer.class, "provinceCode", ParamCheckType.NATURE);
+    // 查询语句
+    return QueryBuilder.query(ProvinceDO.class, ProvinceDO.class)
+            .where(Condition.equalTo(CheckCondition.notNull(provinceCodeParam), ProvinceDO::getCode, provinceCodeParam))
+            .build();
+  }
+
+  /**
    * 执行查询
    **/
   public void query() {
@@ -64,19 +77,6 @@ public class QueryTest {
       defaultWarehouseManager,
       createDataSource()
       );
-  }
-    
-    /**
-     * 预编写查询逻辑
-     **/
-  @RivuletDesc("queryProvince")
-  public WholeDesc queryProvince() {
-    // 从参数中动态取值
-    Param<Integer> provinceCodeParam = Param.of(Integer.class, "provinceCode", ParamCheckType.NATURE);
-    // 查询语句
-    return QueryBuilder.query(ProvinceDO.class, ProvinceDO.class)
-      .where(Condition.equalTo(CheckCondition.notNull(provinceCodeParam), ProvinceDO::getCode, provinceCodeParam))
-      .build();
   }
 }
 ```
