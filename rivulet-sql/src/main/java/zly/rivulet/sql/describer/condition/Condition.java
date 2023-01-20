@@ -10,6 +10,12 @@ import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import java.util.Arrays;
 
 public interface Condition<F, C> {
+    BinaryOperation EqualTo = new BinaryOperation() {
+        @Override
+        public ConditionOperate getConditionOperate() {
+            return ConditionOperate.EQ;
+        }
+    };
 
     ConditionOperate getOperate();
 
@@ -22,69 +28,6 @@ public interface Condition<F, C> {
     static <F> ConditionContainer<F, ?> or(Condition<F, ?>... items) {
         return new ConditionContainer.OR<>(Arrays.asList(items));
     }
-
-
-    interface EqualTo {
-
-        static <F, C> Condition<F, C> of(FieldMapping<F, C> leftElement, FieldMapping<F, C> rightElement) {
-            return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, ConditionOperate.EQ, rightElement);
-        }
-
-        static <F, C> Condition<F, C> of(Function<F, C> leftElement, Function<F, C> rightElement) {
-            return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, ConditionOperate.EQ, rightElement);
-        }
-
-        static <F, C> Condition<F, C> of(Function<F, C> leftElement, Param<C> rightElement) {
-            return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, ConditionOperate.EQ, rightElement);
-        }
-
-        static <F, C> Condition<F, C> of(FieldMapping<F, C> leftElement, Function<F, C> rightElement) {
-            return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, ConditionOperate.EQ, rightElement);
-        }
-
-        static <F, C> Condition<F, C> of(FieldMapping<F, C> leftElement, Param<C> rightElement) {
-            return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, ConditionOperate.EQ, rightElement);
-        }
-
-        static <F, C> Condition<F, C> of(FieldMapping<F, C> leftElement, SqlQueryMetaDesc<F, C> rightElement) {
-            return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, ConditionOperate.EQ, rightElement);
-        }
-
-
-        static <F, C> Condition<F, C> of(CheckCondition checkCondition, FieldMapping<F, C> leftElement, FieldMapping<F, C> rightElement) {
-            return new ConditionElement<>(checkCondition, leftElement, ConditionOperate.EQ, rightElement);
-        }
-
-        static <F, C> Condition<F, C> of(CheckCondition checkCondition, Function<F, C> leftElement, Function<F, C> rightElement) {
-            return new ConditionElement<>(checkCondition, leftElement, ConditionOperate.EQ, rightElement);
-        }
-
-        static <F, C> Condition<F, C> of(CheckCondition checkCondition, Function<F, C> leftElement, Param<C> rightElement) {
-            return new ConditionElement<>(checkCondition, leftElement, ConditionOperate.EQ, rightElement);
-        }
-
-        static <F, C> Condition<F, C> of(CheckCondition checkCondition, FieldMapping<F, C> leftElement, Function<F, C> rightElement) {
-            return new ConditionElement<>(checkCondition, leftElement, ConditionOperate.EQ, rightElement);
-        }
-
-        static <F, C> Condition<F, C> of(CheckCondition checkCondition, FieldMapping<F, C> leftElement, Param<C> rightElement) {
-            return new ConditionElement<>(checkCondition, leftElement, ConditionOperate.EQ, rightElement);
-        }
-
-        static <F, C> Condition<F, C> of(CheckCondition checkCondition, FieldMapping<F, C> leftElement, SqlQueryMetaDesc<F, C> rightElement) {
-            return new ConditionElement<>(checkCondition, leftElement, ConditionOperate.EQ, rightElement);
-        }
-    }
-
-
-
-
-
-
-
-
-
-
 
 
 

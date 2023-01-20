@@ -15,7 +15,6 @@ public class ProvinceDO {
     @MySQLVarchar(length = 16)
     @Comment("省份名称")
     private String name;
-
 }
 ```
 ``` java
