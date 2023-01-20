@@ -6,12 +6,24 @@ import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 import java.util.function.BiFunction;
 
 public enum ConditionOperate {
+    // =
     EQ(EqOperateDefinition::new),
-//    GT(">"),
-//    GTE(">="),
-//    LT("<"),
-//    LTE("<="),
-//    NE("!="),
+
+    // !=
+    NE(NotEqOperateDefinition::new),
+
+    // >
+    GT(GTOperateDefinition::new),
+
+    // >=
+    GTE(GTEOperateDefinition::new),
+
+    // <
+    LT(LTOperateDefinition::new),
+
+    // <=
+    LTE(LTEOperateDefinition::new),
+
     BETWEEN(BetweenOperateDefinition::new),
     IN(InOperateDefinition::new),
 //    NOT_IN("not in"),

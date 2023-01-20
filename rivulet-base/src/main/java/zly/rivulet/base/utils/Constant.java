@@ -23,6 +23,16 @@ public final class Constant {
     public static final String AS = "AS ";
     public static final char EQ = '=';
 
+    public static final String NOT_EQ = "!=";
+
+    public static final char GT = '>';
+
+    public static final char LT = '<';
+
+    public static final String GTE = ">=";
+
+    public static final String LTE = "<=";
+
     public static final String BETWEEN = " BETWEEN ";
 
     public static final String AND = " AND ";
