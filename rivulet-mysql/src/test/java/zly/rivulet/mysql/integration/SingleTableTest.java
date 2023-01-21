@@ -17,7 +17,7 @@ import zly.rivulet.mysql.discriber.function.MySQLFunction;
 import zly.rivulet.mysql.model.PersonDO;
 import zly.rivulet.mysql.model.ProvinceDO;
 import zly.rivulet.mysql.util.MySQLPrintUtils;
-import zly.rivulet.sql.describer.condition.Condition;
+import zly.rivulet.sql.describer.condition.common.Condition;
 import zly.rivulet.sql.describer.query.QueryBuilder;
 import zly.rivulet.sql.describer.query.desc.SortItem;
 
@@ -34,8 +34,8 @@ public class SingleTableTest extends BaseTest {
 
         return QueryBuilder.query(PersonDO.class, PersonDO.class)
             .where(
-                Condition.EqualTo.of(MySQLFunction.Arithmetical.add(PersonDO::getId, PersonDO::getId), Param.staticOf(666)),
-                Condition.between(PersonDO::getBirthday, Param.staticOf(start), Param.staticOf(end))
+                Condition.Equal.of(MySQLFunction.Arithmetical.add(PersonDO::getId, PersonDO::getId), Param.staticOf(666)),
+                Condition.BETWEEN.of(PersonDO::getBirthday, Param.staticOf(start), Param.staticOf(end))
             )
             .orderBy(SortItem.asc(PersonDO::getGender))
             .limit(Param.staticOf(999))
@@ -58,7 +58,7 @@ public class SingleTableTest extends BaseTest {
 
         return QueryBuilder.query(ProvinceDO.class, ProvinceDO.class)
             .where(
-                Condition.EqualTo.of(CheckCondition.notNull(provinceCodeParam), ProvinceDO::getCode, provinceCodeParam)
+                Condition.Equal.of(CheckCondition.notNull(provinceCodeParam), ProvinceDO::getCode, provinceCodeParam)
             ).build();
     }
 

@@ -10,24 +10,24 @@ import zly.rivulet.sql.describer.condition.common.Condition;
 import zly.rivulet.sql.describer.condition.ConditionElement;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
-public class InOperateDefinition extends OperateDefinition {
+public class NotInOperateDefinition extends OperateDefinition {
 
     private final SingleValueElementDefinition leftElement;
 
     private final SingleValueElementDefinition rightElement;
 
-    private InOperateDefinition(CheckCondition checkCondition, SingleValueElementDefinition leftElement, SingleValueElementDefinition rightElement) {
+    private NotInOperateDefinition(CheckCondition checkCondition, SingleValueElementDefinition leftElement, SingleValueElementDefinition rightElement) {
         super(checkCondition, null);
         this.leftElement = leftElement;
         this.rightElement = rightElement;
 
     }
 
-    public InOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
+    public NotInOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
         this(sqlPreParseHelper, (ConditionElement<?, ?>) condition);
     }
 
-    public InOperateDefinition(SqlParserPortableToolbox toolbox, ConditionElement<?, ?> condition) {
+    public NotInOperateDefinition(SqlParserPortableToolbox toolbox, ConditionElement<?, ?> condition) {
         super(condition.getCheckCondition(), toolbox.getParamReceiptManager());
         SingleValueElementDesc<?, ?> leftFieldMapped = condition.getLeftFieldMapped();
         SingleValueElementDesc<?, ?> rightFieldMapped = condition.getRightFieldMappeds()[0];
@@ -36,7 +36,7 @@ public class InOperateDefinition extends OperateDefinition {
         this.rightElement = toolbox.parseSingleValueForCondition(rightFieldMapped);
     }
 
-    public InOperateDefinition(SqlParserPortableToolbox toolbox, MapDefinition mapDefinition, Param<?> param, CheckCondition checkCondition) {
+    public NotInOperateDefinition(SqlParserPortableToolbox toolbox, MapDefinition mapDefinition, Param<?> param, CheckCondition checkCondition) {
         super(checkCondition, toolbox.getParamReceiptManager());
 
         this.leftElement =  mapDefinition;
@@ -75,8 +75,8 @@ public class InOperateDefinition extends OperateDefinition {
         }
 
         @Override
-        public InOperateDefinition copy() {
-            return new InOperateDefinition(checkCondition, leftElement, rightElement);
+        public NotInOperateDefinition copy() {
+            return new NotInOperateDefinition(checkCondition, leftElement, rightElement);
         }
     }
 }

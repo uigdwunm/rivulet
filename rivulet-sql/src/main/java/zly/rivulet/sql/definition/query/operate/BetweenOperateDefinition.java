@@ -4,7 +4,7 @@ import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
 import zly.rivulet.base.describer.SingleValueElementDesc;
-import zly.rivulet.sql.describer.condition.Condition;
+import zly.rivulet.sql.describer.condition.common.Condition;
 import zly.rivulet.sql.describer.condition.ConditionElement;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 

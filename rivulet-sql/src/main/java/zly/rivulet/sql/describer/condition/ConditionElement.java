@@ -2,7 +2,8 @@ package zly.rivulet.sql.describer.condition;
 
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.describer.SingleValueElementDesc;
-import zly.rivulet.base.describer.param.Param;
+import zly.rivulet.sql.describer.condition.common.Condition;
+import zly.rivulet.sql.describer.condition.join.JoinCondition;
 
 public class ConditionElement<F, C> implements Condition<F, C>, JoinCondition<F, C> {
 

@@ -1,4 +1,6 @@
-package zly.rivulet.sql.describer.condition;
+package zly.rivulet.sql.describer.condition.common;
+
+import zly.rivulet.sql.describer.condition.ConditionOperate;
 
 import java.util.List;
 

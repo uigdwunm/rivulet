@@ -17,7 +17,7 @@ import zly.rivulet.sql.definition.query.main.WhereDefinition;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
 import zly.rivulet.sql.definition.query.operate.AndOperateDefinition;
 import zly.rivulet.sql.definition.query.operate.EqOperateDefinition;
-import zly.rivulet.sql.describer.condition.ConditionContainer;
+import zly.rivulet.sql.describer.condition.common.ConditionContainer;
 import zly.rivulet.sql.describer.join.QueryComplexModel;
 import zly.rivulet.sql.describer.update.SqlUpdateMetaDesc;
 import zly.rivulet.sql.exception.SQLDescDefineException;

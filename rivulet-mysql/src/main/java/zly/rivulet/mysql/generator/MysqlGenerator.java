@@ -135,6 +135,9 @@ public class MysqlGenerator implements Generator {
         LTOperateStatement.registerToFactory(sqlStatementFactory);
         LTEOperateStatement.registerToFactory(sqlStatementFactory);
         InOperateStatement.registerToFactory(sqlStatementFactory);
+        NotInOperateStatement.registerToFactory(sqlStatementFactory);
+        NotNullOperateStatement.registerToFactory(sqlStatementFactory);
+        IsNullOperateStatement.registerToFactory(sqlStatementFactory);
         AndOperateStatement.registerToFactory(sqlStatementFactory);
         OrOperateStatement.registerToFactory(sqlStatementFactory);
 

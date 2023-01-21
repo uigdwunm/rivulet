@@ -3,7 +3,7 @@ package zly.rivulet.sql.describer.delete;
 import zly.rivulet.base.definer.annotations.RivuletDesc;
 import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.describer.WholeDesc;
-import zly.rivulet.sql.describer.condition.ConditionContainer;
+import zly.rivulet.sql.describer.condition.common.ConditionContainer;
 
 public class SqlDeleteMetaDesc<T> implements WholeDesc {
 

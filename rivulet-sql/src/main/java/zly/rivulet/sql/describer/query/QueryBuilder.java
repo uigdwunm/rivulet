@@ -3,7 +3,7 @@ package zly.rivulet.sql.describer.query;
 import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.sql.describer.condition.ConditionContainer;
+import zly.rivulet.sql.describer.condition.common.ConditionContainer;
 import zly.rivulet.sql.describer.custom.SQLPartCustomDesc;
 import zly.rivulet.sql.describer.query.builder.SelectByBuilder;
 import zly.rivulet.sql.describer.query.desc.Mapping;

@@ -4,7 +4,7 @@ import zly.rivulet.base.definer.annotations.RivuletDesc;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.describer.param.ParamCheckType;
 import zly.rivulet.mysql.model.PersonDO;
-import zly.rivulet.sql.describer.condition.Condition;
+import zly.rivulet.sql.describer.condition.common.Condition;
 import zly.rivulet.sql.describer.query.QueryBuilder;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.query.desc.Mapping;
@@ -15,7 +15,7 @@ public class PersonDescConfig {
     public static SqlQueryMetaDesc<PersonDO, PersonDO> queryById() {
         return QueryBuilder.query(PersonDO.class, PersonDO.class)
             .where(
-                Condition.EqualTo.of(PersonDO::getId, Param.of(Long.class, "id", ParamCheckType.PLACEHOLDER))
+                Condition.Equal.of(PersonDO::getId, Param.of(Long.class, "id", ParamCheckType.PLACEHOLDER))
             ).build();
     }
 
@@ -27,11 +27,11 @@ public class PersonDescConfig {
                 Mapping.of(PersonDO::setName, PersonDO::getName)
             )
             .where(
-                Condition.EqualTo.of(PersonDO::getGender, Param.of(Boolean.class, "gender", ParamCheckType.PLACEHOLDER)),
+                Condition.Equal.of(PersonDO::getGender, Param.of(Boolean.class, "gender", ParamCheckType.PLACEHOLDER)),
                 Condition.or(
-                    Condition.EqualTo.of(PersonDO::getId, Param.of(Long.class, "aid", ParamCheckType.PLACEHOLDER)),
-                    Condition.EqualTo.of(PersonDO::getId, Param.of(Long.class, "bid", ParamCheckType.PLACEHOLDER)),
-                    Condition.EqualTo.of(PersonDO::getId, Param.of(Long.class, "cid", ParamCheckType.PLACEHOLDER))
+                    Condition.Equal.of(PersonDO::getId, Param.of(Long.class, "aid", ParamCheckType.PLACEHOLDER)),
+                    Condition.Equal.of(PersonDO::getId, Param.of(Long.class, "bid", ParamCheckType.PLACEHOLDER)),
+                    Condition.Equal.of(PersonDO::getId, Param.of(Long.class, "cid", ParamCheckType.PLACEHOLDER))
                 )
             ).build();
     }

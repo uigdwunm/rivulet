@@ -7,7 +7,7 @@ import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definition.query.join.JoinType;
 import zly.rivulet.sql.definition.query.operate.OperateDefinition;
 import zly.rivulet.sql.describer.join.ComplexDescriber;
-import zly.rivulet.sql.describer.condition.JoinConditionContainer;
+import zly.rivulet.sql.describer.condition.join.JoinConditionContainer;
 import zly.rivulet.sql.parser.SQLAliasManager;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 import zly.rivulet.sql.parser.proxy_node.FromNode;

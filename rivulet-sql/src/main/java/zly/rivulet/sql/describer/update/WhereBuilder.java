@@ -1,7 +1,7 @@
 package zly.rivulet.sql.describer.update;
 
-import zly.rivulet.sql.describer.condition.Condition;
-import zly.rivulet.sql.describer.condition.ConditionContainer;
+import zly.rivulet.sql.describer.condition.common.Condition;
+import zly.rivulet.sql.describer.condition.common.ConditionContainer;
 
 import java.util.Arrays;
 

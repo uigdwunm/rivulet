@@ -37,7 +37,13 @@ public final class Constant {
 
     public static final String AND = " AND ";
 
-    public static final String IN = "IN";
+    public static final String IN = " IN";
+
+    public static final String NOT_IN = " NOT_IN";
+
+    public static final String IS_NULL = " IS NULL ";
+
+    public static final String NOT_NULL = " NOT NULL ";
 
 
     /**

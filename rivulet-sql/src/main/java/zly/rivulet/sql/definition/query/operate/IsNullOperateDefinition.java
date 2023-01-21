@@ -8,28 +8,28 @@ import zly.rivulet.sql.describer.condition.common.Condition;
 import zly.rivulet.sql.describer.condition.ConditionElement;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
-public class NotNullOperateDefinition extends OperateDefinition {
+public class IsNullOperateDefinition extends OperateDefinition {
 
     private final SingleValueElementDefinition valueElementDefinition;
 
-    private NotNullOperateDefinition(CheckCondition checkCondition, SingleValueElementDefinition valueElementDefinition) {
+    private IsNullOperateDefinition(CheckCondition checkCondition, SingleValueElementDefinition valueElementDefinition) {
         super(checkCondition, null);
         this.valueElementDefinition = valueElementDefinition;
     }
 
-    public NotNullOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
+    public IsNullOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
         this(sqlPreParseHelper, (ConditionElement<?, ?>) condition);
     }
 
-    public SingleValueElementDefinition getValueElementDefinition() {
-        return valueElementDefinition;
-    }
-
-    private NotNullOperateDefinition(SqlParserPortableToolbox toolbox, ConditionElement<?, ?> condition) {
+    private IsNullOperateDefinition(SqlParserPortableToolbox toolbox, ConditionElement<?, ?> condition) {
         super(condition.getCheckCondition(), toolbox.getParamReceiptManager());
         SingleValueElementDesc<?, ?> elementDesc = condition.getLeftFieldMapped();
 
         this.valueElementDefinition = toolbox.parseSingleValueForCondition(elementDesc);
+    }
+
+    public SingleValueElementDefinition getValueElementDefinition() {
+        return valueElementDefinition;
     }
 
     @Override
@@ -49,8 +49,8 @@ public class NotNullOperateDefinition extends OperateDefinition {
         }
 
         @Override
-        public NotNullOperateDefinition copy() {
-            return new NotNullOperateDefinition(checkCondition, valueElementDefinition);
+        public IsNullOperateDefinition copy() {
+            return new IsNullOperateDefinition(checkCondition, valueElementDefinition);
         }
     }
 }

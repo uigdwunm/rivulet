@@ -13,7 +13,7 @@ import zly.rivulet.mysql.model.join.StudentJoinPerson;
 import zly.rivulet.mysql.model.vo.CityInfo;
 import zly.rivulet.mysql.model.vo.StudentVO;
 import zly.rivulet.mysql.util.MySQLPrintUtils;
-import zly.rivulet.sql.describer.condition.Condition;
+import zly.rivulet.sql.describer.condition.common.Condition;
 import zly.rivulet.sql.describer.query.QueryBuilder;
 import zly.rivulet.sql.describer.query.desc.Mapping;
 
@@ -30,7 +30,7 @@ public class JoinQueryTest extends BaseTest {
 
         return QueryBuilder.query(CityProvinceJoin.class, CityProvinceJoin.class)
             .where(
-                Condition.EqualTo.of(x -> x.getCityDO().getCode(), cityCodeParam)
+                Condition.Equal.of(x -> x.getCityDO().getCode(), cityCodeParam)
             ).build();
     }
 
@@ -46,7 +46,7 @@ public class JoinQueryTest extends BaseTest {
                 Mapping.of(CityInfo::setProvinceCode, x -> x.getProvinceDO().getCode()),
                 Mapping.of(CityInfo::setProvinceName, x -> x.getProvinceDO().getName())
             )
-            .where(Condition.EqualTo.of(x -> x.getCityDO().getCode(), cityCodeParam))
+            .where(Condition.Equal.of(x -> x.getCityDO().getCode(), cityCodeParam))
             .build();
     }
 
@@ -71,7 +71,7 @@ public class JoinQueryTest extends BaseTest {
                     Mapping.of(StudentVO::setStudyTime, x -> x.getStudentDO().getCreateTime())
                 )
                 .where(
-                    Condition.between(x -> x.getStudentDO().getCreateTime(), Param.staticOf(LocalDateTime.now().minusDays(100)), Param.staticOf(LocalDateTime.now()))
+                    Condition.BETWEEN.of(x -> x.getStudentDO().getCreateTime(), Param.staticOf(LocalDateTime.now().minusDays(100)), Param.staticOf(LocalDateTime.now()))
                 )
                 .build()
         );
