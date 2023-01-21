@@ -15,7 +15,7 @@ public class StudentJoinPerson implements QueryComplexModel {
     @Override
     public ComplexDescriber register() {
         ComplexDescriber describer = ComplexDescriber.from(studentDO);
-        describer.leftJoin(personDO).on(JoinCondition.equalTo(studentDO::getPersonId, personDO::getId));
+        describer.leftJoin(personDO).on(JoinCondition.Equal.of(studentDO::getPersonId, personDO::getId));
         return describer;
     }
 
