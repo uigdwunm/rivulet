@@ -5,7 +5,7 @@ import zly.rivulet.base.describer.field.JoinFieldMapping;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.sql.describer.condition.ConditionElement;
 import zly.rivulet.sql.describer.condition.ConditionOperate;
-import zly.rivulet.sql.describer.function.Function;
+import zly.rivulet.sql.describer.function.SQLFunction;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 
 public interface UnaryOperation {
@@ -16,7 +16,7 @@ public interface UnaryOperation {
         return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, this.getConditionOperate());
     }
 
-    default <F, C> JoinCondition<F, C> of(Function<F, C> leftElement) {
+    default <F, C> JoinCondition<F, C> of(SQLFunction<F, C> leftElement) {
         return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, this.getConditionOperate());
     }
 
@@ -32,7 +32,7 @@ public interface UnaryOperation {
         return new ConditionElement<>(checkCondition, leftElement, this.getConditionOperate());
     }
 
-    default <F, C> JoinCondition<F, C> of(CheckCondition checkCondition, Function<F, C> leftElement) {
+    default <F, C> JoinCondition<F, C> of(CheckCondition checkCondition, SQLFunction<F, C> leftElement) {
         return new ConditionElement<>(checkCondition, leftElement, this.getConditionOperate());
     }
 

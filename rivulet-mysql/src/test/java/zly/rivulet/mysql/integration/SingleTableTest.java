@@ -10,6 +10,7 @@ import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.describer.param.ParamCheckType;
 import zly.rivulet.base.generator.Fish;
+import zly.rivulet.base.parser.Parser;
 import zly.rivulet.base.warehouse.DefaultWarehouseManager;
 import zly.rivulet.mysql.DefaultMySQLDataSourceRivuletManager;
 import zly.rivulet.mysql.MySQLRivuletProperties;
@@ -19,6 +20,7 @@ import zly.rivulet.mysql.model.ProvinceDO;
 import zly.rivulet.mysql.util.MySQLPrintUtils;
 import zly.rivulet.sql.describer.condition.common.Condition;
 import zly.rivulet.sql.describer.query.QueryBuilder;
+import zly.rivulet.sql.describer.query.desc.Mapping;
 import zly.rivulet.sql.describer.query.desc.SortItem;
 
 import java.time.LocalDate;
@@ -33,13 +35,16 @@ public class SingleTableTest extends BaseTest {
         LocalDate end = LocalDate.of(1995, Month.JANUARY, 1);
 
         return QueryBuilder.query(PersonDO.class, PersonDO.class)
-            .where(
-                Condition.Equal.of(MySQLFunction.Arithmetical.add(PersonDO::getId, PersonDO::getId), Param.staticOf(666)),
-                Condition.BETWEEN.of(PersonDO::getBirthday, Param.staticOf(start), Param.staticOf(end))
-            )
-            .orderBy(SortItem.asc(PersonDO::getGender))
-            .limit(Param.staticOf(999))
-            .build();
+                .select(
+                        Mapping.of(PersonDO::setName, MySQLFunction.Cast.toNchar(10).of(PersonDO::getId))
+                )
+                .where(
+                    Condition.Equal.of(MySQLFunction.Arithmetical.ADD.of(PersonDO::getId, PersonDO::getId), Param.staticOf(666)),
+                    Condition.BETWEEN.of(PersonDO::getBirthday, Param.staticOf(start), Param.staticOf(end))
+                )
+                .orderBy(SortItem.asc(PersonDO::getGender))
+                .limit(Param.staticOf(999))
+                .build();
     }
 
 
@@ -78,11 +83,16 @@ public class SingleTableTest extends BaseTest {
 
     public RivuletManager createDefaultRivuletManager() {
         DefaultWarehouseManager defaultWarehouseManager = new DefaultWarehouseManager("zly.rivulet.mysql");
-        return new DefaultMySQLDataSourceRivuletManager(
+        RivuletManager rivuletManager = new DefaultMySQLDataSourceRivuletManager(
             new MySQLRivuletProperties(),
             new ConvertorManager(),
             defaultWarehouseManager,
             createDataSource()
         );
+
+        Parser parser = rivuletManager.getParser();
+//        parser.addAnalyzer(new DefaultSQLAnalyzer());
+
+        return rivuletManager;
     }
 }

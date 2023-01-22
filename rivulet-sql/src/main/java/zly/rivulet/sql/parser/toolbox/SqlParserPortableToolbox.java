@@ -14,7 +14,7 @@ import zly.rivulet.sql.SqlRivuletProperties;
 import zly.rivulet.sql.definition.function.SQLFunctionDefinition;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
-import zly.rivulet.sql.describer.function.Function;
+import zly.rivulet.sql.describer.function.SQLFunction;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.exception.SQLDescDefineException;
 import zly.rivulet.sql.parser.SQLAliasManager;
@@ -91,8 +91,8 @@ public class SqlParserPortableToolbox implements ParserPortableToolbox {
                 SQLAliasManager.createAlias()
             );
 
-        } else if (singleValueElementDesc instanceof Function) {
-            Function<?, ?> sqlFunction = (Function<?, ?>) singleValueElementDesc;
+        } else if (singleValueElementDesc instanceof SQLFunction) {
+            SQLFunction<?, ?> sqlFunction = (SQLFunction<?, ?>) singleValueElementDesc;
             SQLFunctionDefinition sqlFunctionDefinition = new SQLFunctionDefinition(this, sqlFunction);
             return new MapDefinition(
                 sqlFunctionDefinition,
@@ -121,8 +121,8 @@ public class SqlParserPortableToolbox implements ParserPortableToolbox {
         } else if (singleValueElementDesc instanceof Param) {
             ParamReceiptManager paramReceiptManager = this.getParamReceiptManager();
             return paramReceiptManager.registerParam((Param<?>) singleValueElementDesc);
-        } else if (singleValueElementDesc instanceof Function) {
-            Function<?, ?> sqlFunction = (Function<?, ?>) singleValueElementDesc;
+        } else if (singleValueElementDesc instanceof SQLFunction) {
+            SQLFunction<?, ?> sqlFunction = (SQLFunction<?, ?>) singleValueElementDesc;
             return new SQLFunctionDefinition(this, sqlFunction);
         } else {
             throw UnbelievableException.unknownType();

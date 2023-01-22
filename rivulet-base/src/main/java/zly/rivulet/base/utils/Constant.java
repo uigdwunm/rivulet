@@ -45,6 +45,8 @@ public final class Constant {
 
     public static final String NOT_NULL = " NOT NULL ";
 
+    public static final String LIMIT = "LIMIT ";
+
 
     /**
      * 模型解析方式时，主键id key的名称

@@ -1,5 +1,6 @@
 package zly.rivulet.mysql.generator.statement.query;
 
+import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.statement.param.SQLParamStatement;
 import zly.rivulet.sql.definition.query.main.LimitDefinition;
@@ -21,7 +22,7 @@ public class LimitStatement extends SqlStatement {
 
     @Override
     public void collectStatement(StatementCollector collector) {
-        collector.append(limitParam);
+        collector.append(Constant.LIMIT).append(limitParam);
     }
 
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {

@@ -5,7 +5,7 @@ import zly.rivulet.base.describer.field.JoinFieldMapping;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.sql.describer.condition.ConditionElement;
 import zly.rivulet.sql.describer.condition.ConditionOperate;
-import zly.rivulet.sql.describer.function.Function;
+import zly.rivulet.sql.describer.function.SQLFunction;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 
 public interface BinaryOperation {
@@ -16,7 +16,7 @@ public interface BinaryOperation {
         return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, this.getConditionOperate(), rightElement);
     }
 
-    default <F, C> JoinCondition<F, C> of(JoinFieldMapping<C> leftElement, Function<F, C> rightElement) {
+    default <F, C> JoinCondition<F, C> of(JoinFieldMapping<C> leftElement, SQLFunction<F, C> rightElement) {
         return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, this.getConditionOperate(), rightElement);
     }
 
@@ -28,19 +28,19 @@ public interface BinaryOperation {
         return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, this.getConditionOperate(), rightElement);
     }
 
-    default <F, C> JoinCondition<F, C> of(Function<F, C> leftElement, JoinFieldMapping<C> rightElement) {
+    default <F, C> JoinCondition<F, C> of(SQLFunction<F, C> leftElement, JoinFieldMapping<C> rightElement) {
         return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, this.getConditionOperate(), rightElement);
     }
 
-    default <F, C> JoinCondition<F, C> of(Function<F, C> leftElement, Function<F, C> rightElement) {
+    default <F, C> JoinCondition<F, C> of(SQLFunction<F, C> leftElement, SQLFunction<F, C> rightElement) {
         return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, this.getConditionOperate(), rightElement);
     }
 
-    default <F, C> JoinCondition<F, C> of(Function<F, C> leftElement, Param<C> rightElement) {
+    default <F, C> JoinCondition<F, C> of(SQLFunction<F, C> leftElement, Param<C> rightElement) {
         return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, this.getConditionOperate(), rightElement);
     }
 
-    default <F, C> JoinCondition<F, C> of(Function<F, C> leftElement, SqlQueryMetaDesc<F, C> rightElement) {
+    default <F, C> JoinCondition<F, C> of(SQLFunction<F, C> leftElement, SqlQueryMetaDesc<F, C> rightElement) {
         return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, this.getConditionOperate(), rightElement);
     }
 
@@ -48,7 +48,7 @@ public interface BinaryOperation {
         return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, this.getConditionOperate(), rightElement);
     }
 
-    default <F, C> JoinCondition<F, C> of(Param<C> leftElement, Function<F, C> rightElement) {
+    default <F, C> JoinCondition<F, C> of(Param<C> leftElement, SQLFunction<F, C> rightElement) {
         return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, this.getConditionOperate(), rightElement);
     }
 
@@ -64,7 +64,7 @@ public interface BinaryOperation {
         return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, this.getConditionOperate(), rightElement);
     }
 
-    default <F, C> JoinCondition<F, C> of(SqlQueryMetaDesc<F, C> leftElement, Function<F, C> rightElement) {
+    default <F, C> JoinCondition<F, C> of(SqlQueryMetaDesc<F, C> leftElement, SQLFunction<F, C> rightElement) {
         return new ConditionElement<>(CheckCondition.IS_TRUE, leftElement, this.getConditionOperate(), rightElement);
     }
 
@@ -80,7 +80,7 @@ public interface BinaryOperation {
         return new ConditionElement<>(checkCondition, leftElement, this.getConditionOperate(), rightElement);
     }
 
-    default <F, C> JoinCondition<F, C> of(CheckCondition checkCondition, JoinFieldMapping<C> leftElement, Function<F, C> rightElement) {
+    default <F, C> JoinCondition<F, C> of(CheckCondition checkCondition, JoinFieldMapping<C> leftElement, SQLFunction<F, C> rightElement) {
         return new ConditionElement<>(checkCondition, leftElement, this.getConditionOperate(), rightElement);
     }
 
@@ -92,19 +92,19 @@ public interface BinaryOperation {
         return new ConditionElement<>(checkCondition, leftElement, this.getConditionOperate(), rightElement);
     }
 
-    default <F, C> JoinCondition<F, C> of(CheckCondition checkCondition, Function<F, C> leftElement, JoinFieldMapping<C> rightElement) {
+    default <F, C> JoinCondition<F, C> of(CheckCondition checkCondition, SQLFunction<F, C> leftElement, JoinFieldMapping<C> rightElement) {
         return new ConditionElement<>(checkCondition, leftElement, this.getConditionOperate(), rightElement);
     }
 
-    default <F, C> JoinCondition<F, C> of(CheckCondition checkCondition, Function<F, C> leftElement, Function<F, C> rightElement) {
+    default <F, C> JoinCondition<F, C> of(CheckCondition checkCondition, SQLFunction<F, C> leftElement, SQLFunction<F, C> rightElement) {
         return new ConditionElement<>(checkCondition, leftElement, this.getConditionOperate(), rightElement);
     }
 
-    default <F, C> JoinCondition<F, C> of(CheckCondition checkCondition, Function<F, C> leftElement, Param<C> rightElement) {
+    default <F, C> JoinCondition<F, C> of(CheckCondition checkCondition, SQLFunction<F, C> leftElement, Param<C> rightElement) {
         return new ConditionElement<>(checkCondition, leftElement, this.getConditionOperate(), rightElement);
     }
 
-    default <F, C> JoinCondition<F, C> of(CheckCondition checkCondition, Function<F, C> leftElement, SqlQueryMetaDesc<F, C> rightElement) {
+    default <F, C> JoinCondition<F, C> of(CheckCondition checkCondition, SQLFunction<F, C> leftElement, SqlQueryMetaDesc<F, C> rightElement) {
         return new ConditionElement<>(checkCondition, leftElement, this.getConditionOperate(), rightElement);
     }
 
@@ -112,7 +112,7 @@ public interface BinaryOperation {
         return new ConditionElement<>(checkCondition, leftElement, this.getConditionOperate(), rightElement);
     }
 
-    default <F, C> JoinCondition<F, C> of(CheckCondition checkCondition, Param<C> leftElement, Function<F, C> rightElement) {
+    default <F, C> JoinCondition<F, C> of(CheckCondition checkCondition, Param<C> leftElement, SQLFunction<F, C> rightElement) {
         return new ConditionElement<>(checkCondition, leftElement, this.getConditionOperate(), rightElement);
     }
 
@@ -128,7 +128,7 @@ public interface BinaryOperation {
         return new ConditionElement<>(checkCondition, leftElement, this.getConditionOperate(), rightElement);
     }
 
-    default <F, C> JoinCondition<F, C> of(CheckCondition checkCondition, SqlQueryMetaDesc<F, C> leftElement, Function<F, C> rightElement) {
+    default <F, C> JoinCondition<F, C> of(CheckCondition checkCondition, SqlQueryMetaDesc<F, C> leftElement, SQLFunction<F, C> rightElement) {
         return new ConditionElement<>(checkCondition, leftElement, this.getConditionOperate(), rightElement);
     }
 
