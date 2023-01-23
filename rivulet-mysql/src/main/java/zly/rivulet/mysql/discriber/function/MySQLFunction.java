@@ -16,6 +16,63 @@ import java.util.function.BiConsumer;
 
 public interface MySQLFunction {
 
+    interface Arithmetical {
+        /**
+         * 加法，+
+         */
+        MultivariateOperation ADD = new MultivariateOperation() {
+            @Override
+            public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCollect() {
+                return ((customCollector, customSingleValueWraps) -> customCollector.appendAllSeparator(customSingleValueWraps, "+"));
+            }
+        };
+
+        /**
+         * 减法，-
+         */
+        BinaryOperation SUBTRACT = new BinaryOperation() {
+            @Override
+            public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCollect() {
+                return ((customCollector, customSingleValueWraps) -> {
+                    customCollector.append(customSingleValueWraps.get(0)).append("-").append(customSingleValueWraps.get(1));
+                });
+            }
+        };
+
+        /**
+         * 乘法，*
+         */
+        MultivariateOperation MULTIPLY = new MultivariateOperation() {
+            @Override
+            public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCollect() {
+                return ((customCollector, customSingleValueWraps) -> customCollector.appendAllSeparator(customSingleValueWraps, "*"));
+            }
+        };
+
+        /**
+         * 除法，/
+         */
+        BinaryOperation DIVIDE = new BinaryOperation() {
+            @Override
+            public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCollect() {
+                return ((customCollector, customSingleValueWraps) -> {
+                    customCollector.append(customSingleValueWraps.get(0)).append("/").append(customSingleValueWraps.get(1));
+                });
+            }
+        };
+
+        BinaryOperation powToInt = new BinaryOperation() {
+            @Override
+            public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCollect() {
+                return (customCollector, customSingleValueWraps) -> {
+                    customCollector.append("POW(");
+                    customCollector.appendAllSeparator(customSingleValueWraps, ",");
+                    customCollector.append(")");
+                };
+            }
+        };
+    }
+
     interface Cast {
         static CastOperation<Object> toBinary() {
             return new CastOperation<>("BINARY");
@@ -103,49 +160,5 @@ public interface MySQLFunction {
     }
 
 
-    interface Arithmetical {
-        MultivariateOperation ADD = new MultivariateOperation() {
-            @Override
-            public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCollect() {
-                return ((customCollector, customSingleValueWraps) -> customCollector.appendAllSeparator(customSingleValueWraps, "+"));
-            }
-        };
-
-        BinaryOperation SUBTRACT = new BinaryOperation() {
-            @Override
-            public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCollect() {
-                return ((customCollector, customSingleValueWraps) -> {
-                    customCollector.append(customSingleValueWraps.get(0)).append("-").append(customSingleValueWraps.get(1));
-                });
-            }
-        };
-
-        MultivariateOperation MULTIPLY = new MultivariateOperation() {
-            @Override
-            public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCollect() {
-                return ((customCollector, customSingleValueWraps) -> customCollector.appendAllSeparator(customSingleValueWraps, "*"));
-            }
-        };
-
-        BinaryOperation DIVIDE = new BinaryOperation() {
-            @Override
-            public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCollect() {
-                return ((customCollector, customSingleValueWraps) -> {
-                    customCollector.append(customSingleValueWraps.get(0)).append("/").append(customSingleValueWraps.get(1));
-                });
-            }
-        };
-
-        BinaryOperation powToInt = new BinaryOperation() {
-            @Override
-            public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCollect() {
-                return (customCollector, customSingleValueWraps) -> {
-                    customCollector.append("POW(");
-                    customCollector.appendAllSeparator(customSingleValueWraps, ",");
-                    customCollector.append(")");
-                };
-            }
-        };
-    }
 
 }

@@ -25,6 +25,10 @@ public final class Constant {
 
     public static final String NOT_EQ = "!=";
 
+    public static final String LIKE = "LIKE ";
+
+    public static final String NOT_LIKE = "NOT LIKE ";
+
     public static final char GT = '>';
 
     public static final char LT = '<';

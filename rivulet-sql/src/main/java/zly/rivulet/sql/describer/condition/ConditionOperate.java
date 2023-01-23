@@ -13,6 +13,12 @@ public enum ConditionOperate {
     // !=
     NE(NotEqOperateDefinition::new),
 
+    // =
+    LIKE(LikeOperateDefinition::new),
+
+    // !=
+    NOT_LIKE(NotLikeOperateDefinition::new),
+
     // >
     GT(GTOperateDefinition::new),
 
