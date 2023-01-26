@@ -55,6 +55,15 @@ public class ConvertorManager {
 
     public <T1, T2> ResultConvertor<T1, T2> getResultConvertor(Class<T1> originType, Class<T2> targetType) {
         ResultConvertor<?, ?> resultConvertor = resultConvertorMap.get(originType, targetType);
+        if (originType.equals(targetType)) {
+            // 结果转换器没有，并且出入参相同，则直接返回
+            return new ResultConvertor<T1, T2>() {
+                @Override
+                public T2 convert(T1 originData) {
+                    return (T2) originData;
+                }
+            };
+        }
         if (resultConvertor == null) {
             throw ModelDefineException.noMatchResultConvertor(originType, targetType);
         }

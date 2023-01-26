@@ -67,4 +67,20 @@ public final class Constant {
     public static final String ONE_STR = "1";
     public static final String QUESTION_MARK = "?";
     public static final Long LONG_ZERO = 0L;
+
+    public static final Long LONG_ONE = 1L;
+    public static final Byte BYTE_ONE = 1;
+
+    public static final Byte BYTE_ZERO = 0;
+    public static final Short SHORT_ONE = 1;
+
+    public static final Short SHORT_ZERO = 0;
+    public static final Integer INTEGER_ONE = 1;
+    public static final Integer INTEGER_ZERO = 0;
+    public static final Float FLOAT_ONE = 1F;
+
+    public static final Float FLOAT_ZERO = 0F;
+    public static final Double DOUBLE_ONE = 1D;
+
+    public static final Double DOUBLE_ZERO = 0D;
 }
