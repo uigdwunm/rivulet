@@ -1,6 +1,6 @@
 package zly.rivulet.mysql.definer.annotations.type.date;
 
-import zly.rivulet.base.definer.outerType.OriginOuterType;
+import zly.rivulet.mysql.definer.outerType.TimeType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -13,7 +13,7 @@ import java.sql.Date;
 public @interface MySQLDate {
 
 
-    class Type implements OriginOuterType {
+    class Type implements TimeType {
         public Type(MySQLDate mySQLDate) {
         }
 

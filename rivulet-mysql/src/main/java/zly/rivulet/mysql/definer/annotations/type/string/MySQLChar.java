@@ -2,10 +2,13 @@ package zly.rivulet.mysql.definer.annotations.type.string;
 
 import zly.rivulet.mysql.definer.outerType.ExactStringType;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
 public @interface MySQLChar {
 
     int length();

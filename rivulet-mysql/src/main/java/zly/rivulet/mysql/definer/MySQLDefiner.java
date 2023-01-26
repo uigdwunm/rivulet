@@ -8,12 +8,10 @@ import zly.rivulet.base.definer.outerType.OriginOuterType;
 import zly.rivulet.base.exception.ModelDefineException;
 import zly.rivulet.base.utils.StringUtil;
 import zly.rivulet.base.utils.View;
-import zly.rivulet.mysql.definer.annotations.type.date.MySQLDate;
-import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLBigInt;
-import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLInt;
-import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLTinyInt;
-import zly.rivulet.mysql.definer.annotations.type.string.MySQLChar;
-import zly.rivulet.mysql.definer.annotations.type.string.MySQLVarchar;
+import zly.rivulet.mysql.definer.annotations.type.binary.*;
+import zly.rivulet.mysql.definer.annotations.type.date.*;
+import zly.rivulet.mysql.definer.annotations.type.numeric.*;
+import zly.rivulet.mysql.definer.annotations.type.string.*;
 import zly.rivulet.sql.convertor.SQLDefaultConvertor;
 import zly.rivulet.sql.definer.SqlDefiner;
 import zly.rivulet.sql.definer.annotations.SqlColumn;
@@ -70,14 +68,40 @@ public class MySQLDefiner extends SqlDefiner {
     @Override
     protected void initTypeConvertor() {
 
-        SQLDefaultConvertor.registerDefault(convertorManager);
+//        SQLDefaultConvertor.registerDefault(convertorManager);
 
-        annotation_TypeCreator_Map.put(MySQLInt.class, anno -> new MySQLInt.Type((MySQLInt) anno));
-        annotation_TypeCreator_Map.put(MySQLVarchar.class, anno -> new MySQLVarchar.Type((MySQLVarchar) anno));
-        annotation_TypeCreator_Map.put(MySQLChar.class, anno -> new MySQLChar.Type((MySQLChar) anno));
-        annotation_TypeCreator_Map.put(MySQLBigInt.class, anno -> new MySQLBigInt.Type((MySQLBigInt) anno));
+        // binary
+        annotation_TypeCreator_Map.put(MySQLBinary.class, anno -> new MySQLBinary.Type((MySQLBinary) anno));
+        annotation_TypeCreator_Map.put(MySQLBlob.class, anno -> new MySQLBlob.Type((MySQLBlob) anno));
+        annotation_TypeCreator_Map.put(MySQLLongBlob.class, anno -> new MySQLLongBlob.Type((MySQLLongBlob) anno));
+        annotation_TypeCreator_Map.put(MySQLMediumBlob.class, anno -> new MySQLMediumBlob.Type((MySQLMediumBlob) anno));
+        annotation_TypeCreator_Map.put(MySQLTinyBlob.class, anno -> new MySQLTinyBlob.Type((MySQLTinyBlob) anno));
+
+        // date
         annotation_TypeCreator_Map.put(MySQLDate.class, anno -> new MySQLDate.Type((MySQLDate) anno));
+        annotation_TypeCreator_Map.put(MySQLDatetime.class, anno -> new MySQLDatetime.Type((MySQLDatetime) anno));
+        annotation_TypeCreator_Map.put(MySQLTime.class, anno -> new MySQLTime.Type((MySQLTime) anno));
+        annotation_TypeCreator_Map.put(MySQLTimestamp.class, anno -> new MySQLTimestamp.Type((MySQLTimestamp) anno));
+        annotation_TypeCreator_Map.put(MySQLYear.class, anno -> new MySQLYear.Type((MySQLYear) anno));
+
+        // int
+        annotation_TypeCreator_Map.put(MySQLBigInt.class, anno -> new MySQLBigInt.Type((MySQLBigInt) anno));
+        annotation_TypeCreator_Map.put(MySQLDecimal.class, anno -> new MySQLDecimal.Type((MySQLDecimal) anno));
+        annotation_TypeCreator_Map.put(MySQLDouble.class, anno -> new MySQLDouble.Type((MySQLDouble) anno));
+        annotation_TypeCreator_Map.put(MySQLFloat.class, anno -> new MySQLFloat.Type((MySQLFloat) anno));
+        annotation_TypeCreator_Map.put(MySQLInt.class, anno -> new MySQLInt.Type((MySQLInt) anno));
+        annotation_TypeCreator_Map.put(MySQLMediumInt.class, anno -> new MySQLMediumInt.Type((MySQLMediumInt) anno));
+        annotation_TypeCreator_Map.put(MySQLSmallInt.class, anno -> new MySQLSmallInt.Type((MySQLSmallInt) anno));
         annotation_TypeCreator_Map.put(MySQLTinyInt.class, anno -> new MySQLTinyInt.Type((MySQLTinyInt) anno));
+
+        // string
+        annotation_TypeCreator_Map.put(MySQLChar.class, anno -> new MySQLChar.Type((MySQLChar) anno));
+        annotation_TypeCreator_Map.put(MySQLJson.class, anno -> new MySQLJson.Type((MySQLJson) anno));
+        annotation_TypeCreator_Map.put(MySQLLongText.class, anno -> new MySQLLongText.Type((MySQLLongText) anno));
+        annotation_TypeCreator_Map.put(MySQLMediumText.class, anno -> new MySQLMediumText.Type((MySQLMediumText) anno));
+        annotation_TypeCreator_Map.put(MySQLText.class, anno -> new MySQLText.Type((MySQLText) anno));
+        annotation_TypeCreator_Map.put(MySQLTinyText.class, anno -> new MySQLTinyText.Type((MySQLTinyText) anno));
+        annotation_TypeCreator_Map.put(MySQLVarchar.class, anno -> new MySQLVarchar.Type((MySQLVarchar) anno));
     }
 
     private MySQLFieldMeta parseFieldMeta(Class<?> clazz, Field field) {

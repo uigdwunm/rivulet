@@ -1,6 +1,6 @@
-package zly.rivulet.mysql.definer.annotations.type.string;
+package zly.rivulet.mysql.definer.annotations.type.binary;
 
-import zly.rivulet.mysql.definer.outerType.VariableStringType;
+import zly.rivulet.mysql.definer.outerType.BinaryType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -9,19 +9,17 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface MySQLVarchar {
+public @interface MySQLMediumBlob {
 
     int length();
 
-    class Type extends VariableStringType {
-
-        public Type(MySQLVarchar mySQLInt) {
-            super(mySQLInt.length());
+    class Type implements BinaryType {
+        public Type(MySQLMediumBlob mySQLInt) {
         }
 
         @Override
         public Class<?> getOuterType() {
-            return String.class;
+            return byte[].class;
         }
     }
 }

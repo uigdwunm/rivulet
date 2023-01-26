@@ -11,7 +11,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface MySQLTinyInt {
-    // TODO
     int maximumDisplayWidth() default 1;
 
     BooleanEnum unSigned() default BooleanEnum.DEFAULT;

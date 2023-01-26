@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-@interface MySQLSmallInt {
+public @interface MySQLSmallInt {
     int maximumDisplayWidth() default 1;
 
     BooleanEnum unSigned() default BooleanEnum.DEFAULT;
@@ -25,8 +25,8 @@ import java.lang.annotation.Target;
 
         private final Class<?> jdbcType;
 
-        public Type(int maximumDisplayWidth, BooleanEnum unSigned, BooleanEnum zerofill) {
-            super(maximumDisplayWidth, unSigned, zerofill);
+        public Type(MySQLSmallInt anno) {
+            super(anno.maximumDisplayWidth(), anno.unSigned(), anno.zerofill());
             if (this.unSigned) {
                 this.minValue = 0;
                 this.maxValue = 65535;

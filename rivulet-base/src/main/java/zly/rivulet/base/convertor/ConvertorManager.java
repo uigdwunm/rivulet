@@ -53,10 +53,6 @@ public class ConvertorManager {
         resultConvertorMap.put(resultConvertor.getOriginType(), resultConvertor.getTargetType(), resultConvertor);
     }
 
-    private static String getKey(Class<?> javaType, Class<?> outerType) {
-        return javaType.getName() + '_' + outerType.getName();
-    }
-
     public <T1, T2> ResultConvertor<T1, T2> getResultConvertor(Class<T1> originType, Class<T2> targetType) {
         ResultConvertor<?, ?> resultConvertor = resultConvertorMap.get(originType, targetType);
         if (resultConvertor == null) {

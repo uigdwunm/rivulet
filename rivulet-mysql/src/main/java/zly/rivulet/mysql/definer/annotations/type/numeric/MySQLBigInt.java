@@ -3,11 +3,14 @@ package zly.rivulet.mysql.definer.annotations.type.numeric;
 import zly.rivulet.base.utils.BooleanEnum;
 import zly.rivulet.mysql.definer.outerType.ExactNumericType;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.math.BigInteger;
 
 @Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
 public @interface MySQLBigInt {
     int maximumDisplayWidth() default 1;
 

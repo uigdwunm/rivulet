@@ -1,6 +1,6 @@
 package zly.rivulet.mysql.definer.annotations.type.string;
 
-import zly.rivulet.mysql.definer.outerType.VariableStringType;
+import zly.rivulet.mysql.definer.outerType.StringType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -9,15 +9,10 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface MySQLVarchar {
+public @interface MySQLLongText {
 
-    int length();
-
-    class Type extends VariableStringType {
-
-        public Type(MySQLVarchar mySQLInt) {
-            super(mySQLInt.length());
-        }
+    class Type implements StringType {
+        public Type(MySQLLongText mySQLInt) {}
 
         @Override
         public Class<?> getOuterType() {

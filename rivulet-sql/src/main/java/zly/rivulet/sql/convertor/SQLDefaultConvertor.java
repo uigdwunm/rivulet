@@ -19,6 +19,7 @@ public class SQLDefaultConvertor {
         registerStatementConvertor(convertorManager);
 
         // 注册结果转换器(用于将查询结果转换成语句)
+
         registerStringConvertor(convertorManager);
         registerBigIntegerConvertor(convertorManager);
         registerLongConvertor(convertorManager);
