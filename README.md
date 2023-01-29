@@ -19,7 +19,6 @@ public class ProvinceDO {
 ``` java
 @SqlTable("t_city")
 public class CityDO {
-
     @PrimaryKey
     @SqlColumn("code")
     @MySQLInt
