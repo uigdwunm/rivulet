@@ -5,7 +5,6 @@
 ```java
 @SqlTable("t_province")
 public class ProvinceDO {
-
     @PrimaryKey
     @SqlColumn("code")
     @MySQLInt
