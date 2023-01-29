@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <parent>
-        <groupId>cn.org.rivulet</groupId>
+        <groupId>io.github.uigdwunm</groupId>
         <artifactId>rivulet-parent</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
@@ -14,7 +14,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>cn.org.rivulet</groupId>
+            <groupId>io.github.uigdwunm</groupId>
             <artifactId>rivulet-base</artifactId>
             <version>${project.parent.version}</version>
         </dependency>

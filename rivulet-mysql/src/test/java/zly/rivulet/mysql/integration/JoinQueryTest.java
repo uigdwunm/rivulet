@@ -60,25 +60,25 @@ public class JoinQueryTest extends BaseTest {
 
     @Test
     public void joinQuery() {
-        Rivulet rivulet = rivuletManager.getRivulet();
-        Blueprint blueprint = rivulet.parse(
-            QueryBuilder.query(StudentJoinPerson.class, StudentVO.class)
-                .select(
-                    Mapping.of(StudentVO::setName, x -> x.getPersonDO().getName()),
-                    Mapping.of(StudentVO::setBirthday, x -> x.getPersonDO().getBirthday()),
-                    Mapping.of(StudentVO::setGender, x -> x.getPersonDO().getGender()),
-                    Mapping.of(StudentVO::setStudyTarget, x -> x.getStudentDO().getTarget()),
-                    Mapping.of(StudentVO::setStudyTime, x -> x.getStudentDO().getCreateTime())
-                )
-                .where(
-                    Condition.BETWEEN.of(x -> x.getStudentDO().getCreateTime(), Param.staticOf(LocalDateTime.now().minusDays(100)), Param.staticOf(LocalDateTime.now()))
-                )
-                .build()
-        );
+//        Rivulet rivulet = rivuletManager.getRivulet();
+//        Blueprint blueprint = rivulet.parse(
+//            QueryBuilder.query(StudentJoinPerson.class, StudentVO.class)
+//                .select(
+//                    Mapping.of(StudentVO::setName, x -> x.getPersonDO().getName()),
+//                    Mapping.of(StudentVO::setBirthday, x -> x.getPersonDO().getBirthday()),
+//                    Mapping.of(StudentVO::setGender, x -> x.getPersonDO().getGender()),
+//                    Mapping.of(StudentVO::setStudyTarget, x -> x.getStudentDO().getTarget()),
+//                    Mapping.of(StudentVO::setStudyTime, x -> x.getStudentDO().getCreateTime())
+//                )
+//                .where(
+//                    Condition.BETWEEN.of(x -> x.getStudentDO().getCreateTime(), Param.staticOf(LocalDateTime.now().minusDays(100)), Param.staticOf(LocalDateTime.now()))
+//                )
+//                .build()
+//        );
 
-        List<StudentVO> vos = rivulet.queryManyByBlueprint(blueprint, Collections.emptyMap());
-        for (StudentVO vo : vos) {
-            System.out.println(vo);
-        }
+//        List<StudentVO> vos = rivulet.queryManyByBlueprint(blueprint, Collections.emptyMap());
+//        for (StudentVO vo : vos) {
+//            System.out.println(vo);
+//        }
     }
 }

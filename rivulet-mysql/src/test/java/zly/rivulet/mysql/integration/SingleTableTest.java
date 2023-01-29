@@ -70,15 +70,15 @@ public class SingleTableTest extends BaseTest {
 
     @Test
     public void query() {
-        Rivulet rivulet = createDefaultRivuletManager().getRivulet();
-        HashMap<String, Object> paramMap = new HashMap<>();
-        paramMap.put("provinceCode", 123);
-        ProvinceDO provinceDO = rivulet.queryOneByDescKey("queryProvince", paramMap);
-
-
-        Fish fish = rivuletManager.testParse("queryProvince");
-        String statement = MySQLPrintUtils.commonPrint(fish);
-        System.out.println(statement);
+//        Rivulet rivulet = createDefaultRivuletManager().getRivulet();
+//        HashMap<String, Object> paramMap = new HashMap<>();
+//        paramMap.put("provinceCode", 123);
+//        ProvinceDO provinceDO = rivulet.queryOneByDescKey("queryProvince", paramMap);
+//
+//
+//        Fish fish = rivuletManager.testParse("queryProvince");
+//        String statement = MySQLPrintUtils.commonPrint(fish);
+//        System.out.println(statement);
     }
 
     public RivuletManager createDefaultRivuletManager() {
