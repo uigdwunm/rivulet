@@ -6,7 +6,7 @@
 
     <packaging>pom</packaging>
 
-    <groupId>pers.zly.rivulet</groupId>
+    <groupId>cn.org.rivulet</groupId>
     <artifactId>rivulet-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
 

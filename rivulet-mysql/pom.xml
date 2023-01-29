@@ -6,7 +6,7 @@
     <packaging>jar</packaging>
 
     <parent>
-        <groupId>pers.zly.rivulet</groupId>
+        <groupId>cn.org.rivulet</groupId>
         <artifactId>rivulet-parent</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
@@ -16,7 +16,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>pers.zly.rivulet</groupId>
+            <groupId>cn.org.rivulet</groupId>
             <artifactId>rivulet-sql</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
