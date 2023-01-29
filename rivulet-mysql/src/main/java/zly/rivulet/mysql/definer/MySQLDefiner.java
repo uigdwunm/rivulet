@@ -12,7 +12,6 @@ import zly.rivulet.mysql.definer.annotations.type.binary.*;
 import zly.rivulet.mysql.definer.annotations.type.date.*;
 import zly.rivulet.mysql.definer.annotations.type.numeric.*;
 import zly.rivulet.mysql.definer.annotations.type.string.*;
-import zly.rivulet.sql.convertor.SQLDefaultConvertor;
 import zly.rivulet.sql.definer.SqlDefiner;
 import zly.rivulet.sql.definer.annotations.SqlColumn;
 import zly.rivulet.sql.definer.annotations.SqlTable;
