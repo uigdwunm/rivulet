@@ -85,7 +85,6 @@ public class SingleTableTest extends BaseTest {
         DefaultWarehouseManager defaultWarehouseManager = new DefaultWarehouseManager("zly.rivulet.mysql");
         RivuletManager rivuletManager = new DefaultMySQLDataSourceRivuletManager(
             new MySQLRivuletProperties(),
-            new ConvertorManager(),
             defaultWarehouseManager,
             createDataSource()
         );

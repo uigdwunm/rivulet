@@ -16,8 +16,8 @@ import java.util.List;
 
 public abstract class MySQLRivulet extends SQLRivulet {
 
-    protected MySQLRivulet(SQLRivuletManager rivuletManager, Connection connection) {
-        super(rivuletManager, connection);
+    protected MySQLRivulet(SQLRivuletManager rivuletManager) {
+        super(rivuletManager);
     }
 
     @Override
@@ -29,7 +29,7 @@ public abstract class MySQLRivulet extends SQLRivulet {
         SQLBlueprint sqlBlueprint = (SQLBlueprint) parser.parseInsertByMeta(modelMeta);
 
         MySQLRivuletProperties rivuletProperties = this.getRivuletProperties();
-        MySQLBatchInsertExecutePlan executePlan = new MySQLBatchInsertExecutePlan(rivuletProperties, super.useConnection());
+        MySQLBatchInsertExecutePlan executePlan = new MySQLBatchInsertExecutePlan(rivuletProperties, useConnection());
 
         ParamManager paramManager = paramManagerFactory.getBatchByModelMeta(modelMeta, (Collection<Object>) models);
         return runningPipeline.go(sqlBlueprint, paramManager, executePlan);
@@ -47,7 +47,7 @@ public abstract class MySQLRivulet extends SQLRivulet {
         ModelMeta modelMeta = definer.createOrGetModelMeta(dOModelClass);
         SQLBlueprint sqlBlueprint = (SQLBlueprint) parser.parseUpdateByMeta(modelMeta);
 
-        MySQLBatchUpdateExecutePlan executePlan = new MySQLBatchUpdateExecutePlan(super.useConnection());
+        MySQLBatchUpdateExecutePlan executePlan = new MySQLBatchUpdateExecutePlan(useConnection());
 
         ParamManager paramManager = paramManagerFactory.getBatchByModelMeta(modelMeta, (Collection<Object>) models);
         return runningPipeline.go(sqlBlueprint, paramManager, executePlan);

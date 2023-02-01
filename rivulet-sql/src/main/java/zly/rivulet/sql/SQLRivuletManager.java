@@ -1,6 +1,7 @@
 package zly.rivulet.sql;
 
 import zly.rivulet.base.RivuletManager;
+import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.generator.Generator;
 import zly.rivulet.base.pipeline.ExecutePlan;
@@ -16,6 +17,14 @@ public abstract class SQLRivuletManager extends RivuletManager {
         super(generator.getParser(), generator, generator.getProperties(), generator.getConvertorManager(), warehouseManager);
         rivuletFlagClassExecutePlanMap = new TwofoldConcurrentHashMap<>();
 
+    }
+
+    public void registerExecutePlan(RivuletFlag rivuletFlag, Class<?> returnType, ExecutePlan executePlan) {
+        this.rivuletFlagClassExecutePlanMap.put(rivuletFlag, returnType, executePlan);
+    }
+
+    public static ConvertorManager cretateDefaultConvertorManager() {
+        ConvertorManager convertorManager = new ConvertorManager();
         // 注册默认的语句转换器(用于将入参转换成语句)
         DefaultStatementConvertors.register(convertorManager);
 
@@ -36,10 +45,8 @@ public abstract class SQLRivuletManager extends RivuletManager {
         DefaultResultSQLTimeConvertors.register(convertorManager);
         DefaultResultSQLTimestampConvertors.register(convertorManager);
         DefaultResultLocalDateTimeConvertors.register(convertorManager);
-    }
 
-    public void registerExecutePlan(RivuletFlag rivuletFlag, Class<?> returnType, ExecutePlan executePlan) {
-        this.rivuletFlagClassExecutePlanMap.put(rivuletFlag, returnType, executePlan);
+        return convertorManager;
     }
 
 }

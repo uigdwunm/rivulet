@@ -3,7 +3,6 @@ package zly.rivulet.sql;
 import zly.rivulet.base.Rivulet;
 import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.definition.Blueprint;
-import zly.rivulet.base.exception.ExecuteException;
 import zly.rivulet.base.generator.param_manager.ParamManager;
 import zly.rivulet.base.generator.param_manager.for_proxy_method.SimpleParamManager;
 import zly.rivulet.base.pipeline.ExecutePlan;
@@ -23,32 +22,12 @@ public abstract class SQLRivulet extends Rivulet {
 
     private final TwofoldConcurrentHashMap<RivuletFlag, Class<?>, ExecutePlan> rivuletFlagClassExecutePlanMap;
 
-    private final Connection connection;
-
-    private volatile boolean isClosed = false;
-
-    protected SQLRivulet(SQLRivuletManager rivuletManager, Connection connection) {
+    protected SQLRivulet(SQLRivuletManager rivuletManager) {
         super(rivuletManager);
         this.rivuletFlagClassExecutePlanMap = rivuletManager.rivuletFlagClassExecutePlanMap;
-        this.connection = connection;
     }
 
-
-    protected Connection useConnection() {
-        if (isClosed) {
-            throw ExecuteException.rivuletIsClosed();
-        }
-        return this.connection;
-    }
-
-    public void close() {
-        try {
-            this.isClosed = true;
-            this.useConnection().close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    protected abstract Connection useConnection();
 
     public void commit() {
         try {

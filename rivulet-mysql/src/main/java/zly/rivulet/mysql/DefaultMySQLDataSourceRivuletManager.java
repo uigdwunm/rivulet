@@ -16,7 +16,6 @@ public class DefaultMySQLDataSourceRivuletManager extends SQLRivuletManager {
 
     public DefaultMySQLDataSourceRivuletManager(
         MySQLRivuletProperties configProperties,
-        ConvertorManager convertorManager,
         WarehouseManager warehouseManager,
         DataSource dataSource
     ) {
@@ -25,9 +24,8 @@ public class DefaultMySQLDataSourceRivuletManager extends SQLRivuletManager {
                 configProperties,
                 new SqlParser(
                     warehouseManager,
-                    new MySQLDefiner(convertorManager),
-                    configProperties,
-                    convertorManager
+                    new MySQLDefiner(cretateDefaultConvertorManager()),
+                    configProperties
                 )
             ),
             warehouseManager

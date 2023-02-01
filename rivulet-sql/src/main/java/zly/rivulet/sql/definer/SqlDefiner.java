@@ -54,4 +54,7 @@ public abstract class SqlDefiner implements Definer {
 
     protected abstract void initTypeConvertor();
 
+    public ConvertorManager getConvertorManager() {
+        return convertorManager;
+    }
 }

@@ -46,7 +46,6 @@ public class App {
         // todo beanManager配置扫包
         DefaultMySQLDataSourceRivuletManager rivuletManager = new DefaultMySQLDataSourceRivuletManager(
             new MySQLRivuletProperties(),
-            new ConvertorManager(),
             defaultWarehouseManager,
             createDataSource()
         );

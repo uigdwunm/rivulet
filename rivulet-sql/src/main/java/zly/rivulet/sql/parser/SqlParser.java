@@ -57,9 +57,9 @@ public class SqlParser implements Parser {
 
     private final TwofoldConcurrentHashMap<ModelMeta, RivuletFlag, Blueprint> modelMetaFlagBlueprintMap = new TwofoldConcurrentHashMap<>();
 
-    public SqlParser(WarehouseManager warehouseManager, SqlDefiner definer, SqlRivuletProperties configProperties, ConvertorManager convertorManager) {
+    public SqlParser(WarehouseManager warehouseManager, SqlDefiner definer, SqlRivuletProperties configProperties) {
         this.configProperties = configProperties;
-        this.convertorManager = convertorManager;
+        this.convertorManager = definer.getConvertorManager();
         this.definer = definer;
         this.warehouseManager = warehouseManager;
     }

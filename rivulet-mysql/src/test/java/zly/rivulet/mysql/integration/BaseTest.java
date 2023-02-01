@@ -26,7 +26,6 @@ public abstract class BaseTest {
         DefaultWarehouseManager defaultWarehouseManager = new DefaultWarehouseManager("zly.rivulet.mysql");
         rivuletManager = new DefaultMySQLDataSourceRivuletManager(
             new MySQLRivuletProperties(),
-            new ConvertorManager(),
             defaultWarehouseManager,
             createDataSource()
         );
