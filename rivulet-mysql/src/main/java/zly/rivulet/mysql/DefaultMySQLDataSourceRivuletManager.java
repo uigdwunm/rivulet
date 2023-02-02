@@ -1,17 +1,12 @@
 package zly.rivulet.mysql;
 
-import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.warehouse.WarehouseManager;
-import zly.rivulet.mysql.definer.MySQLDefiner;
-import zly.rivulet.mysql.generator.MysqlGenerator;
-import zly.rivulet.sql.SQLRivuletManager;
-import zly.rivulet.sql.parser.SqlParser;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class DefaultMySQLDataSourceRivuletManager extends SQLRivuletManager {
+public class DefaultMySQLDataSourceRivuletManager extends MySQLRivuletManager {
     private final DataSource dataSource;
 
     public DefaultMySQLDataSourceRivuletManager(
@@ -19,17 +14,7 @@ public class DefaultMySQLDataSourceRivuletManager extends SQLRivuletManager {
         WarehouseManager warehouseManager,
         DataSource dataSource
     ) {
-        super(
-            new MysqlGenerator(
-                configProperties,
-                new SqlParser(
-                    warehouseManager,
-                    new MySQLDefiner(cretateDefaultConvertorManager()),
-                    configProperties
-                )
-            ),
-            warehouseManager
-        );
+        super(configProperties, warehouseManager);
         this.dataSource = dataSource;
     }
 

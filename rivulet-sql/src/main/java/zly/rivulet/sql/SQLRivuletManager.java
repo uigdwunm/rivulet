@@ -13,10 +13,10 @@ public abstract class SQLRivuletManager extends RivuletManager {
 
     protected final TwofoldConcurrentHashMap<RivuletFlag, Class<?>, ExecutePlan> rivuletFlagClassExecutePlanMap;
 
+
     protected SQLRivuletManager(Generator generator, WarehouseManager warehouseManager) {
         super(generator.getParser(), generator, generator.getProperties(), generator.getConvertorManager(), warehouseManager);
         rivuletFlagClassExecutePlanMap = new TwofoldConcurrentHashMap<>();
-
     }
 
     public void registerExecutePlan(RivuletFlag rivuletFlag, Class<?> returnType, ExecutePlan executePlan) {

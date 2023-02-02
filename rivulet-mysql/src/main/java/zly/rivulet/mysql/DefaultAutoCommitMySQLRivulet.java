@@ -24,6 +24,7 @@ public class DefaultAutoCommitMySQLRivulet extends MySQLRivulet {
         return this.connection;
     }
 
+    @Override
     public void close() {
         try {
             this.isClosed = true;

@@ -29,6 +29,8 @@ public abstract class SQLRivulet extends Rivulet {
 
     protected abstract Connection useConnection();
 
+    protected abstract void close();
+
     public void commit() {
         try {
             this.useConnection().commit();
