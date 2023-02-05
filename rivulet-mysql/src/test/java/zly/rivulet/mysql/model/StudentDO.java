@@ -5,16 +5,14 @@ import zly.rivulet.base.definer.annotations.PrimaryKey;
 import zly.rivulet.mysql.definer.annotations.type.date.MySQLDate;
 import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLBigInt;
 import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLInt;
-import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLTinyInt;
 import zly.rivulet.mysql.definer.annotations.type.string.MySQLChar;
 import zly.rivulet.mysql.definer.annotations.type.string.MySQLVarchar;
 import zly.rivulet.sql.definer.annotations.SqlColumn;
-import zly.rivulet.sql.definer.annotations.SqlTable;
+import zly.rivulet.sql.definer.annotations.SQLTable;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@SqlTable("t_student")
+@SQLTable("t_student")
 public class StudentDO {
 
     @PrimaryKey

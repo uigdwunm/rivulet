@@ -9,6 +9,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ConvertorManager {
 
+    private static final ResultConvertor<Object, Object> selfConvertor = new ResultConvertor<Object, Object>() {
+        @Override
+        public Object convert(Object originData) {
+            return originData;
+        }
+    };
+
     /**
      * Description 一般用于查询结果转换成java类型时,就是 jdbc的type转换成java模型的type
      *
@@ -57,12 +64,7 @@ public class ConvertorManager {
         ResultConvertor<?, ?> resultConvertor = resultConvertorMap.get(originType, targetType);
         if (originType.equals(targetType)) {
             // 结果转换器没有，并且出入参相同，则直接返回
-            return new ResultConvertor<T1, T2>() {
-                @Override
-                public T2 convert(T1 originData) {
-                    return (T2) originData;
-                }
-            };
+            return (ResultConvertor<T1, T2>) selfConvertor;
         }
         if (resultConvertor == null) {
             throw ModelDefineException.noMatchResultConvertor(originType, targetType);

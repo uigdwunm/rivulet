@@ -5,11 +5,11 @@ import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLBigInt;
 import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLInt;
 import zly.rivulet.mysql.definer.annotations.type.string.MySQLChar;
 import zly.rivulet.sql.definer.annotations.SqlColumn;
-import zly.rivulet.sql.definer.annotations.SqlTable;
+import zly.rivulet.sql.definer.annotations.SQLTable;
 
 import java.time.LocalDateTime;
 
-@SqlTable("t_teacher")
+@SQLTable("t_teacher")
 public class TeacherDO {
 
     @SqlColumn

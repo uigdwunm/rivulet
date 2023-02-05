@@ -32,7 +32,6 @@ public class SQLMetaModelResultAssigner extends SQLQueryResultAssigner {
     public void assign(Object container, ResultSet resultSet, int indexStart) {
         int size = fieldAssignerWrapList.size();
         try {
-            // TODO 暂时先放在这
             for (int i = 0; i < size; i++) {
                 FieldAssignerWrap fieldAssignerWrap = fieldAssignerWrapList.get(i);
                 SetMapping<Object, Object> setMapping = fieldAssignerWrap.getSetMapping();

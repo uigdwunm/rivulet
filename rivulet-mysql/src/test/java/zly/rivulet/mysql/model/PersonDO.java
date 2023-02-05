@@ -6,11 +6,11 @@ import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLBigInt;
 import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLTinyInt;
 import zly.rivulet.mysql.definer.annotations.type.string.MySQLVarchar;
 import zly.rivulet.sql.definer.annotations.SqlColumn;
-import zly.rivulet.sql.definer.annotations.SqlTable;
+import zly.rivulet.sql.definer.annotations.SQLTable;
 
 import java.time.LocalDate;
 
-@SqlTable("t_person")
+@SQLTable("t_person")
 public class PersonDO {
 
     @PrimaryKey

@@ -1,9 +1,9 @@
 package zly.rivulet.mysql.definer.model;
 
 import zly.rivulet.sql.definer.annotations.SqlColumn;
-import zly.rivulet.sql.definer.annotations.SqlTable;
+import zly.rivulet.sql.definer.annotations.SQLTable;
 
-@SqlTable("test")
+@SQLTable("test")
 public class DefinerTestModel {
 
     @SqlColumn("")

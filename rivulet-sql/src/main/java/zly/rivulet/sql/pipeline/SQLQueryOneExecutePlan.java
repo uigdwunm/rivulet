@@ -36,6 +36,7 @@ public class SQLQueryOneExecutePlan extends ExecutePlan {
                 try {
                     PreparedStatement statement = connection.prepareStatement(collector.toString());
                     ResultSet resultSet = statement.executeQuery(collector.toString());
+                    resultSet.next();
                     SQLQueryResultAssigner assigner = (SQLQueryResultAssigner) sqlFish.getBlueprint().getAssigner();
                     return assigner.getValue(resultSet, 0);
                 } catch (SQLException e) {

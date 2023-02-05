@@ -1,5 +1,7 @@
 package zly.rivulet.mysql.integration;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.junit.BeforeClass;
 import zly.rivulet.base.parser.Parser;
 import zly.rivulet.mysql.DefaultMySQLDataSourceRivuletManager;
@@ -23,13 +25,27 @@ public abstract class BaseTest {
     public static void createRivuletManager() {
         rivuletManager = new DefaultMySQLDataSourceRivuletManager(
             new MySQLRivuletProperties(),
-            createDataSource()
+            createRealDataSource()
         );
         rivuletManager.putInStorageByBasePackage("zly.rivulet.mysql");
 
         // 过滤掉最外层查询参数的别名
         Parser parser = rivuletManager.getParser();
         parser.addAnalyzer(new DefaultSQLAnalyzer());
+    }
+
+    public static DataSource createRealDataSource() {
+//        Class.forName("com.mysql.jdbc.Driver");
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl("jdbc:mysql://rm-bp1kms1f90gguo416po.rwlb.rds.aliyuncs.com:3306/tt_database?autoReconnect=true&useSSL=false");
+        config.setUsername("v587");
+        config.setPassword("v587V%*&");
+        config.addDataSourceProperty("cachePrepStmts", "true");
+        config.addDataSourceProperty("prepStmtCacheSize", "250");
+        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+
+        return new HikariDataSource(config);
+
     }
 
     /**

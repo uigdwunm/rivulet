@@ -1,6 +1,7 @@
 package zly.rivulet.mysql.integration;
 
 import org.junit.Test;
+import zly.rivulet.base.Rivulet;
 import zly.rivulet.base.RivuletManager;
 import zly.rivulet.base.definer.annotations.RivuletDesc;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
@@ -22,6 +23,7 @@ import zly.rivulet.sql.describer.query.desc.SortItem;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.Collections;
 
 public class SingleTableTest extends BaseTest {
 
@@ -46,7 +48,7 @@ public class SingleTableTest extends BaseTest {
 
     @Test
     public void query11() {
-        RivuletManager rivuletManager = createDefaultRivuletManager();
+        Rivulet rivulet = rivuletManager.getRivulet();
         Fish fish = rivuletManager.testParse("queryPersonTestDesc1");
         String statement = MySQLPrintUtils.commonPrint(fish);
         System.out.println(statement);
@@ -77,16 +79,18 @@ public class SingleTableTest extends BaseTest {
 //        System.out.println(statement);
     }
 
-    public RivuletManager createDefaultRivuletManager() {
-        RivuletManager rivuletManager = new DefaultMySQLDataSourceRivuletManager(
-            new MySQLRivuletProperties(),
-            createDataSource()
-        );
-        rivuletManager.putInStorageByBasePackage("zly.rivulet.mysql");
-
-        Parser parser = rivuletManager.getParser();
-//        parser.addAnalyzer(new DefaultSQLAnalyzer());
-
-        return rivuletManager;
+    @RivuletDesc("queryById")
+    public WholeDesc queryById() {
+        return QueryBuilder.query(PersonDO.class, PersonDO.class)
+            .where(Condition.Equal.of(PersonDO::getId, Param.of(Long.class, "id")))
+            .build();
     }
+
+    @Test
+    public void testQueryById() {
+        Rivulet rivulet = rivuletManager.getRivulet();
+        PersonDO o = rivulet.queryOneByDescKey("queryById", Collections.singletonMap("id", 1L));
+        System.out.println(o);
+    }
+
 }

@@ -4,7 +4,7 @@ import java.lang.annotation.*;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface SqlTable {
+public @interface SQLTable {
 
     /**
      * Description 表名，必填

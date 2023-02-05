@@ -24,7 +24,7 @@ public class SQLModelDefineException extends RuntimeException {
         return new SQLModelDefineException("未定义对应的字段");
     }
 
-    public static SQLModelDefineException notTable() {
-        return new SQLModelDefineException("定义的表对象非法");
+    public static SQLModelDefineException notTable(Class<?> clazz) {
+        return new SQLModelDefineException("定义的表对象非法,必须详尽的描述表元数据,缺少@SqlTable, {}");
     }
 }
