@@ -1,7 +1,5 @@
 package zly.rivulet.mysql;
 
-import zly.rivulet.base.warehouse.WarehouseManager;
-
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -11,10 +9,9 @@ public class DefaultMySQLDataSourceRivuletManager extends MySQLRivuletManager {
 
     public DefaultMySQLDataSourceRivuletManager(
         MySQLRivuletProperties configProperties,
-        WarehouseManager warehouseManager,
         DataSource dataSource
     ) {
-        super(configProperties, warehouseManager);
+        super(configProperties);
         this.dataSource = dataSource;
     }
 

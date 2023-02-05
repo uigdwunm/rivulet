@@ -1,9 +1,7 @@
 package zly.rivulet.mysql.integration;
 
 import org.junit.BeforeClass;
-import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.parser.Parser;
-import zly.rivulet.base.warehouse.DefaultWarehouseManager;
 import zly.rivulet.mysql.DefaultMySQLDataSourceRivuletManager;
 import zly.rivulet.mysql.MySQLRivuletProperties;
 import zly.rivulet.sql.SQLRivuletManager;
@@ -23,12 +21,11 @@ public abstract class BaseTest {
 
     @BeforeClass
     public static void createRivuletManager() {
-        DefaultWarehouseManager defaultWarehouseManager = new DefaultWarehouseManager("zly.rivulet.mysql");
         rivuletManager = new DefaultMySQLDataSourceRivuletManager(
             new MySQLRivuletProperties(),
-            defaultWarehouseManager,
             createDataSource()
         );
+        rivuletManager.putInStorageByBasePackage("zly.rivulet.mysql");
 
         // 过滤掉最外层查询参数的别名
         Parser parser = rivuletManager.getParser();

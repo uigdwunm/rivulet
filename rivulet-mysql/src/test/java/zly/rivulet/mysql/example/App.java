@@ -2,7 +2,6 @@ package zly.rivulet.mysql.example;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.generator.Fish;
 import zly.rivulet.base.generator.statement.Statement;
@@ -10,7 +9,6 @@ import zly.rivulet.base.parser.Parser;
 import zly.rivulet.base.pipeline.BeforeExecuteNode;
 import zly.rivulet.base.pipeline.RunningPipeline;
 import zly.rivulet.base.utils.collector.CommonStatementCollector;
-import zly.rivulet.base.warehouse.DefaultWarehouseManager;
 import zly.rivulet.mysql.DefaultMySQLDataSourceRivuletManager;
 import zly.rivulet.mysql.MySQLRivulet;
 import zly.rivulet.mysql.MySQLRivuletProperties;
@@ -42,13 +40,11 @@ public class App {
     }
 
     public static void main(String[] args) {
-        DefaultWarehouseManager defaultWarehouseManager = new DefaultWarehouseManager("zly.rivulet.mysql");
-        // todo beanManager配置扫包
         DefaultMySQLDataSourceRivuletManager rivuletManager = new DefaultMySQLDataSourceRivuletManager(
             new MySQLRivuletProperties(),
-            defaultWarehouseManager,
             createDataSource()
         );
+        rivuletManager.putInStorageByBasePackage("zly.rivulet.mysql");
         RunningPipeline runningPipeline = rivuletManager.getRunningPipeline();
         runningPipeline.addBeforeExecuteNode(new BeforeExecuteNode() {
             @Override

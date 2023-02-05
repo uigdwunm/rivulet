@@ -6,7 +6,6 @@ import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.generator.Generator;
 import zly.rivulet.base.pipeline.ExecutePlan;
 import zly.rivulet.base.utils.TwofoldConcurrentHashMap;
-import zly.rivulet.base.warehouse.WarehouseManager;
 import zly.rivulet.sql.convertor.*;
 
 public abstract class SQLRivuletManager extends RivuletManager {
@@ -14,8 +13,8 @@ public abstract class SQLRivuletManager extends RivuletManager {
     protected final TwofoldConcurrentHashMap<RivuletFlag, Class<?>, ExecutePlan> rivuletFlagClassExecutePlanMap;
 
 
-    protected SQLRivuletManager(Generator generator, WarehouseManager warehouseManager) {
-        super(generator.getParser(), generator, generator.getProperties(), generator.getConvertorManager(), warehouseManager);
+    protected SQLRivuletManager(Generator generator) {
+        super(generator.getParser(), generator, generator.getProperties(), generator.getConvertorManager());
         rivuletFlagClassExecutePlanMap = new TwofoldConcurrentHashMap<>();
     }
 
@@ -48,5 +47,4 @@ public abstract class SQLRivuletManager extends RivuletManager {
 
         return convertorManager;
     }
-
 }

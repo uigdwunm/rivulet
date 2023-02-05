@@ -13,7 +13,7 @@ import zly.rivulet.base.parser.Analyzer;
 import zly.rivulet.base.parser.Parser;
 import zly.rivulet.base.utils.TwofoldConcurrentHashMap;
 import zly.rivulet.base.utils.View;
-import zly.rivulet.base.warehouse.WarehouseManager;
+import zly.rivulet.sql.SQLRivuletManager;
 import zly.rivulet.sql.SqlRivuletProperties;
 import zly.rivulet.sql.definer.SqlDefiner;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
@@ -29,7 +29,6 @@ import zly.rivulet.sql.parser.proxy_node.ProxyNodeManager;
 import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
@@ -42,6 +41,7 @@ import java.util.stream.Collectors;
  * Date 2022/9/6 8:39
  **/
 public class SqlParser implements Parser {
+    private SQLRivuletManager sqlRivuletManager;
 
     private final SqlRivuletProperties configProperties;
 
@@ -49,19 +49,16 @@ public class SqlParser implements Parser {
 
     private final SqlDefiner definer;
 
-    private final WarehouseManager warehouseManager;
-
     private final ProxyNodeManager proxyNodeManager = new ProxyNodeManager();
 
     private final List<Analyzer> analyzerList = new CopyOnWriteArrayList<>();
 
     private final TwofoldConcurrentHashMap<ModelMeta, RivuletFlag, Blueprint> modelMetaFlagBlueprintMap = new TwofoldConcurrentHashMap<>();
 
-    public SqlParser(WarehouseManager warehouseManager, SqlDefiner definer, SqlRivuletProperties configProperties) {
+    public SqlParser(SqlDefiner definer, SqlRivuletProperties configProperties) {
         this.configProperties = configProperties;
         this.convertorManager = definer.getConvertorManager();
         this.definer = definer;
-        this.warehouseManager = warehouseManager;
     }
 
     @Override
@@ -211,7 +208,11 @@ public class SqlParser implements Parser {
         return proxyNodeManager;
     }
 
-    public WarehouseManager getWarehouseManager() {
-        return warehouseManager;
+    public void setSqlRivuletManager(SQLRivuletManager sqlRivuletManager) {
+        this.sqlRivuletManager = sqlRivuletManager;
+    }
+
+    public SQLRivuletManager getSqlRivuletManager() {
+        return sqlRivuletManager;
     }
 }

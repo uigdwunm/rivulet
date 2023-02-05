@@ -13,12 +13,13 @@ import zly.rivulet.base.pipeline.ExecutePlan;
 import zly.rivulet.base.pipeline.RunningPipeline;
 import zly.rivulet.base.utils.CollectionInstanceCreator;
 import zly.rivulet.base.utils.Constant;
-import zly.rivulet.base.warehouse.WarehouseManager;
 
 import java.lang.reflect.Method;
 import java.util.*;
 
 public abstract class Rivulet {
+
+    protected final RivuletManager rivuletManager;
 
     protected final Parser parser;
 
@@ -32,16 +33,14 @@ public abstract class Rivulet {
 
     protected final RivuletProperties rivuletProperties;
 
-    protected final WarehouseManager warehouseManager;
-
     protected Rivulet(RivuletManager rivuletManager) {
+        this.rivuletManager = rivuletManager;
         this.parser = rivuletManager.parser;
         this.definer = rivuletManager.definer;
         this.runningPipeline = rivuletManager.runningPipeline;
         this.paramManagerFactory = rivuletManager.paramManagerFactory;
         this.collectionInstanceCreator = rivuletManager.collectionInstanceCreator;
         this.rivuletProperties = rivuletManager.configProperties;
-        this.warehouseManager = rivuletManager.warehouseManager;
     }
 
     public Blueprint parse(WholeDesc wholeDesc) {
@@ -54,8 +53,8 @@ public abstract class Rivulet {
      * @author zhaolaiyuan
      * Date 2022/12/25 12:19
      **/
-    public Object exec(Method proxyMethod, Object[] args) {
-        Blueprint sqlBlueprint = warehouseManager.getByProxyMethod(proxyMethod);
+    public Object exec(Method proxyMethod, String descKey, Object[] args) {
+        Blueprint sqlBlueprint = rivuletManager.getBlueprintByDescKey(descKey);
         ParamManager paramManager = paramManagerFactory.getByProxyMethod(sqlBlueprint, proxyMethod, args);
         // 执行
         ExecutePlan executePlan = this.createExecutePlan(sqlBlueprint.getFlag(), proxyMethod.getReturnType());
@@ -71,7 +70,7 @@ public abstract class Rivulet {
      **/
     public <T> T queryOneByDescKey(String descKey, Map<String, Object> params) {
         // 解析definition
-        Blueprint blueprint = warehouseManager.getByDescKey(descKey);
+        Blueprint blueprint = rivuletManager.getBlueprintByDescKey(descKey);
         return this.queryOneByBlueprint(blueprint, new SimpleParamManager(params));
     }
 
@@ -114,7 +113,7 @@ public abstract class Rivulet {
      **/
     public <T> void queryManyByDescKey(String descKey, Map<String, Object> params, Collection<T> resultContainer) {
         // 解析definition
-        Blueprint blueprint = warehouseManager.getByDescKey(descKey);
+        Blueprint blueprint = rivuletManager.getBlueprintByDescKey(descKey);
         this.queryManyByBlueprint(blueprint, params, resultContainer);
     }
 
@@ -200,7 +199,7 @@ public abstract class Rivulet {
      **/
     // 通过desc更新
     public int updateByDescKey(String descKey, Map<String, Object> params) {
-        Blueprint blueprint = warehouseManager.getByDescKey(descKey);
+        Blueprint blueprint = rivuletManager.getBlueprintByDescKey(descKey);
         return this.updateByBlueprint(blueprint, params);
     }
 
@@ -251,4 +250,8 @@ public abstract class Rivulet {
      **/
     //
     public abstract int deleteByBlueprint(Blueprint blueprint, Map<String, Object> params);
+
+    public RivuletManager getRivuletManager() {
+        return rivuletManager;
+    }
 }

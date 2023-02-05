@@ -1,9 +1,7 @@
 package zly.rivulet.mysql.integration;
 
 import org.junit.Test;
-import zly.rivulet.base.Rivulet;
 import zly.rivulet.base.RivuletManager;
-import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.definer.annotations.RivuletDesc;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.describer.WholeDesc;
@@ -11,7 +9,6 @@ import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.describer.param.ParamCheckType;
 import zly.rivulet.base.generator.Fish;
 import zly.rivulet.base.parser.Parser;
-import zly.rivulet.base.warehouse.DefaultWarehouseManager;
 import zly.rivulet.mysql.DefaultMySQLDataSourceRivuletManager;
 import zly.rivulet.mysql.MySQLRivuletProperties;
 import zly.rivulet.mysql.discriber.function.MySQLFunction;
@@ -25,7 +22,6 @@ import zly.rivulet.sql.describer.query.desc.SortItem;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.HashMap;
 
 public class SingleTableTest extends BaseTest {
 
@@ -82,12 +78,11 @@ public class SingleTableTest extends BaseTest {
     }
 
     public RivuletManager createDefaultRivuletManager() {
-        DefaultWarehouseManager defaultWarehouseManager = new DefaultWarehouseManager("zly.rivulet.mysql");
         RivuletManager rivuletManager = new DefaultMySQLDataSourceRivuletManager(
             new MySQLRivuletProperties(),
-            defaultWarehouseManager,
             createDataSource()
         );
+        rivuletManager.putInStorageByBasePackage("zly.rivulet.mysql");
 
         Parser parser = rivuletManager.getParser();
 //        parser.addAnalyzer(new DefaultSQLAnalyzer());

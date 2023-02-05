@@ -2,6 +2,7 @@ package zly.rivulet.base;
 
 import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.definer.Definer;
+import zly.rivulet.base.definer.annotations.RivuletDesc;
 import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.definition.param.ParamManagerFactory;
 import zly.rivulet.base.describer.WholeDesc;
@@ -12,9 +13,12 @@ import zly.rivulet.base.generator.param_manager.for_proxy_method.ForTestParamMan
 import zly.rivulet.base.parser.Parser;
 import zly.rivulet.base.pipeline.RunningPipeline;
 import zly.rivulet.base.utils.CollectionInstanceCreator;
-import zly.rivulet.base.warehouse.WarehouseManager;
+import zly.rivulet.base.utils.LoadUtil;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -32,18 +36,25 @@ public abstract class RivuletManager {
 
     protected final ConvertorManager convertorManager;
 
-    protected final WarehouseManager warehouseManager;
-
     protected final ParamManagerFactory paramManagerFactory;
 
     protected final CollectionInstanceCreator collectionInstanceCreator = new CollectionInstanceCreator();
+
+    /**
+     * 所有key与原始desc的映射
+     **/
+    private final Map<String, WholeDesc> rivuletKey_wholeDesc_map = new HashMap<>();
+
+    /**
+     * 所有key与设计图的映射
+     **/
+    protected final Map<String, Blueprint> rivuletKey_blueprint_map = new ConcurrentHashMap<>();
 
     protected RivuletManager(
         Parser parser,
         Generator generator,
         RivuletProperties configProperties,
-        ConvertorManager convertorManager,
-        WarehouseManager warehouseManager
+        ConvertorManager convertorManager
     ) {
         this.parser = parser;
         this.definer = parser.getDefiner();
@@ -51,7 +62,6 @@ public abstract class RivuletManager {
         this.runningPipeline = new RunningPipeline(generator);
         this.configProperties = configProperties;
         this.convertorManager = convertorManager;
-        this.warehouseManager = warehouseManager;
         this.paramManagerFactory = new ParamManagerFactory();
     }
 
@@ -63,42 +73,54 @@ public abstract class RivuletManager {
      **/
     public abstract Rivulet getRivulet();
 
+    public void putInStorageByBasePackage(String ... basePackages) {
+        for (String basePackage : basePackages) {
+            List<Class<?>> classes = LoadUtil.scan(basePackage);
+            for (Class<?> clazz : classes) {
+                this.putInStorage(clazz);
+            }
+        }
+    }
+
     /**
-     * Description 初始化方法，预创建出所有用到的definition，并按key存储好
-     * 只需要在启动时执行一次
+     * Description 入库
      *
      * @author zhaolaiyuan
-     * Date 2022/3/20 10:15
+     * Date 2022/7/23 11:49
      **/
+    public void putInStorage(Class<?> descClazz) {
+        try {
+            Object o = null;
+            for (Method method : descClazz.getMethods()) {
+                RivuletDesc rivuletDesc  = method.getAnnotation(RivuletDesc.class);
+                if (rivuletDesc != null) {
+                    // 是配置类
+                    String key = rivuletDesc.value();
+                    if (o == null) {
+                        o = descClazz.newInstance();
+                    }
+                    WholeDesc wholeDesc = (WholeDesc) method.invoke(o);
+                    wholeDesc.setAnnotation(rivuletDesc);
+                    rivuletKey_wholeDesc_map.put(key, wholeDesc);
 
-    public void preParseAll() {
-        // 解析所有配置了key的desc
-        Map<String, WholeDesc> allConfiguredDesc = warehouseManager.getAllConfiguredDesc();
-        for (Map.Entry<String, WholeDesc> entry : allConfiguredDesc.entrySet()) {
-            String key = entry.getKey();
-            WholeDesc wholeDesc = entry.getValue();
-
-            Blueprint blueprint = parser.parse(wholeDesc);
-            warehouseManager.putDescKeyBlueprint(key, blueprint);
-        }
-
-        // 将所有关联了代理方法的key与method绑定
-        Map<String, Method> allMapperMethod = warehouseManager.getAllMapperMethod();
-        for (Map.Entry<String, Method> entry : allMapperMethod.entrySet()) {
-            String key = entry.getKey();
-            Method method = entry.getValue();
-
-            // 获取上面解析好的definition
-            Blueprint blueprint = warehouseManager.getByDescKey(key);
-            if (blueprint == null) {
-                // 没有预先定义方法
-                throw ParseException.noBindingDesc(method);
+                    Blueprint blueprint = parser.parse(wholeDesc);
+                    this.rivuletKey_blueprint_map.put(key, blueprint);
+                }
             }
-            // 参数绑定设计图
-            paramManagerFactory.registerProxyMethod(blueprint, method);
-            // 方法绑定设计图
-            warehouseManager.putProxyMethodBlueprint(method, blueprint);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
         }
+    }
+
+    public void methodBinding(Method proxyMethod, String descKey) {
+        // 获取上面解析好的definition
+        Blueprint blueprint = rivuletKey_blueprint_map.get(descKey);
+        if (blueprint == null) {
+            // 没有预先定义方法
+            throw ParseException.noBindingDesc(proxyMethod);
+        }
+        // 参数绑定设计图
+        paramManagerFactory.registerProxyMethod(blueprint, proxyMethod);
     }
 
     /**
@@ -109,7 +131,7 @@ public abstract class RivuletManager {
      * Date 2022/8/9 8:32
      **/
     public void warmUpAll() {
-        for (Blueprint blueprint : warehouseManager.getAllBlueprint()) {
+        for (Blueprint blueprint : rivuletKey_blueprint_map.values()) {
             generator.warmUp(blueprint);
         }
     }
@@ -121,7 +143,7 @@ public abstract class RivuletManager {
 
     public Fish testParse(String rivuletKey) {
         // 解析definition
-        WholeDesc wholeDesc = warehouseManager.getWholeDesc(rivuletKey);
+        WholeDesc wholeDesc = rivuletKey_wholeDesc_map.get(rivuletKey);
         Blueprint blueprint = parser.parse(wholeDesc);
         return generator.generate(blueprint, new ForTestParamManager());
     }
@@ -132,5 +154,13 @@ public abstract class RivuletManager {
 
     public Parser getParser() {
         return parser;
+    }
+
+    public Blueprint getBlueprintByDescKey(String descKey) {
+        return rivuletKey_blueprint_map.get(descKey);
+    }
+
+    public WholeDesc getWholeDescByDescKey(String descKey) {
+        return rivuletKey_wholeDesc_map.get(descKey);
     }
 }
