@@ -30,6 +30,11 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
     protected final Class<S> selectModel;
 
     /**
+     * 是否查询返回并映射为单个结果类型
+     **/
+    protected final boolean isOneResult;
+
+    /**
      * 映射的查询列表，
      **/
     protected final List<Mapping<F, S, ?>> mappedItemList;
@@ -76,9 +81,10 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
      **/
 //    protected final boolean isHaveNativeStatement;
 
-    public SqlQueryMetaDesc(Class<F> modelFrom, Class<S> selectModel, List<Mapping<F, S, ?>> mappedItemList, ConditionContainer<?, ?> whereConditionContainer, List<FieldMapping<F, ?>> groupFieldList, ConditionContainer<?, ?> havingConditionContainer, List<SortItem<F, ?>> orderItemList, Param<Integer> skit, Param<Integer> limit, Map<Class<? extends Definition>, Param<SQLPartCustomDesc>> customStatementMap) {
+    public SqlQueryMetaDesc(Class<F> modelFrom, Class<S> selectModel, boolean isOneResult, List<Mapping<F, S, ?>> mappedItemList, ConditionContainer<?, ?> whereConditionContainer, List<FieldMapping<F, ?>> groupFieldList, ConditionContainer<?, ?> havingConditionContainer, List<SortItem<F, ?>> orderItemList, Param<Integer> skit, Param<Integer> limit, Map<Class<? extends Definition>, Param<SQLPartCustomDesc>> customStatementMap) {
         this.modelFrom = modelFrom;
         this.selectModel = selectModel;
+        this.isOneResult = isOneResult;
         this.mappedItemList = mappedItemList;
         this.whereConditionContainer = whereConditionContainer;
         this.groupFieldList = groupFieldList;
@@ -148,5 +154,9 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
     @Override
     public Class<?> getReturnType() {
         return selectModel;
+    }
+
+    public boolean isOneResult() {
+        return isOneResult;
     }
 }

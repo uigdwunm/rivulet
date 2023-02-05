@@ -1,5 +1,6 @@
 package zly.rivulet.sql.parser.proxy_node;
 
+import zly.rivulet.base.assigner.Assigner;
 import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.definer.FieldMeta;
 import zly.rivulet.base.describer.SingleValueElementDesc;
@@ -14,8 +15,8 @@ import zly.rivulet.base.utils.PairReturn;
 import zly.rivulet.sql.SQLRivuletManager;
 import zly.rivulet.sql.assigner.SQLContainerResultAssigner;
 import zly.rivulet.sql.assigner.SQLMetaModelResultAssigner;
+import zly.rivulet.sql.assigner.SQLOneResultAssigner;
 import zly.rivulet.sql.assigner.SQLQueryResultAssigner;
-import zly.rivulet.sql.describer.join.QueryComplexModel;
 import zly.rivulet.sql.definer.SqlDefiner;
 import zly.rivulet.sql.definer.annotations.SQLSubQuery;
 import zly.rivulet.sql.definer.annotations.SqlQueryAlias;
@@ -24,6 +25,7 @@ import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
+import zly.rivulet.sql.describer.join.QueryComplexModel;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 import zly.rivulet.sql.describer.query.desc.Mapping;
 import zly.rivulet.sql.exception.SQLDescDefineException;
@@ -32,6 +34,7 @@ import zly.rivulet.sql.parser.SqlParser;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 import java.lang.reflect.Field;
+import java.sql.ResultSet;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -59,7 +62,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
      **/
     private final List<QueryProxyNode> conditionSubQueryList = new ArrayList<>();
 
-    private final SQLQueryResultAssigner assigner;
+    private final Assigner<ResultSet> assigner;
     /**
      * 当前节点的别名flag
      **/
@@ -94,7 +97,11 @@ public class QueryProxyNode implements SelectNode, FromNode {
                 // 通过指定好的映射解析
                 selectNodeList = this.parseSelectNodeListByMappedItemList(toolbox, proxyModel, mappedItemList);
                 // 生成赋值器
-                assigner = this.parseAssignerByMappedItemList(convertorManager, selectModelClass, mappedItemList);
+                if (sqlQueryMetaDesc.isOneResult()) {
+                    assigner = new SQLOneResultAssigner(convertorManager, selectModelClass);
+                } else {
+                    assigner = this.parseAssignerByMappedItemList(convertorManager, selectModelClass, mappedItemList);
+                }
             } else if (fromModelClass.equals(selectModelClass)) {
                 PairReturn<List<SelectNode>, SQLQueryResultAssigner> pairReturn = this.parseSelectNodeListAndAssignerByComplexModel(convertorManager, fromNodeList, selectModelClass, fromNodeFieldMap);
                 selectNodeList = pairReturn.getLeft();
@@ -119,7 +126,11 @@ public class QueryProxyNode implements SelectNode, FromNode {
                 // 通过指定好的映射解析
                 selectNodeList = this.parseSelectNodeListByMappedItemList(toolbox, proxyModel, mappedItemList);
                 // 生成赋值器
-                assigner = this.parseAssignerByMappedItemList(convertorManager, selectModelClass, mappedItemList);
+                if (sqlQueryMetaDesc.isOneResult()) {
+                    assigner = new SQLOneResultAssigner(convertorManager, selectModelClass);
+                } else {
+                    assigner = this.parseAssignerByMappedItemList(convertorManager, selectModelClass, mappedItemList);
+                }
             } else if (fromModelClass.equals(selectModelClass)) {
                 PairReturn<List<SelectNode>, SQLQueryResultAssigner> pairReturn = this.parseSelectNodeListAndAssignerByMetaModel(convertorManager, metaModelProxyNode);
                 selectNodeList = pairReturn.getLeft();
@@ -187,7 +198,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
         List<SQLContainerResultAssigner.ContainerFieldAssignerWrap> assignerList = new ArrayList<>();
         for (FromNode fromNode : fromNodeList) {
             Field field = fromNodeFieldMap.get(fromNode);
-            SQLQueryResultAssigner fromItemAssigner;
+            Assigner<ResultSet> fromItemAssigner;
             if (fromNode instanceof MetaModelProxyNode) {
                 MetaModelProxyNode metaModelProxyNode = (MetaModelProxyNode) fromNode;
                 PairReturn<List<SelectNode>, SQLQueryResultAssigner> pairReturn = this.parseSelectNodeListAndAssignerByMetaModel(convertorManager, metaModelProxyNode);
@@ -310,6 +321,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
                     wholeDesc = new SqlQueryMetaDesc<>(
                         mainFrom,
                         mainFrom,
+                        false,
                         null,
                         sqlQueryMetaDesc.getWhereConditionContainer(),
                         sqlQueryMetaDesc.getGroupFieldList(),
@@ -430,7 +442,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
         return this.sqlQueryDefinition;
     }
 
-    public SQLQueryResultAssigner getAssigner() {
+    public Assigner<ResultSet> getAssigner() {
         return assigner;
     }
 

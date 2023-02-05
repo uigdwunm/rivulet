@@ -3,6 +3,7 @@ package zly.rivulet.sql.describer.query.desc;
 import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.field.SetMapping;
+import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.sql.describer.function.SQLFunction;
 import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
 
@@ -28,6 +29,10 @@ public class Mapping<F, S, C> {
      **/
     public static <F, S, C> Mapping<F, S, C> of(SetMapping<S, C> selectField, SQLFunction<F, C> desc) {
         return new Mapping<>(selectField, desc);
+    }
+
+    public static <F, S, C> Mapping<F, S, C> of(SetMapping<S, C> selectField, Param<C> desc) {
+        return new Mapping<>(selectField, (SingleValueElementDesc) desc);
     }
 
     public static <F, S, C> Mapping<F, S, C> of(SetMapping<S, C> selectField, FieldMapping<F, C> desc) {

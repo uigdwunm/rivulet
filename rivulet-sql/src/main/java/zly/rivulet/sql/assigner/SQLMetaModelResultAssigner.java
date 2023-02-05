@@ -5,6 +5,7 @@ import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.describer.field.SetMapping;
 import zly.rivulet.base.utils.ClassUtils;
 import zly.rivulet.base.utils.View;
+import zly.rivulet.sql.describer.query.builder.SelectByBuilder;
 
 import java.lang.reflect.Type;
 import java.sql.ResultSet;
@@ -39,6 +40,8 @@ public class SQLMetaModelResultAssigner extends SQLQueryResultAssigner {
                 ResultConvertor<Object, Object> resultConvertor = fieldAssignerWrap.getConvertor(result.getClass());
                 setMapping.setMapping(container, resultConvertor.convert(result));
             }
+//            if (container instanceof SelectByBuilder.OneResult) {
+//            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

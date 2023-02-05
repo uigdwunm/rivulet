@@ -48,6 +48,4 @@ public abstract class SQLQueryResultAssigner implements Assigner<ResultSet> {
         this.assign(container, results, indexStart);
         return container;
     }
-
-    public abstract int size();
 }

@@ -62,8 +62,8 @@ public class ConvertorManager {
 
     public <T1, T2> ResultConvertor<T1, T2> getResultConvertor(Class<T1> originType, Class<T2> targetType) {
         ResultConvertor<?, ?> resultConvertor = resultConvertorMap.get(originType, targetType);
-        if (originType.equals(targetType)) {
-            // 结果转换器没有，并且出入参相同，则直接返回
+        if (originType.equals(targetType) || targetType.equals(Object.class)) {
+            // 结果转换器没有，并且出入参相同，或者目标类型是Object，则直接返回
             return (ResultConvertor<T1, T2>) selfConvertor;
         }
         if (resultConvertor == null) {

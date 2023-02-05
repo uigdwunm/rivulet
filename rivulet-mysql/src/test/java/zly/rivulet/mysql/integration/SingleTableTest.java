@@ -6,6 +6,7 @@ import zly.rivulet.base.RivuletManager;
 import zly.rivulet.base.definer.annotations.RivuletDesc;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.describer.WholeDesc;
+import zly.rivulet.base.describer.field.SetMapping;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.describer.param.ParamCheckType;
 import zly.rivulet.base.generator.Fish;
@@ -17,6 +18,7 @@ import zly.rivulet.mysql.model.PersonDO;
 import zly.rivulet.mysql.model.ProvinceDO;
 import zly.rivulet.mysql.util.MySQLPrintUtils;
 import zly.rivulet.sql.describer.condition.common.Condition;
+import zly.rivulet.sql.describer.function.SQLFunction;
 import zly.rivulet.sql.describer.query.QueryBuilder;
 import zly.rivulet.sql.describer.query.desc.Mapping;
 import zly.rivulet.sql.describer.query.desc.SortItem;
@@ -24,6 +26,7 @@ import zly.rivulet.sql.describer.query.desc.SortItem;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Collections;
+import java.util.function.BiConsumer;
 
 public class SingleTableTest extends BaseTest {
 
@@ -31,7 +34,6 @@ public class SingleTableTest extends BaseTest {
     public WholeDesc queryPerson() {
         LocalDate start = LocalDate.of(1994, Month.JANUARY, 1);
         LocalDate end = LocalDate.of(1995, Month.JANUARY, 1);
-
         return QueryBuilder.query(PersonDO.class, PersonDO.class)
                 .select(
                         Mapping.of(PersonDO::setName, MySQLFunction.Cast.toNchar(10).of(PersonDO::getId))
@@ -91,6 +93,22 @@ public class SingleTableTest extends BaseTest {
         Rivulet rivulet = rivuletManager.getRivulet();
         PersonDO o = rivulet.queryOneByDescKey("queryById", Collections.singletonMap("id", 1L));
         System.out.println(o);
+    }
+
+    @RivuletDesc("count")
+    public WholeDesc count() {
+        SQLFunction<Object, String> of = MySQLFunction.Aggregate.COUNT.of(Param.staticOf("1"));
+        return QueryBuilder.query(PersonDO.class, Integer.class)
+            .selectOne(
+                MySQLFunction.Aggregate.COUNT.of(Param.staticOf(1))
+            ).build();
+    }
+
+    @Test
+    public void testCount() {
+        Rivulet rivulet = rivuletManager.getRivulet();
+        Object count = rivulet.queryOneByDescKey("count", Collections.emptyMap());
+        System.out.println(count);
     }
 
 }

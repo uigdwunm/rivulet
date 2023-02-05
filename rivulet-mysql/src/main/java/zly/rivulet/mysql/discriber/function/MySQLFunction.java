@@ -6,6 +6,7 @@ import zly.rivulet.mysql.discriber.function.cast.CastOperation;
 import zly.rivulet.sql.describer.function.BinaryOperation;
 import zly.rivulet.sql.describer.function.MultivariateOperation;
 import zly.rivulet.sql.describer.function.SQLFunction;
+import zly.rivulet.sql.describer.function.UnaryOperation;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -15,6 +16,17 @@ import java.util.*;
 import java.util.function.BiConsumer;
 
 public interface MySQLFunction {
+    interface Aggregate {
+        UnaryOperation COUNT = new UnaryOperation() {
+            @Override
+            public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCollect() {
+                return (customCollector, customSingleValueWraps) -> {
+                    customCollector.append("count(").append(customSingleValueWraps.get(0)).append(")");
+                };
+            }
+        };
+
+    }
 
     interface Arithmetical {
         /**
@@ -23,7 +35,7 @@ public interface MySQLFunction {
         MultivariateOperation ADD = new MultivariateOperation() {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCollect() {
-                return ((customCollector, customSingleValueWraps) -> customCollector.appendAllSeparator(customSingleValueWraps, "+"));
+                return (customCollector, customSingleValueWraps) -> customCollector.appendAllSeparator(customSingleValueWraps, "+");
             }
         };
 
@@ -33,9 +45,9 @@ public interface MySQLFunction {
         BinaryOperation SUBTRACT = new BinaryOperation() {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCollect() {
-                return ((customCollector, customSingleValueWraps) -> {
+                return (customCollector, customSingleValueWraps) -> {
                     customCollector.append(customSingleValueWraps.get(0)).append("-").append(customSingleValueWraps.get(1));
-                });
+                };
             }
         };
 
@@ -45,7 +57,7 @@ public interface MySQLFunction {
         MultivariateOperation MULTIPLY = new MultivariateOperation() {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCollect() {
-                return ((customCollector, customSingleValueWraps) -> customCollector.appendAllSeparator(customSingleValueWraps, "*"));
+                return (customCollector, customSingleValueWraps) -> customCollector.appendAllSeparator(customSingleValueWraps, "*");
             }
         };
 
@@ -55,9 +67,9 @@ public interface MySQLFunction {
         BinaryOperation DIVIDE = new BinaryOperation() {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCollect() {
-                return ((customCollector, customSingleValueWraps) -> {
+                return (customCollector, customSingleValueWraps) -> {
                     customCollector.append(customSingleValueWraps.get(0)).append("/").append(customSingleValueWraps.get(1));
-                });
+                };
             }
         };
 

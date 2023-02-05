@@ -1,5 +1,6 @@
 package zly.rivulet.sql.assigner;
 
+import zly.rivulet.base.assigner.Assigner;
 import zly.rivulet.base.describer.field.SetMapping;
 import zly.rivulet.base.utils.View;
 
@@ -71,7 +72,7 @@ public class SQLContainerResultAssigner extends SQLQueryResultAssigner {
     @Override
     public void assign(Object parentContainer, ResultSet resultSet, int indexStart) {
         for (ContainerFieldAssignerWrap subAssignerWrap : fieldAssignerList) {
-            SQLQueryResultAssigner subAssigner = subAssignerWrap.assigner;
+            Assigner<ResultSet> subAssigner = subAssignerWrap.assigner;
             SetMapping<Object, Object> setMapping = subAssignerWrap.setMapping;
             // 获取值
             Object value = subAssigner.getValue(resultSet, indexStart);
@@ -87,11 +88,11 @@ public class SQLContainerResultAssigner extends SQLQueryResultAssigner {
     }
 
     public static class ContainerFieldAssignerWrap {
-        private final SQLQueryResultAssigner assigner;
+        private final Assigner<ResultSet> assigner;
 
         private final SetMapping<Object, Object> setMapping;
 
-        public ContainerFieldAssignerWrap(SQLQueryResultAssigner assigner, SetMapping<Object, Object> setMapping) {
+        public ContainerFieldAssignerWrap(Assigner<ResultSet> assigner, SetMapping<Object, Object> setMapping) {
             this.assigner = assigner;
             this.setMapping = setMapping;
         }

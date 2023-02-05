@@ -1,5 +1,6 @@
 package zly.rivulet.sql.definition.query;
 
+import zly.rivulet.base.assigner.Assigner;
 import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.definition.AbstractDefinition;
 import zly.rivulet.base.definition.Definition;
@@ -34,6 +35,7 @@ import zly.rivulet.sql.parser.proxy_node.ProxyNodeManager;
 import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
 import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +59,7 @@ public class SqlQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
 
     private LimitDefinition limit;
 
-    private SQLQueryResultAssigner assigner;
+    private Assigner<ResultSet> assigner;
 
     private final List<AbstractDefinition> subDefinitionList = new ArrayList<>();
 
@@ -177,7 +179,7 @@ public class SqlQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
         OrderByDefinition orderByDefinition,
         SkitDefinition skit,
         LimitDefinition limit,
-        SQLQueryResultAssigner assigner,
+        Assigner<ResultSet> assigner,
         ParamReceiptManager paramReceiptManager,
         SQLAliasManager aliasManager
     ) {
@@ -257,7 +259,7 @@ public class SqlQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
     }
 
     @Override
-    public SQLQueryResultAssigner getAssigner() {
+    public Assigner<ResultSet> getAssigner() {
         return this.assigner;
     }
 

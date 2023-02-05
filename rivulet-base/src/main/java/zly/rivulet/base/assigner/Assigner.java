@@ -10,5 +10,6 @@ public interface Assigner<T> {
      **/
     Object getValue(T results, int indexStart);
 
+    int size();
 
 }

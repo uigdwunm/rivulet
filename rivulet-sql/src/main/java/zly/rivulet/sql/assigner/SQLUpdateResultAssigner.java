@@ -8,4 +8,9 @@ public class SQLUpdateResultAssigner implements Assigner<Integer> {
     public Object getValue(Integer results, int indexStart) {
         return results;
     }
+
+    @Override
+    public int size() {
+        return 0;
+    }
 }

@@ -29,6 +29,11 @@ public class QueryBuilder<F, S> {
     protected Class<S> selectModel;
 
     /**
+     * 是否查询返回并映射为单个结果类型
+     **/
+    protected boolean isOneResult = false;
+
+    /**
      * 映射的查询列表，
      **/
     protected List<Mapping<F, S, ?>> mappedItemList;
@@ -76,6 +81,7 @@ public class QueryBuilder<F, S> {
         return new SqlQueryMetaDesc<>(
             this.modelFrom,
             this.selectModel,
+            this.isOneResult,
             this.mappedItemList,
             this.whereConditionContainer,
             this.groupFieldList,
