@@ -1,8 +1,12 @@
 package zly.rivulet.mysql.integration;
 
+import com.alibaba.fastjson2.JSON;
 import org.junit.Test;
 import zly.rivulet.base.Rivulet;
 import zly.rivulet.base.RivuletManager;
+import zly.rivulet.base.convertor.ConvertorManager;
+import zly.rivulet.base.convertor.ResultConvertor;
+import zly.rivulet.base.convertor.StatementConvertor;
 import zly.rivulet.base.definer.annotations.RivuletDesc;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.describer.WholeDesc;
@@ -91,7 +95,7 @@ public class SingleTableTest extends BaseTest {
     @Test
     public void testQueryById() {
         Rivulet rivulet = rivuletManager.getRivulet();
-        PersonDO o = rivulet.queryOneByDescKey("queryById", Collections.singletonMap("id", 1L));
+        PersonDO o = rivulet.queryOneByDescKey("queryById", Collections.singletonMap("id", 18L));
         System.out.println(o);
     }
 
@@ -109,6 +113,38 @@ public class SingleTableTest extends BaseTest {
         Rivulet rivulet = rivuletManager.getRivulet();
         Object count = rivulet.queryOneByDescKey("count", Collections.emptyMap());
         System.out.println(count);
+    }
+
+    @Test
+    public void testInsert() {
+        ConvertorManager convertorManager = rivuletManager.getConvertorManager();
+        convertorManager.registerSuperClassConvertor(
+            new StatementConvertor<ProvinceDO>() {
+                @Override
+                public String convert(ProvinceDO originData) {
+                    return "'" + JSON.toJSONString(originData) + "'";
+                }
+            },
+            new ResultConvertor<String, ProvinceDO>() {
+                @Override
+                public ProvinceDO convert(String originData) {
+                    return JSON.parseObject(originData, ProvinceDO.class);
+                }
+            }
+        );
+        PersonDO personDO = new PersonDO();
+        personDO.setBirthday(LocalDate.now());
+        personDO.setName("张小圆");
+        personDO.setGender(false);
+        ProvinceDO provinceDO = new ProvinceDO();
+        provinceDO.setCode(123);
+        provinceDO.setName("西红市");
+        personDO.setExtra(provinceDO);
+        Rivulet rivulet = rivuletManager.getRivulet();
+        rivulet.insertOne(personDO);
+
+        PersonDO o = rivulet.queryOneByDescKey("queryById", Collections.singletonMap("id", 18L));
+        System.out.println(o);
     }
 
 }

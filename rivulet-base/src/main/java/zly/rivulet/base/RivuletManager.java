@@ -156,6 +156,10 @@ public abstract class RivuletManager {
         return parser;
     }
 
+    public ConvertorManager getConvertorManager() {
+        return convertorManager;
+    }
+
     public Blueprint getBlueprintByDescKey(String descKey) {
         return rivuletKey_blueprint_map.get(descKey);
     }

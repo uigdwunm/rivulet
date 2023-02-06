@@ -4,6 +4,7 @@ import zly.rivulet.base.definer.annotations.PrimaryKey;
 import zly.rivulet.mysql.definer.annotations.type.date.MySQLDate;
 import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLBigInt;
 import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLTinyInt;
+import zly.rivulet.mysql.definer.annotations.type.string.MySQLJson;
 import zly.rivulet.mysql.definer.annotations.type.string.MySQLVarchar;
 import zly.rivulet.sql.definer.annotations.SqlColumn;
 import zly.rivulet.sql.definer.annotations.SQLTable;
@@ -29,6 +30,10 @@ public class PersonDO {
     @SqlColumn
     @MySQLTinyInt
     private boolean gender;
+
+    @SqlColumn
+    @MySQLJson
+    private ProvinceDO extra;
 
 
     public Long getId() {
@@ -63,6 +68,14 @@ public class PersonDO {
         this.gender = gender;
     }
 
+    public ProvinceDO getExtra() {
+        return extra;
+    }
+
+    public void setExtra(ProvinceDO extra) {
+        this.extra = extra;
+    }
+
     @Override
     public String toString() {
         return "PersonDO{" +
@@ -70,6 +83,7 @@ public class PersonDO {
             ", birthday=" + birthday +
             ", name='" + name + '\'' +
             ", gender=" + gender +
+            ", extra=" + extra +
             '}';
     }
 }

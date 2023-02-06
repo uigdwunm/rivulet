@@ -3,7 +3,12 @@ package zly.rivulet.mysql.integration;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.BeforeClass;
+import zly.rivulet.base.generator.Fish;
+import zly.rivulet.base.generator.statement.Statement;
 import zly.rivulet.base.parser.Parser;
+import zly.rivulet.base.pipeline.BeforeExecuteNode;
+import zly.rivulet.base.pipeline.RunningPipeline;
+import zly.rivulet.base.utils.collector.CommonStatementCollector;
 import zly.rivulet.mysql.DefaultMySQLDataSourceRivuletManager;
 import zly.rivulet.mysql.MySQLRivuletProperties;
 import zly.rivulet.sql.SQLRivuletManager;
@@ -14,6 +19,7 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 public abstract class BaseTest {
@@ -32,6 +38,17 @@ public abstract class BaseTest {
         // 过滤掉最外层查询参数的别名
         Parser parser = rivuletManager.getParser();
         parser.addAnalyzer(new DefaultSQLAnalyzer());
+        RunningPipeline runningPipeline = rivuletManager.getRunningPipeline();
+        runningPipeline.addBeforeExecuteNode(new BeforeExecuteNode() {
+            @Override
+            public Object handle(Fish fish, Supplier<Object> executor) {
+                Statement statement = fish.getStatement();
+                CommonStatementCollector commonStatementCollector = new CommonStatementCollector();
+                statement.collectStatementOrCache(commonStatementCollector);
+                System.out.println(commonStatementCollector);
+                return nextHandle(fish, executor);
+            }
+        });
     }
 
     public static DataSource createRealDataSource() {

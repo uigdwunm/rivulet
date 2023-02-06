@@ -35,4 +35,12 @@ public class ProvinceDO {
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public String toString() {
+        return "ProvinceDO{" +
+            "code=" + code +
+            ", name='" + name + '\'' +
+            '}';
+    }
 }

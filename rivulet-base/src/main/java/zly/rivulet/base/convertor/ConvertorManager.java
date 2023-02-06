@@ -55,9 +55,9 @@ public class ConvertorManager {
         statementConvertorMap.put(statementConvertor.getOriginType(), statementConvertor);
     }
 
-    public <T1, T2> void registerSuperClassConvertor(StatementConvertor<T1> statementConvertor, ResultConvertor<T1, T2> resultConvertor) {
+    public <T1, T2> void registerSuperClassConvertor(StatementConvertor<T1> statementConvertor, ResultConvertor<T2, T1> resultConvertor) {
         this.superClassConvertor.add(statementConvertor);
-        resultConvertorMap.put(resultConvertor.getOriginType(), resultConvertor.getTargetType(), resultConvertor);
+        this.resultConvertorMap.put(resultConvertor.getOriginType(), resultConvertor.getTargetType(), resultConvertor);
     }
 
     public <T1, T2> ResultConvertor<T1, T2> getResultConvertor(Class<T1> originType, Class<T2> targetType) {
