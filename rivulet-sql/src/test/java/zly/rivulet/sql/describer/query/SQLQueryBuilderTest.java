@@ -2,7 +2,7 @@ package zly.rivulet.sql.describer.query;
 
 import org.junit.Test;
 
-public class QueryBuilderTest {
+public class SQLQueryBuilderTest {
 
     @Test
     public void query() {

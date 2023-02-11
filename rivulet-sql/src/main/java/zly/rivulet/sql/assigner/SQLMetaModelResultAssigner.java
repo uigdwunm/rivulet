@@ -3,11 +3,8 @@ package zly.rivulet.sql.assigner;
 import zly.rivulet.base.convertor.ResultConvertor;
 import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.base.describer.field.SetMapping;
-import zly.rivulet.base.utils.ClassUtils;
 import zly.rivulet.base.utils.View;
-import zly.rivulet.sql.describer.query.builder.SelectByBuilder;
 
-import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;

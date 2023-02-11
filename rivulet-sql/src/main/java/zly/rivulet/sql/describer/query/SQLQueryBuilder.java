@@ -5,7 +5,7 @@ import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.sql.describer.condition.common.ConditionContainer;
 import zly.rivulet.sql.describer.custom.SQLPartCustomDesc;
-import zly.rivulet.sql.describer.query.builder.SelectByBuilder;
+import zly.rivulet.sql.describer.query.builder.SelectByBuilderSQL;
 import zly.rivulet.sql.describer.query.desc.Mapping;
 import zly.rivulet.sql.describer.query.desc.SortItem;
 
@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class QueryBuilder<F, S> {
+public class SQLQueryBuilder<F, S> {
     /**
      * 查询主要模型，from
      * 有两种赋值方式，
@@ -73,8 +73,8 @@ public class QueryBuilder<F, S> {
      **/
     protected Map<Class<? extends Definition>, Param<SQLPartCustomDesc>> customStatementMap = new HashMap<>();
 
-    public static <F, S> SelectByBuilder<F, S> query(Class<F> from, Class<S> select) {
-        return new SelectByBuilder<>(from, select);
+    public static <F, S> SelectByBuilderSQL<F, S> query(Class<F> from, Class<S> select) {
+        return new SelectByBuilderSQL<>(from, select);
     }
 
     public final SqlQueryMetaDesc<F, S> build() {

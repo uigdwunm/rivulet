@@ -13,7 +13,7 @@ import zly.rivulet.mysql.DefaultMySQLDataSourceRivuletManager;
 import zly.rivulet.mysql.MySQLRivulet;
 import zly.rivulet.mysql.MySQLRivuletProperties;
 import zly.rivulet.mysql.model.PersonDO;
-import zly.rivulet.sql.describer.query.QueryBuilder;
+import zly.rivulet.sql.describer.query.SQLQueryBuilder;
 import zly.rivulet.sql.parser.analyzer.DefaultSQLAnalyzer;
 
 import javax.sql.DataSource;
@@ -69,7 +69,7 @@ public class App {
         System.out.println("*********************");
 
         Blueprint blueprint = parser.parse(
-            QueryBuilder.query(PersonDO.class, PersonDO.class).build()
+            SQLQueryBuilder.query(PersonDO.class, PersonDO.class).build()
         );
 
         List<PersonDO> personDOList = rivulet.queryManyByBlueprint(blueprint, Collections.emptyMap());

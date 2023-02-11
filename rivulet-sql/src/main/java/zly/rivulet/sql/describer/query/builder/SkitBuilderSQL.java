@@ -2,9 +2,9 @@ package zly.rivulet.sql.describer.query.builder;
 
 import zly.rivulet.base.describer.param.Param;
 
-public class SkitBuilder<F, S> extends LimitBuilder<F, S> {
+public class SkitBuilderSQL<F, S> extends LimitBuilderSQL<F, S> {
 
-    public LimitBuilder<F, S> skit(Param<Integer> skit) {
+    public LimitBuilderSQL<F, S> skit(Param<Integer> skit) {
         super.skit = skit;
         return this;
     }
