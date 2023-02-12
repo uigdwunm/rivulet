@@ -18,7 +18,7 @@ public class ModelFromStatement extends SqlStatement implements QueryFromStateme
     }
 
     @Override
-    protected int length() {
+    public int length() {
         return tableName.length();
     }
 

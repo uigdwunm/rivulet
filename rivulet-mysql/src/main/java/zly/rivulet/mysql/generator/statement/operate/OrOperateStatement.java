@@ -18,7 +18,7 @@ public class OrOperateStatement extends OperateStatement {
     }
 
     @Override
-    protected int length() {
+    public int length() {
         int length = 0;
         length += subOperateList.size() * OR_CONNECTOR.length() - 1;
         for (OperateStatement operateStatement : subOperateList) {

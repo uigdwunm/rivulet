@@ -16,8 +16,6 @@ public abstract class AbstractStatement implements Statement {
         }
     }
 
-    protected abstract int length();
-
     @Override
     public void initCache() {
         CommonStatementCollector commonStatementCollector = new CommonStatementCollector();
@@ -33,7 +31,4 @@ public abstract class AbstractStatement implements Statement {
             this.collectStatement(collector);
         }
     }
-
-    @Override
-    public abstract void collectStatement(StatementCollector collector);
 }

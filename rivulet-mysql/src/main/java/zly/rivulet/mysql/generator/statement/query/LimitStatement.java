@@ -16,7 +16,7 @@ public class LimitStatement extends SqlStatement {
     }
 
     @Override
-    protected int length() {
+    public int length() {
         return limitParam.getLengthOrCache();
     }
 

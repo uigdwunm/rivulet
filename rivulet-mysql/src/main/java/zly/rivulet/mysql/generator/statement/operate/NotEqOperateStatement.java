@@ -19,15 +19,15 @@ public class NotEqOperateStatement extends OperateStatement {
     }
 
     @Override
-    protected int length() {
-        return leftValue.getLengthOrCache() + 1 + rightValue.getLengthOrCache();
+    public int length() {
+        return leftValue.singleLength() + 1 + rightValue.singleLength();
     }
 
     @Override
     public void collectStatement(StatementCollector collector) {
-        collector.append(leftValue);
+        leftValue.singleCollectStatement(collector);
         collector.append(Constant.NOT_EQ);
-        collector.append(rightValue);
+        rightValue.singleCollectStatement(collector);
     }
 
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {

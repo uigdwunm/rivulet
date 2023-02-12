@@ -104,7 +104,7 @@ public abstract class Rivulet {
      **/
     public  <T> List<T> queryManyByDescKey(String descKey, Map<String, Object> params) {
         LinkedList<T> list = new LinkedList<>();
-        this.queryManyByDescKey(descKey, params, new LinkedList<>());
+        this.queryManyByDescKey(descKey, params, list);
         return list;
     }
 

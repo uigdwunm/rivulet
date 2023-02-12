@@ -16,13 +16,13 @@ public class IsNullOperateStatement extends OperateStatement {
     }
 
     @Override
-    protected int length() {
-        return value.getLengthOrCache() + Constant.IS_NULL.length();
+    public int length() {
+        return value.singleLength() + Constant.IS_NULL.length();
     }
 
     @Override
     public void collectStatement(StatementCollector collector) {
-        collector.append(value);
+        value.singleCollectStatement(collector);
         collector.append(Constant.IS_NULL);
     }
 

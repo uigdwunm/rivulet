@@ -4,7 +4,6 @@ import zly.rivulet.base.describer.custom.CustomCollector;
 import zly.rivulet.base.describer.custom.CustomSingleValueWrap;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.sql.definition.SQLCustomDefinition;
-import zly.rivulet.sql.definition.function.SQLFunctionDefinition;
 import zly.rivulet.sql.generator.SqlStatementFactory;
 import zly.rivulet.sql.generator.statement.SqlStatement;
 
@@ -27,7 +26,7 @@ public class SQLCustomStatement extends SqlStatement {
     }
 
     @Override
-    protected int length() {
+    public int length() {
         return 0;
     }
 

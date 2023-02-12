@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
+@SuppressWarnings("unchecked")
 public class View<T> implements Iterable<T> {
 
     private final Object[] elements;

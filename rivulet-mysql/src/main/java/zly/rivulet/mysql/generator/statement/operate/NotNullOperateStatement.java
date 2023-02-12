@@ -3,7 +3,6 @@ package zly.rivulet.mysql.generator.statement.operate;
 import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.statement.SingleValueElementStatement;
-import zly.rivulet.sql.definition.query.operate.EqOperateDefinition;
 import zly.rivulet.sql.definition.query.operate.NotNullOperateDefinition;
 import zly.rivulet.sql.generator.SqlStatementFactory;
 import zly.rivulet.sql.generator.statement.SqlStatement;
@@ -17,13 +16,13 @@ public class NotNullOperateStatement extends OperateStatement {
     }
 
     @Override
-    protected int length() {
-        return value.getLengthOrCache() + Constant.NOT_NULL.length();
+    public int length() {
+        return value.singleLength() + Constant.NOT_NULL.length();
     }
 
     @Override
     public void collectStatement(StatementCollector collector) {
-        collector.append(value);
+        value.singleCollectStatement(collector);
         collector.append(Constant.NOT_NULL);
     }
 

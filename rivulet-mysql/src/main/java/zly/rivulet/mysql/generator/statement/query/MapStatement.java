@@ -36,34 +36,20 @@ public class MapStatement extends SqlStatement implements SingleValueElementStat
     }
 
     @Override
-    protected int length() {
-        int length = 0;
-        if (value instanceof MySqlQueryStatement) {
-            length += 1;
-            length += value.getLengthOrCache();
-            length += 1;
-        } else if (StringUtil.isNotBlank(this.referenceAlias)) {
-            length += value.getLengthOrCache();
-            length += 1 + Constant.AS.length();
-            length += this.alias.length();
+    public int length() {
+        if (StringUtil.isNotBlank(this.referenceAlias)) {
+            return this.referenceAlias.length() + 1 + value.singleLength();
         } else {
-            length += value.getLengthOrCache();
+            return value.singleLength();
         }
-        return length;
     }
 
     @Override
     public void collectStatement(StatementCollector collector) {
-        if (value instanceof MySqlQueryStatement) {
-            collector.leftBracket();
-            collector.append(value);
-            collector.rightBracket();
-        } else if (StringUtil.isNotBlank(this.referenceAlias)) {
+        if (StringUtil.isNotBlank(this.referenceAlias)) {
             collector.append(this.referenceAlias).append(Constant.POINT_CHAR);
-            collector.append(value);
-        } else {
-            collector.append(value);
         }
+        value.singleCollectStatement(collector);
     }
 
     public void selectItemCollectStatement(StatementCollector collector) {

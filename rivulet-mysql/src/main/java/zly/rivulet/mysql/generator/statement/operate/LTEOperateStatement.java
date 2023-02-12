@@ -3,7 +3,6 @@ package zly.rivulet.mysql.generator.statement.operate;
 import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.statement.SingleValueElementStatement;
-import zly.rivulet.sql.definition.query.operate.GTEOperateDefinition;
 import zly.rivulet.sql.definition.query.operate.LTEOperateDefinition;
 import zly.rivulet.sql.generator.SqlStatementFactory;
 import zly.rivulet.sql.generator.statement.SqlStatement;
@@ -20,15 +19,15 @@ public class LTEOperateStatement extends OperateStatement {
     }
 
     @Override
-    protected int length() {
-        return leftValue.getLengthOrCache() + 1 + rightValue.getLengthOrCache();
+    public int length() {
+        return leftValue.singleLength() + 1 + rightValue.singleLength();
     }
 
     @Override
     public void collectStatement(StatementCollector collector) {
-        collector.append(leftValue);
+        leftValue.singleCollectStatement(collector);
         collector.append(Constant.LTE);
-        collector.append(rightValue);
+        rightValue.singleCollectStatement(collector);
     }
 
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {

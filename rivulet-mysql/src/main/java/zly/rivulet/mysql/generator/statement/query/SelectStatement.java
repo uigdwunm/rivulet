@@ -23,7 +23,7 @@ public class SelectStatement extends SqlStatement {
     }
 
     @Override
-    protected int length() {
+    public int length() {
         return SELECT.length() +
             mapStatementList.size() - 1 +
             mapStatementList.stream().map(MapStatement::selectItemLength).reduce(0, Integer::sum);

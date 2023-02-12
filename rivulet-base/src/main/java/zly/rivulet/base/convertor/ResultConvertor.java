@@ -6,6 +6,7 @@ import java.lang.reflect.Type;
 
 public abstract class ResultConvertor<O, T> extends Convertor<O, T> {
 
+    @SuppressWarnings("unchecked")
     public ResultConvertor() {
         Type[] classGenericTypes = ClassUtils.getClassGenericTypes(this.getClass());
         super.originType = (Class<O>) classGenericTypes[0];

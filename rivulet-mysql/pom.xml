@@ -8,7 +8,7 @@
     <parent>
         <groupId>io.github.uigdwunm</groupId>
         <artifactId>rivulet-parent</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>0.0.1-PREVIEW</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -41,11 +41,20 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

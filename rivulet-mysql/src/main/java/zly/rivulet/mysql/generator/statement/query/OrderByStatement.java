@@ -23,7 +23,7 @@ public class OrderByStatement extends SqlStatement {
     }
 
     @Override
-    protected int length() {
+    public int length() {
         return ORDER_BY.length() +
             sortItemStatementList.size() - 1 +
             sortItemStatementList.stream().map(SortItemStatement::getLengthOrCache).reduce(0, Integer::sum);

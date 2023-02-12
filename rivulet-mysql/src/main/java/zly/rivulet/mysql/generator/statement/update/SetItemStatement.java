@@ -21,7 +21,7 @@ public class SetItemStatement extends SqlStatement {
 
 
     @Override
-    protected int length() {
+    public int length() {
         return mapStatement.getLengthOrCache() + 1 + singleValueElementStatement.getLengthOrCache();
     }
 

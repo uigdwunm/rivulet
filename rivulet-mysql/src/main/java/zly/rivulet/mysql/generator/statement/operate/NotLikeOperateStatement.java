@@ -19,15 +19,15 @@ public class NotLikeOperateStatement extends OperateStatement {
     }
 
     @Override
-    protected int length() {
-        return leftValue.getLengthOrCache() + 1 + rightValue.getLengthOrCache();
+    public int length() {
+        return leftValue.singleLength() + Constant.NOT_LIKE.length() + rightValue.singleLength();
     }
 
     @Override
     public void collectStatement(StatementCollector collector) {
-        collector.append(leftValue);
+        leftValue.singleCollectStatement(collector);
         collector.append(Constant.NOT_LIKE);
-        collector.append(rightValue);
+        rightValue.singleCollectStatement(collector);
     }
 
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {

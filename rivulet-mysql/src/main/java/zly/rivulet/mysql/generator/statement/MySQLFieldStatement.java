@@ -14,7 +14,7 @@ public class MySQLFieldStatement extends SqlStatement implements SingleValueElem
     }
 
     @Override
-    protected int length() {
+    public int length() {
         return mySQLFieldMeta.getOriginName().length();
     }
 

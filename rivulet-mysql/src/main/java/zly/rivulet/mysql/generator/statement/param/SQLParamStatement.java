@@ -24,7 +24,7 @@ public class SQLParamStatement extends SqlStatement implements SingleValueElemen
     }
 
     @Override
-    protected int length() {
+    public int length() {
         return value.length();
     }
 

@@ -28,7 +28,7 @@ public class MySQLUpdateStatement extends SqlStatement {
     }
 
     @Override
-    protected int length() {
+    public int length() {
         return UPDATE.length() + mySQLModelMeta.getTableName().length() + 1 + setStatement.getLengthOrCache() + whereStatement.getLengthOrCache();
     }
 

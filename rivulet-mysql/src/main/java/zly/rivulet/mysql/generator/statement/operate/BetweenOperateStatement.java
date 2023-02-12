@@ -4,7 +4,6 @@ import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.statement.SingleValueElementStatement;
 import zly.rivulet.sql.definition.query.operate.BetweenOperateDefinition;
-import zly.rivulet.sql.definition.query.operate.EqOperateDefinition;
 import zly.rivulet.sql.generator.SqlStatementFactory;
 import zly.rivulet.sql.generator.statement.SqlStatement;
 
@@ -23,17 +22,17 @@ public class BetweenOperateStatement extends OperateStatement {
     }
 
     @Override
-    protected int length() {
-        return leftValue.getLengthOrCache() + Constant.BETWEEN.length() + beforeValue.getLengthOrCache() + Constant.AND.length() + afterValue.getLengthOrCache();
+    public int length() {
+        return leftValue.singleLength() + Constant.BETWEEN.length() + beforeValue.singleLength() + Constant.AND.length() + afterValue.singleLength();
     }
 
     @Override
     public void collectStatement(StatementCollector collector) {
-        collector.append(leftValue);
+        leftValue.singleCollectStatement(collector);
         collector.append(Constant.BETWEEN);
-        collector.append(beforeValue);
+        beforeValue.singleCollectStatement(collector);
         collector.append(Constant.AND);
-        collector.append(afterValue);
+        afterValue.singleCollectStatement(collector);
     }
 
     public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {

@@ -40,7 +40,7 @@ public class MySQLInsertStatement extends SqlStatement {
     }
 
     @Override
-    protected int length() {
+    public int length() {
         int length = 0;
         length += INSERT_INTO.length() + sqlModelMeta.getTableName().length() + 1;
 

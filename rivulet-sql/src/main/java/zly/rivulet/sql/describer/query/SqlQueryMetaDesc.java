@@ -7,10 +7,12 @@ import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.param.Param;
+import zly.rivulet.base.utils.CollectionUtils;
 import zly.rivulet.sql.describer.condition.common.ConditionContainer;
 import zly.rivulet.sql.describer.custom.SQLPartCustomDesc;
 import zly.rivulet.sql.describer.query.desc.Mapping;
 import zly.rivulet.sql.describer.query.desc.SortItem;
+import zly.rivulet.sql.exception.SQLDescDefineException;
 
 import java.util.List;
 import java.util.Map;
@@ -93,6 +95,13 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
         this.skit = skit;
         this.limit = limit;
         this.customStatementMap = customStatementMap;
+        this.check();
+    }
+
+    private void check() {
+        if (CollectionUtils.isEmpty(mappedItemList) && !modelFrom.equals(selectModel)) {
+            throw SQLDescDefineException.noMappedItemList(modelFrom, selectModel);
+        }
     }
 
     public Map<Class<? extends Definition>, Param<SQLPartCustomDesc>> getCustomStatementMap() {

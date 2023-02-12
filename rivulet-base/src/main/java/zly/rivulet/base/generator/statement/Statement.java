@@ -6,6 +6,8 @@ public interface Statement {
 
     int getLengthOrCache();
 
+    int length();
+
     void initCache();
 
     void collectStatementOrCache(StatementCollector collector);

@@ -31,10 +31,10 @@ public class FromStatement extends SqlStatement {
     }
 
     @Override
-    protected int length() {
+    public int length() {
         int length = 0;
         length += FROM.length();
-        length += this.mainFrom.getLengthOrCache();
+        length += this.mainFrom.singleLength();
         if (StringUtil.isNotBlank(this.mainFromAlias)) {
             length += 1 + this.mainFromAlias.length();
         }
@@ -49,7 +49,7 @@ public class FromStatement extends SqlStatement {
     @Override
     public void collectStatement(StatementCollector collector) {
         collector.append(FROM);
-        collector.append(this.mainFrom);
+        mainFrom.singleCollectStatement(collector);
         if (StringUtil.isNotBlank(this.mainFromAlias)) {
             collector.space().append(this.mainFromAlias);
         }

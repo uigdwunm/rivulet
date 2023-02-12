@@ -24,7 +24,7 @@ public class MySQLDeleteStatement extends SqlStatement {
     }
 
     @Override
-    protected int length() {
+    public int length() {
         return DELETE_FROM.length() + mySQLModelMeta.getTableName().length() + 1 + whereStatement.getLengthOrCache();
     }
 

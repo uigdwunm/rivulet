@@ -24,7 +24,7 @@ public class SetStatement extends SqlStatement {
     }
 
     @Override
-    protected int length() {
+    public int length() {
         return SET.length() + (setItemStatementView.size() - 1) + setItemStatementView.stream().map(SetItemStatement::getLengthOrCache).reduce(0, Integer::sum);
     }
 

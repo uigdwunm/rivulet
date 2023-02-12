@@ -18,7 +18,7 @@ public class SortItemStatement extends SqlStatement {
         this.sortType = sortType;
     }
     @Override
-    protected int length() {
+    public int length() {
         return value.getLengthOrCache() + 1 + sortType.name().length();
     }
 

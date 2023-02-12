@@ -25,6 +25,7 @@ import zly.rivulet.sql.describer.query.desc.SortItem;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Collections;
+import java.util.List;
 
 public class SingleTableTest extends BaseTest {
 
@@ -56,27 +57,26 @@ public class SingleTableTest extends BaseTest {
 
     @RivuletDesc("queryProvince")
     public WholeDesc queryProvince() {
-        // 从参数中动态取值
-        Param<Integer> provinceCodeParam = Param.of(Integer.class, "provinceCode", ParamCheckType.NATURE);
-
         return SQLQueryBuilder.query(ProvinceDO.class, ProvinceDO.class)
-            .where(
-                Condition.Equal.of(CheckCondition.notNull(provinceCodeParam), ProvinceDO::getCode, provinceCodeParam)
+            .select(
+                Mapping.of(ProvinceDO::setCode, Param.staticOf(112)),
+                Mapping.of(ProvinceDO::setName, ProvinceDO::getName)
+            ).where(
+                Condition.Equal.of(ProvinceDO::getCode, Param.of(Integer.class, "province.code"))
             ).build();
     }
 
 
     @Test
     public void query() {
-//        Rivulet rivulet = createDefaultRivuletManager().getRivulet();
-//        HashMap<String, Object> paramMap = new HashMap<>();
-//        paramMap.put("provinceCode", 123);
-//        ProvinceDO provinceDO = rivulet.queryOneByDescKey("queryProvince", paramMap);
-//
-//
-//        Fish fish = rivuletManager.testParse("queryProvince");
+//        Fish fish = rivuletManager.testParse(queryProvince());
 //        String statement = MySQLPrintUtils.commonPrint(fish);
 //        System.out.println(statement);
+        Rivulet rivulet = rivuletManager.getRivulet();
+        List<ProvinceDO> queryProvince = rivulet.queryManyByDescKey("queryProvince", Collections.emptyMap());
+        for (ProvinceDO provinceDO : queryProvince) {
+            System.out.println(provinceDO);
+        }
     }
 
     @RivuletDesc("queryById")

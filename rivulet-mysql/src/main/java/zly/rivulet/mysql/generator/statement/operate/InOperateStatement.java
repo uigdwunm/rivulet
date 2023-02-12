@@ -20,13 +20,13 @@ public class InOperateStatement extends OperateStatement {
     }
 
     @Override
-    protected int length() {
-        return leftValue.getLengthOrCache() + 2 + rightValue.getLengthOrCache();
+    public int length() {
+        return leftValue.singleLength() + Constant.IN.length() + 2 + rightValue.getLengthOrCache();
     }
 
     @Override
     public void collectStatement(StatementCollector collector) {
-        collector.append(leftValue);
+        leftValue.singleLength();
         collector.append(Constant.IN);
         collector.leftBracket();
         collector.append(rightValue);

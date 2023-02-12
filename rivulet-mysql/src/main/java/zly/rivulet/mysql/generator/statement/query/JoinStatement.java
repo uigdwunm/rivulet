@@ -46,9 +46,9 @@ public class JoinStatement extends SqlStatement {
     }
 
     @Override
-    protected int length() {
+    public int length() {
         return joinType.getPrefix().length() + 1 +
-            queryFrom.getLengthOrCache() +
+            queryFrom.singleLength() +
             (StringUtil.isNotBlank(alias) ? AS.length() + alias.length() : 0) +
             (operateStatement != null ? ON.length() + operateStatement.getLengthOrCache() : 0)
             ;
@@ -57,7 +57,7 @@ public class JoinStatement extends SqlStatement {
     @Override
     public void collectStatement(StatementCollector collector) {
         collector.append(this.joinType.getPrefix()).space();
-        this.queryFrom.collectStatementOrCache(collector);
+        this.queryFrom.singleCollectStatement(collector);
         String alias = this.alias;
         if (StringUtil.isNotBlank(alias)) {
             collector.append(AS).append(alias);

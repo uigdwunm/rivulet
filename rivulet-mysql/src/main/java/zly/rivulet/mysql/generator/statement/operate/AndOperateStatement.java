@@ -20,7 +20,7 @@ public class AndOperateStatement extends OperateStatement {
 
 
     @Override
-    protected int length() {
+    public int length() {
         int length = 0;
         length += (subOperateList.size() - 1) * AND_CONNECTOR.length();
         for (OperateStatement operateStatement : subOperateList) {

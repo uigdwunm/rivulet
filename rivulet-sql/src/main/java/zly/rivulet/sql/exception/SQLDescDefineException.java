@@ -39,4 +39,8 @@ public class SQLDescDefineException extends RuntimeException {
     public static SQLDescDefineException mustQueryKey(String value, Class<?> fieldType) {
         return new SQLDescDefineException("必须使用查询key作为子查询" + value);
     }
+
+    public static SQLDescDefineException noMappedItemList(Class<?> fromModel, Class<?> selectModel) {
+        return new SQLDescDefineException("from模型和select模型不一致时，必须定义每个select字段的映射结果,fromMode=" + fromModel.getSimpleName() + ", selectModel=" + selectModel.getSimpleName());
+    }
 }

@@ -19,13 +19,13 @@ public class NotInOperateStatement extends OperateStatement {
     }
 
     @Override
-    protected int length() {
-        return leftValue.getLengthOrCache() + 2 + rightValue.getLengthOrCache();
+    public int length() {
+        return leftValue.singleLength() + 2 + rightValue.getLengthOrCache();
     }
 
     @Override
     public void collectStatement(StatementCollector collector) {
-        collector.append(leftValue);
+        leftValue.singleCollectStatement(collector);
         collector.append(Constant.NOT_IN);
         collector.leftBracket();
         collector.append(rightValue);
