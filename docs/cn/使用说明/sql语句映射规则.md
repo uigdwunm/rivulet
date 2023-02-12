@@ -2,6 +2,22 @@
 ## 1、概述
 + 整体原则是类似原生语句的格式。
 
+### 测试方法
+```java
+class Test {
+    /**
+     * RivuletManager对象中专门预留了一个方法用于测试 testParse，得到一个fish
+     * 通过工具类拿到fish中的语句MySQLPrintUtils。
+     **/
+    public void test(RivuletManager rivuletManager) {
+       Fish fish = rivuletManager.testParse(queryProvince());
+       String statement = MySQLPrintUtils.commonPrint(fish);
+       System.out.println(statement);
+    }
+}
+
+```
+
 ## 2、构造详解
 1. 首先用SQLQueryBuilder开启一个sqlDesc的构造。
 2. 通过IDE提示引出第一个query方法。
