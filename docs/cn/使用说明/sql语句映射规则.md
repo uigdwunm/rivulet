@@ -6,7 +6,8 @@
 ```java
 class Test {
     /**
-     * RivuletManager对象中专门预留了一个方法用于测试 testParse，得到一个fish
+     * RivuletManager对象中专门预留了一个方法用于测试编写的desc是否符合预期。
+     * testParse()，得到一个fish
      * 通过工具类拿到fish中的语句MySQLPrintUtils。
      **/
     public void test(RivuletManager rivuletManager) {
@@ -19,10 +20,88 @@ class Test {
 ```
 
 ## 2、构造详解
+准备两个表对象
+```java
+
+@SQLTable("t_province")
+public class ProvinceDO {
+
+   @PrimaryKey
+   @SqlColumn("code")
+   @MySQLInt
+   private Integer code;
+
+   @SqlColumn
+   @MySQLVarchar(length = 16)
+   @Comment("省份名称")
+   private String name;
+
+   public Integer getCode() {
+      return code;
+   }
+
+   public void setCode(Integer code) {
+      this.code = code;
+   }
+
+   public String getName() {
+      return name;
+   }
+
+   public void setName(String name) {
+      this.name = name;
+   }
+}
+```
+```java
+
+@SQLTable("t_city")
+public class CityDO {
+
+   @PrimaryKey
+   @SqlColumn("code")
+   @MySQLInt
+   private Integer code;
+
+   @SqlColumn
+   @MySQLVarchar(length = 16)
+   @Comment("城市名称")
+   private String name;
+
+   @SqlColumn("province_code")
+   @MySQLInt
+   @Comment("所属省份code")
+   private Integer provinceCode;
+
+   public Integer getCode() {
+      return code;
+   }
+
+   public void setCode(Integer code) {
+      this.code = code;
+   }
+
+   public String getName() {
+      return name;
+   }
+
+   public void setName(String name) {
+      this.name = name;
+   }
+
+   public Integer getProvinceCode() {
+      return provinceCode;
+   }
+
+   public void setProvinceCode(Integer provinceCode) {
+      this.provinceCode = provinceCode;
+   }
+}
+```
 1. 首先用SQLQueryBuilder开启一个sqlDesc的构造。
 2. 通过IDE提示引出第一个query方法。
    1. query方法包含两个参数。
-   2. 第一个参数表示from的表模型对象class，如果是联表查询，则是联表查询的对象模型。
+   2. 第一个参数表示from的表模型对象class，如果是[联表查询](#联表查询)，则是[联表查询](#联表查询)的对象模型。
    3. 第二个参数表示select结果的模型对象class，就是查询完成的结果，封装到哪个对象中。
    4. from模型和select模型可以是同一个，模型相同时可以不指定select字段映射结果，默认返回全部字段。
 ```java
@@ -65,6 +144,44 @@ class Demo {
    }
 }
 ```
+
+### 联表查询
+示例：
+```java
+public class CityProvinceJoin implements QueryComplexModel {
+
+   private CityDO cityDO;
+
+   private ProvinceDO provinceDO;
+
+   /**
+    * 下面方法会得到这个语句
+    *    from t_city c left join t_province p on p.code = c.province_code
+    **/
+   @Override
+   public ComplexDescriber register() {
+       ComplexDescriber describer = ComplexDescriber.from(cityDO);
+
+       // 联表条件
+       describer.leftJoin(provinceDO).on(JoinCondition.Equal.of(provinceDO::getCode, cityDO::getProvinceCode));
+
+       return describer;
+   }
+
+   public CityDO getCityDO() {
+       return cityDO;
+   }
+
+   public ProvinceDO getProvinceDO() {
+       return provinceDO;
+   }
+}
+```
+1. 先建立一个联表描述类,需要继承QueryComplexModel。
+2. 将需要联表的表，记录为成员变量
+3. 在register方法中，用ComplexDescriber来描述多个模型的联表关系
+4. 首先必须存在的from对象，这里不像SQLQueryBuilder一样传入表模型class对象，而是传入成员变量表对象。
+5. 然后继续调用不同的join来描述连接类型。
 
 ### singleValue
 在sql的语法中，无论是select的子项，还是where的子项，都可以是多种形态的值，我大致分了四类：

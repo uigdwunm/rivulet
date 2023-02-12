@@ -1,6 +1,8 @@
 # rivulet（半成品预览版）
 ## spring接入
 [rivulet-spring](https://github.com/uigdwunm/rivulet-spring)
+## 使用说明
+1. [spl语句映射规则](docs/cn/使用说明/sql语句映射规则.md)
 
 ## 基本特性预览
 ### 1、查询
