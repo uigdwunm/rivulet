@@ -8,7 +8,7 @@
 
     <groupId>io.github.uigdwunm</groupId>
     <artifactId>rivulet-parent</artifactId>
-    <version>0.0.1-PREVIEW</version>
+    <version>0.0.2-PREVIEW</version>
 
     <licenses>
         <license>

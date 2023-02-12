@@ -4,8 +4,10 @@ import zly.rivulet.base.exception.ModelDefineException;
 import zly.rivulet.base.utils.ClassUtils;
 import zly.rivulet.base.utils.TwofoldConcurrentHashMap;
 
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 public class ConvertorManager {
 
@@ -23,6 +25,8 @@ public class ConvertorManager {
      * Date 2022/12/4 12:40
      **/
     private final TwofoldConcurrentHashMap<Class<?>, Class<?> , ResultConvertor<?, ?>> resultConvertorMap;
+
+    private final ConcurrentHashMap<Class<?>, Set<ResultConvertor<?, ?>>> superResultConvertor;
 
     /**
      * Description java类型转换成语句时的convertor
@@ -42,6 +46,7 @@ public class ConvertorManager {
 
     public ConvertorManager() {
         this.resultConvertorMap = new TwofoldConcurrentHashMap<>();
+        this.superResultConvertor = new ConcurrentHashMap<>();
         this.statementConvertorMap = new ConcurrentHashMap<>();
         this.superClassConvertor = new CopyOnWriteArrayList<>();
     }
@@ -57,19 +62,37 @@ public class ConvertorManager {
 
     public <T1, T2> void registerSuperClassConvertor(StatementConvertor<T1> statementConvertor, ResultConvertor<T2, T1> resultConvertor) {
         this.superClassConvertor.add(statementConvertor);
-        this.resultConvertorMap.put(resultConvertor.getOriginType(), resultConvertor.getTargetType(), resultConvertor);
+        this.superResultConvertor.compute(
+            resultConvertor.getOriginType(),
+            (k, v) -> {
+                if (v == null) {
+                    v = new CopyOnWriteArraySet<>();
+                }
+                v.add(resultConvertor);
+                return v;
+            }
+        );
     }
 
     public <T1, T2> ResultConvertor<T1, T2> getResultConvertor(Class<T1> originType, Class<T2> targetType) {
         ResultConvertor<?, ?> resultConvertor = resultConvertorMap.get(originType, targetType);
+        if (resultConvertor != null) {
+            return (ResultConvertor<T1, T2>) resultConvertor;
+        }
         if (originType.equals(targetType) || targetType.equals(Object.class)) {
             // 结果转换器没有，并且出入参相同，或者目标类型是Object，则直接返回
             return (ResultConvertor<T1, T2>) selfConvertor;
         }
-        if (resultConvertor == null) {
+        Set<ResultConvertor<?, ?>> resultConvertors = superResultConvertor.get(originType);
+        if (resultConvertors == null) {
             throw ModelDefineException.noMatchResultConvertor(originType, targetType);
         }
-        return (ResultConvertor<T1, T2>) resultConvertor;
+        for (ResultConvertor<?, ?> convertor : resultConvertors) {
+            if (ClassUtils.isExtend(convertor.getTargetType(), targetType)) {
+                return (ResultConvertor<T1, T2>) convertor;
+            }
+        }
+        throw ModelDefineException.noMatchResultConvertor(originType, targetType);
     }
 
     /**
