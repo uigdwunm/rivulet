@@ -3,6 +3,7 @@
 [rivulet-spring](https://github.com/uigdwunm/rivulet-spring)
 ## 说明文档
 1. [spl语句映射规则](docs/cn/使用说明/sql语句映射规则.md)
+2. [扩展点](docs/cn/使用说明/扩展点.md)
 
 ## 基本特性预览
 ### 1、查询
