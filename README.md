@@ -1,4 +1,4 @@
-# rivulet（半成品预览版）
+# rivulet（溪流）（半成品预览版）
 ## spring接入
 [rivulet-spring](https://github.com/uigdwunm/rivulet-spring)
 ## 说明文档
