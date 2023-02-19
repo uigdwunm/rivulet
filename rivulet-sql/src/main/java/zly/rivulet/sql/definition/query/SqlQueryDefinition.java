@@ -107,7 +107,7 @@ public class SqlQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
         }
         Param<Integer> limit = metaDesc.getLimit();
         if (limit != null) {
-            this.limit = new LimitDefinition(toolbox, limit);
+            this.limit = new LimitDefinition(toolbox, this.skit, limit);
             this.subDefinitionList.add(this.limit);
         }
 

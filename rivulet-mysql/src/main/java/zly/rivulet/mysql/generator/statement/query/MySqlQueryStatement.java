@@ -5,6 +5,7 @@ import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.statement.SingleValueElementStatement;
 import zly.rivulet.sql.definition.query.SqlQueryDefinition;
+import zly.rivulet.sql.definition.query.main.SkitDefinition;
 import zly.rivulet.sql.generator.SqlStatementFactory;
 import zly.rivulet.sql.generator.statement.SqlStatement;
 
@@ -59,6 +60,8 @@ public class MySqlQueryStatement extends SqlStatement implements QueryFromStatem
             (definition, soleFlag, initHelper) -> {
                 SqlQueryDefinition sqlQueryDefinition = (SqlQueryDefinition) definition;
                 List<SqlStatement> subStatementList = sqlQueryDefinition.getSubDefinitionList().stream()
+                    // 要跳过skit节点，要不mysql整不了
+                    .filter(subDefinition -> !(subDefinition instanceof SkitDefinition))
                     .map(subDefinition -> sqlStatementFactory.warmUp(subDefinition, soleFlag.subSwitch(), initHelper))
                     .collect(Collectors.toList());
                 return new MySqlQueryStatement(sqlQueryDefinition, subStatementList);
@@ -67,6 +70,8 @@ public class MySqlQueryStatement extends SqlStatement implements QueryFromStatem
                 SqlQueryDefinition sqlQueryDefinition = (SqlQueryDefinition) definition;
                 CommonParamManager paramManager = helper.getParamManager();
                 List<SqlStatement> subStatementList = sqlQueryDefinition.getSubDefinitionList().stream()
+                    // 要跳过skit节点，要不mysql整不了
+                    .filter(subDefinition -> !(subDefinition instanceof SkitDefinition))
                     .filter(subDefinition -> subDefinition.check(paramManager))
                     .map(subDefinition -> sqlStatementFactory.getOrCreate(subDefinition, helper))
                     .collect(Collectors.toList());

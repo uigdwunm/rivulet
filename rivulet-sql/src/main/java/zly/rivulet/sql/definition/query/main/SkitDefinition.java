@@ -22,6 +22,10 @@ public class SkitDefinition extends AbstractDefinition {
         this.skit = paramReceiptManager.registerParam(skit);
     }
 
+    public ParamReceipt getSkit() {
+        return skit;
+    }
+
     @Override
     public Copier copier() {
         return new Copier(skit);

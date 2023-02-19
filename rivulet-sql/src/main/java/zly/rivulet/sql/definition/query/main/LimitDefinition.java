@@ -11,32 +11,50 @@ import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 public class LimitDefinition extends AbstractDefinition {
     private final ParamReceipt limit;
 
-    private LimitDefinition(CheckCondition checkCondition, ParamReceipt limit) {
+    /**
+     * 这里加上skit的部分，可能有的sql语法用的上
+     **/
+    private final SkitDefinition skit;
+
+    private LimitDefinition(CheckCondition checkCondition, SkitDefinition skit, ParamReceipt limit) {
         super(checkCondition, null);
         this.limit = limit;
+        this.skit = skit;
     }
 
-    public LimitDefinition(SqlParserPortableToolbox sqlPreParseHelper, Param<Integer> limit) {
+    public LimitDefinition(SqlParserPortableToolbox sqlPreParseHelper, SkitDefinition skit, Param<Integer> limit) {
         super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamReceiptManager());
         ParamReceiptManager paramReceiptManager = sqlPreParseHelper.getParamReceiptManager();
         this.limit = paramReceiptManager.registerParam(limit);
+        this.skit = skit;
     }
 
     public ParamReceipt getLimitParam() {
         return limit;
     }
 
+    public SkitDefinition getSkit() {
+        return skit;
+    }
+
     @Override
     public Copier copier() {
-        return new Copier(limit);
+        return new Copier(limit, skit);
     }
 
     public class Copier implements Definition.Copier {
 
         private ParamReceipt limit;
 
-        private Copier(ParamReceipt limit) {
+        private SkitDefinition skit;
+
+        private Copier(ParamReceipt limit, SkitDefinition skit) {
             this.limit = limit;
+            this.skit = skit;
+        }
+
+        public void setSkit(SkitDefinition skit) {
+            this.skit = skit;
         }
 
         public void setLimit(ParamReceipt limit) {
@@ -45,7 +63,7 @@ public class LimitDefinition extends AbstractDefinition {
 
         @Override
         public LimitDefinition copy() {
-            return new LimitDefinition(checkCondition, limit);
+            return new LimitDefinition(checkCondition, skit, limit);
         }
     }
 }

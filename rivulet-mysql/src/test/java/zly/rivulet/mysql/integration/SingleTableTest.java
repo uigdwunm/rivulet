@@ -57,13 +57,15 @@ public class SingleTableTest extends BaseTest {
 
     @RivuletDesc("queryProvince")
     public WholeDesc queryProvince() {
+
+
         return SQLQueryBuilder.query(ProvinceDO.class, ProvinceDO.class)
             .select(
                 Mapping.of(ProvinceDO::setCode, Param.staticOf(112)),
                 Mapping.of(ProvinceDO::setName, ProvinceDO::getName)
             ).where(
                 Condition.Equal.of(ProvinceDO::getCode, Param.of(Integer.class, "province.code"))
-            ).build();
+            ).skit(Param.staticOf(0)).limit(Param.staticOf(1)).build();
     }
 
 
@@ -82,7 +84,7 @@ public class SingleTableTest extends BaseTest {
     @RivuletDesc("queryById")
     public WholeDesc queryById() {
         return SQLQueryBuilder.query(PersonDO.class, PersonDO.class)
-            .where(Condition.Equal.of(PersonDO::getId, Param.of(Long.class, "id")))
+            .where(Condition.Equal.of(PersonDO::getId, Param.staticOf(2)))
             .build();
     }
 

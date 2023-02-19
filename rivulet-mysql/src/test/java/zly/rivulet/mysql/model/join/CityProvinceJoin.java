@@ -20,7 +20,10 @@ public class CityProvinceJoin implements QueryComplexModel {
         ComplexDescriber describer = ComplexDescriber.from(cityDO);
 
         // 联表条件
-        describer.leftJoin(provinceDO).on(JoinCondition.Equal.of(provinceDO::getCode, cityDO::getProvinceCode));
+        describer.leftJoin(provinceDO)
+            .on(
+                JoinCondition.Equal.of(provinceDO::getCode, cityDO::getProvinceCode)
+            );
 
         return describer;
     }
