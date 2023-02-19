@@ -8,7 +8,7 @@
 
     <groupId>io.github.uigdwunm</groupId>
     <artifactId>rivulet-parent</artifactId>
-    <version>0.0.9-PREVIEW</version>
+    <version>0.0.10-PREVIEW</version>
 
     <name>rivulet</name>
     <description>a data persistence layer framework</description>
