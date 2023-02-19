@@ -34,8 +34,12 @@ public class SQLMetaModelResultAssigner extends SQLQueryResultAssigner {
                 FieldAssignerWrap fieldAssignerWrap = fieldAssignerWrapList.get(i);
                 SetMapping<Object, Object> setMapping = fieldAssignerWrap.getSetMapping();
                 Object result = resultSet.getObject(indexStart + i + 1);
-                ResultConvertor<Object, Object> resultConvertor = fieldAssignerWrap.getConvertor(result.getClass());
-                setMapping.setMapping(container, resultConvertor.convert(result));
+                if (result != null) {
+                    ResultConvertor<Object, Object> resultConvertor = fieldAssignerWrap.getConvertor(result.getClass());
+                    setMapping.setMapping(container, resultConvertor.convert(result));
+                } else {
+                    setMapping.setMapping(container, null);
+                }
             }
 //            if (container instanceof SelectByBuilder.OneResult) {
 //            }
