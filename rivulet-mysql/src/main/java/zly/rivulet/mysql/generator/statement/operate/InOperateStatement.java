@@ -3,10 +3,9 @@ package zly.rivulet.mysql.generator.statement.operate;
 import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.statement.SingleValueElementStatement;
-import zly.rivulet.sql.definition.query.operate.EqOperateDefinition;
 import zly.rivulet.sql.definition.query.operate.InOperateDefinition;
-import zly.rivulet.sql.generator.SqlStatementFactory;
-import zly.rivulet.sql.generator.statement.SqlStatement;
+import zly.rivulet.sql.generator.SQLStatementFactory;
+import zly.rivulet.sql.generator.statement.SQLStatement;
 
 public class InOperateStatement extends OperateStatement {
 
@@ -33,19 +32,19 @@ public class InOperateStatement extends OperateStatement {
         collector.rightBracket();
     }
 
-    public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
+    public static void registerToFactory(SQLStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
             InOperateDefinition.class,
             (definition, soleFlag, initHelper) -> {
                 InOperateDefinition inOperateDefinition = (InOperateDefinition) definition;
-                SqlStatement leftStatement = sqlStatementFactory.warmUp(inOperateDefinition.getLeftElement(), soleFlag.subSwitch(), initHelper);
-                SqlStatement rightStatement = sqlStatementFactory.warmUp(inOperateDefinition.getRightElement(), soleFlag.subSwitch(), initHelper);
+                SQLStatement leftStatement = sqlStatementFactory.warmUp(inOperateDefinition.getLeftElement(), soleFlag.subSwitch(), initHelper);
+                SQLStatement rightStatement = sqlStatementFactory.warmUp(inOperateDefinition.getRightElement(), soleFlag.subSwitch(), initHelper);
                 return new InOperateStatement((SingleValueElementStatement) leftStatement, (SingleValueElementStatement) rightStatement);
             },
             (definition, helper) -> {
                 InOperateDefinition inOperateDefinition = (InOperateDefinition) definition;
-                SqlStatement leftStatement = sqlStatementFactory.getOrCreate(inOperateDefinition.getLeftElement(), helper);
-                SqlStatement rightStatement = sqlStatementFactory.getOrCreate(inOperateDefinition.getRightElement(), helper);
+                SQLStatement leftStatement = sqlStatementFactory.getOrCreate(inOperateDefinition.getLeftElement(), helper);
+                SQLStatement rightStatement = sqlStatementFactory.getOrCreate(inOperateDefinition.getRightElement(), helper);
                 return new InOperateStatement((SingleValueElementStatement) leftStatement, (SingleValueElementStatement) rightStatement);
             }
         );

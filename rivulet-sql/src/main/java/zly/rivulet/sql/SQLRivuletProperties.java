@@ -2,7 +2,7 @@ package zly.rivulet.sql;
 
 import zly.rivulet.base.RivuletProperties;
 
-public abstract class SqlRivuletProperties extends RivuletProperties {
+public abstract class SQLRivuletProperties extends RivuletProperties {
 
 
     /**

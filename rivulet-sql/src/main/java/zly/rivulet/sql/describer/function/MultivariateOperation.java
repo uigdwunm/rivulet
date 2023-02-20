@@ -6,7 +6,7 @@ import zly.rivulet.base.describer.custom.CustomSingleValueWrap;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.field.JoinFieldMapping;
 import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
+import zly.rivulet.sql.describer.query.SQLQueryMetaDesc;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -59,10 +59,10 @@ public abstract class MultivariateOperation {
     }
 
     @SafeVarargs
-    public final <F, C> SQLFunction<F, C> of(FieldMapping<F, C> leftValue, SqlQueryMetaDesc<F, C> ... rightValues) {
+    public final <F, C> SQLFunction<F, C> of(FieldMapping<F, C> leftValue, SQLQueryMetaDesc<F, C>... rightValues) {
         LinkedList<SingleValueElementDesc<F, C>> list = new LinkedList<>();
         list.add(leftValue);
-        for (SqlQueryMetaDesc<F, C> value : rightValues) {
+        for (SQLQueryMetaDesc<F, C> value : rightValues) {
             list.add((SingleValueElementDesc) value);
         }
         return new SQLFunction<F, C>(list) {
@@ -119,10 +119,10 @@ public abstract class MultivariateOperation {
     }
 
     @SafeVarargs
-    public final <F, C> SQLFunction<F, C> of(JoinFieldMapping<C> leftValue, SqlQueryMetaDesc<F, C> ... rightValues) {
+    public final <F, C> SQLFunction<F, C> of(JoinFieldMapping<C> leftValue, SQLQueryMetaDesc<F, C>... rightValues) {
         List<SingleValueElementDesc<F, C>> list = new LinkedList<>();
         list.add((SingleValueElementDesc) leftValue);
-        for (SqlQueryMetaDesc<F, C> value : rightValues) {
+        for (SQLQueryMetaDesc<F, C> value : rightValues) {
             list.add((SingleValueElementDesc) value);
         }
         return new SQLFunction<F, C>(list) {
@@ -194,10 +194,10 @@ public abstract class MultivariateOperation {
     }
 
     @SafeVarargs
-    public final <F, C> SQLFunction<F, C> of(SQLFunction<F, C> leftValue, SqlQueryMetaDesc<F, C> ... rightValues) {
+    public final <F, C> SQLFunction<F, C> of(SQLFunction<F, C> leftValue, SQLQueryMetaDesc<F, C>... rightValues) {
         List<SingleValueElementDesc<F, C>> list = new LinkedList<>();
         list.add((SingleValueElementDesc) leftValue);
-        for (SqlQueryMetaDesc<F, C> value : rightValues) {
+        for (SQLQueryMetaDesc<F, C> value : rightValues) {
             list.add((SingleValueElementDesc) value);
         }
         return new SQLFunction<F, C>(list) {
@@ -269,10 +269,10 @@ public abstract class MultivariateOperation {
     }
 
     @SafeVarargs
-    public final <F, C> SQLFunction<F, C> of(Param<C> leftValue, SqlQueryMetaDesc<F, C> ... rightValues) {
+    public final <F, C> SQLFunction<F, C> of(Param<C> leftValue, SQLQueryMetaDesc<F, C>... rightValues) {
         List<SingleValueElementDesc<F, C>> list = new LinkedList<>();
         list.add((SingleValueElementDesc) leftValue);
-        for (SqlQueryMetaDesc<F, C> value : rightValues) {
+        for (SQLQueryMetaDesc<F, C> value : rightValues) {
             list.add((SingleValueElementDesc) value);
         }
         return new SQLFunction<F, C>(list) {
@@ -284,7 +284,7 @@ public abstract class MultivariateOperation {
     }
 
     @SafeVarargs
-    public final <F, C> SQLFunction<F, C> of(SqlQueryMetaDesc<F, C> leftValue, FieldMapping<F, C> ... rightValues) {
+    public final <F, C> SQLFunction<F, C> of(SQLQueryMetaDesc<F, C> leftValue, FieldMapping<F, C> ... rightValues) {
         List<SingleValueElementDesc<F, C>> list = new LinkedList<>();
         list.add((SingleValueElementDesc) leftValue);
         for (FieldMapping<F, C> value : rightValues) {
@@ -299,7 +299,7 @@ public abstract class MultivariateOperation {
     }
 
     @SafeVarargs
-    public final <F, C> SQLFunction<F, C> of(SqlQueryMetaDesc<F, C> leftValue, JoinFieldMapping<C> ... rightValues) {
+    public final <F, C> SQLFunction<F, C> of(SQLQueryMetaDesc<F, C> leftValue, JoinFieldMapping<C> ... rightValues) {
         List<SingleValueElementDesc<F, C>> list = new LinkedList<>();
         list.add((SingleValueElementDesc) leftValue);
         for (JoinFieldMapping<C> value : rightValues) {
@@ -314,7 +314,7 @@ public abstract class MultivariateOperation {
     }
 
     @SafeVarargs
-    public final <F, C> SQLFunction<F, C> of(SqlQueryMetaDesc<F, C> leftValue, SQLFunction<F, C> ... rightValues) {
+    public final <F, C> SQLFunction<F, C> of(SQLQueryMetaDesc<F, C> leftValue, SQLFunction<F, C> ... rightValues) {
         List<SingleValueElementDesc<F, C>> list = new LinkedList<>();
         list.add((SingleValueElementDesc) leftValue);
         for (SQLFunction<F, C> value : rightValues) {
@@ -329,7 +329,7 @@ public abstract class MultivariateOperation {
     }
 
     @SafeVarargs
-    public final <F, C> SQLFunction<F, C> of(SqlQueryMetaDesc<F, C> leftValue, Param<C> ... rightValues) {
+    public final <F, C> SQLFunction<F, C> of(SQLQueryMetaDesc<F, C> leftValue, Param<C> ... rightValues) {
         List<SingleValueElementDesc<F, C>> list = new LinkedList<>();
         list.add((SingleValueElementDesc) leftValue);
         for (Param<C> value : rightValues) {
@@ -344,10 +344,10 @@ public abstract class MultivariateOperation {
     }
 
     @SafeVarargs
-    public final <F, C> SQLFunction<F, C> of(SqlQueryMetaDesc<F, C> leftValue, SqlQueryMetaDesc<F, C> ... rightValues) {
+    public final <F, C> SQLFunction<F, C> of(SQLQueryMetaDesc<F, C> leftValue, SQLQueryMetaDesc<F, C>... rightValues) {
         List<SingleValueElementDesc<F, C>> list = new LinkedList<>();
         list.add((SingleValueElementDesc) leftValue);
-        for (SqlQueryMetaDesc<F, C> value : rightValues) {
+        for (SQLQueryMetaDesc<F, C> value : rightValues) {
             list.add((SingleValueElementDesc) value);
         }
         return new SQLFunction<F, C>(list) {

@@ -6,7 +6,7 @@ import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.definition.param.ParamReceipt;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.parser.ParamReceiptManager;
-import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
+import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
 public class LimitDefinition extends AbstractDefinition {
     private final ParamReceipt limit;
@@ -22,7 +22,7 @@ public class LimitDefinition extends AbstractDefinition {
         this.skit = skit;
     }
 
-    public LimitDefinition(SqlParserPortableToolbox sqlPreParseHelper, SkitDefinition skit, Param<Integer> limit) {
+    public LimitDefinition(SQLParserPortableToolbox sqlPreParseHelper, SkitDefinition skit, Param<Integer> limit) {
         super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamReceiptManager());
         ParamReceiptManager paramReceiptManager = sqlPreParseHelper.getParamReceiptManager();
         this.limit = paramReceiptManager.registerParam(limit);

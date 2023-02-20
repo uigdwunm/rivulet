@@ -4,7 +4,7 @@ import zly.rivulet.base.convertor.ConvertorManager;
 import zly.rivulet.mysql.definer.MySQLDefiner;
 import zly.rivulet.mysql.generator.MysqlGenerator;
 import zly.rivulet.sql.SQLRivuletManager;
-import zly.rivulet.sql.parser.SqlParser;
+import zly.rivulet.sql.parser.SQLParser;
 
 public abstract class MySQLRivuletManager extends SQLRivuletManager {
 
@@ -17,10 +17,10 @@ public abstract class MySQLRivuletManager extends SQLRivuletManager {
     }
 
     protected MySQLRivuletManager(MySQLRivuletProperties configProperties, MySQLDefiner mySQLDefiner) {
-        this(configProperties, new SqlParser(mySQLDefiner, configProperties));
+        this(configProperties, new SQLParser(mySQLDefiner, configProperties));
     }
 
-    protected MySQLRivuletManager(MySQLRivuletProperties configProperties, SqlParser sqlParser) {
+    protected MySQLRivuletManager(MySQLRivuletProperties configProperties, SQLParser sqlParser) {
         super(new MysqlGenerator(configProperties, sqlParser));
         sqlParser.setSqlRivuletManager(this);
     }

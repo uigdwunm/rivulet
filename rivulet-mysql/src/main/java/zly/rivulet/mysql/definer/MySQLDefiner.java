@@ -12,8 +12,8 @@ import zly.rivulet.mysql.definer.annotations.type.binary.*;
 import zly.rivulet.mysql.definer.annotations.type.date.*;
 import zly.rivulet.mysql.definer.annotations.type.numeric.*;
 import zly.rivulet.mysql.definer.annotations.type.string.*;
-import zly.rivulet.sql.definer.SqlDefiner;
-import zly.rivulet.sql.definer.annotations.SqlColumn;
+import zly.rivulet.sql.definer.SQLDefiner;
+import zly.rivulet.sql.definer.annotations.SQLColumn;
 import zly.rivulet.sql.definer.annotations.SQLTable;
 import zly.rivulet.sql.exception.SQLModelDefineException;
 
@@ -23,7 +23,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class MySQLDefiner extends SqlDefiner {
+public class MySQLDefiner extends SQLDefiner {
 
 
     private final Map<Class<?>, MySQLModelMeta> modelMetaMap = new HashMap<>();
@@ -105,14 +105,14 @@ public class MySQLDefiner extends SqlDefiner {
 
     private MySQLFieldMeta parseFieldMeta(Class<?> clazz, Field field) {
 
-        SqlColumn sqlColumn = null;
+        SQLColumn sqlColumn = null;
         String comment = null;
         String defaultValue = null;
         OriginOuterType originOuterType = null;
         boolean isPrimary = false;
         for (Annotation annotation : field.getAnnotations()) {
-            if (annotation instanceof SqlColumn) {
-                sqlColumn = (SqlColumn) annotation;
+            if (annotation instanceof SQLColumn) {
+                sqlColumn = (SQLColumn) annotation;
             } else if (annotation instanceof PrimaryKey) {
                 isPrimary = true;
             } else if (annotation instanceof Comment) {

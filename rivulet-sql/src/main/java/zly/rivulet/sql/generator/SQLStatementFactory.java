@@ -2,14 +2,14 @@ package zly.rivulet.sql.generator;
 
 import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.utils.RelationSwitch;
-import zly.rivulet.sql.generator.statement.SqlStatement;
+import zly.rivulet.sql.generator.statement.SQLStatement;
 import zly.rivulet.sql.generator.toolbox.SQLGenerateToolbox;
 import zly.rivulet.sql.generator.toolbox.WarmUpToolbox;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class SqlStatementFactory {
+public class SQLStatementFactory {
     /**
      * 初始化statement生成器，一个语句必须先执行初始化才能执行运行时statement
      **/
@@ -26,13 +26,13 @@ public class SqlStatementFactory {
         DEFINITION_RUN_CREATOR_MAP.put(clazz, statementRunCreator);
     }
 
-    public SqlStatement getOrCreate(Definition definition, SQLGenerateToolbox toolbox) {
+    public SQLStatement getOrCreate(Definition definition, SQLGenerateToolbox toolbox) {
         Definition replaceDefinition = toolbox.getReplaceDefinition(definition.getClass());
         if (replaceDefinition != null) {
             definition = replaceDefinition;
         } else {
             // 如果存在replaceDefinition，那一定没有缓存，不存在才需要查下
-            SqlStatement statement = toolbox.getBlueprint().getStatement(definition);
+            SQLStatement statement = toolbox.getBlueprint().getStatement(definition);
             if (statement != null) {
                 // 缓存查到了
                 return statement;
@@ -42,9 +42,9 @@ public class SqlStatementFactory {
         return statementRunCreator.create(definition, toolbox);
     }
 
-    public SqlStatement warmUp(Definition definition, RelationSwitch soleFlag, WarmUpToolbox toolbox) {
+    public SQLStatement warmUp(Definition definition, RelationSwitch soleFlag, WarmUpToolbox toolbox) {
         StatementInitCreator statementInitCreator = DEFINITION_WARM_UP_CREATOR_MAP.get(definition.getClass());
-        SqlStatement sqlStatement = statementInitCreator.create(definition, soleFlag, toolbox);
+        SQLStatement sqlStatement = statementInitCreator.create(definition, soleFlag, toolbox);
         if (soleFlag.isEnable()) {
             // 唯一，可以缓存
             toolbox.getSqlBlueprint().putStatement(definition, sqlStatement);
@@ -58,11 +58,11 @@ public class SqlStatementFactory {
 
     @FunctionalInterface
     public interface StatementInitCreator {
-        SqlStatement create(Object definition, RelationSwitch soleFlag, WarmUpToolbox helper);
+        SQLStatement create(Object definition, RelationSwitch soleFlag, WarmUpToolbox helper);
     }
 
     @FunctionalInterface
     public interface StatementRunCreator {
-        SqlStatement create(Object definition, SQLGenerateToolbox helper);
+        SQLStatement create(Object definition, SQLGenerateToolbox helper);
     }
 }

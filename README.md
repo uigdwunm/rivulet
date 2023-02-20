@@ -1,41 +1,118 @@
 # rivulet（半成品预览版）
-## spring接入
-[rivulet-spring](https://github.com/uigdwunm/rivulet-spring)
 ## 说明文档
 1. [spl语句映射规则](docs/cn/使用说明/sql语句映射规则.md)
 2. [扩展点](docs/cn/使用说明/扩展点.md)
+3. 
+## 使用spring接入
+[rivulet-spring](https://github.com/uigdwunm/rivulet-spring)
+
+## 使用原生方式接入（最简单案例快速开始）
+1. 准备声明RivuletManager，并配置要扫描的包。
+```java
+public class CreateSQLRivuletManagerTest {
+  public SQLRivuletManager createRivuletManager() {
+    SQLRivuletManager rivuletManager = new DefaultMySQLDataSourceRivuletManager(
+            new MySQLRivuletProperties(),
+            createRealDataSource()
+    );
+    rivuletManager.putInStorageByBasePackage("zly.rivulet.mysql");
+    return rivuletManager;
+  }
+}
+```
+
+2. 声明表模型对象，这里需要比较全面的表信息。
+   + 类注解 @SQLTable 是必须的，对应表名
+   + 每个字段的@SQLColumn 是必须的，对应字段名。
+   + 每个字段的类型 比如 @MySQLBigInt、@MySQLVarchar……，也是必须的
+```java
+@SQLTable("t_person")
+public class PersonDO {
+
+  @PrimaryKey
+  @SQLColumn("id")
+  @MySQLBigInt
+  private Long id;
+
+  @SQLColumn
+  @MySQLVarchar(length = 64)
+  private String name;
+  
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(long id) {
+    this.id = id;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+}
+```
+
+3. 在扫描的包路径范围内，声明Desc来表达sql语句。
+    + Desc方法必须是无参方法，返回值WholeDesc。
+    + 方法必须加注解 @RivuletDesc，并赋予一个唯一key，用来定位这个语句。
+```java
+public class CreateDesc {
+  @RivuletDesc("queryById")
+  public WholeDesc queryById() {
+    return SQLQueryBuilder.query(PersonDO.class, PersonDO.class)
+            .where(Condition.Equal.of(PersonDO::getId, Param.staticOf(2)))
+            .build();
+  }
+}
+```
+
+4. 调用时，通过RivuletManager对象，获取一个Rivulet进行调用。
+    + rivulet对象有各种方法，需要通过key定位语句，就是上面@RivuletDesc中的key
+    + 如果查询单个就queryOne，多个就queryMany
+```java
+public class ExecTest {
+  public void exec() {
+    Rivulet rivulet = rivuletManager.getRivulet();
+    PersonDO result = rivulet.queryOneByDescKey("queryById", Collections.emptyMap());
+  }
+}
+```
 
 ## 基本特性预览
 ### 1、查询
 #### 准备表对象（必须有getter方法，这里节省篇幅省略）
 ```java
-@SqlTable("t_province")
+@SQLTable("t_province")
 public class ProvinceDO {
     @PrimaryKey
-    @SqlColumn("code")
+    @SQLColumn("code")
     @MySQLInt
     private Integer code;
 
-    @SqlColumn
+    @SQLColumn
     @MySQLVarchar(length = 16)
     @Comment("省份名称")
     private String name;
 }
 ```
 ``` java
-@SqlTable("t_city")
+@SQLTable("t_city")
 public class CityDO {
     @PrimaryKey
-    @SqlColumn("code")
+    @SQLColumn("code")
     @MySQLInt
     private Integer code;
 
-    @SqlColumn
+    @SQLColumn
     @MySQLVarchar(length = 16)
     @Comment("城市名称")
     private String name;
 
-    @SqlColumn("province_code")
+    @SQLColumn("province_code")
     @MySQLInt
     @Comment("所属省份code")
     private Integer provinceCode;

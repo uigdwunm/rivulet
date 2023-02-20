@@ -5,11 +5,11 @@ import zly.rivulet.base.utils.StringUtil;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.statement.SingleValueElementStatement;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
-import zly.rivulet.sql.generator.SqlStatementFactory;
-import zly.rivulet.sql.generator.statement.SqlStatement;
+import zly.rivulet.sql.generator.SQLStatementFactory;
+import zly.rivulet.sql.generator.statement.SQLStatement;
 import zly.rivulet.sql.parser.SQLAliasManager;
 
-public class MapStatement extends SqlStatement implements SingleValueElementStatement {
+public class MapStatement extends SQLStatement implements SingleValueElementStatement {
 
     private final SingleValueElementStatement value;
 
@@ -70,12 +70,12 @@ public class MapStatement extends SqlStatement implements SingleValueElementStat
         }
     }
 
-    public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
+    public static void registerToFactory(SQLStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
             MapDefinition.class,
             (definition, soleFlag, initHelper) -> {
                 MapDefinition mapDefinition = (MapDefinition) definition;
-                SqlStatement value = sqlStatementFactory.warmUp(mapDefinition.getValueDefinition(), soleFlag.subSwitch(), initHelper);
+                SQLStatement value = sqlStatementFactory.warmUp(mapDefinition.getValueDefinition(), soleFlag.subSwitch(), initHelper);
                 SQLAliasManager aliasManager = initHelper.getAliasManager();
                 String alias = aliasManager.getAlias(mapDefinition.getAliasFlag());
                 String referenceAlias = aliasManager.getAlias(mapDefinition.getReferenceAlias());
@@ -83,7 +83,7 @@ public class MapStatement extends SqlStatement implements SingleValueElementStat
             },
             (definition, helper) -> {
                 MapDefinition mapDefinition = (MapDefinition) definition;
-                SqlStatement value = sqlStatementFactory.getOrCreate(mapDefinition.getValueDefinition(), helper);
+                SQLStatement value = sqlStatementFactory.getOrCreate(mapDefinition.getValueDefinition(), helper);
                 SQLAliasManager aliasManager = helper.getAliasManager();
                 String alias = aliasManager.getAlias(mapDefinition.getAliasFlag());
                 String referenceAlias = aliasManager.getAlias(mapDefinition.getReferenceAlias());

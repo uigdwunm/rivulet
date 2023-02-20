@@ -2,11 +2,9 @@ package zly.rivulet.sql.parser.proxy_node;
 
 import zly.rivulet.base.definer.annotations.RivuletDesc;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
-import zly.rivulet.sql.definition.query.SqlQueryDefinition;
-import zly.rivulet.sql.definition.update.SqlUpdateDefinition;
-import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
-import zly.rivulet.sql.describer.update.SqlUpdateMetaDesc;
-import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
+import zly.rivulet.sql.definition.query.SQLQueryDefinition;
+import zly.rivulet.sql.describer.query.SQLQueryMetaDesc;
+import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -45,9 +43,9 @@ public final class ProxyNodeManager {
 
 
     public QueryProxyNode getOrCreateQueryProxyNode(
-        SqlQueryDefinition sqlQueryDefinition,
-        SqlParserPortableToolbox toolbox,
-        SqlQueryMetaDesc<?, ?> metaDesc
+        SQLQueryDefinition sqlQueryDefinition,
+        SQLParserPortableToolbox toolbox,
+        SQLQueryMetaDesc<?, ?> metaDesc
     ) {
         RivuletDesc rivuletDesc = metaDesc.getAnnotation();
         if (rivuletDesc == null) {
@@ -72,7 +70,7 @@ public final class ProxyNodeManager {
     }
 
     public QueryProxyNode getOrCreateQueryProxyNode(
-        SqlParserPortableToolbox toolbox,
+        SQLParserPortableToolbox toolbox,
         RivuletDesc rivuletDesc,
         Class<?> fromModelClass
     ) {
@@ -91,7 +89,7 @@ public final class ProxyNodeManager {
     }
 
 
-    public QueryProxyNode getOrCreateQueryProxyNode(SqlParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta) {
+    public QueryProxyNode getOrCreateQueryProxyNode(SQLParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta) {
         return new QueryProxyNode(toolbox, sqlModelMeta);
     }
 

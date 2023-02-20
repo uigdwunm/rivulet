@@ -17,7 +17,7 @@ import zly.rivulet.sql.exception.SQLDescDefineException;
 import java.util.List;
 import java.util.Map;
 
-public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, WholeDesc {
+public class SQLQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, WholeDesc {
     /**
      * 查询主要模型，from
      * 有两种赋值方式，
@@ -83,7 +83,7 @@ public class SqlQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
      **/
 //    protected final boolean isHaveNativeStatement;
 
-    public SqlQueryMetaDesc(Class<F> modelFrom, Class<S> selectModel, boolean isOneResult, List<Mapping<F, S, ?>> mappedItemList, ConditionContainer<?, ?> whereConditionContainer, List<FieldMapping<F, ?>> groupFieldList, ConditionContainer<?, ?> havingConditionContainer, List<SortItem<F, ?>> orderItemList, Param<Integer> skit, Param<Integer> limit, Map<Class<? extends Definition>, Param<SQLPartCustomDesc>> customStatementMap) {
+    public SQLQueryMetaDesc(Class<F> modelFrom, Class<S> selectModel, boolean isOneResult, List<Mapping<F, S, ?>> mappedItemList, ConditionContainer<?, ?> whereConditionContainer, List<FieldMapping<F, ?>> groupFieldList, ConditionContainer<?, ?> havingConditionContainer, List<SortItem<F, ?>> orderItemList, Param<Integer> skit, Param<Integer> limit, Map<Class<? extends Definition>, Param<SQLPartCustomDesc>> customStatementMap) {
         this.modelFrom = modelFrom;
         this.selectModel = selectModel;
         this.isOneResult = isOneResult;

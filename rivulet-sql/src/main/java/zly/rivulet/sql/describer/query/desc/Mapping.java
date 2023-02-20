@@ -5,7 +5,7 @@ import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.field.SetMapping;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.sql.describer.function.SQLFunction;
-import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
+import zly.rivulet.sql.describer.query.SQLQueryMetaDesc;
 
 public class Mapping<F, S, C> {
 
@@ -39,7 +39,7 @@ public class Mapping<F, S, C> {
         return new Mapping<>(selectField, desc);
     }
 
-    public static <F, S, C> Mapping<F, S, C> of(SetMapping<S, C> selectField, SqlQueryMetaDesc<F, C> desc) {
+    public static <F, S, C> Mapping<F, S, C> of(SetMapping<S, C> selectField, SQLQueryMetaDesc<F, C> desc) {
         return new Mapping<>(selectField, desc);
     }
 

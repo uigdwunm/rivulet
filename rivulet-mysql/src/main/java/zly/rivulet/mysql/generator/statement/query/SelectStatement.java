@@ -3,13 +3,13 @@ package zly.rivulet.mysql.generator.statement.query;
 import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.sql.definition.query.main.SelectDefinition;
-import zly.rivulet.sql.generator.SqlStatementFactory;
-import zly.rivulet.sql.generator.statement.SqlStatement;
+import zly.rivulet.sql.generator.SQLStatementFactory;
+import zly.rivulet.sql.generator.statement.SQLStatement;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SelectStatement extends SqlStatement {
+public class SelectStatement extends SQLStatement {
 
     private final SelectDefinition selectDefinition;
 
@@ -37,19 +37,19 @@ public class SelectStatement extends SqlStatement {
         }
     }
 
-    public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
+    public static void registerToFactory(SQLStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
             SelectDefinition.class,
             (definition, soleFlag, initHelper) -> {
                 SelectDefinition selectDefinition = (SelectDefinition) definition;
-                List<SqlStatement> mapStatementList = selectDefinition.getMapDefinitionList().stream()
+                List<SQLStatement> mapStatementList = selectDefinition.getMapDefinitionList().stream()
                     .map(mapDefinition -> sqlStatementFactory.warmUp(mapDefinition, soleFlag.subSwitch(), initHelper))
                     .collect(Collectors.toList());
                 return new SelectStatement(selectDefinition, (List) mapStatementList);
             },
             (definition, helper) -> {
                 SelectDefinition selectDefinition = (SelectDefinition) definition;
-                List<SqlStatement> mapStatementList = selectDefinition.getMapDefinitionList().stream()
+                List<SQLStatement> mapStatementList = selectDefinition.getMapDefinitionList().stream()
                     .map(mapDefinition -> sqlStatementFactory.getOrCreate(mapDefinition, helper))
                     .collect(Collectors.toList());
                 return new SelectStatement(selectDefinition, (List) mapStatementList);

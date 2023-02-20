@@ -6,7 +6,7 @@ import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefiniti
 import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.sql.describer.condition.common.Condition;
 import zly.rivulet.sql.describer.condition.ConditionElement;
-import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
+import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
 public class IsNullOperateDefinition extends OperateDefinition {
 
@@ -17,11 +17,11 @@ public class IsNullOperateDefinition extends OperateDefinition {
         this.valueElementDefinition = valueElementDefinition;
     }
 
-    public IsNullOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
+    public IsNullOperateDefinition(SQLParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
         this(sqlPreParseHelper, (ConditionElement<?, ?>) condition);
     }
 
-    private IsNullOperateDefinition(SqlParserPortableToolbox toolbox, ConditionElement<?, ?> condition) {
+    private IsNullOperateDefinition(SQLParserPortableToolbox toolbox, ConditionElement<?, ?> condition) {
         super(condition.getCheckCondition(), toolbox.getParamReceiptManager());
         SingleValueElementDesc<?, ?> elementDesc = condition.getLeftFieldMapped();
 

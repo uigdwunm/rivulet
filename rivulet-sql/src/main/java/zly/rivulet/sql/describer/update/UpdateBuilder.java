@@ -26,8 +26,8 @@ public class UpdateBuilder<T> {
         return new SetBuilder<>(from);
     }
 
-    public SqlUpdateMetaDesc<T> build() {
-        return new SqlUpdateMetaDesc<>(
+    public SQLUpdateMetaDesc<T> build() {
+        return new SQLUpdateMetaDesc<>(
             this.model,
             this.mappedItemList,
             this.whereConditionContainer

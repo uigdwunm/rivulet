@@ -7,18 +7,18 @@ import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.View;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.statement.SingleValueElementStatement;
-import zly.rivulet.mysql.generator.statement.param.SQLParamStatement;
+import zly.rivulet.mysql.generator.statement.param.MySQLParamStatement;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.insert.ColumnItemDefinition;
 import zly.rivulet.sql.definition.insert.SQLInsertDefinition;
-import zly.rivulet.sql.generator.SqlStatementFactory;
-import zly.rivulet.sql.generator.statement.SqlStatement;
+import zly.rivulet.sql.generator.SQLStatementFactory;
+import zly.rivulet.sql.generator.statement.SQLStatement;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MySQLInsertStatement extends SqlStatement {
+public class MySQLInsertStatement extends SQLStatement {
 
     private final SQLInsertDefinition definition;
 
@@ -89,7 +89,7 @@ public class MySQLInsertStatement extends SqlStatement {
     }
 
 
-    public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
+    public static void registerToFactory(SQLStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
             SQLInsertDefinition.class,
             (definition, soleFlag, toolbox) -> {
@@ -130,7 +130,7 @@ public class MySQLInsertStatement extends SqlStatement {
                 List<List<SingleValueElementStatement>> valuesStatement;
                 if (paramManager != null) {
                     List<SingleValueElementStatement> singleValueElementStatementList = columnItemDefinitionList.stream()
-                        .map(columnItemDefinition -> (SingleValueElementStatement) new SQLParamStatement(paramManager.getStatement(columnItemDefinition.getForModelMetaParamReceipt()), ParamCheckType.NATURE))
+                        .map(columnItemDefinition -> (SingleValueElementStatement) new MySQLParamStatement(paramManager.getStatement(columnItemDefinition.getForModelMetaParamReceipt()), ParamCheckType.NATURE))
                         .collect(Collectors.toList());
                     valuesStatement = Collections.singletonList(singleValueElementStatementList);
                 } else {
@@ -139,7 +139,7 @@ public class MySQLInsertStatement extends SqlStatement {
                         .map(model -> {
                             CommonParamManager subParamManager = batchParamManager.createCommonParamManager(model);
                             return columnItemDefinitionList.stream()
-                                .map(columnItemDefinition -> (SingleValueElementStatement) new SQLParamStatement(subParamManager.getStatement(columnItemDefinition.getForModelMetaParamReceipt()), ParamCheckType.NATURE))
+                                .map(columnItemDefinition -> (SingleValueElementStatement) new MySQLParamStatement(subParamManager.getStatement(columnItemDefinition.getForModelMetaParamReceipt()), ParamCheckType.NATURE))
                                 .collect(Collectors.toList());
                         }).collect(Collectors.toList());
                 }

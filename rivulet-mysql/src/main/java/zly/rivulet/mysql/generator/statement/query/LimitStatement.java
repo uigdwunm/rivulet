@@ -2,19 +2,19 @@ package zly.rivulet.mysql.generator.statement.query;
 
 import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.collector.StatementCollector;
-import zly.rivulet.mysql.generator.statement.param.SQLParamStatement;
+import zly.rivulet.mysql.generator.statement.param.MySQLParamStatement;
 import zly.rivulet.sql.definition.query.main.LimitDefinition;
 import zly.rivulet.sql.definition.query.main.SkitDefinition;
-import zly.rivulet.sql.generator.SqlStatementFactory;
-import zly.rivulet.sql.generator.statement.SqlStatement;
+import zly.rivulet.sql.generator.SQLStatementFactory;
+import zly.rivulet.sql.generator.statement.SQLStatement;
 
-public class LimitStatement extends SqlStatement {
+public class LimitStatement extends SQLStatement {
 
-    private final SQLParamStatement limitParam;
+    private final MySQLParamStatement limitParam;
 
-    private final SQLParamStatement skitParam;
+    private final MySQLParamStatement skitParam;
 
-    public LimitStatement(SQLParamStatement limitParam, SQLParamStatement skitParam) {
+    public LimitStatement(MySQLParamStatement limitParam, MySQLParamStatement skitParam) {
         this.limitParam = limitParam;
         this.skitParam = skitParam;
     }
@@ -37,28 +37,28 @@ public class LimitStatement extends SqlStatement {
         }
     }
 
-    public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
+    public static void registerToFactory(SQLStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
             LimitDefinition.class,
             (definition, soleFlag, initHelper) -> {
                 LimitDefinition limitDefinition = (LimitDefinition) definition;
-                SqlStatement limitParam = sqlStatementFactory.warmUp(limitDefinition.getLimitParam(), soleFlag.subSwitch(), initHelper);
+                SQLStatement limitParam = sqlStatementFactory.warmUp(limitDefinition.getLimitParam(), soleFlag.subSwitch(), initHelper);
                 SkitDefinition skit = limitDefinition.getSkit();
-                SqlStatement skitParam = null;
+                SQLStatement skitParam = null;
                 if (skit != null) {
                     skitParam = sqlStatementFactory.warmUp(skit.getSkit(), soleFlag.subSwitch(), initHelper);
                 }
-                return new LimitStatement((SQLParamStatement) limitParam, (SQLParamStatement) skitParam);
+                return new LimitStatement((MySQLParamStatement) limitParam, (MySQLParamStatement) skitParam);
             },
             (definition, helper) -> {
                 LimitDefinition limitDefinition = (LimitDefinition) definition;
-                SqlStatement limitParam = sqlStatementFactory.getOrCreate(limitDefinition.getLimitParam(), helper);
+                SQLStatement limitParam = sqlStatementFactory.getOrCreate(limitDefinition.getLimitParam(), helper);
                 SkitDefinition skit = limitDefinition.getSkit();
-                SqlStatement skitParam = null;
+                SQLStatement skitParam = null;
                 if (skit != null) {
                     skitParam = sqlStatementFactory.getOrCreate(skit.getSkit(), helper);
                 }
-                return new LimitStatement((SQLParamStatement) limitParam, (SQLParamStatement) skitParam);
+                return new LimitStatement((MySQLParamStatement) limitParam, (MySQLParamStatement) skitParam);
             }
         );
     }

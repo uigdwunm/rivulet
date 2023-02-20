@@ -6,7 +6,7 @@ import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLBigInt;
 import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLTinyInt;
 import zly.rivulet.mysql.definer.annotations.type.string.MySQLJson;
 import zly.rivulet.mysql.definer.annotations.type.string.MySQLVarchar;
-import zly.rivulet.sql.definer.annotations.SqlColumn;
+import zly.rivulet.sql.definer.annotations.SQLColumn;
 import zly.rivulet.sql.definer.annotations.SQLTable;
 
 import java.time.LocalDate;
@@ -15,23 +15,23 @@ import java.time.LocalDate;
 public class PersonDO {
 
     @PrimaryKey
-    @SqlColumn("id")
+    @SQLColumn("id")
     @MySQLBigInt
     private Long id;
 
-    @SqlColumn("birthday")
+    @SQLColumn("birthday")
     @MySQLDate
     private LocalDate birthday;
 
-    @SqlColumn
+    @SQLColumn
     @MySQLVarchar(length = 64)
     private String name;
 
-    @SqlColumn
+    @SQLColumn
     @MySQLTinyInt
     private boolean gender;
 
-    @SqlColumn
+    @SQLColumn
     @MySQLJson
     private ProvinceDO extra;
 

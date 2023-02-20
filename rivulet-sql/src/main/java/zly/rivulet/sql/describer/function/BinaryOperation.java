@@ -6,12 +6,11 @@ import zly.rivulet.base.describer.custom.CustomSingleValueWrap;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.field.JoinFieldMapping;
 import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
+import zly.rivulet.sql.describer.query.SQLQueryMetaDesc;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 public interface BinaryOperation {
 
@@ -44,7 +43,7 @@ public interface BinaryOperation {
         };
     }
 
-    default <F, C> SQLFunction<F, C> of(FieldMapping<F, C> leftValue, SqlQueryMetaDesc<F, C> rightValue) {
+    default <F, C> SQLFunction<F, C> of(FieldMapping<F, C> leftValue, SQLQueryMetaDesc<F, C> rightValue) {
         return new SQLFunction<F, C>(Arrays.asList((SingleValueElementDesc) leftValue, (SingleValueElementDesc) rightValue)) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
@@ -80,7 +79,7 @@ public interface BinaryOperation {
         };
     }
 
-    default <F, C> SQLFunction<F, C> of(JoinFieldMapping<C> leftValue, SqlQueryMetaDesc<F, C> rightValue) {
+    default <F, C> SQLFunction<F, C> of(JoinFieldMapping<C> leftValue, SQLQueryMetaDesc<F, C> rightValue) {
         return new SQLFunction<F, C>(Arrays.asList((SingleValueElementDesc) leftValue, (SingleValueElementDesc) rightValue)) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
@@ -125,7 +124,7 @@ public interface BinaryOperation {
         };
     }
 
-    default <F, C> SQLFunction<F, C> of(SQLFunction<F, C> leftValue, SqlQueryMetaDesc<F, C> rightValue) {
+    default <F, C> SQLFunction<F, C> of(SQLFunction<F, C> leftValue, SQLQueryMetaDesc<F, C> rightValue) {
         return new SQLFunction<F, C>(Arrays.asList((SingleValueElementDesc) leftValue, (SingleValueElementDesc) rightValue)) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
@@ -170,7 +169,7 @@ public interface BinaryOperation {
         };
     }
 
-    default <F, C> SQLFunction<F, C> of(Param<C> leftValue, SqlQueryMetaDesc<F, C> rightValue) {
+    default <F, C> SQLFunction<F, C> of(Param<C> leftValue, SQLQueryMetaDesc<F, C> rightValue) {
         return new SQLFunction<F, C>(Arrays.asList((SingleValueElementDesc) leftValue, (SingleValueElementDesc) rightValue)) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
@@ -179,7 +178,7 @@ public interface BinaryOperation {
         };
     }
 
-    default <F, C> SQLFunction<F, C> of(SqlQueryMetaDesc<F, C> leftValue, FieldMapping<F, C> rightValue) {
+    default <F, C> SQLFunction<F, C> of(SQLQueryMetaDesc<F, C> leftValue, FieldMapping<F, C> rightValue) {
         return new SQLFunction<F, C>(Arrays.asList((SingleValueElementDesc) leftValue, (SingleValueElementDesc) rightValue)) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
@@ -188,7 +187,7 @@ public interface BinaryOperation {
         };
     }
 
-    default <F, C> SQLFunction<F, C> of(SqlQueryMetaDesc<F, C> leftValue, JoinFieldMapping<C> rightValue) {
+    default <F, C> SQLFunction<F, C> of(SQLQueryMetaDesc<F, C> leftValue, JoinFieldMapping<C> rightValue) {
         return new SQLFunction<F, C>(Arrays.asList((SingleValueElementDesc) leftValue, (SingleValueElementDesc) rightValue)) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
@@ -197,7 +196,7 @@ public interface BinaryOperation {
         };
     }
 
-    default <F, C> SQLFunction<F, C> of(SqlQueryMetaDesc<F, C> leftValue, SQLFunction<F, C> rightValue) {
+    default <F, C> SQLFunction<F, C> of(SQLQueryMetaDesc<F, C> leftValue, SQLFunction<F, C> rightValue) {
         return new SQLFunction<F, C>(Arrays.asList((SingleValueElementDesc) leftValue, (SingleValueElementDesc) rightValue)) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
@@ -206,7 +205,7 @@ public interface BinaryOperation {
         };
     }
 
-    default <F, C> SQLFunction<F, C> of(SqlQueryMetaDesc<F, C> leftValue, Param<C> rightValue) {
+    default <F, C> SQLFunction<F, C> of(SQLQueryMetaDesc<F, C> leftValue, Param<C> rightValue) {
         return new SQLFunction<F, C>(Arrays.asList((SingleValueElementDesc) leftValue, (SingleValueElementDesc) rightValue)) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
@@ -215,7 +214,7 @@ public interface BinaryOperation {
         };
     }
 
-    default <F, C> SQLFunction<F, C> of(SqlQueryMetaDesc<F, C> leftValue, SqlQueryMetaDesc<F, C> rightValue) {
+    default <F, C> SQLFunction<F, C> of(SQLQueryMetaDesc<F, C> leftValue, SQLQueryMetaDesc<F, C> rightValue) {
         return new SQLFunction<F, C>(Arrays.asList((SingleValueElementDesc) leftValue, (SingleValueElementDesc) rightValue)) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {

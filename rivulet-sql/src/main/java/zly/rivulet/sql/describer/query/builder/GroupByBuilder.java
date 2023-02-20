@@ -4,11 +4,11 @@ import zly.rivulet.base.describer.field.FieldMapping;
 
 import java.util.Arrays;
 
-public class GroupByBuilderSQL<F, S> extends HavingBuilderSQL<F, S> {
+public class GroupByBuilder<F, S> extends HavingBuilder<F, S> {
 
 
     @SafeVarargs
-    public final HavingBuilderSQL<F, S> groupBy(FieldMapping<F, ?> ... groupItems) {
+    public final HavingBuilder<F, S> groupBy(FieldMapping<F, ?> ... groupItems) {
         super.groupFieldList = Arrays.asList(groupItems);
         return this;
     }

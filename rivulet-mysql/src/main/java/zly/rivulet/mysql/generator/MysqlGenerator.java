@@ -21,33 +21,33 @@ import zly.rivulet.mysql.generator.statement.delete.MySQLDeleteStatement;
 import zly.rivulet.mysql.generator.statement.insert.ColumnItemStatement;
 import zly.rivulet.mysql.generator.statement.insert.MySQLInsertStatement;
 import zly.rivulet.mysql.generator.statement.operate.*;
-import zly.rivulet.mysql.generator.statement.param.SQLParamStatement;
+import zly.rivulet.mysql.generator.statement.param.MySQLParamStatement;
 import zly.rivulet.mysql.generator.statement.query.*;
 import zly.rivulet.mysql.generator.statement.update.MySQLUpdateStatement;
 import zly.rivulet.mysql.generator.statement.update.SetItemStatement;
 import zly.rivulet.mysql.generator.statement.update.SetStatement;
 import zly.rivulet.sql.definition.SQLBlueprint;
 import zly.rivulet.sql.describer.custom.SQLPartCustomDesc;
-import zly.rivulet.sql.generator.SqlStatementFactory;
-import zly.rivulet.sql.generator.statement.SqlStatement;
+import zly.rivulet.sql.generator.SQLStatementFactory;
+import zly.rivulet.sql.generator.statement.SQLStatement;
 import zly.rivulet.sql.generator.toolbox.SQLGenerateToolbox;
 import zly.rivulet.sql.generator.toolbox.WarmUpToolbox;
-import zly.rivulet.sql.parser.SqlParser;
+import zly.rivulet.sql.parser.SQLParser;
 
 import java.util.Map;
 
 public class MysqlGenerator implements Generator {
 
-    private final SqlStatementFactory sqlStatementFactory;
+    private final SQLStatementFactory sqlStatementFactory;
 
     private final MySQLRivuletProperties configProperties;
 
     private final ConvertorManager convertorManager;
 
-    private final SqlParser sqlParser;
+    private final SQLParser sqlParser;
 
-    public MysqlGenerator(MySQLRivuletProperties configProperties, SqlParser sqlParser) {
-        this.sqlStatementFactory = new SqlStatementFactory();
+    public MysqlGenerator(MySQLRivuletProperties configProperties, SQLParser sqlParser) {
+        this.sqlStatementFactory = new SQLStatementFactory();
         this.convertorManager = sqlParser.getConvertorManager();
         this.configProperties = configProperties;
         this.sqlParser = sqlParser;
@@ -92,7 +92,7 @@ public class MysqlGenerator implements Generator {
                 }
             }
         }
-        SqlStatement rootStatement = sqlStatementFactory.getOrCreate(sqlBlueprint, toolbox);
+        SQLStatement rootStatement = sqlStatementFactory.getOrCreate(sqlBlueprint, toolbox);
         return new MySQLFish(sqlBlueprint, rootStatement);
     }
 
@@ -111,13 +111,13 @@ public class MysqlGenerator implements Generator {
         return this.convertorManager;
     }
 
-    private void registerStatement(SqlStatementFactory sqlStatementFactory) {
-        SQLParamStatement.registerToFactory(sqlStatementFactory);
+    private void registerStatement(SQLStatementFactory sqlStatementFactory) {
+        MySQLParamStatement.registerToFactory(sqlStatementFactory);
 
         SQLCustomStatement.registerToFactory(sqlStatementFactory);
         SQLFunctionStatement.registerToFactory(sqlStatementFactory);
 
-        MySqlQueryStatement.registerToFactory(sqlStatementFactory);
+        MySQLQueryStatement.registerToFactory(sqlStatementFactory);
         SelectStatement.registerToFactory(sqlStatementFactory);
         ModelFromStatement.registerToFactory(sqlStatementFactory);
         MySQLFieldStatement.registerToFactory(sqlStatementFactory);

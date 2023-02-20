@@ -5,7 +5,7 @@ import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
 import zly.rivulet.base.describer.field.FieldMapping;
-import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
+import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,7 +18,7 @@ public class GroupDefinition extends AbstractDefinition {
         this.groupFields = groupFields;
     }
 
-    public GroupDefinition(SqlParserPortableToolbox toolbox, List<? extends FieldMapping<?,?>> groupFieldList) {
+    public GroupDefinition(SQLParserPortableToolbox toolbox, List<? extends FieldMapping<?,?>> groupFieldList) {
         super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
         this.groupFields = groupFieldList.stream()
             .map(toolbox::parseSingleValueForCondition)

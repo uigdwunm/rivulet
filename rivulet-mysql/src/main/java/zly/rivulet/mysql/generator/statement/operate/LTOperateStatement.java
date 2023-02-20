@@ -4,8 +4,8 @@ import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.statement.SingleValueElementStatement;
 import zly.rivulet.sql.definition.query.operate.LTOperateDefinition;
-import zly.rivulet.sql.generator.SqlStatementFactory;
-import zly.rivulet.sql.generator.statement.SqlStatement;
+import zly.rivulet.sql.generator.SQLStatementFactory;
+import zly.rivulet.sql.generator.statement.SQLStatement;
 
 public class LTOperateStatement extends OperateStatement {
 
@@ -30,19 +30,19 @@ public class LTOperateStatement extends OperateStatement {
         rightValue.singleCollectStatement(collector);
     }
 
-    public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
+    public static void registerToFactory(SQLStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
             LTOperateDefinition.class,
             (definition, soleFlag, initHelper) -> {
                 LTOperateDefinition ltOperateDefinition = (LTOperateDefinition) definition;
-                SqlStatement leftStatement = sqlStatementFactory.warmUp(ltOperateDefinition.getLeftElement(), soleFlag.subSwitch(), initHelper);
-                SqlStatement rightStatement = sqlStatementFactory.warmUp(ltOperateDefinition.getRightElement(), soleFlag.subSwitch(), initHelper);
+                SQLStatement leftStatement = sqlStatementFactory.warmUp(ltOperateDefinition.getLeftElement(), soleFlag.subSwitch(), initHelper);
+                SQLStatement rightStatement = sqlStatementFactory.warmUp(ltOperateDefinition.getRightElement(), soleFlag.subSwitch(), initHelper);
                 return new LTOperateStatement((SingleValueElementStatement) leftStatement, (SingleValueElementStatement) rightStatement);
             },
             (definition, helper) -> {
                 LTOperateDefinition ltOperateDefinition = (LTOperateDefinition) definition;
-                SqlStatement leftStatement = sqlStatementFactory.getOrCreate(ltOperateDefinition.getLeftElement(), helper);
-                SqlStatement rightStatement = sqlStatementFactory.getOrCreate(ltOperateDefinition.getRightElement(), helper);
+                SQLStatement leftStatement = sqlStatementFactory.getOrCreate(ltOperateDefinition.getLeftElement(), helper);
+                SQLStatement rightStatement = sqlStatementFactory.getOrCreate(ltOperateDefinition.getRightElement(), helper);
                 return new LTOperateStatement((SingleValueElementStatement) leftStatement, (SingleValueElementStatement) rightStatement);
             }
         );

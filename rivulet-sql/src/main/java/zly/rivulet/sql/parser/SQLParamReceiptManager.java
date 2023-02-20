@@ -7,9 +7,9 @@ import zly.rivulet.base.describer.param.StandardParam;
 import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.sql.definition.param.SQLParamReceipt;
 
-public class SqlParamReceiptManager extends ParamReceiptManager {
+public class SQLParamReceiptManager extends ParamReceiptManager {
 
-    public SqlParamReceiptManager(ConvertorManager convertorManager) {
+    public SQLParamReceiptManager(ConvertorManager convertorManager) {
         super(convertorManager);
     }
 

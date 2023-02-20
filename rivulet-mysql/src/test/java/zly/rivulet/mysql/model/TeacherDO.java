@@ -4,7 +4,7 @@ import zly.rivulet.mysql.definer.annotations.type.date.MySQLDatetime;
 import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLBigInt;
 import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLInt;
 import zly.rivulet.mysql.definer.annotations.type.string.MySQLChar;
-import zly.rivulet.sql.definer.annotations.SqlColumn;
+import zly.rivulet.sql.definer.annotations.SQLColumn;
 import zly.rivulet.sql.definer.annotations.SQLTable;
 
 import java.time.LocalDateTime;
@@ -12,19 +12,19 @@ import java.time.LocalDateTime;
 @SQLTable("t_teacher")
 public class TeacherDO {
 
-    @SqlColumn
+    @SQLColumn
     @MySQLInt
     private int id;
 
-    @SqlColumn
+    @SQLColumn
     @MySQLChar(length = 6)
     private String code;
 
-    @SqlColumn("person_id")
+    @SQLColumn("person_id")
     @MySQLBigInt
     private long personId;
 
-    @SqlColumn("create_time")
+    @SQLColumn("create_time")
     @MySQLDatetime
     private LocalDateTime createTime;
 

@@ -17,21 +17,21 @@ import zly.rivulet.sql.assigner.SQLContainerResultAssigner;
 import zly.rivulet.sql.assigner.SQLMetaModelResultAssigner;
 import zly.rivulet.sql.assigner.SQLOneResultAssigner;
 import zly.rivulet.sql.assigner.SQLQueryResultAssigner;
-import zly.rivulet.sql.definer.SqlDefiner;
+import zly.rivulet.sql.definer.SQLDefiner;
 import zly.rivulet.sql.definer.annotations.SQLSubQuery;
-import zly.rivulet.sql.definer.annotations.SqlQueryAlias;
+import zly.rivulet.sql.definer.annotations.SQLQueryAlias;
 import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
-import zly.rivulet.sql.definition.query.SqlQueryDefinition;
+import zly.rivulet.sql.definition.query.SQLQueryDefinition;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
 import zly.rivulet.sql.describer.join.QueryComplexModel;
-import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
+import zly.rivulet.sql.describer.query.SQLQueryMetaDesc;
 import zly.rivulet.sql.describer.query.desc.Mapping;
 import zly.rivulet.sql.exception.SQLDescDefineException;
 import zly.rivulet.sql.parser.SQLAliasManager;
-import zly.rivulet.sql.parser.SqlParser;
-import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
+import zly.rivulet.sql.parser.SQLParser;
+import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
@@ -43,7 +43,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
     /**
      * 是SqlQueryDefinition, 解析时没啥用,也不能用,提前放到这
      **/
-    private final SqlQueryDefinition sqlQueryDefinition;
+    private final SQLQueryDefinition sqlQueryDefinition;
 
     private final Object proxyModel;
 
@@ -75,7 +75,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
      * @author zhaolaiyuan
      * Date 2022/10/24 8:27
      **/
-    QueryProxyNode(SqlQueryDefinition sqlQueryDefinition, SqlParserPortableToolbox toolbox, SqlQueryMetaDesc<?, ?> sqlQueryMetaDesc) {
+    QueryProxyNode(SQLQueryDefinition sqlQueryDefinition, SQLParserPortableToolbox toolbox, SQLQueryMetaDesc<?, ?> sqlQueryMetaDesc) {
         this.sqlQueryDefinition = sqlQueryDefinition;
         Class<?> fromModelClass = sqlQueryMetaDesc.getMainFrom();
         Class<?> selectModelClass = sqlQueryMetaDesc.getSelectModel();
@@ -113,7 +113,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
         } else {
             // from是表模型
             // 生成node
-            SqlParser sqlParser = toolbox.getSqlPreParser();
+            SQLParser sqlParser = toolbox.getSqlPreParser();
             ProxyNodeManager proxyModelManager = sqlParser.getProxyModelManager();
             SQLModelMeta sqlModelMeta = sqlParser.getDefiner().createOrGetModelMeta(fromModelClass);
             MetaModelProxyNode metaModelProxyNode = proxyModelManager.getOrCreateProxyMetaModel(sqlModelMeta);
@@ -148,12 +148,12 @@ public class QueryProxyNode implements SelectNode, FromNode {
      * @author zhaolaiyuan
      * Date 2022/10/16 11:37
      **/
-    QueryProxyNode(SqlParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta) {
+    QueryProxyNode(SQLParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta) {
         // 给meta模型通用的，不只是query
         this.sqlQueryDefinition = null;
 
         // from是表模型
-        SqlParser sqlPreParser = toolbox.getSqlPreParser();
+        SQLParser sqlPreParser = toolbox.getSqlPreParser();
         ProxyNodeManager proxyModelManager = sqlPreParser.getProxyModelManager();
         ConvertorManager convertorManager = sqlPreParser.getConvertorManager();
         MetaModelProxyNode metaModelProxyNode = proxyModelManager.getOrCreateProxyMetaModel(sqlModelMeta);
@@ -171,10 +171,10 @@ public class QueryProxyNode implements SelectNode, FromNode {
      * @author zhaolaiyuan
      * Date 2022/10/24 8:36
      **/
-    QueryProxyNode(SqlParserPortableToolbox toolbox, Class<?> fromModelClass) {
+    QueryProxyNode(SQLParserPortableToolbox toolbox, Class<?> fromModelClass) {
         // from只能是表模型
         // 生成node
-        SqlParser sqlParser = toolbox.getSqlPreParser();
+        SQLParser sqlParser = toolbox.getSqlPreParser();
         ProxyNodeManager proxyModelManager = sqlParser.getProxyModelManager();
         SQLModelMeta sqlModelMeta = sqlParser.getDefiner().createOrGetModelMeta(fromModelClass);
         MetaModelProxyNode metaModelProxyNode = proxyModelManager.getOrCreateProxyMetaModel(sqlModelMeta);
@@ -207,7 +207,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
                 fromItemAssigner = pairReturn.getRight();
             } else if (fromNode instanceof QueryProxyNode) {
                 QueryProxyNode queryProxyNode = (QueryProxyNode) fromNode;
-                SqlQueryDefinition sqlQueryDefinition = queryProxyNode.getQuerySelectMeta();
+                SQLQueryDefinition sqlQueryDefinition = queryProxyNode.getQuerySelectMeta();
                 // 拿到子查询的selectNode
                 selectNodeList.addAll(queryProxyNode.getSelectNodeList());
                 // 拿到子查询的赋值器
@@ -259,7 +259,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
     }
 
     private List<FromNode> parseFromNodeListByComplexModel(
-        SqlParserPortableToolbox toolbox,
+        SQLParserPortableToolbox toolbox,
         Object proxyModel,
         Class<?> fromModelClass,
         Map<FromNode, Field> fromNodeFieldMap
@@ -273,7 +273,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
             FromNode fromNode = this.parseFromNode(toolbox, field);
 
             // 指定别名
-            SqlQueryAlias sqlQueryAlias = field.getAnnotation(SqlQueryAlias.class);
+            SQLQueryAlias sqlQueryAlias = field.getAnnotation(SQLQueryAlias.class);
             if (sqlQueryAlias != null) {
                 SQLAliasManager.AliasFlag fromNodeAliasFlag = fromNode.getAliasFlag();
                 if (sqlQueryAlias.isForce()) {
@@ -298,8 +298,8 @@ public class QueryProxyNode implements SelectNode, FromNode {
         return fromNodeList;
     }
 
-    private FromNode parseFromNode(SqlParserPortableToolbox toolbox, Field field) {
-        SqlParser sqlParser = toolbox.getSqlPreParser();
+    private FromNode parseFromNode(SQLParserPortableToolbox toolbox, Field field) {
+        SQLParser sqlParser = toolbox.getSqlPreParser();
         Class<?> fieldType = field.getType();
         // 这个注解表示当前字段代表一个子查询，value是key
         SQLSubQuery sqlSubQuery = field.getAnnotation(SQLSubQuery.class);
@@ -309,8 +309,8 @@ public class QueryProxyNode implements SelectNode, FromNode {
             // 解析子查询
             WholeDesc wholeDesc = sqlRivuletManager.getWholeDescByDescKey(sqlSubQuery.value());
             // 校验下
-            if (wholeDesc instanceof SqlQueryMetaDesc) {
-                SqlQueryMetaDesc<Object, Object> sqlQueryMetaDesc = (SqlQueryMetaDesc<Object, Object>) wholeDesc;
+            if (wholeDesc instanceof SQLQueryMetaDesc) {
+                SQLQueryMetaDesc<Object, Object> sqlQueryMetaDesc = (SQLQueryMetaDesc<Object, Object>) wholeDesc;
                 // 校验子查询的模型是否等于原desc的from模型
                 if (!fieldType.equals(sqlQueryMetaDesc.getMainFrom())) {
                     throw SQLDescDefineException.subQueryMustOriginFrom(sqlSubQuery.value(), fieldType, sqlQueryMetaDesc.getMainFrom());
@@ -318,7 +318,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
                 if (!sqlQueryMetaDesc.getMainFrom().equals(sqlQueryMetaDesc.getSelectModel())) {
                     // 如果原desa的from模型和select模型不匹配，则重新改造一个
                     Class<Object> mainFrom = (Class<Object>) sqlQueryMetaDesc.getMainFrom();
-                    wholeDesc = new SqlQueryMetaDesc<>(
+                    wholeDesc = new SQLQueryMetaDesc<>(
                         mainFrom,
                         mainFrom,
                         false,
@@ -339,7 +339,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
             sqlParser.parse(wholeDesc, toolbox);
             return toolbox.popQueryProxyNode();
         } else {
-            SqlDefiner sqlDefiner = sqlParser.getDefiner();
+            SQLDefiner sqlDefiner = sqlParser.getDefiner();
             // 不是子查询, 则按modelMeta解析
             SQLModelMeta sqlModelMeta = sqlDefiner.createOrGetModelMeta(field.getType());
             if (sqlModelMeta == null) {
@@ -365,7 +365,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
     }
 
     private List<SelectNode> parseSelectNodeListByMappedItemList(
-        SqlParserPortableToolbox toolbox,
+        SQLParserPortableToolbox toolbox,
         Object proxyModel,
         List<? extends Mapping<?, ?, ?>> mappedItemList
     ) {
@@ -438,7 +438,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
     }
 
     @Override
-    public SqlQueryDefinition getQuerySelectMeta() {
+    public SQLQueryDefinition getQuerySelectMeta() {
         return this.sqlQueryDefinition;
     }
 

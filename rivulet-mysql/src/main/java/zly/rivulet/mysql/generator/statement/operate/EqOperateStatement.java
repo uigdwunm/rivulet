@@ -4,8 +4,8 @@ import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.statement.SingleValueElementStatement;
 import zly.rivulet.sql.definition.query.operate.EqOperateDefinition;
-import zly.rivulet.sql.generator.SqlStatementFactory;
-import zly.rivulet.sql.generator.statement.SqlStatement;
+import zly.rivulet.sql.generator.SQLStatementFactory;
+import zly.rivulet.sql.generator.statement.SQLStatement;
 
 public class EqOperateStatement extends OperateStatement {
 
@@ -30,19 +30,19 @@ public class EqOperateStatement extends OperateStatement {
         rightValue.singleCollectStatement(collector);
     }
 
-    public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
+    public static void registerToFactory(SQLStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
             EqOperateDefinition.class,
             (definition, soleFlag, initHelper) -> {
                 EqOperateDefinition eqOperateDefinition = (EqOperateDefinition) definition;
-                SqlStatement leftStatement = sqlStatementFactory.warmUp(eqOperateDefinition.getLeftElement(), soleFlag.subSwitch(), initHelper);
-                SqlStatement rightStatement = sqlStatementFactory.warmUp(eqOperateDefinition.getRightElement(), soleFlag.subSwitch(), initHelper);
+                SQLStatement leftStatement = sqlStatementFactory.warmUp(eqOperateDefinition.getLeftElement(), soleFlag.subSwitch(), initHelper);
+                SQLStatement rightStatement = sqlStatementFactory.warmUp(eqOperateDefinition.getRightElement(), soleFlag.subSwitch(), initHelper);
                 return new EqOperateStatement((SingleValueElementStatement) leftStatement, (SingleValueElementStatement) rightStatement);
             },
             (definition, helper) -> {
                 EqOperateDefinition eqOperateDefinition = (EqOperateDefinition) definition;
-                SqlStatement leftStatement = sqlStatementFactory.getOrCreate(eqOperateDefinition.getLeftElement(), helper);
-                SqlStatement rightStatement = sqlStatementFactory.getOrCreate(eqOperateDefinition.getRightElement(), helper);
+                SQLStatement leftStatement = sqlStatementFactory.getOrCreate(eqOperateDefinition.getLeftElement(), helper);
+                SQLStatement rightStatement = sqlStatementFactory.getOrCreate(eqOperateDefinition.getRightElement(), helper);
                 return new EqOperateStatement((SingleValueElementStatement) leftStatement, (SingleValueElementStatement) rightStatement);
             }
         );

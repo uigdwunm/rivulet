@@ -7,7 +7,7 @@ import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.field.JoinFieldMapping;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.sql.describer.function.SQLFunction;
-import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
+import zly.rivulet.sql.describer.query.SQLQueryMetaDesc;
 
 import java.util.Collections;
 import java.util.List;
@@ -65,7 +65,7 @@ public class CastOperation<C> {
         };
     }
 
-    public <F, O> SQLFunction<F, C> of(SqlQueryMetaDesc<F, O> value) {
+    public <F, O> SQLFunction<F, C> of(SQLQueryMetaDesc<F, O> value) {
         return new SQLFunction<F, C>(Collections.singletonList((SingleValueElementDesc) value)) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {

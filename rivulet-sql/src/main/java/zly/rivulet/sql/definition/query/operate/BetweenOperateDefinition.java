@@ -6,7 +6,7 @@ import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefiniti
 import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.sql.describer.condition.common.Condition;
 import zly.rivulet.sql.describer.condition.ConditionElement;
-import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
+import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
 public class BetweenOperateDefinition extends OperateDefinition {
 
@@ -28,11 +28,11 @@ public class BetweenOperateDefinition extends OperateDefinition {
         this.afterElement = afterElement;
     }
 
-    public BetweenOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
+    public BetweenOperateDefinition(SQLParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
         this(sqlPreParseHelper, (ConditionElement<?, ?>) condition);
     }
 
-    public BetweenOperateDefinition(SqlParserPortableToolbox toolbox, ConditionElement<?, ?> condition) {
+    public BetweenOperateDefinition(SQLParserPortableToolbox toolbox, ConditionElement<?, ?> condition) {
         super(condition.getCheckCondition(), toolbox.getParamReceiptManager());
         SingleValueElementDesc<?, ?> leftFieldMapped = condition.getLeftFieldMapped();
         SingleValueElementDesc<?, ?> beforeElement = condition.getRightFieldMappeds()[0];

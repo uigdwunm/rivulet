@@ -4,10 +4,10 @@ import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.statement.SingleValueElementStatement;
 import zly.rivulet.sql.definition.query.orderby.SortItemDefinition;
 import zly.rivulet.sql.describer.query.desc.SortItem;
-import zly.rivulet.sql.generator.SqlStatementFactory;
-import zly.rivulet.sql.generator.statement.SqlStatement;
+import zly.rivulet.sql.generator.SQLStatementFactory;
+import zly.rivulet.sql.generator.statement.SQLStatement;
 
-public class SortItemStatement extends SqlStatement {
+public class SortItemStatement extends SQLStatement {
 
     private final SingleValueElementStatement value;
 
@@ -28,17 +28,17 @@ public class SortItemStatement extends SqlStatement {
         collector.space().append(sortType.name());
     }
 
-    public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
+    public static void registerToFactory(SQLStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
             SortItemDefinition.class,
             (definition, soleFlag, initHelper) -> {
                 SortItemDefinition sortItemDefinition = (SortItemDefinition) definition;
-                SqlStatement value = sqlStatementFactory.warmUp(sortItemDefinition.getSingleValue(), soleFlag.subSwitch(), initHelper);
+                SQLStatement value = sqlStatementFactory.warmUp(sortItemDefinition.getSingleValue(), soleFlag.subSwitch(), initHelper);
                 return new SortItemStatement((SingleValueElementStatement) value, sortItemDefinition.getSortType());
             },
             (definition, helper) -> {
                 SortItemDefinition sortItemDefinition = (SortItemDefinition) definition;
-                SqlStatement value = sqlStatementFactory.getOrCreate(sortItemDefinition.getSingleValue(), helper);
+                SQLStatement value = sqlStatementFactory.getOrCreate(sortItemDefinition.getSingleValue(), helper);
                 return new SortItemStatement((SingleValueElementStatement) value, sortItemDefinition.getSortType());
             }
         );

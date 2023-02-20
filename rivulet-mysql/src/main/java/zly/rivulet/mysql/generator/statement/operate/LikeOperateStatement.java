@@ -4,8 +4,8 @@ import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.statement.SingleValueElementStatement;
 import zly.rivulet.sql.definition.query.operate.LikeOperateDefinition;
-import zly.rivulet.sql.generator.SqlStatementFactory;
-import zly.rivulet.sql.generator.statement.SqlStatement;
+import zly.rivulet.sql.generator.SQLStatementFactory;
+import zly.rivulet.sql.generator.statement.SQLStatement;
 
 public class LikeOperateStatement extends OperateStatement {
 
@@ -30,19 +30,19 @@ public class LikeOperateStatement extends OperateStatement {
         rightValue.singleCollectStatement(collector);
     }
 
-    public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
+    public static void registerToFactory(SQLStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
             LikeOperateDefinition.class,
             (definition, soleFlag, initHelper) -> {
                 LikeOperateDefinition likeOperateDefinition = (LikeOperateDefinition) definition;
-                SqlStatement leftStatement = sqlStatementFactory.warmUp(likeOperateDefinition.getLeftElement(), soleFlag.subSwitch(), initHelper);
-                SqlStatement rightStatement = sqlStatementFactory.warmUp(likeOperateDefinition.getRightElement(), soleFlag.subSwitch(), initHelper);
+                SQLStatement leftStatement = sqlStatementFactory.warmUp(likeOperateDefinition.getLeftElement(), soleFlag.subSwitch(), initHelper);
+                SQLStatement rightStatement = sqlStatementFactory.warmUp(likeOperateDefinition.getRightElement(), soleFlag.subSwitch(), initHelper);
                 return new LikeOperateStatement((SingleValueElementStatement) leftStatement, (SingleValueElementStatement) rightStatement);
             },
             (definition, helper) -> {
                 LikeOperateDefinition likeOperateDefinition = (LikeOperateDefinition) definition;
-                SqlStatement leftStatement = sqlStatementFactory.getOrCreate(likeOperateDefinition.getLeftElement(), helper);
-                SqlStatement rightStatement = sqlStatementFactory.getOrCreate(likeOperateDefinition.getRightElement(), helper);
+                SQLStatement leftStatement = sqlStatementFactory.getOrCreate(likeOperateDefinition.getLeftElement(), helper);
+                SQLStatement rightStatement = sqlStatementFactory.getOrCreate(likeOperateDefinition.getRightElement(), helper);
                 return new LikeOperateStatement((SingleValueElementStatement) leftStatement, (SingleValueElementStatement) rightStatement);
             }
         );

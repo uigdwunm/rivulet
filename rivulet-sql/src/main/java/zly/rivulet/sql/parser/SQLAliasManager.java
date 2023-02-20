@@ -1,7 +1,7 @@
 package zly.rivulet.sql.parser;
 
 import zly.rivulet.base.utils.StringUtil;
-import zly.rivulet.sql.SqlRivuletProperties;
+import zly.rivulet.sql.SQLRivuletProperties;
 import zly.rivulet.sql.exception.SQLDescDefineException;
 import zly.rivulet.sql.parser.proxy_node.FromNode;
 import zly.rivulet.sql.parser.proxy_node.ProxyNode;
@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class SQLAliasManager {
 
-    private final SqlRivuletProperties configProperties;
+    private final SQLRivuletProperties configProperties;
 
     private final Map<AliasFlag, String> aliasMap;
 
@@ -35,11 +35,11 @@ public class SQLAliasManager {
      **/
     private final Map<String, Integer> repeatAlias = new HashMap<>();
 
-    public SQLAliasManager(SqlRivuletProperties configProperties) {
+    public SQLAliasManager(SQLRivuletProperties configProperties) {
         this(configProperties, new HashMap<>(), new HashMap<>());
     }
 
-    private SQLAliasManager(SqlRivuletProperties configProperties, Map<AliasFlag, String> aliasMap, Map<AliasFlag, String> shortAliasMap) {
+    private SQLAliasManager(SQLRivuletProperties configProperties, Map<AliasFlag, String> aliasMap, Map<AliasFlag, String> shortAliasMap) {
         this.configProperties = configProperties;
         this.aliasMap = aliasMap;
         this.shortAliasMap = shortAliasMap;

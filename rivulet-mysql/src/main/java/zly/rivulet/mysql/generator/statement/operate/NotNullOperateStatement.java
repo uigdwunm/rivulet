@@ -4,8 +4,8 @@ import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.statement.SingleValueElementStatement;
 import zly.rivulet.sql.definition.query.operate.NotNullOperateDefinition;
-import zly.rivulet.sql.generator.SqlStatementFactory;
-import zly.rivulet.sql.generator.statement.SqlStatement;
+import zly.rivulet.sql.generator.SQLStatementFactory;
+import zly.rivulet.sql.generator.statement.SQLStatement;
 
 public class NotNullOperateStatement extends OperateStatement {
 
@@ -26,17 +26,17 @@ public class NotNullOperateStatement extends OperateStatement {
         collector.append(Constant.NOT_NULL);
     }
 
-    public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
+    public static void registerToFactory(SQLStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
             NotNullOperateDefinition.class,
             (definition, soleFlag, initHelper) -> {
                 NotNullOperateDefinition notNullOperateDefinition = (NotNullOperateDefinition) definition;
-                SqlStatement valueStatement = sqlStatementFactory.warmUp(notNullOperateDefinition.getValueElementDefinition(), soleFlag.subSwitch(), initHelper);
+                SQLStatement valueStatement = sqlStatementFactory.warmUp(notNullOperateDefinition.getValueElementDefinition(), soleFlag.subSwitch(), initHelper);
                 return new NotNullOperateStatement((SingleValueElementStatement) valueStatement);
             },
             (definition, helper) -> {
                 NotNullOperateDefinition notNullOperateDefinition = (NotNullOperateDefinition) definition;
-                SqlStatement valueStatement = sqlStatementFactory.getOrCreate(notNullOperateDefinition.getValueElementDefinition(), helper);
+                SQLStatement valueStatement = sqlStatementFactory.getOrCreate(notNullOperateDefinition.getValueElementDefinition(), helper);
                 return new NotNullOperateStatement((SingleValueElementStatement) valueStatement);
             }
         );

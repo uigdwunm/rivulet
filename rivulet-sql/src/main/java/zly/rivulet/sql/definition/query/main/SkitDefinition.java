@@ -6,7 +6,7 @@ import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.definition.param.ParamReceipt;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.parser.ParamReceiptManager;
-import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
+import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
 public class SkitDefinition extends AbstractDefinition {
     private ParamReceipt skit;
@@ -16,7 +16,7 @@ public class SkitDefinition extends AbstractDefinition {
         this.skit = skit;
     }
 
-    public SkitDefinition(SqlParserPortableToolbox sqlPreParseHelper, Param<Integer> skit) {
+    public SkitDefinition(SQLParserPortableToolbox sqlPreParseHelper, Param<Integer> skit) {
         super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamReceiptManager());
         ParamReceiptManager paramReceiptManager = sqlPreParseHelper.getParamReceiptManager();
         this.skit = paramReceiptManager.registerParam(skit);

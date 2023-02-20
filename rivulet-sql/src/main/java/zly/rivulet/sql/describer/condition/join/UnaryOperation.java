@@ -6,7 +6,7 @@ import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.sql.describer.condition.ConditionElement;
 import zly.rivulet.sql.describer.condition.ConditionOperate;
 import zly.rivulet.sql.describer.function.SQLFunction;
-import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
+import zly.rivulet.sql.describer.query.SQLQueryMetaDesc;
 
 public interface UnaryOperation {
 
@@ -24,7 +24,7 @@ public interface UnaryOperation {
         return new ConditionElement<>(CheckCondition.IS_TRUE, value, this.getConditionOperate());
     }
 
-    default <F, C> JoinCondition<F, C> of(SqlQueryMetaDesc<F, C> value) {
+    default <F, C> JoinCondition<F, C> of(SQLQueryMetaDesc<F, C> value) {
         return new ConditionElement<>(CheckCondition.IS_TRUE, value, this.getConditionOperate());
     }
 
@@ -40,7 +40,7 @@ public interface UnaryOperation {
         return new ConditionElement<>(checkCondition, value, this.getConditionOperate());
     }
 
-    default <F, C> JoinCondition<F, C> of(CheckCondition checkCondition, SqlQueryMetaDesc<F, C> value) {
+    default <F, C> JoinCondition<F, C> of(CheckCondition checkCondition, SQLQueryMetaDesc<F, C> value) {
         return new ConditionElement<>(checkCondition, value, this.getConditionOperate());
     }
 }

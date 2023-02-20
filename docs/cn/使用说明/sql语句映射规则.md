@@ -27,11 +27,11 @@ class Test {
 public class ProvinceDO {
 
    @PrimaryKey
-   @SqlColumn("code")
+   @SQLColumn("code")
    @MySQLInt
    private Integer code;
 
-   @SqlColumn
+   @SQLColumn
    @MySQLVarchar(length = 16)
    @Comment("省份名称")
    private String name;
@@ -59,16 +59,16 @@ public class ProvinceDO {
 public class CityDO {
 
    @PrimaryKey
-   @SqlColumn("code")
+   @SQLColumn("code")
    @MySQLInt
    private Integer code;
 
-   @SqlColumn
+   @SQLColumn
    @MySQLVarchar(length = 16)
    @Comment("城市名称")
    private String name;
 
-   @SqlColumn("province_code")
+   @SQLColumn("province_code")
    @MySQLInt
    @Comment("所属省份code")
    private Integer provinceCode;

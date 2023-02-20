@@ -6,9 +6,8 @@ import zly.rivulet.base.describer.custom.CustomSingleValueWrap;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.field.JoinFieldMapping;
 import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
+import zly.rivulet.sql.describer.query.SQLQueryMetaDesc;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -54,7 +53,7 @@ public interface UnaryOperation {
         };
     }
 
-    default <F, C> SQLFunction<F, C> of(SqlQueryMetaDesc<F, C> value) {
+    default <F, C> SQLFunction<F, C> of(SQLQueryMetaDesc<F, C> value) {
         return new SQLFunction<F, C>(Collections.singletonList(value)) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {

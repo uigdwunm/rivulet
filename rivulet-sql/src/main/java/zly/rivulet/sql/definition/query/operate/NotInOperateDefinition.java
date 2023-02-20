@@ -8,7 +8,7 @@ import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
 import zly.rivulet.sql.describer.condition.common.Condition;
 import zly.rivulet.sql.describer.condition.ConditionElement;
-import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
+import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
 public class NotInOperateDefinition extends OperateDefinition {
 
@@ -23,11 +23,11 @@ public class NotInOperateDefinition extends OperateDefinition {
 
     }
 
-    public NotInOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
+    public NotInOperateDefinition(SQLParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
         this(sqlPreParseHelper, (ConditionElement<?, ?>) condition);
     }
 
-    public NotInOperateDefinition(SqlParserPortableToolbox toolbox, ConditionElement<?, ?> condition) {
+    public NotInOperateDefinition(SQLParserPortableToolbox toolbox, ConditionElement<?, ?> condition) {
         super(condition.getCheckCondition(), toolbox.getParamReceiptManager());
         SingleValueElementDesc<?, ?> leftFieldMapped = condition.getLeftFieldMapped();
         SingleValueElementDesc<?, ?> rightFieldMapped = condition.getRightFieldMappeds()[0];
@@ -36,7 +36,7 @@ public class NotInOperateDefinition extends OperateDefinition {
         this.rightElement = toolbox.parseSingleValueForCondition(rightFieldMapped);
     }
 
-    public NotInOperateDefinition(SqlParserPortableToolbox toolbox, MapDefinition mapDefinition, Param<?> param, CheckCondition checkCondition) {
+    public NotInOperateDefinition(SQLParserPortableToolbox toolbox, MapDefinition mapDefinition, Param<?> param, CheckCondition checkCondition) {
         super(checkCondition, toolbox.getParamReceiptManager());
 
         this.leftElement =  mapDefinition;

@@ -3,13 +3,13 @@ package zly.rivulet.mysql.generator.statement.update;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.definer.MySQLModelMeta;
 import zly.rivulet.mysql.generator.statement.query.WhereStatement;
-import zly.rivulet.sql.definition.update.SqlUpdateDefinition;
-import zly.rivulet.sql.generator.SqlStatementFactory;
-import zly.rivulet.sql.generator.statement.SqlStatement;
+import zly.rivulet.sql.definition.update.SQLUpdateDefinition;
+import zly.rivulet.sql.generator.SQLStatementFactory;
+import zly.rivulet.sql.generator.statement.SQLStatement;
 
-public class MySQLUpdateStatement extends SqlStatement {
+public class MySQLUpdateStatement extends SQLStatement {
 
-    private final SqlUpdateDefinition definition;
+    private final SQLUpdateDefinition definition;
 
     private final MySQLModelMeta mySQLModelMeta;
 
@@ -20,7 +20,7 @@ public class MySQLUpdateStatement extends SqlStatement {
     private static final String UPDATE = "UPDATE ";
 
 
-    public MySQLUpdateStatement(SqlUpdateDefinition definition, MySQLModelMeta mySQLModelMeta, SetStatement setStatement, WhereStatement whereStatement) {
+    public MySQLUpdateStatement(SQLUpdateDefinition definition, MySQLModelMeta mySQLModelMeta, SetStatement setStatement, WhereStatement whereStatement) {
         this.definition = definition;
         this.mySQLModelMeta = mySQLModelMeta;
         this.setStatement = setStatement;
@@ -40,22 +40,22 @@ public class MySQLUpdateStatement extends SqlStatement {
         collector.append(whereStatement);
     }
 
-    public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
+    public static void registerToFactory(SQLStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
-            SqlUpdateDefinition.class,
+            SQLUpdateDefinition.class,
             (definition, soleFlag, toolbox) -> {
-                SqlUpdateDefinition sqlUpdateDefinition = (SqlUpdateDefinition) definition;
+                SQLUpdateDefinition sqlUpdateDefinition = (SQLUpdateDefinition) definition;
                 MySQLModelMeta mySQLModelMeta = (MySQLModelMeta) sqlUpdateDefinition.getFromDefinition().getMainFrom();
-                SqlStatement setSQLStatement = sqlStatementFactory.warmUp(sqlUpdateDefinition.getSetDefinition(), soleFlag.subSwitch(), toolbox);
-                SqlStatement whereSQLStatement = sqlStatementFactory.warmUp(sqlUpdateDefinition.getWhereDefinition(), soleFlag.subSwitch(), toolbox);
+                SQLStatement setSQLStatement = sqlStatementFactory.warmUp(sqlUpdateDefinition.getSetDefinition(), soleFlag.subSwitch(), toolbox);
+                SQLStatement whereSQLStatement = sqlStatementFactory.warmUp(sqlUpdateDefinition.getWhereDefinition(), soleFlag.subSwitch(), toolbox);
 
                 return new MySQLUpdateStatement(sqlUpdateDefinition, mySQLModelMeta, (SetStatement) setSQLStatement, (WhereStatement) whereSQLStatement);
             },
             (definition, toolbox) -> {
-                SqlUpdateDefinition sqlUpdateDefinition = (SqlUpdateDefinition) definition;
+                SQLUpdateDefinition sqlUpdateDefinition = (SQLUpdateDefinition) definition;
                 MySQLModelMeta mySQLModelMeta = (MySQLModelMeta) sqlUpdateDefinition.getFromDefinition().getMainFrom();
-                SqlStatement setSQLStatement = sqlStatementFactory.getOrCreate(sqlUpdateDefinition.getSetDefinition(), toolbox);
-                SqlStatement whereSQLStatement = sqlStatementFactory.getOrCreate(sqlUpdateDefinition.getWhereDefinition(), toolbox);
+                SQLStatement setSQLStatement = sqlStatementFactory.getOrCreate(sqlUpdateDefinition.getSetDefinition(), toolbox);
+                SQLStatement whereSQLStatement = sqlStatementFactory.getOrCreate(sqlUpdateDefinition.getWhereDefinition(), toolbox);
 
                 return new MySQLUpdateStatement(sqlUpdateDefinition, mySQLModelMeta, (SetStatement) setSQLStatement, (WhereStatement) whereSQLStatement);
             }

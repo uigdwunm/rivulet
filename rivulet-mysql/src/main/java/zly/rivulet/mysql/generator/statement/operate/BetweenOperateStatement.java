@@ -4,8 +4,8 @@ import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.statement.SingleValueElementStatement;
 import zly.rivulet.sql.definition.query.operate.BetweenOperateDefinition;
-import zly.rivulet.sql.generator.SqlStatementFactory;
-import zly.rivulet.sql.generator.statement.SqlStatement;
+import zly.rivulet.sql.generator.SQLStatementFactory;
+import zly.rivulet.sql.generator.statement.SQLStatement;
 
 public class BetweenOperateStatement extends OperateStatement {
 
@@ -35,21 +35,21 @@ public class BetweenOperateStatement extends OperateStatement {
         afterValue.singleCollectStatement(collector);
     }
 
-    public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
+    public static void registerToFactory(SQLStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
             BetweenOperateDefinition.class,
             (definition, soleFlag, initHelper) -> {
                 BetweenOperateDefinition betweenOperateDefinition = (BetweenOperateDefinition) definition;
-                SqlStatement leftStatement = sqlStatementFactory.warmUp(betweenOperateDefinition.getLeftElement(), soleFlag.subSwitch(), initHelper);
-                SqlStatement beforeStatement = sqlStatementFactory.warmUp(betweenOperateDefinition.getBeforeElement(), soleFlag.subSwitch(), initHelper);
-                SqlStatement afterStatement = sqlStatementFactory.warmUp(betweenOperateDefinition.getAfterElement(), soleFlag.subSwitch(), initHelper);
+                SQLStatement leftStatement = sqlStatementFactory.warmUp(betweenOperateDefinition.getLeftElement(), soleFlag.subSwitch(), initHelper);
+                SQLStatement beforeStatement = sqlStatementFactory.warmUp(betweenOperateDefinition.getBeforeElement(), soleFlag.subSwitch(), initHelper);
+                SQLStatement afterStatement = sqlStatementFactory.warmUp(betweenOperateDefinition.getAfterElement(), soleFlag.subSwitch(), initHelper);
                 return new BetweenOperateStatement((SingleValueElementStatement) leftStatement, (SingleValueElementStatement) beforeStatement, (SingleValueElementStatement) afterStatement);
             },
             (definition, helper) -> {
                 BetweenOperateDefinition betweenOperateDefinition = (BetweenOperateDefinition) definition;
-                SqlStatement leftStatement = sqlStatementFactory.getOrCreate(betweenOperateDefinition.getLeftElement(), helper);
-                SqlStatement beforeStatement = sqlStatementFactory.getOrCreate(betweenOperateDefinition.getBeforeElement(), helper);
-                SqlStatement afterStatement = sqlStatementFactory.getOrCreate(betweenOperateDefinition.getAfterElement(), helper);
+                SQLStatement leftStatement = sqlStatementFactory.getOrCreate(betweenOperateDefinition.getLeftElement(), helper);
+                SQLStatement beforeStatement = sqlStatementFactory.getOrCreate(betweenOperateDefinition.getBeforeElement(), helper);
+                SQLStatement afterStatement = sqlStatementFactory.getOrCreate(betweenOperateDefinition.getAfterElement(), helper);
                 return new BetweenOperateStatement((SingleValueElementStatement) leftStatement, (SingleValueElementStatement) beforeStatement, (SingleValueElementStatement) afterStatement);
             }
         );

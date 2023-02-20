@@ -4,23 +4,23 @@ import zly.rivulet.base.definer.annotations.Comment;
 import zly.rivulet.base.definer.annotations.PrimaryKey;
 import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLInt;
 import zly.rivulet.mysql.definer.annotations.type.string.MySQLVarchar;
-import zly.rivulet.sql.definer.annotations.SqlColumn;
+import zly.rivulet.sql.definer.annotations.SQLColumn;
 import zly.rivulet.sql.definer.annotations.SQLTable;
 
 @SQLTable("t_city")
 public class CityDO {
 
     @PrimaryKey
-    @SqlColumn("code")
+    @SQLColumn("code")
     @MySQLInt
     private Integer code;
 
-    @SqlColumn
+    @SQLColumn
     @MySQLVarchar(length = 16)
     @Comment("城市名称")
     private String name;
 
-    @SqlColumn("province_code")
+    @SQLColumn("province_code")
     @MySQLInt
     @Comment("所属省份code")
     private Integer provinceCode;

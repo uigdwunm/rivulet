@@ -5,10 +5,10 @@ import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.statement.SingleValueElementStatement;
 import zly.rivulet.mysql.generator.statement.query.MapStatement;
 import zly.rivulet.sql.definition.update.SetItemDefinition;
-import zly.rivulet.sql.generator.SqlStatementFactory;
-import zly.rivulet.sql.generator.statement.SqlStatement;
+import zly.rivulet.sql.generator.SQLStatementFactory;
+import zly.rivulet.sql.generator.statement.SQLStatement;
 
-public class SetItemStatement extends SqlStatement {
+public class SetItemStatement extends SQLStatement {
 
     private final SingleValueElementStatement singleValueElementStatement;
 
@@ -32,19 +32,19 @@ public class SetItemStatement extends SqlStatement {
         collector.append(singleValueElementStatement);
     }
 
-    public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
+    public static void registerToFactory(SQLStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
             SetItemDefinition.class,
             (definition, soleFlag, toolbox) -> {
                 SetItemDefinition setItemDefinition = (SetItemDefinition) definition;
-                SqlStatement singleValueStatement = sqlStatementFactory.warmUp(setItemDefinition.getValueDefinition(), soleFlag.subSwitch(), toolbox);
-                SqlStatement fieldStatement = sqlStatementFactory.warmUp(setItemDefinition.getFieldMap(), soleFlag.subSwitch(), toolbox);
+                SQLStatement singleValueStatement = sqlStatementFactory.warmUp(setItemDefinition.getValueDefinition(), soleFlag.subSwitch(), toolbox);
+                SQLStatement fieldStatement = sqlStatementFactory.warmUp(setItemDefinition.getFieldMap(), soleFlag.subSwitch(), toolbox);
                 return new SetItemStatement((SingleValueElementStatement) singleValueStatement, (MapStatement) fieldStatement);
             },
             (definition, toolbox) -> {
                 SetItemDefinition setItemDefinition = (SetItemDefinition) definition;
-                SqlStatement singleValueStatement = sqlStatementFactory.getOrCreate(setItemDefinition.getValueDefinition(), toolbox);
-                SqlStatement fieldStatement = sqlStatementFactory.getOrCreate(setItemDefinition.getFieldMap(), toolbox);
+                SQLStatement singleValueStatement = sqlStatementFactory.getOrCreate(setItemDefinition.getValueDefinition(), toolbox);
+                SQLStatement fieldStatement = sqlStatementFactory.getOrCreate(setItemDefinition.getFieldMap(), toolbox);
                 return new SetItemStatement((SingleValueElementStatement) singleValueStatement, (MapStatement) fieldStatement);
             }
         );

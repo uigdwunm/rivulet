@@ -8,7 +8,7 @@ import zly.rivulet.base.definition.param.ParamReceipt;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.generator.statement.Statement;
 import zly.rivulet.base.parser.ParamReceiptManager;
-import zly.rivulet.sql.generator.statement.SqlStatement;
+import zly.rivulet.sql.generator.statement.SQLStatement;
 import zly.rivulet.sql.parser.SQLAliasManager;
 
 import java.util.Map;
@@ -34,7 +34,7 @@ public abstract class SQLBlueprint implements Blueprint {
     /**
      * definition类和statement之间的缓存映射
      **/
-    private final Map<Definition, SqlStatement> statementCache = new ConcurrentHashMap<>();
+    private final Map<Definition, SQLStatement> statementCache = new ConcurrentHashMap<>();
 
     protected boolean isWarmUp = false;
 
@@ -55,11 +55,11 @@ public abstract class SQLBlueprint implements Blueprint {
 
     @Override
     public void putStatement(Definition key, Statement sqlStatement) {
-        this.statementCache.put(key, (SqlStatement) sqlStatement);
+        this.statementCache.put(key, (SQLStatement) sqlStatement);
     }
 
     @Override
-    public SqlStatement getStatement(Definition key) {
+    public SQLStatement getStatement(Definition key) {
         return this.statementCache.get(key);
     }
 

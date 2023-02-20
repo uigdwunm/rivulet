@@ -1,4 +1,4 @@
-package zly.rivulet.sql.definition.update;
+package zly.rivulet.sql.definition.delete;
 
 import zly.rivulet.base.assigner.Assigner;
 import zly.rivulet.base.definer.enums.RivuletFlag;
@@ -8,6 +8,7 @@ import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.describer.param.ParamCheckType;
 import zly.rivulet.base.utils.ClassUtils;
+import zly.rivulet.base.utils.Constant;
 import zly.rivulet.sql.assigner.SQLUpdateResultAssigner;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
@@ -18,53 +19,45 @@ import zly.rivulet.sql.definition.query.mapping.MapDefinition;
 import zly.rivulet.sql.definition.query.operate.AndOperateDefinition;
 import zly.rivulet.sql.definition.query.operate.EqOperateDefinition;
 import zly.rivulet.sql.describer.condition.common.ConditionContainer;
+import zly.rivulet.sql.describer.delete.SQLDeleteMetaDesc;
 import zly.rivulet.sql.describer.join.QueryComplexModel;
-import zly.rivulet.sql.describer.update.SqlUpdateMetaDesc;
 import zly.rivulet.sql.exception.SQLDescDefineException;
 import zly.rivulet.sql.parser.SQLAliasManager;
-import zly.rivulet.sql.parser.SqlParser;
+import zly.rivulet.sql.parser.SQLParser;
 import zly.rivulet.sql.parser.proxy_node.FromNode;
 import zly.rivulet.sql.parser.proxy_node.ProxyNodeManager;
 import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
-import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
+import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
-public class SqlUpdateDefinition extends SQLBlueprint {
-
-    private final SqlUpdateMetaDesc<?> metaDesc;
+public class SQLDeleteDefinition extends SQLBlueprint {
 
     private final FromDefinition fromDefinition;
-
-    private final SetDefinition setDefinition;
 
     private final WhereDefinition whereDefinition;
 
     private final SQLUpdateResultAssigner assigner = new SQLUpdateResultAssigner();
 
-    private SqlUpdateDefinition(SqlUpdateMetaDesc<?> metaDesc, FromDefinition fromDefinition, SetDefinition setDefinition, WhereDefinition whereDefinition) {
-        super(RivuletFlag.UPDATE, metaDesc);
-        this.metaDesc = metaDesc;
+    private SQLDeleteDefinition(WholeDesc wholeDesc, FromDefinition fromDefinition, WhereDefinition whereDefinition) {
+        super(RivuletFlag.DELETE, wholeDesc);
         this.fromDefinition = fromDefinition;
-        this.setDefinition = setDefinition;
         this.whereDefinition = whereDefinition;
     }
 
-    public SqlUpdateDefinition(SqlParserPortableToolbox toolbox, WholeDesc wholeDesc) {
-        super(RivuletFlag.UPDATE, wholeDesc);
-        this.metaDesc = (SqlUpdateMetaDesc<?>) wholeDesc;
+    public SQLDeleteDefinition(SQLParserPortableToolbox toolbox, WholeDesc wholeDesc) {
+        super(RivuletFlag.DELETE, wholeDesc);
+        SQLDeleteMetaDesc<?> metaDesc = (SQLDeleteMetaDesc<?>) wholeDesc;
         this.aliasManager = new SQLAliasManager(toolbox.getConfigProperties());
         Class<?> mainFrom = metaDesc.getMainFrom();
         if (ClassUtils.isExtend(QueryComplexModel.class, mainFrom)) {
-            // 仅支持单表更新
+            // 仅支持单表删除
             throw SQLDescDefineException.unSupportMultiModelUpdate();
         }
         // 获取QueryProxyNode
         ProxyNodeManager proxyModelManager = toolbox.getSqlPreParser().getProxyModelManager();
-        QueryProxyNode queryProxyNode = proxyModelManager.getOrCreateQueryProxyNode(toolbox, metaDesc.getAnnotation(), metaDesc.getMainFrom());
+        QueryProxyNode queryProxyNode = proxyModelManager.getOrCreateQueryProxyNode(toolbox, metaDesc.getAnnotation(), mainFrom);
         toolbox.setQueryProxyNode(queryProxyNode);
 
         this.fromDefinition = new FromDefinition(toolbox);
-
-        this.setDefinition = new SetDefinition(toolbox, metaDesc.getMappedItemList());
 
         ConditionContainer<?, ?> whereConditionContainer = metaDesc.getWhereConditionContainer();
         if (whereConditionContainer != null) {
@@ -77,24 +70,21 @@ public class SqlUpdateDefinition extends SQLBlueprint {
         this.aliasManager.init(queryProxyNode);
     }
 
-    public SqlUpdateDefinition(SqlParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta, SQLFieldMeta primaryKey) {
-        super(RivuletFlag.UPDATE, null);
-        this.metaDesc = null;
+    public SQLDeleteDefinition(SQLParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta, SQLFieldMeta primaryKey) {
+        super(RivuletFlag.DELETE, null);
         Class<?> mainFrom = sqlModelMeta.getModelClass();
         if (ClassUtils.isExtend(QueryComplexModel.class, mainFrom)) {
             // 仅支持单表更新
             throw SQLDescDefineException.unSupportMultiModelUpdate();
         }
-        SqlParser sqlParser = toolbox.getSqlPreParser();
+        SQLParser sqlParser = toolbox.getSqlPreParser();
         ProxyNodeManager proxyModelManager = sqlParser.getProxyModelManager();
         QueryProxyNode queryProxyNode = proxyModelManager.getOrCreateQueryProxyNode(toolbox, sqlModelMeta);
         toolbox.setQueryProxyNode(queryProxyNode);
 
         this.fromDefinition = new FromDefinition(toolbox);
 
-        this.setDefinition = new SetDefinition(toolbox, sqlModelMeta);
-
-        Param<?> mainIdParam = Param.of(primaryKey.getFieldType(), primaryKey.getFieldName(), ParamCheckType.NATURE);
+        Param<?> mainIdParam = Param.of(primaryKey.getFieldType(), Constant.MAIN_ID, ParamCheckType.NATURE);
         FromNode fromNode = queryProxyNode.getFromNodeList().get(0);
         this.whereDefinition = new WhereDefinition(
             toolbox,
@@ -118,7 +108,7 @@ public class SqlUpdateDefinition extends SQLBlueprint {
 
     @Override
     public RivuletFlag getFlag() {
-        return RivuletFlag.UPDATE;
+        return RivuletFlag.DELETE;
     }
 
     @Override
@@ -135,55 +125,29 @@ public class SqlUpdateDefinition extends SQLBlueprint {
         return fromDefinition;
     }
 
-    public SetDefinition getSetDefinition() {
-        return setDefinition;
-    }
-
     public WhereDefinition getWhereDefinition() {
         return whereDefinition;
     }
 
     @Override
     public Copier copier() {
-        return null;
+        return new Copier(this.fromDefinition, this.whereDefinition);
     }
 
     public class Copier implements Definition.Copier {
 
-        private SqlUpdateMetaDesc<?> metaDesc;
-
         private FromDefinition fromDefinition;
-
-        private SetDefinition setDefinition;
 
         private WhereDefinition whereDefinition;
 
-        private Copier(SqlUpdateMetaDesc<?> metaDesc, FromDefinition fromDefinition, SetDefinition setDefinition, WhereDefinition whereDefinition) {
-            this.metaDesc = metaDesc;
+        public Copier(FromDefinition fromDefinition, WhereDefinition whereDefinition) {
             this.fromDefinition = fromDefinition;
-            this.setDefinition = setDefinition;
-            this.whereDefinition = whereDefinition;
-        }
-
-        public void setMetaDesc(SqlUpdateMetaDesc<?> metaDesc) {
-            this.metaDesc = metaDesc;
-        }
-
-        public void setFromDefinition(FromDefinition fromDefinition) {
-            this.fromDefinition = fromDefinition;
-        }
-
-        public void setSetDefinition(SetDefinition setDefinition) {
-            this.setDefinition = setDefinition;
-        }
-
-        public void setWhereDefinition(WhereDefinition whereDefinition) {
             this.whereDefinition = whereDefinition;
         }
 
         @Override
-        public SqlUpdateDefinition copy() {
-            return new SqlUpdateDefinition(metaDesc, fromDefinition, setDefinition, whereDefinition);
+        public SQLDeleteDefinition copy() {
+            return new SQLDeleteDefinition(wholeDesc, this.fromDefinition, this.whereDefinition);
         }
     }
 }

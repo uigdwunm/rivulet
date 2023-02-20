@@ -4,13 +4,13 @@ import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.View;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.sql.definition.update.SetDefinition;
-import zly.rivulet.sql.generator.SqlStatementFactory;
-import zly.rivulet.sql.generator.statement.SqlStatement;
+import zly.rivulet.sql.generator.SQLStatementFactory;
+import zly.rivulet.sql.generator.statement.SQLStatement;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SetStatement extends SqlStatement {
+public class SetStatement extends SQLStatement {
 
     private final SetDefinition setDefinition;
 
@@ -36,12 +36,12 @@ public class SetStatement extends SqlStatement {
         }
     }
 
-    public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
+    public static void registerToFactory(SQLStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
             SetDefinition.class,
             (definition, soleFlag, toolbox) -> {
                 SetDefinition setDefinition = (SetDefinition) definition;
-                List<SqlStatement> setItemDefinitionList = setDefinition.getSetItemDefinitionView().stream()
+                List<SQLStatement> setItemDefinitionList = setDefinition.getSetItemDefinitionView().stream()
                     .map(itemDefinition -> sqlStatementFactory.warmUp(itemDefinition, soleFlag.subSwitch(), toolbox))
                     .collect(Collectors.toList());
 
@@ -49,7 +49,7 @@ public class SetStatement extends SqlStatement {
             },
             (definition, toolbox) -> {
                 SetDefinition setDefinition = (SetDefinition) definition;
-                List<SqlStatement> setItemDefinitionList = setDefinition.getSetItemDefinitionView().stream()
+                List<SQLStatement> setItemDefinitionList = setDefinition.getSetItemDefinitionView().stream()
                     .map(itemDefinition -> sqlStatementFactory.getOrCreate(itemDefinition, toolbox))
                     .collect(Collectors.toList());
 

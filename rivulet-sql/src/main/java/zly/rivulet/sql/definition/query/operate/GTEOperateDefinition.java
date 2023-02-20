@@ -8,7 +8,7 @@ import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
 import zly.rivulet.sql.describer.condition.common.Condition;
 import zly.rivulet.sql.describer.condition.ConditionElement;
-import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
+import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
 public class GTEOperateDefinition extends OperateDefinition {
 
@@ -22,11 +22,11 @@ public class GTEOperateDefinition extends OperateDefinition {
         this.rightElement = rightElement;
     }
 
-    public GTEOperateDefinition(SqlParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
+    public GTEOperateDefinition(SQLParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
         this(sqlPreParseHelper, (ConditionElement<?, ?>) condition);
     }
 
-    public GTEOperateDefinition(SqlParserPortableToolbox toolbox, ConditionElement<?, ?> condition) {
+    public GTEOperateDefinition(SQLParserPortableToolbox toolbox, ConditionElement<?, ?> condition) {
         super(condition.getCheckCondition(), toolbox.getParamReceiptManager());
         SingleValueElementDesc<?, ?> leftFieldMapped = condition.getLeftFieldMapped();
         SingleValueElementDesc<?, ?> rightFieldMapped = condition.getRightFieldMappeds()[0];
@@ -35,7 +35,7 @@ public class GTEOperateDefinition extends OperateDefinition {
         this.rightElement = toolbox.parseSingleValueForCondition(rightFieldMapped);
     }
 
-    public GTEOperateDefinition(SqlParserPortableToolbox toolbox, MapDefinition mapDefinition, Param<?> param, CheckCondition checkCondition) {
+    public GTEOperateDefinition(SQLParserPortableToolbox toolbox, MapDefinition mapDefinition, Param<?> param, CheckCondition checkCondition) {
         super(checkCondition, toolbox.getParamReceiptManager());
 
         this.leftElement =  mapDefinition;

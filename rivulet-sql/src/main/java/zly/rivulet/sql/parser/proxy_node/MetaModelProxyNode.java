@@ -2,13 +2,10 @@ package zly.rivulet.sql.parser.proxy_node;
 
 import zly.rivulet.base.utils.ClassUtils;
 import zly.rivulet.base.utils.StringUtil;
-import zly.rivulet.sql.definer.SqlDefiner;
-import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
 import zly.rivulet.sql.parser.SQLAliasManager;
-import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
 
 public class MetaModelProxyNode implements FromNode {
 

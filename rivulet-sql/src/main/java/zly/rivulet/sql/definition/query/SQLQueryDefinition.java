@@ -14,7 +14,6 @@ import zly.rivulet.base.utils.ClassUtils;
 import zly.rivulet.base.utils.CollectionUtils;
 import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.MapUtils;
-import zly.rivulet.sql.assigner.SQLQueryResultAssigner;
 import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
@@ -27,13 +26,13 @@ import zly.rivulet.sql.definition.query.operate.InOperateDefinition;
 import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
 import zly.rivulet.sql.describer.condition.common.ConditionContainer;
 import zly.rivulet.sql.describer.custom.SQLPartCustomDesc;
-import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
+import zly.rivulet.sql.describer.query.SQLQueryMetaDesc;
 import zly.rivulet.sql.describer.query.desc.SortItem;
 import zly.rivulet.sql.parser.SQLAliasManager;
 import zly.rivulet.sql.parser.proxy_node.FromNode;
 import zly.rivulet.sql.parser.proxy_node.ProxyNodeManager;
 import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
-import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
+import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -41,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class SqlQueryDefinition extends SQLBlueprint implements QueryFromMeta, SQLSingleValueElementDefinition {
+public class SQLQueryDefinition extends SQLBlueprint implements QueryFromMeta, SQLSingleValueElementDefinition {
 
     private SelectDefinition selectDefinition;
 
@@ -65,9 +64,9 @@ public class SqlQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
 
     private final SQLAliasManager.AliasFlag aliasFlag = SQLAliasManager.createAlias();
 
-    public SqlQueryDefinition(SqlParserPortableToolbox toolbox, WholeDesc wholeDesc) {
+    public SQLQueryDefinition(SQLParserPortableToolbox toolbox, WholeDesc wholeDesc) {
         super(RivuletFlag.QUERY, wholeDesc);
-        SqlQueryMetaDesc<?, ?> metaDesc = (SqlQueryMetaDesc<?, ?>) wholeDesc;
+        SQLQueryMetaDesc<?, ?> metaDesc = (SQLQueryMetaDesc<?, ?>) wholeDesc;
         this.paramReceiptManager = toolbox.getParamReceiptManager();
 
         ProxyNodeManager proxyModelManager = toolbox.getSqlPreParser().getProxyModelManager();
@@ -126,7 +125,7 @@ public class SqlQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
         this.aliasManager.init(queryProxyNode);
     }
 
-    public SqlQueryDefinition(SqlParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta, SQLFieldMeta primaryKey) {
+    public SQLQueryDefinition(SQLParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta, SQLFieldMeta primaryKey) {
         super(RivuletFlag.QUERY, null);
         Class<?> modelClass = sqlModelMeta.getModelClass();
         this.aliasManager = new SQLAliasManager(toolbox.getConfigProperties());
@@ -169,7 +168,7 @@ public class SqlQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
         this.assigner = queryProxyNode.getAssigner();
     }
 
-    public SqlQueryDefinition(
+    public SQLQueryDefinition(
         WholeDesc wholeDesc,
         SelectDefinition selectDefinition,
         FromDefinition fromDefinition,
@@ -329,8 +328,8 @@ public class SqlQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
         }
 
         @Override
-        public SqlQueryDefinition copy() {
-            return new SqlQueryDefinition(
+        public SQLQueryDefinition copy() {
+            return new SQLQueryDefinition(
                 wholeDesc,
                 selectDefinitionCopier != null ? selectDefinitionCopier.copy() : selectDefinition,
                 fromDefinitionCopier != null ? fromDefinitionCopier.copy() : fromDefinition,

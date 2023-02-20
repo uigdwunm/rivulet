@@ -6,7 +6,7 @@ import zly.rivulet.base.definition.Definition;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.SQLBlueprint;
-import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
+import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,7 +25,7 @@ public class SQLInsertDefinition extends SQLBlueprint {
         this.columnItemDefinitionList = columnItemDefinitionList;
     }
 
-    public SQLInsertDefinition(SQLModelMeta sqlModelMeta, SqlParserPortableToolbox toolbox) {
+    public SQLInsertDefinition(SQLModelMeta sqlModelMeta, SQLParserPortableToolbox toolbox) {
         super(RivuletFlag.INSERT, null);
         this.sqlModelMeta = sqlModelMeta;
         this.columnItemDefinitionList = sqlModelMeta.getFieldMetaList().stream()

@@ -4,8 +4,8 @@ import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.statement.SingleValueElementStatement;
 import zly.rivulet.sql.definition.query.operate.IsNullOperateDefinition;
-import zly.rivulet.sql.generator.SqlStatementFactory;
-import zly.rivulet.sql.generator.statement.SqlStatement;
+import zly.rivulet.sql.generator.SQLStatementFactory;
+import zly.rivulet.sql.generator.statement.SQLStatement;
 
 public class IsNullOperateStatement extends OperateStatement {
 
@@ -26,17 +26,17 @@ public class IsNullOperateStatement extends OperateStatement {
         collector.append(Constant.IS_NULL);
     }
 
-    public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
+    public static void registerToFactory(SQLStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
             IsNullOperateDefinition.class,
             (definition, soleFlag, initHelper) -> {
                 IsNullOperateDefinition isNullOperateDefinition = (IsNullOperateDefinition) definition;
-                SqlStatement valueStatement = sqlStatementFactory.warmUp(isNullOperateDefinition.getValueElementDefinition(), soleFlag.subSwitch(), initHelper);
+                SQLStatement valueStatement = sqlStatementFactory.warmUp(isNullOperateDefinition.getValueElementDefinition(), soleFlag.subSwitch(), initHelper);
                 return new IsNullOperateStatement((SingleValueElementStatement) valueStatement);
             },
             (definition, helper) -> {
                 IsNullOperateDefinition isNullOperateDefinition = (IsNullOperateDefinition) definition;
-                SqlStatement valueStatement = sqlStatementFactory.getOrCreate(isNullOperateDefinition.getValueElementDefinition(), helper);
+                SQLStatement valueStatement = sqlStatementFactory.getOrCreate(isNullOperateDefinition.getValueElementDefinition(), helper);
                 return new IsNullOperateStatement((SingleValueElementStatement) valueStatement);
             }
         );

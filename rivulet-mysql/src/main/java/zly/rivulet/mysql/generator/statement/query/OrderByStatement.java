@@ -3,13 +3,13 @@ package zly.rivulet.mysql.generator.statement.query;
 import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.sql.definition.query.main.OrderByDefinition;
-import zly.rivulet.sql.generator.SqlStatementFactory;
-import zly.rivulet.sql.generator.statement.SqlStatement;
+import zly.rivulet.sql.generator.SQLStatementFactory;
+import zly.rivulet.sql.generator.statement.SQLStatement;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class OrderByStatement extends SqlStatement {
+public class OrderByStatement extends SQLStatement {
 
     private final OrderByDefinition orderByDefinition;
 
@@ -37,19 +37,19 @@ public class OrderByStatement extends SqlStatement {
         }
     }
 
-    public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
+    public static void registerToFactory(SQLStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
             OrderByDefinition.class,
             (definition, soleFlag, initHelper) -> {
                 OrderByDefinition orderByDefinition = (OrderByDefinition) definition;
-                List<SqlStatement> sortItemStatementList = orderByDefinition.getSortItemDefinitionList().stream()
+                List<SQLStatement> sortItemStatementList = orderByDefinition.getSortItemDefinitionList().stream()
                     .map(sortItemDefinition -> sqlStatementFactory.warmUp(sortItemDefinition, soleFlag.subSwitch(), initHelper))
                     .collect(Collectors.toList());
                 return new OrderByStatement(orderByDefinition, (List) sortItemStatementList);
             },
             (definition, helper) -> {
                 OrderByDefinition orderByDefinition = (OrderByDefinition) definition;
-                List<SqlStatement> sortItemStatementList = orderByDefinition.getSortItemDefinitionList().stream()
+                List<SQLStatement> sortItemStatementList = orderByDefinition.getSortItemDefinitionList().stream()
                     .map(sortItemDefinition -> sqlStatementFactory.getOrCreate(sortItemDefinition, helper))
                     .collect(Collectors.toList());
                 return new OrderByStatement(orderByDefinition, (List) sortItemStatementList);

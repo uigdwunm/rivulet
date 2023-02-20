@@ -10,16 +10,16 @@ import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.base.parser.toolbox.ParserPortableToolbox;
-import zly.rivulet.sql.SqlRivuletProperties;
+import zly.rivulet.sql.SQLRivuletProperties;
 import zly.rivulet.sql.definition.function.SQLFunctionDefinition;
-import zly.rivulet.sql.definition.query.SqlQueryDefinition;
+import zly.rivulet.sql.definition.query.SQLQueryDefinition;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
 import zly.rivulet.sql.describer.function.SQLFunction;
-import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
+import zly.rivulet.sql.describer.query.SQLQueryMetaDesc;
 import zly.rivulet.sql.exception.SQLDescDefineException;
 import zly.rivulet.sql.parser.SQLAliasManager;
-import zly.rivulet.sql.parser.SqlParamReceiptManager;
-import zly.rivulet.sql.parser.SqlParser;
+import zly.rivulet.sql.parser.SQLParamReceiptManager;
+import zly.rivulet.sql.parser.SQLParser;
 import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
 
 import java.util.Deque;
@@ -27,9 +27,9 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-public class SqlParserPortableToolbox implements ParserPortableToolbox {
+public class SQLParserPortableToolbox implements ParserPortableToolbox {
 
-    private final SqlParser sqlPreParser;
+    private final SQLParser sqlPreParser;
 
     private final ParamReceiptManager paramReceiptManager;
 
@@ -39,7 +39,7 @@ public class SqlParserPortableToolbox implements ParserPortableToolbox {
      **/
     private final Deque<QueryProxyNode> queryProxyNodeStack = new LinkedList<>();
 
-    private final SqlRivuletProperties configProperties;
+    private final SQLRivuletProperties configProperties;
 
     private final SQLAliasManager sqlAliasManager;
 
@@ -54,9 +54,9 @@ public class SqlParserPortableToolbox implements ParserPortableToolbox {
      **/
     private final Set<QueryProxyNode> repeatProxyNodeCheck = new HashSet<>();
 
-    public SqlParserPortableToolbox(SqlParser sqlPreParser) {
+    public SQLParserPortableToolbox(SQLParser sqlPreParser) {
         this.sqlPreParser = sqlPreParser;
-        this.paramReceiptManager = new SqlParamReceiptManager(sqlPreParser.getConvertorManager());
+        this.paramReceiptManager = new SQLParamReceiptManager(sqlPreParser.getConvertorManager());
         this.configProperties = sqlPreParser.getConfigProperties();
         this.sqlAliasManager = new SQLAliasManager(sqlPreParser.getConfigProperties());
     }
@@ -71,7 +71,7 @@ public class SqlParserPortableToolbox implements ParserPortableToolbox {
         if (singleValueElementDesc instanceof FieldMapping) {
             // 字段类的select
             return queryProxyNode.getFieldDefinitionFromThreadLocal((FieldMapping<?, ?>) singleValueElementDesc, proxyModel);
-        } else if (singleValueElementDesc instanceof SqlQueryMetaDesc) {
+        } else if (singleValueElementDesc instanceof SQLQueryMetaDesc) {
             // 子查询类型的select
             sqlPreParser.parse((WholeDesc) singleValueElementDesc, this);
             QueryProxyNode subQueryProxyNode = this.popQueryProxyNode();
@@ -112,9 +112,9 @@ public class SqlParserPortableToolbox implements ParserPortableToolbox {
         } else if (singleValueElementDesc instanceof JoinFieldMapping) {
             JoinFieldMapping<Object> joinFieldMapping = (JoinFieldMapping<Object>) singleValueElementDesc;
             return queryProxyNode.getFieldDefinitionFromThreadLocal(joinFieldMapping, queryProxyNode.getProxyModel());
-        } else if (singleValueElementDesc instanceof SqlQueryMetaDesc) {
-            SqlParser sqlPreParser = this.getSqlPreParser();
-            SqlQueryDefinition sqlQueryDefinition = (SqlQueryDefinition) sqlPreParser.parse((SqlQueryMetaDesc<?, ?>) singleValueElementDesc, this);
+        } else if (singleValueElementDesc instanceof SQLQueryMetaDesc) {
+            SQLParser sqlPreParser = this.getSqlPreParser();
+            SQLQueryDefinition sqlQueryDefinition = (SQLQueryDefinition) sqlPreParser.parse((SQLQueryMetaDesc<?, ?>) singleValueElementDesc, this);
             QueryProxyNode subQueryNode = this.popQueryProxyNode();
             queryProxyNode.addConditionSubQuery(subQueryNode);
             return sqlQueryDefinition;
@@ -147,7 +147,7 @@ public class SqlParserPortableToolbox implements ParserPortableToolbox {
         }
     }
 
-    public SqlParser getSqlPreParser() {
+    public SQLParser getSqlPreParser() {
         return sqlPreParser;
     }
 
@@ -167,7 +167,7 @@ public class SqlParserPortableToolbox implements ParserPortableToolbox {
         return this.queryProxyNodeStack.pop();
     }
 
-    public SqlRivuletProperties getConfigProperties() {
+    public SQLRivuletProperties getConfigProperties() {
         return configProperties;
     }
 

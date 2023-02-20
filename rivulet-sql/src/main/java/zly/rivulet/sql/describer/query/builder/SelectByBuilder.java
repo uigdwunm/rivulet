@@ -4,47 +4,47 @@ import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.field.SetMapping;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.sql.describer.function.SQLFunction;
-import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
+import zly.rivulet.sql.describer.query.SQLQueryMetaDesc;
 import zly.rivulet.sql.describer.query.desc.Mapping;
 
 import java.util.Arrays;
 import java.util.Collections;
 
-public class SelectByBuilderSQL<F, S> extends WhereByBuilderSQL<F, S> {
+public class SelectByBuilder<F, S> extends WhereByBuilder<F, S> {
 
-    public SelectByBuilderSQL(Class<F> from, Class<S> select) {
+    public SelectByBuilder(Class<F> from, Class<S> select) {
         super.modelFrom = from;
         super.selectModel = select;
     }
 
     @SafeVarargs
-    public final WhereByBuilderSQL<F, S> select(Mapping<F, S, ?> ... items) {
+    public final WhereByBuilder<F, S> select(Mapping<F, S, ?> ... items) {
         super.mappedItemList = Arrays.asList(items);
         return this;
     }
 
-    public final WhereByBuilderSQL<F, S> selectOne(Param<?> desc) {
+    public final WhereByBuilder<F, S> selectOne(Param<?> desc) {
         SetMapping<OneResult, ?> mappingField = OneResult::setValue;
         super.mappedItemList = Collections.singletonList(Mapping.of((SetMapping) mappingField, desc));
         super.isOneResult = true;
         return this;
     }
 
-    public final WhereByBuilderSQL<F, S> selectOne(FieldMapping<F, ?> desc) {
+    public final WhereByBuilder<F, S> selectOne(FieldMapping<F, ?> desc) {
         SetMapping<OneResult, ?> mappingField = OneResult::setValue;
         super.mappedItemList = Collections.singletonList(Mapping.of((SetMapping) mappingField, desc));
         super.isOneResult = true;
         return this;
     }
 
-    public final WhereByBuilderSQL<F, S> selectOne(SqlQueryMetaDesc<F, ?> desc) {
+    public final WhereByBuilder<F, S> selectOne(SQLQueryMetaDesc<F, ?> desc) {
         SetMapping<OneResult, ?> mappingField = OneResult::setValue;
         super.mappedItemList = Collections.singletonList(Mapping.of((SetMapping) mappingField, desc));
         super.isOneResult = true;
         return this;
     }
 
-    public final WhereByBuilderSQL<F, S> selectOne(SQLFunction<F, ?> desc) {
+    public final WhereByBuilder<F, S> selectOne(SQLFunction<F, ?> desc) {
         SetMapping<OneResult, ?> mappingField = OneResult::setValue;
         super.mappedItemList = Collections.singletonList(Mapping.of((SetMapping) mappingField, desc));
         super.isOneResult = true;

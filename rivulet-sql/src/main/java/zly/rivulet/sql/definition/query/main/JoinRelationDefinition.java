@@ -9,7 +9,7 @@ import zly.rivulet.sql.definition.query.operate.OperateDefinition;
 import zly.rivulet.sql.describer.join.ComplexDescriber;
 import zly.rivulet.sql.describer.condition.join.JoinConditionContainer;
 import zly.rivulet.sql.parser.SQLAliasManager;
-import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
+import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 import zly.rivulet.sql.parser.proxy_node.FromNode;
 import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
 
@@ -31,7 +31,7 @@ public class JoinRelationDefinition extends AbstractDefinition {
             this.joinType = joinType;
         }
 
-    public JoinRelationDefinition(SqlParserPortableToolbox toolbox, ComplexDescriber.Relation<?> desc) {
+    public JoinRelationDefinition(SQLParserPortableToolbox toolbox, ComplexDescriber.Relation<?> desc) {
         super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
         QueryProxyNode proxyNode = toolbox.getQueryProxyNode();
         JoinConditionContainer<?, ?> conditionContainer = desc.getConditionContainer();

@@ -4,14 +4,14 @@ import zly.rivulet.base.utils.CollectionUtils;
 import zly.rivulet.base.utils.StringUtil;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.sql.definition.query.main.FromDefinition;
-import zly.rivulet.sql.generator.SqlStatementFactory;
-import zly.rivulet.sql.generator.statement.SqlStatement;
+import zly.rivulet.sql.generator.SQLStatementFactory;
+import zly.rivulet.sql.generator.statement.SQLStatement;
 import zly.rivulet.sql.parser.SQLAliasManager;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class FromStatement extends SqlStatement {
+public class FromStatement extends SQLStatement {
 
     private final FromDefinition definition;
 
@@ -63,7 +63,7 @@ public class FromStatement extends SqlStatement {
         }
     }
 
-    public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
+    public static void registerToFactory(SQLStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
             FromDefinition.class,
             (definition, soleFlag, initHelper) -> {

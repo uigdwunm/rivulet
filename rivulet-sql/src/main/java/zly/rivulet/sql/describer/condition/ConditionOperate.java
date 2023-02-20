@@ -2,7 +2,7 @@ package zly.rivulet.sql.describer.condition;
 
 import zly.rivulet.sql.definition.query.operate.*;
 import zly.rivulet.sql.describer.condition.common.Condition;
-import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
+import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
 import java.util.function.BiFunction;
 
@@ -43,14 +43,14 @@ public enum ConditionOperate {
 
     ;
 
-    private final BiFunction<SqlParserPortableToolbox, Condition<?, ?>, OperateDefinition> operate;
+    private final BiFunction<SQLParserPortableToolbox, Condition<?, ?>, OperateDefinition> operate;
 
 
-    ConditionOperate(BiFunction<SqlParserPortableToolbox, Condition<?, ?>, OperateDefinition> operate) {
+    ConditionOperate(BiFunction<SQLParserPortableToolbox, Condition<?, ?>, OperateDefinition> operate) {
         this.operate = operate;
     }
 
-    public OperateDefinition createDefinition(SqlParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
+    public OperateDefinition createDefinition(SQLParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
         return operate.apply(sqlPreParseHelper, condition);
     }
 

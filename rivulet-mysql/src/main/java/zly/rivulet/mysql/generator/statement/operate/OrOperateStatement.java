@@ -2,7 +2,7 @@ package zly.rivulet.mysql.generator.statement.operate;
 
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.sql.definition.query.operate.OrOperateDefinition;
-import zly.rivulet.sql.generator.SqlStatementFactory;
+import zly.rivulet.sql.generator.SQLStatementFactory;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,7 +48,7 @@ public class OrOperateStatement extends OperateStatement {
         }
     }
 
-    public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
+    public static void registerToFactory(SQLStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
             OrOperateDefinition.class,
             (definition, soleFlag, initHelper) -> {

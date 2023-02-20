@@ -19,8 +19,8 @@ public class DeleteBuilder<T> {
         return new SetBuilder<>(from);
     }
 
-    public SqlDeleteMetaDesc<T> build() {
-        return new SqlDeleteMetaDesc<>(
+    public SQLDeleteMetaDesc<T> build() {
+        return new SQLDeleteMetaDesc<>(
             this.model,
             this.whereConditionContainer
         );

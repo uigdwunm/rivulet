@@ -1,16 +1,25 @@
-package zly.rivulet.sql.describer.delete;
+package zly.rivulet.sql.describer.update;
 
 import zly.rivulet.base.definer.annotations.RivuletDesc;
 import zly.rivulet.base.definer.enums.RivuletFlag;
 import zly.rivulet.base.describer.WholeDesc;
 import zly.rivulet.sql.describer.condition.common.ConditionContainer;
+import zly.rivulet.sql.describer.query.desc.Mapping;
 
-public class SqlDeleteMetaDesc<T> implements WholeDesc {
+import java.util.List;
+
+public class SQLUpdateMetaDesc<T> implements WholeDesc {
 
     /**
      * 要更新的模型
      **/
     private final Class<T> model;
+
+    /**
+     * set赋值列表
+     **/
+    private final List<Mapping<T, T, ?>> mappedItemList;
+
 
     /**
      * where查询子项
@@ -19,8 +28,9 @@ public class SqlDeleteMetaDesc<T> implements WholeDesc {
 
     protected RivuletDesc anno;
 
-    public SqlDeleteMetaDesc(Class<T> model, ConditionContainer<T, ?> whereConditionContainer) {
+    public SQLUpdateMetaDesc(Class<T> model, List<Mapping<T, T, ?>> mappedItemList, ConditionContainer<T, ?> whereConditionContainer) {
         this.model = model;
+        this.mappedItemList = mappedItemList;
         this.whereConditionContainer = whereConditionContainer;
     }
 
@@ -51,6 +61,10 @@ public class SqlDeleteMetaDesc<T> implements WholeDesc {
 
     public Class<T> getModel() {
         return model;
+    }
+
+    public List<Mapping<T, T, ?>> getMappedItemList() {
+        return mappedItemList;
     }
 
     public ConditionContainer<T, ?> getWhereConditionContainer() {

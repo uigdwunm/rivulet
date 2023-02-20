@@ -3,13 +3,13 @@ package zly.rivulet.mysql.generator.statement.delete;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.definer.MySQLModelMeta;
 import zly.rivulet.mysql.generator.statement.query.WhereStatement;
-import zly.rivulet.sql.definition.delete.SqlDeleteDefinition;
-import zly.rivulet.sql.generator.SqlStatementFactory;
-import zly.rivulet.sql.generator.statement.SqlStatement;
+import zly.rivulet.sql.definition.delete.SQLDeleteDefinition;
+import zly.rivulet.sql.generator.SQLStatementFactory;
+import zly.rivulet.sql.generator.statement.SQLStatement;
 
-public class MySQLDeleteStatement extends SqlStatement {
+public class MySQLDeleteStatement extends SQLStatement {
 
-    private SqlDeleteDefinition definition;
+    private SQLDeleteDefinition definition;
 
     private final MySQLModelMeta mySQLModelMeta;
 
@@ -17,7 +17,7 @@ public class MySQLDeleteStatement extends SqlStatement {
 
     private static final String DELETE_FROM = "DELETE FROM ";
 
-    public MySQLDeleteStatement(SqlDeleteDefinition definition, MySQLModelMeta mySQLModelMeta, WhereStatement whereStatement) {
+    public MySQLDeleteStatement(SQLDeleteDefinition definition, MySQLModelMeta mySQLModelMeta, WhereStatement whereStatement) {
         this.definition = definition;
         this.mySQLModelMeta = mySQLModelMeta;
         this.whereStatement = whereStatement;
@@ -34,20 +34,20 @@ public class MySQLDeleteStatement extends SqlStatement {
         collector.append(whereStatement);
     }
 
-    public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
+    public static void registerToFactory(SQLStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
-            SqlDeleteDefinition.class,
+            SQLDeleteDefinition.class,
             (definition, soleFlag, toolbox) -> {
-                SqlDeleteDefinition sqlDeleteDefinition = (SqlDeleteDefinition) definition;
+                SQLDeleteDefinition sqlDeleteDefinition = (SQLDeleteDefinition) definition;
                 MySQLModelMeta mySQLModelMeta = (MySQLModelMeta) sqlDeleteDefinition.getFromDefinition().getMainFrom();
-                SqlStatement whereSQLStatement = sqlStatementFactory.warmUp(sqlDeleteDefinition.getWhereDefinition(), soleFlag.subSwitch(), toolbox);
+                SQLStatement whereSQLStatement = sqlStatementFactory.warmUp(sqlDeleteDefinition.getWhereDefinition(), soleFlag.subSwitch(), toolbox);
 
                 return new MySQLDeleteStatement(sqlDeleteDefinition, mySQLModelMeta, (WhereStatement) whereSQLStatement);
             },
             (definition, toolbox) -> {
-                SqlDeleteDefinition sqlDeleteDefinition = (SqlDeleteDefinition) definition;
+                SQLDeleteDefinition sqlDeleteDefinition = (SQLDeleteDefinition) definition;
                 MySQLModelMeta mySQLModelMeta = (MySQLModelMeta) sqlDeleteDefinition.getFromDefinition().getMainFrom();
-                SqlStatement whereSQLStatement = sqlStatementFactory.getOrCreate(sqlDeleteDefinition.getWhereDefinition(), toolbox);
+                SQLStatement whereSQLStatement = sqlStatementFactory.getOrCreate(sqlDeleteDefinition.getWhereDefinition(), toolbox);
 
                 return new MySQLDeleteStatement(sqlDeleteDefinition, mySQLModelMeta, (WhereStatement) whereSQLStatement);
             }

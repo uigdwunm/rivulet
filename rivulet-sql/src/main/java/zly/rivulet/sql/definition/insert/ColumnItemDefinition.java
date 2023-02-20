@@ -7,7 +7,7 @@ import zly.rivulet.base.definition.param.ParamReceipt;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.describer.param.ParamCheckType;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
-import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
+import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
 public class ColumnItemDefinition extends AbstractDefinition {
     private final SQLFieldMeta sqlFieldMeta;
@@ -20,7 +20,7 @@ public class ColumnItemDefinition extends AbstractDefinition {
         this.forModelMetaParamReceipt = forModelMetaParamReceipt;
     }
 
-    protected ColumnItemDefinition(SqlParserPortableToolbox toolbox, SQLFieldMeta fieldMeta) {
+    protected ColumnItemDefinition(SQLParserPortableToolbox toolbox, SQLFieldMeta fieldMeta) {
         super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
         this.forModelMetaParamReceipt = toolbox.getParamReceiptManager().registerParam(
             Param.of(

@@ -1,8 +1,8 @@
 package zly.rivulet.mysql;
 
-import zly.rivulet.sql.SqlRivuletProperties;
+import zly.rivulet.sql.SQLRivuletProperties;
 
-public class MySQLRivuletProperties extends SqlRivuletProperties {
+public class MySQLRivuletProperties extends SQLRivuletProperties {
 
     /**
      * 批量插入时,单条插入语句最多插入多少条

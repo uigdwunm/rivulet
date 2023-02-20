@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-public abstract class SqlDefiner implements Definer {
+public abstract class SQLDefiner implements Definer {
 
     /**
      * 注解和类型对象的映射
@@ -21,7 +21,7 @@ public abstract class SqlDefiner implements Definer {
 
     protected final ConvertorManager convertorManager;
 
-    protected SqlDefiner(ConvertorManager convertorManager) {
+    protected SQLDefiner(ConvertorManager convertorManager) {
         this.convertorManager = convertorManager;
         initTypeConvertor();
     }

@@ -3,10 +3,10 @@ package zly.rivulet.mysql.generator.statement.insert;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definition.insert.ColumnItemDefinition;
-import zly.rivulet.sql.generator.SqlStatementFactory;
-import zly.rivulet.sql.generator.statement.SqlStatement;
+import zly.rivulet.sql.generator.SQLStatementFactory;
+import zly.rivulet.sql.generator.statement.SQLStatement;
 
-public class ColumnItemStatement extends SqlStatement {
+public class ColumnItemStatement extends SQLStatement {
 
     private final SQLFieldMeta sqlFieldMeta;
 
@@ -28,7 +28,7 @@ public class ColumnItemStatement extends SqlStatement {
         collector.append(sqlFieldMeta.getOriginName());
     }
 
-    public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
+    public static void registerToFactory(SQLStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
             ColumnItemDefinition.class,
             (definition, soleFlag, toolbox) -> {

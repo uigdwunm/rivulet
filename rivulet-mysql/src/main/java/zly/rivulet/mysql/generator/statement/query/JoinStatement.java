@@ -6,10 +6,10 @@ import zly.rivulet.mysql.generator.statement.operate.OperateStatement;
 import zly.rivulet.sql.definition.query.join.JoinType;
 import zly.rivulet.sql.definition.query.main.JoinRelationDefinition;
 import zly.rivulet.sql.parser.SQLAliasManager;
-import zly.rivulet.sql.generator.SqlStatementFactory;
-import zly.rivulet.sql.generator.statement.SqlStatement;
+import zly.rivulet.sql.generator.SQLStatementFactory;
+import zly.rivulet.sql.generator.statement.SQLStatement;
 
-public class JoinStatement extends SqlStatement {
+public class JoinStatement extends SQLStatement {
     private final QueryFromStatement queryFrom;
 
     private final String alias;
@@ -69,7 +69,7 @@ public class JoinStatement extends SqlStatement {
         }
     }
 
-    public static void registerToFactory(SqlStatementFactory sqlStatementFactory) {
+    public static void registerToFactory(SQLStatementFactory sqlStatementFactory) {
         sqlStatementFactory.register(
             JoinRelationDefinition.class,
             (definition, soleFlag, initHelper) -> {

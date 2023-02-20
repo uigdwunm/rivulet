@@ -1,6 +1,6 @@
 package zly.rivulet.mysql.generator.statement.operate;
 
-import zly.rivulet.sql.generator.statement.SqlStatement;
+import zly.rivulet.sql.generator.statement.SQLStatement;
 
-public abstract class OperateStatement extends SqlStatement {
+public abstract class OperateStatement extends SQLStatement {
 }

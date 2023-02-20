@@ -13,7 +13,7 @@ import zly.rivulet.sql.definition.query.mapping.MapDefinition;
 import zly.rivulet.sql.describer.query.desc.Mapping;
 import zly.rivulet.sql.parser.proxy_node.MetaModelProxyNode;
 import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
-import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
+import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
 public class SetItemDefinition extends AbstractDefinition {
 
@@ -27,7 +27,7 @@ public class SetItemDefinition extends AbstractDefinition {
         this.valueDefinition = valueDefinition;
     }
 
-    public SetItemDefinition(SqlParserPortableToolbox toolbox, MapDefinition fieldMap, Param<?> param) {
+    public SetItemDefinition(SQLParserPortableToolbox toolbox, MapDefinition fieldMap, Param<?> param) {
         super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
 
         QueryProxyNode currNode = toolbox.getQueryProxyNode();
@@ -35,7 +35,7 @@ public class SetItemDefinition extends AbstractDefinition {
         this.fieldMap = fieldMap;
     }
 
-    public SetItemDefinition(SqlParserPortableToolbox toolbox, Mapping<?, ?, ?> mapping) {
+    public SetItemDefinition(SQLParserPortableToolbox toolbox, Mapping<?, ?, ?> mapping) {
         super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
         QueryProxyNode currNode = toolbox.getQueryProxyNode();
         this.valueDefinition = toolbox.parseSingValueForSelect(currNode.getProxyModel(), mapping.getDesc());

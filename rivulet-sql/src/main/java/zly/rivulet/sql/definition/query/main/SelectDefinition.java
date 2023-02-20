@@ -8,7 +8,7 @@ import zly.rivulet.base.utils.View;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
 import zly.rivulet.sql.parser.proxy_node.CommonSelectNode;
 import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
-import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
+import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,7 +34,7 @@ public class SelectDefinition extends AbstractContainerDefinition {
         this.mappingDefinitionList = mappingDefinitionList;
     }
 
-    public SelectDefinition(SqlParserPortableToolbox toolbox, Class<?> selectModel, QueryProxyNode queryProxyNode) {
+    public SelectDefinition(SQLParserPortableToolbox toolbox, Class<?> selectModel, QueryProxyNode queryProxyNode) {
         super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
         List<MapDefinition> mapDefinitionList = queryProxyNode.getSelectNodeList().stream()
             .map(selectNode -> {

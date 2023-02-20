@@ -7,7 +7,7 @@ import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLBigInt;
 import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLInt;
 import zly.rivulet.mysql.definer.annotations.type.string.MySQLChar;
 import zly.rivulet.mysql.definer.annotations.type.string.MySQLVarchar;
-import zly.rivulet.sql.definer.annotations.SqlColumn;
+import zly.rivulet.sql.definer.annotations.SQLColumn;
 import zly.rivulet.sql.definer.annotations.SQLTable;
 
 import java.time.LocalDateTime;
@@ -16,25 +16,25 @@ import java.time.LocalDateTime;
 public class StudentDO {
 
     @PrimaryKey
-    @SqlColumn("id")
+    @SQLColumn("id")
     @MySQLInt
     private Integer id;
 
-    @SqlColumn("person_id")
+    @SQLColumn("person_id")
     @MySQLBigInt
     @Comment("对应person表的主键")
     private Long personId;
 
-    @SqlColumn
+    @SQLColumn
     @MySQLChar(length = 12)
     @Comment("学生编号")
     private String code;
 
-    @SqlColumn
+    @SQLColumn
     @MySQLVarchar(length = 64)
     private String target;
 
-    @SqlColumn("create_time")
+    @SQLColumn("create_time")
     @MySQLDate
     private LocalDateTime createTime;
 

@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface SqlColumn {
+public @interface SQLColumn {
 
     /**
      * Description 字段名，默认是变量名

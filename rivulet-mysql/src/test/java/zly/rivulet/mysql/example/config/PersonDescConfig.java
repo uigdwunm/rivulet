@@ -6,13 +6,13 @@ import zly.rivulet.base.describer.param.ParamCheckType;
 import zly.rivulet.mysql.model.PersonDO;
 import zly.rivulet.sql.describer.condition.common.Condition;
 import zly.rivulet.sql.describer.query.SQLQueryBuilder;
-import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
+import zly.rivulet.sql.describer.query.SQLQueryMetaDesc;
 import zly.rivulet.sql.describer.query.desc.Mapping;
 
 public class PersonDescConfig {
 
     @RivuletDesc("queryById")
-    public static SqlQueryMetaDesc<PersonDO, PersonDO> queryById() {
+    public static SQLQueryMetaDesc<PersonDO, PersonDO> queryById() {
         return SQLQueryBuilder.query(PersonDO.class, PersonDO.class)
             .where(
                 Condition.Equal.of(PersonDO::getId, Param.of(Long.class, "id", ParamCheckType.PLACEHOLDER))
@@ -20,7 +20,7 @@ public class PersonDescConfig {
     }
 
     @RivuletDesc("sdf")
-    public static SqlQueryMetaDesc<PersonDO, PersonDO> queryPerson() {
+    public static SQLQueryMetaDesc<PersonDO, PersonDO> queryPerson() {
         return SQLQueryBuilder.query(PersonDO.class, PersonDO.class)
             .select(
                 Mapping.of(PersonDO::setId, PersonDO::getId),

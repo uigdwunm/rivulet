@@ -12,7 +12,7 @@ import zly.rivulet.sql.definition.query.mapping.MapDefinition;
 import zly.rivulet.sql.describer.query.desc.Mapping;
 import zly.rivulet.sql.parser.proxy_node.FromNode;
 import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
-import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
+import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,7 +26,7 @@ public class SetDefinition extends AbstractContainerDefinition {
         this.setItemDefinitionView = View.create(setItemDefinitionList);
     }
 
-    public SetDefinition(SqlParserPortableToolbox toolbox, List<? extends Mapping<?, ?, ?>> mappedItemList) {
+    public SetDefinition(SQLParserPortableToolbox toolbox, List<? extends Mapping<?, ?, ?>> mappedItemList) {
         super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
         List<SetItemDefinition> list = mappedItemList.stream()
             .map(mapping -> new SetItemDefinition(toolbox, mapping))
@@ -34,7 +34,7 @@ public class SetDefinition extends AbstractContainerDefinition {
         this.setItemDefinitionView = View.create(list);
     }
 
-    public SetDefinition(SqlParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta) {
+    public SetDefinition(SQLParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta) {
         super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
         QueryProxyNode currNode = toolbox.getQueryProxyNode();
         FromNode fromNode = currNode.getFromNodeList().get(0);

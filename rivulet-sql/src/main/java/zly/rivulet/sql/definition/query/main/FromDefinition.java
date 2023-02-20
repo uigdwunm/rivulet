@@ -7,12 +7,12 @@ import zly.rivulet.sql.describer.join.QueryComplexModel;
 import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.describer.join.ComplexDescriber;
-import zly.rivulet.sql.describer.query.SqlQueryMetaDesc;
+import zly.rivulet.sql.describer.query.SQLQueryMetaDesc;
 import zly.rivulet.sql.parser.SQLAliasManager;
 import zly.rivulet.sql.parser.proxy_node.FromNode;
 import zly.rivulet.sql.parser.proxy_node.MetaModelProxyNode;
 import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
-import zly.rivulet.sql.parser.toolbox.SqlParserPortableToolbox;
+import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,7 +32,7 @@ public class FromDefinition extends AbstractDefinition {
         this.joinRelations = joinRelations;
     }
 
-    public FromDefinition(SqlParserPortableToolbox toolbox) {
+    public FromDefinition(SQLParserPortableToolbox toolbox) {
         super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
 
         QueryProxyNode proxyNode = toolbox.getQueryProxyNode();
@@ -63,7 +63,7 @@ public class FromDefinition extends AbstractDefinition {
             return ((SQLModelMeta) mainFrom).getModelClass();
         } else {
             // 随便返回一个,无意义
-            return SqlQueryMetaDesc.class;
+            return SQLQueryMetaDesc.class;
         }
     }
 
