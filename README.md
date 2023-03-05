@@ -1,4 +1,7 @@
 # rivulet（半成品预览版）
+## 介绍文档
+1. [概览介绍](https://mp.weixin.qq.com/s/h4YeXvYREXcMRS9HwqBKaw)
+2. [关于轻松写出一个SQL](https://mp.weixin.qq.com/s/TW_k1Ur-L0nmCBXFJyJ4HA)
 ## 说明文档
 1. [spl语句映射规则](docs/cn/使用说明/sql语句映射规则.md)
 2. [扩展点](docs/cn/使用说明/扩展点.md)

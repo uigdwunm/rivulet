@@ -15,8 +15,6 @@ public class CityProvinceJoin implements QueryComplexModel {
 
     private CityDO cityDO;
 
-    private CityDO cityDO2;
-
     @SQLSubQuery("queryProvince")
     private ProvinceDO subProvinceDO;
 
@@ -26,11 +24,6 @@ public class CityProvinceJoin implements QueryComplexModel {
     public ComplexDescriber register() {
         ComplexDescriber describer = ComplexDescriber.from(cityDO);
 
-        // 联表条件
-        describer.leftJoin(cityDO2)
-            .on(
-                JoinCondition.Equal.of(provinceDO::getCode, cityDO2::getProvinceCode)
-            );
         // 联表条件
         describer.leftJoin(provinceDO)
             .on(

@@ -31,8 +31,8 @@ public abstract class BaseTest {
     public static void createRivuletManager() {
         rivuletManager = new DefaultMySQLDataSourceRivuletManager(
             new MySQLRivuletProperties(),
-//            createRealDataSource()
-            createDataSource()
+            createRealDataSource()
+//            createDataSource()
         );
         rivuletManager.putInStorageByBasePackage("zly.rivulet.mysql");
 
