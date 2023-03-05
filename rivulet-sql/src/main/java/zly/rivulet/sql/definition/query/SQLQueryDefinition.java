@@ -70,7 +70,7 @@ public class SQLQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
         this.paramReceiptManager = toolbox.getParamReceiptManager();
 
         ProxyNodeManager proxyModelManager = toolbox.getSqlPreParser().getProxyModelManager();
-        QueryProxyNode queryProxyNode = proxyModelManager.getOrCreateQueryProxyNode(this, toolbox, metaDesc);
+        QueryProxyNode queryProxyNode = proxyModelManager.createQueryProxyNode(this, toolbox, metaDesc);
         toolbox.setQueryProxyNode(queryProxyNode);
 
         this.selectDefinition = new SelectDefinition(toolbox, metaDesc.getSelectModel(), queryProxyNode);
@@ -131,7 +131,7 @@ public class SQLQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
         this.aliasManager = new SQLAliasManager(toolbox.getConfigProperties());
         // 生成queryProxyNode
         ProxyNodeManager proxyModelManager = toolbox.getSqlPreParser().getProxyModelManager();
-        QueryProxyNode queryProxyNode = proxyModelManager.getOrCreateQueryProxyNode(toolbox, sqlModelMeta);
+        QueryProxyNode queryProxyNode = proxyModelManager.createQueryProxyNode(toolbox, sqlModelMeta);
         toolbox.setQueryProxyNode(queryProxyNode);
         this.fromDefinition = new FromDefinition(toolbox);
         this.selectDefinition = new SelectDefinition(toolbox, modelClass, queryProxyNode);

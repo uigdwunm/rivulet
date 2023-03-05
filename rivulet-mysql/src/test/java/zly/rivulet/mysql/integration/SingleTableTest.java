@@ -55,10 +55,31 @@ public class SingleTableTest extends BaseTest {
         System.out.println(statement);
     }
 
+    @RivuletDesc("queryByCode")
+    public WholeDesc queryByCode() {
+        // select * from t_province where name = '小明' and (code > 2 or code <= 8)
+        return SQLQueryBuilder.query(ProvinceDO.class, ProvinceDO.class)
+            .where(
+                Condition.IN.of(
+                    ProvinceDO::getCode,
+                    SQLQueryBuilder.query(ProvinceDO.class, Integer.class).selectOne(ProvinceDO::getCode).build()
+                )
+            ).build();
+//        return SQLQueryBuilder.query(ProvinceDO.class, ProvinceDO.class)
+//            .where(
+//                Condition.Equal.of(MySQLFunction.Cast.toNchar(10).of(ProvinceDO::getCode), Param.staticOf("2"))
+//            ).build();
+    }
+
+    @Test
+    public void test() {
+        Fish fish = rivuletManager.testParse("queryByCode");
+        String statement = MySQLPrintUtils.commonPrint(fish);
+        System.out.println(statement);
+    }
+
     @RivuletDesc("queryProvince")
     public WholeDesc queryProvince() {
-
-
         return SQLQueryBuilder.query(ProvinceDO.class, ProvinceDO.class)
             .select(
                 Mapping.of(ProvinceDO::setCode, Param.staticOf(112)),
@@ -83,6 +104,7 @@ public class SingleTableTest extends BaseTest {
 
     @RivuletDesc("queryById")
     public WholeDesc queryById() {
+        // select * from t_person where id = 2
         return SQLQueryBuilder.query(PersonDO.class, PersonDO.class)
             .where(Condition.Equal.of(PersonDO::getId, Param.staticOf(2)))
             .build();

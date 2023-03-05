@@ -54,7 +54,7 @@ public class SQLDeleteDefinition extends SQLBlueprint {
         }
         // 获取QueryProxyNode
         ProxyNodeManager proxyModelManager = toolbox.getSqlPreParser().getProxyModelManager();
-        QueryProxyNode queryProxyNode = proxyModelManager.getOrCreateQueryProxyNode(toolbox, metaDesc.getAnnotation(), mainFrom);
+        QueryProxyNode queryProxyNode = proxyModelManager.createQueryProxyNode(toolbox, metaDesc.getAnnotation(), mainFrom);
         toolbox.setQueryProxyNode(queryProxyNode);
 
         this.fromDefinition = new FromDefinition(toolbox);
@@ -79,7 +79,7 @@ public class SQLDeleteDefinition extends SQLBlueprint {
         }
         SQLParser sqlParser = toolbox.getSqlPreParser();
         ProxyNodeManager proxyModelManager = sqlParser.getProxyModelManager();
-        QueryProxyNode queryProxyNode = proxyModelManager.getOrCreateQueryProxyNode(toolbox, sqlModelMeta);
+        QueryProxyNode queryProxyNode = proxyModelManager.createQueryProxyNode(toolbox, sqlModelMeta);
         toolbox.setQueryProxyNode(queryProxyNode);
 
         this.fromDefinition = new FromDefinition(toolbox);

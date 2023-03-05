@@ -30,19 +30,23 @@ public final class ProxyNodeManager {
      * @author zhaolaiyuan
      * Date 2022/10/8 19:42
      **/
-    public MetaModelProxyNode getOrCreateProxyMetaModel(SQLModelMeta sqlModelMeta) {
-        MetaModelProxyNode metaModelProxyNode = metaModelProxyNodeMap.get(sqlModelMeta);
-        if (metaModelProxyNode != null) {
-            return metaModelProxyNode;
+    public MetaModelProxyNode getOrCreateProxyMetaModel(SQLModelMeta sqlModelMeta, SQLParserPortableToolbox toolbox) {
+        // 每个表的代理对象只能从缓存拿一次
+        if (toolbox.repeatProxyNodeCheck(sqlModelMeta)) {
+            MetaModelProxyNode metaModelProxyNode = metaModelProxyNodeMap.get(sqlModelMeta);
+            if (metaModelProxyNode != null) {
+                // 缓存有则可以拿
+                return metaModelProxyNode;
+            }
         }
 
-        metaModelProxyNode = new MetaModelProxyNode(sqlModelMeta);
+        MetaModelProxyNode metaModelProxyNode = new MetaModelProxyNode(sqlModelMeta);
         metaModelProxyNodeMap.put(sqlModelMeta, metaModelProxyNode);
         return metaModelProxyNode;
     }
 
 
-    public QueryProxyNode getOrCreateQueryProxyNode(
+    public QueryProxyNode createQueryProxyNode(
         SQLQueryDefinition sqlQueryDefinition,
         SQLParserPortableToolbox toolbox,
         SQLQueryMetaDesc<?, ?> metaDesc
@@ -52,24 +56,12 @@ public final class ProxyNodeManager {
             return new QueryProxyNode(sqlQueryDefinition, toolbox, metaDesc);
         }
         // 从缓存取
-        QueryProxyNode queryProxyNode = this.queryProxyNodeMap.get(rivuletDesc.value());
-        if (queryProxyNode != null) {
-            if (toolbox.repeatProxyNodeCheck(queryProxyNode)) {
-                return queryProxyNode;
-            } else {
-                // 整个语句中会可能会有多个子查询，每个子查询必须要有自己的ProxyNode，要不解析会乱套
-                // 所以从缓存拿ProxyNode没问题，但是只能拿一次，如果出现重复的，一定得新建
-                return new QueryProxyNode(sqlQueryDefinition, toolbox, metaDesc);
-            }
-        } else {
-            // 缓存中没有
-            queryProxyNode = new QueryProxyNode(sqlQueryDefinition, toolbox, metaDesc);
-            this.queryProxyNodeMap.put(rivuletDesc.value(), queryProxyNode);
-            return queryProxyNode;
-        }
+        QueryProxyNode queryProxyNode = new QueryProxyNode(sqlQueryDefinition, toolbox, metaDesc);
+        this.queryProxyNodeMap.put(rivuletDesc.value(), queryProxyNode);
+        return queryProxyNode;
     }
 
-    public QueryProxyNode getOrCreateQueryProxyNode(
+    public QueryProxyNode createQueryProxyNode(
         SQLParserPortableToolbox toolbox,
         RivuletDesc rivuletDesc,
         Class<?> fromModelClass
@@ -78,18 +70,13 @@ public final class ProxyNodeManager {
             return new QueryProxyNode(toolbox, fromModelClass);
         }
 
-        QueryProxyNode queryProxyNode = this.queryProxyNodeMap.get(rivuletDesc.value());
-        if (queryProxyNode != null) {
-            return queryProxyNode;
-        }
-
-        queryProxyNode = new QueryProxyNode(toolbox, fromModelClass);
+        QueryProxyNode queryProxyNode = new QueryProxyNode(toolbox, fromModelClass);
         this.queryProxyNodeMap.put(rivuletDesc.value(), queryProxyNode);
         return queryProxyNode;
     }
 
 
-    public QueryProxyNode getOrCreateQueryProxyNode(SQLParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta) {
+    public QueryProxyNode createQueryProxyNode(SQLParserPortableToolbox toolbox, SQLModelMeta sqlModelMeta) {
         return new QueryProxyNode(toolbox, sqlModelMeta);
     }
 

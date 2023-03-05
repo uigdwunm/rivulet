@@ -80,6 +80,13 @@ public abstract class RivuletManager {
                 this.putInStorage(clazz);
             }
         }
+        for (Map.Entry<String, WholeDesc> entry : rivuletKey_wholeDesc_map.entrySet()) {
+            String key = entry.getKey();
+            WholeDesc wholeDesc = entry.getValue();
+
+            Blueprint blueprint = parser.parse(wholeDesc);
+            this.rivuletKey_blueprint_map.put(key, blueprint);
+        }
     }
 
     /**
@@ -102,9 +109,6 @@ public abstract class RivuletManager {
                     WholeDesc wholeDesc = (WholeDesc) method.invoke(o);
                     wholeDesc.setAnnotation(rivuletDesc);
                     rivuletKey_wholeDesc_map.put(key, wholeDesc);
-
-                    Blueprint blueprint = parser.parse(wholeDesc);
-                    this.rivuletKey_blueprint_map.put(key, blueprint);
                 }
             }
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {

@@ -11,6 +11,7 @@ import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.base.parser.toolbox.ParserPortableToolbox;
 import zly.rivulet.sql.SQLRivuletProperties;
+import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.function.SQLFunctionDefinition;
 import zly.rivulet.sql.definition.query.SQLQueryDefinition;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
@@ -52,7 +53,7 @@ public class SQLParserPortableToolbox implements ParserPortableToolbox {
      * 整个语句中会可能会有多个子查询，每个子查询必须要有自己的ProxyNode，要不解析会乱套
      * 所以从缓存拿ProxyNode没问题，但是只能拿一次，如果出现重复的，一定得新建
      **/
-    private final Set<QueryProxyNode> repeatProxyNodeCheck = new HashSet<>();
+    private final Set<SQLModelMeta> repeatProxyModelCheck = new HashSet<>();
 
     public SQLParserPortableToolbox(SQLParser sqlPreParser) {
         this.sqlPreParser = sqlPreParser;
@@ -193,7 +194,7 @@ public class SQLParserPortableToolbox implements ParserPortableToolbox {
      * @author zhaolaiyuan
      * Date 2022/10/27 8:41
      **/
-    public boolean repeatProxyNodeCheck(QueryProxyNode queryProxyNode) {
-        return repeatProxyNodeCheck.add(queryProxyNode);
+    public boolean repeatProxyNodeCheck(SQLModelMeta sqlModelMeta) {
+        return repeatProxyModelCheck.add(sqlModelMeta);
     }
 }

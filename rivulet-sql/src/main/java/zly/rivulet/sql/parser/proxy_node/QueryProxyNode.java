@@ -116,7 +116,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
             SQLParser sqlParser = toolbox.getSqlPreParser();
             ProxyNodeManager proxyModelManager = sqlParser.getProxyModelManager();
             SQLModelMeta sqlModelMeta = sqlParser.getDefiner().createOrGetModelMeta(fromModelClass);
-            MetaModelProxyNode metaModelProxyNode = proxyModelManager.getOrCreateProxyMetaModel(sqlModelMeta);
+            MetaModelProxyNode metaModelProxyNode = proxyModelManager.getOrCreateProxyMetaModel(sqlModelMeta, toolbox);
 
             this.proxyModel = metaModelProxyNode.getProxyModel();
             this.fromNodeList = Collections.singletonList(metaModelProxyNode);
@@ -156,7 +156,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
         SQLParser sqlPreParser = toolbox.getSqlPreParser();
         ProxyNodeManager proxyModelManager = sqlPreParser.getProxyModelManager();
         ConvertorManager convertorManager = sqlPreParser.getConvertorManager();
-        MetaModelProxyNode metaModelProxyNode = proxyModelManager.getOrCreateProxyMetaModel(sqlModelMeta);
+        MetaModelProxyNode metaModelProxyNode = proxyModelManager.getOrCreateProxyMetaModel(sqlModelMeta, toolbox);
         this.proxyModel = metaModelProxyNode.getProxyModel();
         this.fromNodeList = Collections.singletonList(metaModelProxyNode);
 
@@ -177,7 +177,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
         SQLParser sqlParser = toolbox.getSqlPreParser();
         ProxyNodeManager proxyModelManager = sqlParser.getProxyModelManager();
         SQLModelMeta sqlModelMeta = sqlParser.getDefiner().createOrGetModelMeta(fromModelClass);
-        MetaModelProxyNode metaModelProxyNode = proxyModelManager.getOrCreateProxyMetaModel(sqlModelMeta);
+        MetaModelProxyNode metaModelProxyNode = proxyModelManager.getOrCreateProxyMetaModel(sqlModelMeta, toolbox);
 
         this.proxyModel = metaModelProxyNode.getProxyModel();
         this.fromNodeList = Collections.singletonList(metaModelProxyNode);
@@ -347,7 +347,7 @@ public class QueryProxyNode implements SelectNode, FromNode {
                 throw SQLDescDefineException.unknownQueryType(field.getType());
             }
             ProxyNodeManager proxyModelManager = sqlParser.getProxyModelManager();
-            return proxyModelManager.getOrCreateProxyMetaModel(sqlModelMeta);
+            return proxyModelManager.getOrCreateProxyMetaModel(sqlModelMeta, toolbox);
         }
     }
 
