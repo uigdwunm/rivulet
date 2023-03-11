@@ -35,10 +35,10 @@ public class SingleTableTest extends BaseTest {
         LocalDate end = LocalDate.of(1995, Month.JANUARY, 1);
         return SQLQueryBuilder.query(PersonDO.class, PersonDO.class)
                 .select(
-                        Mapping.of(PersonDO::setName, MySQLFunction.Cast.toNchar(10).of(PersonDO::getId))
+                        Mapping.of(PersonDO::setName, MySQLFunction.toNchar(10).of(PersonDO::getId))
                 )
                 .where(
-                    Condition.Equal.of(MySQLFunction.Arithmetical.ADD.of(PersonDO::getId, PersonDO::getId), Param.staticOf(666)),
+                    Condition.Equal.of(MySQLFunction.ADD.of(PersonDO::getId, PersonDO::getId), Param.staticOf(666)),
                     Condition.BETWEEN.of(PersonDO::getBirthday, Param.staticOf(start), Param.staticOf(end))
                 )
                 .orderBy(SortItem.asc(PersonDO::getGender))
@@ -134,10 +134,10 @@ public class SingleTableTest extends BaseTest {
 
     @RivuletDesc("count")
     public WholeDesc count() {
-        SQLFunction<Object, String> of = MySQLFunction.Aggregate.COUNT.of(Param.staticOf("1"));
+        SQLFunction<Object, String> of = MySQLFunction.COUNT.of(Param.staticOf("1"));
         return SQLQueryBuilder.query(PersonDO.class, Integer.class)
             .selectOne(
-                MySQLFunction.Aggregate.COUNT.of(Param.staticOf(1))
+                MySQLFunction.COUNT.of(Param.staticOf(1))
             ).build();
     }
 

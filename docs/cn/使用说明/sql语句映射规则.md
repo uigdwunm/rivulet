@@ -210,9 +210,9 @@ class Demo {
       // select code + code from t_province where code = code + code
       return SQLQueryBuilder.query(ProvinceDO.class, ProvinceDO.class)
               .select( 
-                  Mapping.of(ProvinceDO::setCode, MySQLFunction.Arithmetical.ADD.of(ProvinceDO::getCode, ProvinceDO::getCode))
+                  Mapping.of(ProvinceDO::setCode, MySQLFunction.ADD.of(ProvinceDO::getCode, ProvinceDO::getCode))
               ).where(
-                  Condition.Equal.of(ProvinceDO::getCode, MySQLFunction.Arithmetical.ADD.of(ProvinceDO::getCode, ProvinceDO::getCode))
+                  Condition.Equal.of(ProvinceDO::getCode, MySQLFunction.ADD.of(ProvinceDO::getCode, ProvinceDO::getCode))
               ).build();
    }
 }
@@ -251,9 +251,9 @@ class Demo {
       // select code + code from t_province where code = code + code
       return SQLQueryBuilder.query(ProvinceDO.class, ProvinceDO.class)
               .select(
-                      Mapping.of(ProvinceDO::setCode, MySQLFunction.Arithmetical.ADD.of(ProvinceDO::getCode, ProvinceDO::getCode))
+                      Mapping.of(ProvinceDO::setCode, MySQLFunction.ADD.of(ProvinceDO::getCode, ProvinceDO::getCode))
               ).where(
-                      Condition.Equal.of(ProvinceDO::getCode, MySQLFunction.Arithmetical.ADD.of(ProvinceDO::getCode, ProvinceDO::getCode))
+                      Condition.Equal.of(ProvinceDO::getCode, MySQLFunction.ADD.of(ProvinceDO::getCode, ProvinceDO::getCode))
               ).build();
    }
    @RivuletDesc("queryProvince")
