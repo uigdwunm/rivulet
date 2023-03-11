@@ -25,6 +25,12 @@
 ### 使用spring接入
 [rivulet-spring](https://github.com/uigdwunm/rivulet-spring)
 ### 使用原生方式接入（最简单案例快速开始）
+>
+>&lt;dependency>\
+>&ensp;&ensp;&ensp;&ensp;&lt;groupId>io.github.uigdwunm&lt;/groupId>\
+>&ensp;&ensp;&ensp;&ensp;&lt;artifactId>rivulet-mysql&lt;/artifactId>\
+>&ensp;&ensp;&ensp;&ensp;&lt;version>0.0.13-PREVIEW&lt;/version>\
+>&lt;/dependency>
 1. 准备声明RivuletManager，并配置要扫描的包。
 ```java
 public class CreateSQLRivuletManagerTest {
