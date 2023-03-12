@@ -158,11 +158,11 @@ sql就短短的那么一段字符串实际上耗不了太多性能，不过我�
 一般sql拼接都是用占位符替换的。\
 首先看看sql的语法树。
 真的是一棵树。
-![](docs/img/yfs.png)\
+![](https://github.com/uigdwunm/rivulet/tree/main/docs/img/yfs.png)\
 我将对象化的sql利用起来，有了语句的父子包含关系，可以将每个部分进行缓存。\
 其中不能缓存的地方，比如参数，就标记上，同时子级对象不能缓存，那父级对象也不能缓存，要有连带失效的能力。\
 这样处理整条sql语句后。\
-![](docs/img/bnhc.png)\
+![](https://github.com/uigdwunm/rivulet/tree/main/docs/img/bnhc.png)\
 如图，红色是不能缓存的，绿色是可以缓存的。\
 只要语句中每个部位都能缓存，那么最外层的父级就能直接拿到。\
 虽然原理很简单，不过实现还花了点小心思，做这种小玩具挺好玩的。\
