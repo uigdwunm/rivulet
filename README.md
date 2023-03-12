@@ -24,7 +24,7 @@
 ## 快速开始
 ### 使用spring接入
 [rivulet-spring](https://github.com/uigdwunm/rivulet-spring)
-### 使用原生方式接入（最简单案例快速开始）
+### 使用原生方式接入
 >
 >&lt;dependency>\
 >&ensp;&ensp;&ensp;&ensp;&lt;groupId>io.github.uigdwunm&lt;/groupId>\
