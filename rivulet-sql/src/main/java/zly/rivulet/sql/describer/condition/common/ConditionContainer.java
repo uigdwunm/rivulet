@@ -4,21 +4,21 @@ import zly.rivulet.sql.describer.condition.ConditionOperate;
 
 import java.util.List;
 
-public abstract class ConditionContainer<F, C> implements Condition<F, C> {
+public abstract class ConditionContainer implements Condition {
 
-    private final List<Condition<?, ?>> conditionElementList;
+    private final List<Condition> conditionElementList;
 
-    protected ConditionContainer(List<Condition<?, ?>> conditionElementList) {
+    protected ConditionContainer(List<Condition> conditionElementList) {
         this.conditionElementList = conditionElementList;
     }
 
-    public List<Condition<?, ?>> getConditionElementList() {
+    public List<Condition> getConditionElementList() {
         return conditionElementList;
     }
 
-    public static class AND<F, C> extends ConditionContainer<F, C> {
+    public static class AND extends ConditionContainer {
 
-        public AND(List<Condition<?, ?>> conditionElementList) {
+        public AND(List<Condition> conditionElementList) {
             super(conditionElementList);
         }
 
@@ -28,9 +28,9 @@ public abstract class ConditionContainer<F, C> implements Condition<F, C> {
         }
     }
 
-    public static class OR<F, C> extends ConditionContainer<F, C> {
+    public static class OR extends ConditionContainer {
 
-        public OR(List<Condition<?, ?>> conditionElementList) {
+        public OR(List<Condition> conditionElementList) {
             super(conditionElementList);
         }
 

@@ -6,5 +6,5 @@ package zly.rivulet.base.describer;
  * @author zhaolaiyuan
  * Date 2022/1/2 13:50
  **/
-public interface SingleValueElementDesc<F, C> extends Desc {
+public interface SingleValueElementDesc extends Desc {
 }

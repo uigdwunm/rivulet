@@ -27,7 +27,7 @@ import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefini
 import zly.rivulet.sql.describer.condition.common.ConditionContainer;
 import zly.rivulet.sql.describer.custom.SQLPartCustomDesc;
 import zly.rivulet.sql.describer.query.SQLQueryMetaDesc;
-import zly.rivulet.sql.describer.query.desc.SortItem;
+import zly.rivulet.sql.describer.select.item.SortItem;
 import zly.rivulet.sql.parser.SQLAliasManager;
 import zly.rivulet.sql.parser.proxy_node.FromNode;
 import zly.rivulet.sql.parser.proxy_node.ProxyNodeManager;

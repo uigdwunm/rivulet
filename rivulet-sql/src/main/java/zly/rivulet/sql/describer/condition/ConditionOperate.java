@@ -43,14 +43,14 @@ public enum ConditionOperate {
 
     ;
 
-    private final BiFunction<SQLParserPortableToolbox, Condition<?, ?>, OperateDefinition> operate;
+    private final BiFunction<SQLParserPortableToolbox, Condition, OperateDefinition> operate;
 
 
-    ConditionOperate(BiFunction<SQLParserPortableToolbox, Condition<?, ?>, OperateDefinition> operate) {
+    ConditionOperate(BiFunction<SQLParserPortableToolbox, Condition, OperateDefinition> operate) {
         this.operate = operate;
     }
 
-    public OperateDefinition createDefinition(SQLParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
+    public OperateDefinition createDefinition(SQLParserPortableToolbox sqlPreParseHelper, Condition condition) {
         return operate.apply(sqlPreParseHelper, condition);
     }
 

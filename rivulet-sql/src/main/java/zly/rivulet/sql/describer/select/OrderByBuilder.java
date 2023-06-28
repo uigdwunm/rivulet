@@ -1,4 +1,4 @@
-package zly.rivulet.sql.describer.query.builder;
+package zly.rivulet.sql.describer.select;
 
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.sql.definition.query.main.OrderByDefinition;
@@ -8,10 +8,10 @@ import zly.rivulet.sql.describer.select.item.SortItem;
 import java.util.Arrays;
 import java.util.List;
 
-public class OrderByBuilder<F, S> extends SkitBuilder<F, S> {
+public class OrderByBuilder<T> extends SkitBuilder<T> {
 
-    @SafeVarargs
-    public final SkitBuilder<F, S> orderBy(SortItem<F, ?> ... items) {
+
+    public final SkitBuilder<T> orderBy(SortItem ... items) {
         super.orderItemList = Arrays.asList(items);
         return this;
     }
@@ -22,7 +22,7 @@ public class OrderByBuilder<F, S> extends SkitBuilder<F, S> {
      * @author zhaolaiyuan
      * Date 2022/10/23 11:44
      **/
-    public final SkitBuilder<F, S> orderBy(Param<SQLPartCustomDesc> customDescParam) {
+    public final SkitBuilder<T> orderBy(Param<SQLPartCustomDesc> customDescParam) {
         super.customStatementMap.put(OrderByDefinition.class, customDescParam);
         return this;
     }
@@ -33,7 +33,7 @@ public class OrderByBuilder<F, S> extends SkitBuilder<F, S> {
      * @author zhaolaiyuan
      * Date 2022/10/23 11:44
      **/
-    public final SkitBuilder<F, S> orderBy(Param<SQLPartCustomDesc> customDescParam, List<SortItem<F, ?>> orderItemList) {
+    public final SkitBuilder<T> orderBy(Param<SQLPartCustomDesc> customDescParam, List<SortItem> orderItemList) {
         super.customStatementMap.put(OrderByDefinition.class, customDescParam);
         super.orderItemList = orderItemList;
         return this;

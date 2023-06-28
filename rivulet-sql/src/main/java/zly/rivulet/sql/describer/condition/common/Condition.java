@@ -4,18 +4,16 @@ import zly.rivulet.sql.describer.condition.ConditionOperate;
 
 import java.util.Arrays;
 
-public interface Condition<F, C> {
+public interface Condition {
 
     ConditionOperate getOperate();
 
-    @SafeVarargs
-    static <F> ConditionContainer<F, ?> and(Condition<F, ?>... items) {
-        return new ConditionContainer.AND<>(Arrays.asList(items));
+    static ConditionContainer and(Condition ... items) {
+        return new ConditionContainer.AND(Arrays.asList(items));
     }
 
-    @SafeVarargs
-    static <F> ConditionContainer<F, ?> or(Condition<F, ?>... items) {
-        return new ConditionContainer.OR<>(Arrays.asList(items));
+    static ConditionContainer or(Condition ... items) {
+        return new ConditionContainer.OR(Arrays.asList(items));
     }
 
     /**

@@ -10,26 +10,20 @@ import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.utils.CollectionUtils;
 import zly.rivulet.sql.describer.condition.common.ConditionContainer;
 import zly.rivulet.sql.describer.custom.SQLPartCustomDesc;
-import zly.rivulet.sql.describer.query.desc.Mapping;
-import zly.rivulet.sql.describer.query.desc.SortItem;
+import zly.rivulet.sql.describer.meta.SQLColumnMeta;
+import zly.rivulet.sql.describer.select.item.Mapping;
+import zly.rivulet.sql.describer.select.item.SortItem;
 import zly.rivulet.sql.exception.SQLDescDefineException;
 
 import java.util.List;
 import java.util.Map;
 
-public class SQLQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, WholeDesc {
-    /**
-     * 查询主要模型，from
-     * 有两种赋值方式，
-     * modelFrom 是表模型或联表模型
-     *
-     **/
-    protected final Class<F> modelFrom;
+public class SQLQueryMetaDesc<R> implements SingleValueElementDesc, WholeDesc {
 
     /**
      * 查询结果映射模型
      **/
-    protected final Class<S> selectModel;
+    protected final Class<R> resultModelClass;
 
     /**
      * 是否查询返回并映射为单个结果类型
@@ -39,27 +33,27 @@ public class SQLQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
     /**
      * 映射的查询列表，
      **/
-    protected final List<Mapping<F, S, ?>> mappedItemList;
+    protected final List<Mapping<R>> mappedItemList;
 
     /**
      * where查询子项
      **/
-    protected final ConditionContainer<?, ?> whereConditionContainer;
+    protected final ConditionContainer whereConditionContainer;
 
     /**
      * 分组字段的列表
      **/
-    protected final List<FieldMapping<F, ?>> groupFieldList;
+    protected final List<SQLColumnMeta> groupColumnList;
 
     /**
      * having查询子项
      **/
-    protected final ConditionContainer<?, ?> havingConditionContainer;
+    protected final ConditionContainer havingConditionContainer;
 
     /**
      * order排序子项
      **/
-    protected final List<SortItem<F, ?>> orderItemList;
+    protected final List<SortItem> orderItemList;
 
     /**
      * 跳过行数
@@ -83,13 +77,12 @@ public class SQLQueryMetaDesc<F, S> implements SingleValueElementDesc<F, S>, Who
      **/
 //    protected final boolean isHaveNativeStatement;
 
-    public SQLQueryMetaDesc(Class<F> modelFrom, Class<S> selectModel, boolean isOneResult, List<Mapping<F, S, ?>> mappedItemList, ConditionContainer<?, ?> whereConditionContainer, List<FieldMapping<F, ?>> groupFieldList, ConditionContainer<?, ?> havingConditionContainer, List<SortItem<F, ?>> orderItemList, Param<Integer> skit, Param<Integer> limit, Map<Class<? extends Definition>, Param<SQLPartCustomDesc>> customStatementMap) {
-        this.modelFrom = modelFrom;
-        this.selectModel = selectModel;
+    public SQLQueryMetaDesc(Class<R> resultModelClass, boolean isOneResult, List<Mapping<R>> mappedItemList, ConditionContainer whereConditionContainer, List<SQLColumnMeta> groupColumnList, ConditionContainer havingConditionContainer, List<SortItem> orderItemList, Param<Integer> skit, Param<Integer> limit, Map<Class<? extends Definition>, Param<SQLPartCustomDesc>> customStatementMap) {
+        this.resultModelClass = resultModelClass;
         this.isOneResult = isOneResult;
         this.mappedItemList = mappedItemList;
         this.whereConditionContainer = whereConditionContainer;
-        this.groupFieldList = groupFieldList;
+        this.groupColumnList = groupColumnList;
         this.havingConditionContainer = havingConditionContainer;
         this.orderItemList = orderItemList;
         this.skit = skit;

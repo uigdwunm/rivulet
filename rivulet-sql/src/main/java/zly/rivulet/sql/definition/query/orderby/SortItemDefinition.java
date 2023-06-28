@@ -4,7 +4,7 @@ import zly.rivulet.base.definition.AbstractDefinition;
 import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
-import zly.rivulet.sql.describer.query.desc.SortItem;
+import zly.rivulet.sql.describer.select.item.SortItem;
 import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
 public class SortItemDefinition extends AbstractDefinition {

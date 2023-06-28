@@ -7,7 +7,7 @@ import zly.rivulet.sql.describer.condition.common.ConditionContainer;
 import zly.rivulet.sql.describer.custom.SQLPartCustomDesc;
 import zly.rivulet.sql.describer.query.builder.SelectByBuilder;
 import zly.rivulet.sql.describer.query.desc.Mapping;
-import zly.rivulet.sql.describer.query.desc.SortItem;
+import zly.rivulet.sql.describer.select.item.SortItem;
 
 import java.util.HashMap;
 import java.util.List;

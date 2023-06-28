@@ -1,32 +1,5 @@
 package zly.rivulet.mysql.integration;
 
-import com.alibaba.fastjson2.JSON;
-import org.junit.Test;
-import zly.rivulet.base.Rivulet;
-import zly.rivulet.base.convertor.ConvertorManager;
-import zly.rivulet.base.convertor.ResultConvertor;
-import zly.rivulet.base.convertor.StatementConvertor;
-import zly.rivulet.base.definer.annotations.RivuletDesc;
-import zly.rivulet.base.definition.checkCondition.CheckCondition;
-import zly.rivulet.base.describer.WholeDesc;
-import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.base.describer.param.ParamCheckType;
-import zly.rivulet.base.generator.Fish;
-import zly.rivulet.mysql.discriber.function.MySQLFunction;
-import zly.rivulet.mysql.model.PersonDO;
-import zly.rivulet.mysql.model.ProvinceDO;
-import zly.rivulet.mysql.util.MySQLPrintUtils;
-import zly.rivulet.sql.describer.condition.common.Condition;
-import zly.rivulet.sql.describer.function.SQLFunction;
-import zly.rivulet.sql.describer.query.SQLQueryBuilder;
-import zly.rivulet.sql.describer.query.desc.Mapping;
-import zly.rivulet.sql.describer.query.desc.SortItem;
-
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.Collections;
-import java.util.List;
-
 public class SingleTableTest extends BaseTest {
 //
 //    @RivuletDesc("queryPersonTestDesc1")

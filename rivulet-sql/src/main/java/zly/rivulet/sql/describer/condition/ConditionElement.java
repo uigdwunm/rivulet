@@ -3,15 +3,14 @@ package zly.rivulet.sql.describer.condition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.sql.describer.condition.common.Condition;
-import zly.rivulet.sql.describer.condition.join.JoinCondition;
 
-public class ConditionElement<F, C> implements Condition<F, C>, JoinCondition<F, C> {
+public class ConditionElement implements Condition {
 
-    private final SingleValueElementDesc<F, C> leftFieldMapped;
+    private final SingleValueElementDesc leftFieldMapped;
 
     private final ConditionOperate operate;
 
-    private final SingleValueElementDesc<F, C>[] rightFieldMappeds;
+    private final SingleValueElementDesc[] rightFieldMappeds;
 
     /**
      * Description 检测存在条件
@@ -22,7 +21,7 @@ public class ConditionElement<F, C> implements Condition<F, C>, JoinCondition<F,
     private final CheckCondition checkCondition;
 
 //    @SafeVarargs
-//    public ConditionElement(CheckCondition checkCondition, SingleValueElementDesc<F, C> leftFieldMapped, ConditionOperate operate, SingleValueElementDesc<F, C> ... rightFieldMappeds) {
+//    public ConditionElement(CheckCondition checkCondition, SingleValueElementDesc leftFieldMapped, ConditionOperate operate, SingleValueElementDesc ... rightFieldMappeds) {
 //        this.checkCondition = checkCondition;
 //        this.leftFieldMapped = leftFieldMapped;
 //        this.operate = operate;
@@ -31,25 +30,25 @@ public class ConditionElement<F, C> implements Condition<F, C>, JoinCondition<F,
 
     public ConditionElement(CheckCondition checkCondition, Object leftFieldMapped, ConditionOperate operate) {
         this.checkCondition = checkCondition;
-        this.leftFieldMapped = (SingleValueElementDesc<F, C>) leftFieldMapped;
+        this.leftFieldMapped = (SingleValueElementDesc) leftFieldMapped;
         this.operate = operate;
         this.rightFieldMappeds = new SingleValueElementDesc[]{};
     }
 
     public ConditionElement(CheckCondition checkCondition, Object leftFieldMapped, ConditionOperate operate, Object rightFieldMapped) {
         this.checkCondition = checkCondition;
-        this.leftFieldMapped = (SingleValueElementDesc<F, C>) leftFieldMapped;
+        this.leftFieldMapped = (SingleValueElementDesc) leftFieldMapped;
         this.operate = operate;
-        SingleValueElementDesc<F, C> rightFieldMapped1 = (SingleValueElementDesc<F, C>) rightFieldMapped;
+        SingleValueElementDesc rightFieldMapped1 = (SingleValueElementDesc) rightFieldMapped;
         this.rightFieldMappeds = new SingleValueElementDesc[]{rightFieldMapped1};
     }
 
     public ConditionElement(CheckCondition checkCondition, Object leftFieldMapped, ConditionOperate operate, Object rightFieldMapped1, Object rightFieldMapped2) {
         this.checkCondition = checkCondition;
-        this.leftFieldMapped = (SingleValueElementDesc<F, C>) leftFieldMapped;
+        this.leftFieldMapped = (SingleValueElementDesc) leftFieldMapped;
         this.operate = operate;
-        SingleValueElementDesc<F, C> rightFieldMapped11 = (SingleValueElementDesc<F, C>) rightFieldMapped1;
-        SingleValueElementDesc<F, C> rightFieldMapped22 = (SingleValueElementDesc<F, C>) rightFieldMapped2;
+        SingleValueElementDesc rightFieldMapped11 = (SingleValueElementDesc) rightFieldMapped1;
+        SingleValueElementDesc rightFieldMapped22 = (SingleValueElementDesc) rightFieldMapped2;
         this.rightFieldMappeds = new SingleValueElementDesc[]{rightFieldMapped11, rightFieldMapped22};
     }
 
@@ -57,7 +56,7 @@ public class ConditionElement<F, C> implements Condition<F, C>, JoinCondition<F,
         return checkCondition;
     }
 
-    public SingleValueElementDesc<F, C> getLeftFieldMapped() {
+    public SingleValueElementDesc getLeftFieldMapped() {
         return leftFieldMapped;
     }
 
@@ -66,7 +65,7 @@ public class ConditionElement<F, C> implements Condition<F, C>, JoinCondition<F,
         return operate;
     }
 
-    public SingleValueElementDesc<F, C>[] getRightFieldMappeds() {
+    public SingleValueElementDesc[] getRightFieldMappeds() {
         return rightFieldMappeds;
     }
 }
