@@ -12,7 +12,7 @@ public class HivingBuilder<T> extends OrderByBuilder<T> {
     }
 
     public final OrderByBuilder<T> hiving(ConditionContainer conditionContainer) {
-        super.hivingConditionContainer = conditionContainer;
+        super.havingConditionContainer = conditionContainer;
         return this;
     }
 }

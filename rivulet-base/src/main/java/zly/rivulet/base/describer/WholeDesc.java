@@ -5,13 +5,11 @@ import zly.rivulet.base.definer.enums.RivuletFlag;
 
 public interface WholeDesc extends Desc {
 
-    Class<?> getMainFrom();
+    Class<?> getReturnType();
 
     RivuletDesc getAnnotation();
 
     void setAnnotation(RivuletDesc anno);
 
     RivuletFlag getFlag();
-
-    Class<?> getReturnType();
 }

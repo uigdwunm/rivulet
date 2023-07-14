@@ -66,7 +66,7 @@ public class SQLQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
 
     public SQLQueryDefinition(SQLParserPortableToolbox toolbox, WholeDesc wholeDesc) {
         super(RivuletFlag.QUERY, wholeDesc);
-        SQLQueryMetaDesc<?, ?> metaDesc = (SQLQueryMetaDesc<?, ?>) wholeDesc;
+        SQLQueryMetaDesc<?> metaDesc = (SQLQueryMetaDesc<?>) wholeDesc;
         this.paramReceiptManager = toolbox.getParamReceiptManager();
 
         ProxyNodeManager proxyModelManager = toolbox.getSqlPreParser().getProxyModelManager();
@@ -78,7 +78,7 @@ public class SQLQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
 
         this.subDefinitionList.add(selectDefinition);
         this.subDefinitionList.add(fromDefinition);
-        ConditionContainer<?, ?> whereConditionContainer = metaDesc.getWhereConditionContainer();
+        ConditionContainer whereConditionContainer = metaDesc.getWhereConditionContainer();
         if (whereConditionContainer != null) {
             this.whereDefinition = new WhereDefinition(toolbox, whereConditionContainer);
             this.subDefinitionList.add(this.whereDefinition);
@@ -89,12 +89,12 @@ public class SQLQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
             this.groupDefinition = new GroupDefinition(toolbox, groupFieldList);
             this.subDefinitionList.add(this.groupDefinition);
         }
-        ConditionContainer<?, ?> havingConditionContainer = metaDesc.getHavingConditionContainer();
+        ConditionContainer havingConditionContainer = metaDesc.getHavingConditionContainer();
         if (havingConditionContainer != null) {
             this.havingDefinition = new HavingDefinition(toolbox, havingConditionContainer);
             this.subDefinitionList.add(this.havingDefinition);
         }
-        List<? extends SortItem<?, ?>> orderItemList = metaDesc.getOrderItemList();
+        List<? extends SortItem> orderItemList = metaDesc.getOrderItemList();
         if (CollectionUtils.isNotEmpty(orderItemList)) {
             this.orderByDefinition = new OrderByDefinition(toolbox, orderItemList);
             this.subDefinitionList.add(this.orderByDefinition);

@@ -39,7 +39,9 @@ public class SQLQueryBuilder<T> {
      **/
     protected boolean fillModelIgnoreCase = false;
 
-    protected List<Mapping<?>> mappedItemList;
+    protected boolean isOneResult = false;
+
+    protected List<Mapping<T>> mappedItemList = null;
 
     protected SQLTableMeta from;
 
@@ -49,7 +51,7 @@ public class SQLQueryBuilder<T> {
 
     protected List<SQLColumnMeta> groupColumnList = null;
 
-    protected ConditionContainer hivingConditionContainer;
+    protected ConditionContainer havingConditionContainer;
 
     /**
      * order排序子项
@@ -78,9 +80,23 @@ public class SQLQueryBuilder<T> {
         return selectBuilder;
     }
 
-
-
     public SQLQueryMetaDesc<T> build() {
-
+        return new SQLQueryMetaDesc<>(
+                this.resultModelClass,
+                this.autoFillModel,
+                this.fillModelAutoConvertUnderline,
+                this.fillModelIgnoreCase,
+                this.isOneResult,
+                this.mappedItemList,
+                this.from,
+                this.joinList,
+                this.whereConditionContainer,
+                this.groupColumnList,
+                this.havingConditionContainer,
+                this.orderItemList,
+                this.skit,
+                this.limit,
+                this.customStatementMap
+        );
     }
 }
