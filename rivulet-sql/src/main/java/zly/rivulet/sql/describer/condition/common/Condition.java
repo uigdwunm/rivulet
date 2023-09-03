@@ -79,7 +79,7 @@ public interface Condition {
     /**
      * ${value} IN (${value})
      */
-    BinaryOperation IN = new BinaryOperation() {
+    BinaryOperation in = new BinaryOperation() {
         @Override
         public ConditionOperate getConditionOperate() {
             return ConditionOperate.IN;

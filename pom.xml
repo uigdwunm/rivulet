@@ -39,6 +39,7 @@
         <module>rivulet-base</module>
         <module>rivulet-sql</module>
         <module>rivulet-mysql</module>
+        <module>rivulet-util</module>
     </modules>
 
     <properties>

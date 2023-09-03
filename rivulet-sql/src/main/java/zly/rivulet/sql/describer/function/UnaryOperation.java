@@ -18,7 +18,7 @@ public interface UnaryOperation {
     BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCollect();
 
     default <F, C> SQLFunction<F, C> of(FieldMapping<F, C> value) {
-        return new SQLFunction<F, C>(Collections.singletonList(value)) {
+        return new SQLFunction<F, C>(Collections.singletonList(value), targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -27,7 +27,7 @@ public interface UnaryOperation {
     }
 
     default <F, C> SQLFunction<F, C> of(JoinFieldMapping<C> value) {
-        return new SQLFunction<F, C>(Collections.singletonList((SingleValueElementDesc) value)) {
+        return new SQLFunction<F, C>(Collections.singletonList((SingleValueElementDesc) value), targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -36,7 +36,7 @@ public interface UnaryOperation {
     }
 
     default <F, C> SQLFunction<F, C> of(Function<F, C> value) {
-        return new SQLFunction<F, C>(Collections.singletonList((SingleValueElementDesc) value)) {
+        return new SQLFunction<F, C>(Collections.singletonList((SingleValueElementDesc) value), targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -45,7 +45,7 @@ public interface UnaryOperation {
     }
 
     default <F, C> SQLFunction<F, C> of(Param<C> value) {
-        return new SQLFunction<F, C>(Collections.singletonList((SingleValueElementDesc) value)) {
+        return new SQLFunction<F, C>(Collections.singletonList((SingleValueElementDesc) value), targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -54,7 +54,7 @@ public interface UnaryOperation {
     }
 
     default <F, C> SQLFunction<F, C> of(SQLQueryMetaDesc<F, C> value) {
-        return new SQLFunction<F, C>(Collections.singletonList(value)) {
+        return new SQLFunction<F, C>(Collections.singletonList(value), targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();

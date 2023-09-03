@@ -22,7 +22,7 @@ public abstract class MultivariateOperation {
         LinkedList<SingleValueElementDesc<F, C>> list = new LinkedList<>();
         list.add(leftValue);
         Collections.addAll(list, rightValues);
-        return new SQLFunction<F, C>(list) {
+        return new SQLFunction<F, C>(list, targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -35,7 +35,7 @@ public abstract class MultivariateOperation {
         LinkedList<SingleValueElementDesc<F, C>> list = new LinkedList<>();
         list.add(leftValue);
         Collections.addAll(list, rightValues);
-        return new SQLFunction<F, C>(list) {
+        return new SQLFunction<F, C>(list, targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -50,7 +50,7 @@ public abstract class MultivariateOperation {
         for (Param<C> param : rightValues) {
             list.add((SingleValueElementDesc) param);
         }
-        return new SQLFunction<F, C>(list) {
+        return new SQLFunction<F, C>(list, targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -65,7 +65,7 @@ public abstract class MultivariateOperation {
         for (SQLQueryMetaDesc<F, C> value : rightValues) {
             list.add((SingleValueElementDesc) value);
         }
-        return new SQLFunction<F, C>(list) {
+        return new SQLFunction<F, C>(list, targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -80,7 +80,7 @@ public abstract class MultivariateOperation {
         for (JoinFieldMapping<C> value : rightValues) {
             list.add((SingleValueElementDesc) value);
         }
-        return new SQLFunction<F, C>(list) {
+        return new SQLFunction<F, C>(list, targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -95,7 +95,7 @@ public abstract class MultivariateOperation {
         for (SQLFunction<F, C> value : rightValues) {
             list.add((SingleValueElementDesc) value);
         }
-        return new SQLFunction<F, C>(list) {
+        return new SQLFunction<F, C>(list, targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -110,7 +110,7 @@ public abstract class MultivariateOperation {
         for (Param<C> value : rightValues) {
             list.add((SingleValueElementDesc) value);
         }
-        return new SQLFunction<F, C>(list) {
+        return new SQLFunction<F, C>(list, targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -125,7 +125,7 @@ public abstract class MultivariateOperation {
         for (SQLQueryMetaDesc<F, C> value : rightValues) {
             list.add((SingleValueElementDesc) value);
         }
-        return new SQLFunction<F, C>(list) {
+        return new SQLFunction<F, C>(list, targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -140,7 +140,7 @@ public abstract class MultivariateOperation {
         for (FieldMapping<F, C> value : rightValues) {
             list.add((SingleValueElementDesc) value);
         }
-        return new SQLFunction<F, C>(list) {
+        return new SQLFunction<F, C>(list, targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -155,7 +155,7 @@ public abstract class MultivariateOperation {
         for (JoinFieldMapping<C> value : rightValues) {
             list.add((SingleValueElementDesc) value);
         }
-        return new SQLFunction<F, C>(list) {
+        return new SQLFunction<F, C>(list, targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -170,7 +170,7 @@ public abstract class MultivariateOperation {
         for (SQLFunction<F, C> value : rightValues) {
             list.add((SingleValueElementDesc) value);
         }
-        return new SQLFunction<F, C>(list) {
+        return new SQLFunction<F, C>(list, targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -185,7 +185,7 @@ public abstract class MultivariateOperation {
         for (Param<C> value : rightValues) {
             list.add((SingleValueElementDesc) value);
         }
-        return new SQLFunction<F, C>(list) {
+        return new SQLFunction<F, C>(list, targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -200,7 +200,7 @@ public abstract class MultivariateOperation {
         for (SQLQueryMetaDesc<F, C> value : rightValues) {
             list.add((SingleValueElementDesc) value);
         }
-        return new SQLFunction<F, C>(list) {
+        return new SQLFunction<F, C>(list, targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -215,7 +215,7 @@ public abstract class MultivariateOperation {
         for (FieldMapping<F, C> value : rightValues) {
             list.add((SingleValueElementDesc) value);
         }
-        return new SQLFunction<F, C>(list) {
+        return new SQLFunction<F, C>(list, targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -230,7 +230,7 @@ public abstract class MultivariateOperation {
         for (JoinFieldMapping<C> value : rightValues) {
             list.add((SingleValueElementDesc) value);
         }
-        return new SQLFunction<F, C>(list) {
+        return new SQLFunction<F, C>(list, targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -245,7 +245,7 @@ public abstract class MultivariateOperation {
         for (SQLFunction<F, C> value : rightValues) {
             list.add((SingleValueElementDesc) value);
         }
-        return new SQLFunction<F, C>(list) {
+        return new SQLFunction<F, C>(list, targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -260,7 +260,7 @@ public abstract class MultivariateOperation {
         for (Param<C> value : rightValues) {
             list.add((SingleValueElementDesc) value);
         }
-        return new SQLFunction<F, C>(list) {
+        return new SQLFunction<F, C>(list, targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -275,7 +275,7 @@ public abstract class MultivariateOperation {
         for (SQLQueryMetaDesc<F, C> value : rightValues) {
             list.add((SingleValueElementDesc) value);
         }
-        return new SQLFunction<F, C>(list) {
+        return new SQLFunction<F, C>(list, targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -290,7 +290,7 @@ public abstract class MultivariateOperation {
         for (FieldMapping<F, C> value : rightValues) {
             list.add((SingleValueElementDesc) value);
         }
-        return new SQLFunction<F, C>(list) {
+        return new SQLFunction<F, C>(list, targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -305,7 +305,7 @@ public abstract class MultivariateOperation {
         for (JoinFieldMapping<C> value : rightValues) {
             list.add((SingleValueElementDesc) value);
         }
-        return new SQLFunction<F, C>(list) {
+        return new SQLFunction<F, C>(list, targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -320,7 +320,7 @@ public abstract class MultivariateOperation {
         for (SQLFunction<F, C> value : rightValues) {
             list.add((SingleValueElementDesc) value);
         }
-        return new SQLFunction<F, C>(list) {
+        return new SQLFunction<F, C>(list, targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -335,7 +335,7 @@ public abstract class MultivariateOperation {
         for (Param<C> value : rightValues) {
             list.add((SingleValueElementDesc) value);
         }
-        return new SQLFunction<F, C>(list) {
+        return new SQLFunction<F, C>(list, targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -350,7 +350,7 @@ public abstract class MultivariateOperation {
         for (SQLQueryMetaDesc<F, C> value : rightValues) {
             list.add((SingleValueElementDesc) value);
         }
-        return new SQLFunction<F, C>(list) {
+        return new SQLFunction<F, C>(list, targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();

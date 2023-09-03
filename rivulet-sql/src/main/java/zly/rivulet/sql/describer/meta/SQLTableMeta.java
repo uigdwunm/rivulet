@@ -1,6 +1,6 @@
 package zly.rivulet.sql.describer.meta;
 
-public abstract class SQLTableMeta {
+public interface SQLTableMeta {
 
-    protected abstract void primaryKey();
+    abstract void primaryKey();
 }

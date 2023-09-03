@@ -7,7 +7,7 @@ import java.util.function.BiConsumer;
 
 public interface CustomDesc {
 
-    List<SingleValueElementDesc<?, ?>> getSingleValueList();
+    List<SingleValueElementDesc<?>> getSingleValueList();
 
     BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect();
 }

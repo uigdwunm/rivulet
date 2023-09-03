@@ -5,16 +5,24 @@ import zly.rivulet.base.describer.custom.CustomDesc;
 
 import java.util.List;
 
-public abstract class SQLFunction<F, C> implements SingleValueElementDesc<F, C>, CustomDesc {
+public abstract class SQLFunction<C> implements SingleValueElementDesc<C>, CustomDesc {
 
-    private final List<SingleValueElementDesc<F, C>> singleValueElementDescList;
+    private final List<SingleValueElementDesc<C>> singleValueElementDescList;
 
-    protected SQLFunction(List<SingleValueElementDesc<F, C>> singleValueElementDescList) {
+    private final Class<C> targetType;
+
+    protected SQLFunction(List<SingleValueElementDesc<C>> singleValueElementDescList, Class<C> targetType) {
         this.singleValueElementDescList = singleValueElementDescList;
+        this.targetType = targetType;
     }
 
     @Override
-    public List<SingleValueElementDesc<?, ?>> getSingleValueList() {
+    public Class<C> getTargetType() {
+        return this.targetType;
+    }
+
+    @Override
+    public List<SingleValueElementDesc<?>> getSingleValueList() {
         return (List) singleValueElementDescList;
     }
 }

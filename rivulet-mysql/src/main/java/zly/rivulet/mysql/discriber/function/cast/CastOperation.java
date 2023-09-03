@@ -30,7 +30,7 @@ public class CastOperation<C> {
     }
 
     public <F, O> SQLFunction<F, C> of(FieldMapping<F, O> value) {
-        return new SQLFunction<F, C>(Collections.singletonList((SingleValueElementDesc) value)) {
+        return new SQLFunction<F, C>(Collections.singletonList((SingleValueElementDesc) value), targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -39,7 +39,7 @@ public class CastOperation<C> {
     }
 
     public <F, O> SQLFunction<F, C> of(JoinFieldMapping<O> value) {
-        return new SQLFunction<F, C>(Collections.singletonList((SingleValueElementDesc) value)) {
+        return new SQLFunction<F, C>(Collections.singletonList((SingleValueElementDesc) value), targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -48,7 +48,7 @@ public class CastOperation<C> {
     }
 
     public <F, O> SQLFunction<F, C> of(SQLFunction<F, O> value) {
-        return new SQLFunction<F, C>(Collections.singletonList((SingleValueElementDesc) value)) {
+        return new SQLFunction<F, C>(Collections.singletonList((SingleValueElementDesc) value), targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -57,7 +57,7 @@ public class CastOperation<C> {
     }
 
     public <F, O> SQLFunction<F, C> of(Param<O> value) {
-        return new SQLFunction<F, C>(Collections.singletonList((SingleValueElementDesc) value)) {
+        return new SQLFunction<F, C>(Collections.singletonList((SingleValueElementDesc) value), targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();
@@ -66,7 +66,7 @@ public class CastOperation<C> {
     }
 
     public <F, O> SQLFunction<F, C> of(SQLQueryMetaDesc<F, O> value) {
-        return new SQLFunction<F, C>(Collections.singletonList((SingleValueElementDesc) value)) {
+        return new SQLFunction<F, C>(Collections.singletonList((SingleValueElementDesc) value), targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return getCollect();

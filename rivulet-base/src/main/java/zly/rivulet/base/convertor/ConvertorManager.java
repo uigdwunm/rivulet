@@ -11,13 +11,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 public class ConvertorManager {
 
-    private static final ResultConvertor<Object, Object> selfConvertor = new ResultConvertor<Object, Object>() {
-        @Override
-        public Object convert(Object originData) {
-            return originData;
-        }
-    };
-
     /**
      * Description 一般用于查询结果转换成java类型时,就是 jdbc的type转换成java模型的type
      *
@@ -81,7 +74,7 @@ public class ConvertorManager {
         }
         if (originType.equals(targetType) || targetType.equals(Object.class)) {
             // 结果转换器没有，并且出入参相同，或者目标类型是Object，则直接返回
-            return (ResultConvertor<T1, T2>) selfConvertor;
+            return (ResultConvertor<T1, T2>) ResultConvertor.SELF_CONVERTOR;
         }
         Set<ResultConvertor<?, ?>> resultConvertors = superResultConvertor.get(originType);
         if (resultConvertors == null) {

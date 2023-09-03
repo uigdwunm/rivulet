@@ -130,7 +130,7 @@ public interface MySQLFunction {
     }
 
     static <F> SQLFunction<F, java.util.Date> curDateToDate() {
-        return new SQLFunction<F, java.util.Date>(Collections.emptyList()) {
+        return new SQLFunction<F, java.util.Date>(Collections.emptyList(), targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return (customCollector, customSingleValueWraps) -> {
@@ -141,7 +141,7 @@ public interface MySQLFunction {
     }
 
     static <F> SQLFunction<F, LocalDate> curDateToLocalDate() {
-        return new SQLFunction<F, LocalDate>(Collections.emptyList()) {
+        return new SQLFunction<F, LocalDate>(Collections.emptyList(), targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return (customCollector, customSingleValueWraps) -> {
@@ -152,7 +152,7 @@ public interface MySQLFunction {
     }
 
     static <F> SQLFunction<F, LocalDateTime> curDateToLocalDateTime() {
-        return new SQLFunction<F, LocalDateTime>(Collections.emptyList()) {
+        return new SQLFunction<F, LocalDateTime>(Collections.emptyList(), targetType) {
             @Override
             public BiConsumer<CustomCollector, List<CustomSingleValueWrap>> getCustomCollect() {
                 return (customCollector, customSingleValueWraps) -> {

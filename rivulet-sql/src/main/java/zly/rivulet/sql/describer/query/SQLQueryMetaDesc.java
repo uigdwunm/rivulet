@@ -17,7 +17,7 @@ import zly.rivulet.sql.describer.select.item.SortItem;
 import java.util.List;
 import java.util.Map;
 
-public class SQLQueryMetaDesc<T> implements SingleValueElementDesc, WholeDesc {
+public class SQLQueryMetaDesc<T> implements SingleValueElementDesc<T>, WholeDesc {
 
     /**
      * 查询结果映射模型
@@ -51,7 +51,6 @@ public class SQLQueryMetaDesc<T> implements SingleValueElementDesc, WholeDesc {
      * 映射的查询列表，
      **/
     private final List<Mapping<T>> mappedItemList;
-
 
     private SQLTableMeta from;
 
@@ -94,7 +93,23 @@ public class SQLQueryMetaDesc<T> implements SingleValueElementDesc, WholeDesc {
 
     private RivuletDesc anno;
 
-    public SQLQueryMetaDesc(Class<T> resultModelClass, boolean autoFillModel, boolean fillModelAutoConvertUnderline, boolean fillModelIgnoreCase, boolean isOneResult, List<Mapping<T>> mappedItemList, SQLTableMeta from, List<JoinItem> joinList, ConditionContainer whereConditionContainer, List<SQLColumnMeta> groupColumnList, ConditionContainer havingConditionContainer, List<SortItem> orderItemList, Param<Integer> skit, Param<Integer> limit, Map<Class<? extends Definition>, Param<SQLPartCustomDesc>> customStatementMap) {
+    public SQLQueryMetaDesc(
+            Class<T> resultModelClass,
+            boolean autoFillModel,
+            boolean fillModelAutoConvertUnderline,
+            boolean fillModelIgnoreCase,
+            boolean isOneResult,
+            List<Mapping<T>> mappedItemList,
+            SQLTableMeta from,
+            List<JoinItem> joinList,
+            ConditionContainer whereConditionContainer,
+            List<SQLColumnMeta> groupColumnList,
+            ConditionContainer havingConditionContainer,
+            List<SortItem> orderItemList,
+            Param<Integer> skit,
+            Param<Integer> limit,
+            Map<Class<? extends Definition>, Param<SQLPartCustomDesc>> customStatementMap
+    ) {
         this.resultModelClass = resultModelClass;
         this.autoFillModel = autoFillModel;
         this.fillModelAutoConvertUnderline = fillModelAutoConvertUnderline;

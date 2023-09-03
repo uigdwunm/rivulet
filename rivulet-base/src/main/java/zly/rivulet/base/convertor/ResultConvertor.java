@@ -6,6 +6,13 @@ import java.lang.reflect.Type;
 
 public abstract class ResultConvertor<O, T> extends Convertor<O, T> {
 
+    public static final ResultConvertor<Object, Object> SELF_CONVERTOR = new ResultConvertor<Object, Object>() {
+        @Override
+        public Object convert(Object originData) {
+            return originData;
+        }
+    };
+
     @SuppressWarnings("unchecked")
     public ResultConvertor() {
         Type[] classGenericTypes = ClassUtils.getClassGenericTypes(this.getClass());

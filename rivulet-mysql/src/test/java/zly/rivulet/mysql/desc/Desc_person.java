@@ -7,14 +7,12 @@ import zly.rivulet.sql.describer.meta.SQLTableMeta;
 public class Desc_person extends SQLTableMeta {
     public static final String TABLE_NAME = "t_person";
 
-    public final SQLColumnMeta id = new SQLColumnMeta(this);
+    public final SQLColumnMeta<Long> id = new SQLColumnMeta<>(Long.class, this);
 
-    public final SQLColumnMeta name = new SQLColumnMeta(this);
-
-    public MySQLColumnDesc id;
+    public final SQLColumnMeta<String> name = new SQLColumnMeta<>(String.class, this);
 
     @Override
-    protected void primaryKey() {
+    public void primaryKey() {
 
     }
 }
