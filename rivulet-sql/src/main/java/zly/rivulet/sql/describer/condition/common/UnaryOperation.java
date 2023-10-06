@@ -6,7 +6,7 @@ import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.sql.describer.condition.ConditionElement;
 import zly.rivulet.sql.describer.condition.ConditionOperate;
 import zly.rivulet.sql.describer.function.SQLFunction;
-import zly.rivulet.sql.describer.query.SQLQueryMetaDesc;
+import zly.rivulet.sql.describer.query_.SQLQueryMetaDesc;
 
 public interface UnaryOperation {
 

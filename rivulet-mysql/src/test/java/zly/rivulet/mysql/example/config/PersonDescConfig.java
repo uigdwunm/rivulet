@@ -5,9 +5,9 @@ import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.describer.param.ParamCheckType;
 import zly.rivulet.mysql.model.PersonDO;
 import zly.rivulet.sql.describer.condition.common.Condition;
-import zly.rivulet.sql.describer.query.SQLQueryBuilder;
-import zly.rivulet.sql.describer.query.SQLQueryMetaDesc;
-import zly.rivulet.sql.describer.query.desc.Mapping;
+import zly.rivulet.sql.describer.query_.SQLQueryBuilder;
+import zly.rivulet.sql.describer.query_.SQLQueryMetaDesc;
+import zly.rivulet.sql.describer.query_.desc.Mapping;
 
 public class PersonDescConfig {
 

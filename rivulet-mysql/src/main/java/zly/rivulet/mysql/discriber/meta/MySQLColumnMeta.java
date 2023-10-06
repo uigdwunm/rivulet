@@ -1,15 +1,12 @@
 package zly.rivulet.mysql.discriber.meta;
 
 import zly.rivulet.sql.describer.meta.SQLColumnMeta;
+import zly.rivulet.sql.describer.meta.SQLQueryMeta;
 
-public abstract class MySQLColumnMeta<C> implements SQLColumnMeta<C> {
+public class MySQLColumnMeta<C> extends SQLColumnMeta<C> {
 
-    protected final MySQLTableMeta sqlTableMeta;
-
-    protected final Class<C> type;
-
-    public MySQLColumnMeta(MySQLTableMeta sqlTableMeta, Class<C> type) {
-        this.sqlTableMeta = sqlTableMeta;
-        this.type = type;
+    public MySQLColumnMeta(String name, SQLQueryMeta sqlQueryMeta, Class<C> type) {
+        super(name, sqlQueryMeta, type);
     }
+
 }

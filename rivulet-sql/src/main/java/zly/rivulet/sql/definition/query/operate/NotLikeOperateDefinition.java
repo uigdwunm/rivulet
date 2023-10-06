@@ -22,14 +22,14 @@ public class NotLikeOperateDefinition extends OperateDefinition {
         this.rightElement = rightElement;
     }
 
-    public NotLikeOperateDefinition(SQLParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
-        this(sqlPreParseHelper, (ConditionElement<?, ?>) condition);
+    public NotLikeOperateDefinition(SQLParserPortableToolbox sqlPreParseHelper, Condition condition) {
+        this(sqlPreParseHelper, (ConditionElement) condition);
     }
 
-    public NotLikeOperateDefinition(SQLParserPortableToolbox toolbox, ConditionElement<?, ?> condition) {
+    public NotLikeOperateDefinition(SQLParserPortableToolbox toolbox, ConditionElement condition) {
         super(condition.getCheckCondition(), toolbox.getParamReceiptManager());
-        SingleValueElementDesc<?, ?> leftFieldMapped = condition.getLeftFieldMapped();
-        SingleValueElementDesc<?, ?> rightFieldMapped = condition.getRightFieldMappeds()[0];
+        SingleValueElementDesc<?> leftFieldMapped = condition.getLeftFieldMapped();
+        SingleValueElementDesc<?> rightFieldMapped = condition.getRightFieldMappeds()[0];
 
         this.leftElement = toolbox.parseSingleValueForCondition(leftFieldMapped);
         this.rightElement = toolbox.parseSingleValueForCondition(rightFieldMapped);

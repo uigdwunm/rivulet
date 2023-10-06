@@ -1,4 +1,4 @@
-package zly.rivulet.sql.describer.query;
+package zly.rivulet.sql.describer.query_;
 
 import org.junit.Test;
 

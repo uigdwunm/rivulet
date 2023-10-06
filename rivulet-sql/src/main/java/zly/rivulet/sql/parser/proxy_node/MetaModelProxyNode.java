@@ -4,7 +4,7 @@ import zly.rivulet.base.utils.ClassUtils;
 import zly.rivulet.base.utils.StringUtil;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
-import zly.rivulet.sql.definition.query.mapping.MapDefinition;
+import zly.rivulet.sql.definition.query_.mapping.MapDefinition;
 import zly.rivulet.sql.parser.SQLAliasManager;
 
 public class MetaModelProxyNode implements FromNode {

@@ -4,7 +4,7 @@ import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.StringUtil;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.statement.SingleValueElementStatement;
-import zly.rivulet.sql.definition.query.mapping.MapDefinition;
+import zly.rivulet.sql.definition.query_.mapping.MapDefinition;
 import zly.rivulet.sql.generator.SQLStatementFactory;
 import zly.rivulet.sql.generator.statement.SQLStatement;
 import zly.rivulet.sql.parser.SQLAliasManager;

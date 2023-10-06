@@ -1,7 +1,7 @@
-package zly.rivulet.sql.describer.query.builder;
+package zly.rivulet.sql.describer.query_.builder;
 
 import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.sql.describer.query.SQLQueryBuilder;
+import zly.rivulet.sql.describer.query_.SQLQueryBuilder;
 
 public class LimitBuilder<F, S> extends SQLQueryBuilder<F, S> {
 

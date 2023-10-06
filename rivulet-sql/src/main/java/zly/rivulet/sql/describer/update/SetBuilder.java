@@ -1,6 +1,6 @@
 package zly.rivulet.sql.describer.update;
 
-import zly.rivulet.sql.describer.query.desc.Mapping;
+import zly.rivulet.sql.describer.query_.desc.Mapping;
 
 import java.util.Arrays;
 

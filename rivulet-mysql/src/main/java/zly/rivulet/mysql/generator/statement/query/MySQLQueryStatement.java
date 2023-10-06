@@ -3,8 +3,8 @@ package zly.rivulet.mysql.generator.statement.query;
 import zly.rivulet.base.generator.param_manager.for_proxy_method.CommonParamManager;
 import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.collector.StatementCollector;
-import zly.rivulet.sql.definition.query.SQLQueryDefinition;
-import zly.rivulet.sql.definition.query.main.SkitDefinition;
+import zly.rivulet.sql.definition.query_.SQLQueryDefinition;
+import zly.rivulet.sql.definition.query_.main.SkitDefinition;
 import zly.rivulet.sql.generator.SQLStatementFactory;
 import zly.rivulet.sql.generator.statement.SQLStatement;
 

@@ -22,14 +22,14 @@ public class LikeOperateDefinition extends OperateDefinition {
         this.rightElement = rightElement;
     }
 
-    public LikeOperateDefinition(SQLParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
-        this(sqlPreParseHelper, (ConditionElement<?, ?>) condition);
+    public LikeOperateDefinition(SQLParserPortableToolbox sqlPreParseHelper, Condition condition) {
+        this(sqlPreParseHelper, (ConditionElement) condition);
     }
 
-    public LikeOperateDefinition(SQLParserPortableToolbox toolbox, ConditionElement<?, ?> condition) {
+    public LikeOperateDefinition(SQLParserPortableToolbox toolbox, ConditionElement condition) {
         super(condition.getCheckCondition(), toolbox.getParamReceiptManager());
-        SingleValueElementDesc<?, ?> leftFieldMapped = condition.getLeftFieldMapped();
-        SingleValueElementDesc<?, ?> rightFieldMapped = condition.getRightFieldMappeds()[0];
+        SingleValueElementDesc<?> leftFieldMapped = condition.getLeftFieldMapped();
+        SingleValueElementDesc<?> rightFieldMapped = condition.getRightFieldMappeds()[0];
 
         this.leftElement = toolbox.parseSingleValueForCondition(leftFieldMapped);
         this.rightElement = toolbox.parseSingleValueForCondition(rightFieldMapped);

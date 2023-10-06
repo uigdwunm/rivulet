@@ -3,10 +3,10 @@ package zly.rivulet.sql.parser.analyzer;
 import zly.rivulet.base.definition.Blueprint;
 import zly.rivulet.base.parser.Analyzer;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
-import zly.rivulet.sql.definition.query.SQLQueryDefinition;
-import zly.rivulet.sql.definition.query.main.FromDefinition;
-import zly.rivulet.sql.definition.query.main.SelectDefinition;
-import zly.rivulet.sql.definition.query.mapping.MapDefinition;
+import zly.rivulet.sql.definition.query_.SQLQueryDefinition;
+import zly.rivulet.sql.definition.query_.main.FromDefinition;
+import zly.rivulet.sql.definition.query_.main.SelectDefinition;
+import zly.rivulet.sql.definition.query_.mapping.MapDefinition;
 import zly.rivulet.sql.parser.SQLAliasManager;
 
 public class DefaultSQLAnalyzer implements Analyzer {

@@ -1,4 +1,4 @@
-package zly.rivulet.sql.describer.query;
+package zly.rivulet.sql.describer.query_;
 
 import zly.rivulet.base.definer.annotations.RivuletDesc;
 import zly.rivulet.base.definer.enums.RivuletFlag;
@@ -9,7 +9,7 @@ import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.sql.describer.condition.common.ConditionContainer;
 import zly.rivulet.sql.describer.custom.SQLPartCustomDesc;
 import zly.rivulet.sql.describer.meta.SQLColumnMeta;
-import zly.rivulet.sql.describer.meta.SQLTableMeta;
+import zly.rivulet.sql.describer.meta.SQLQueryMeta;
 import zly.rivulet.sql.describer.select.item.JoinItem;
 import zly.rivulet.sql.describer.select.item.Mapping;
 import zly.rivulet.sql.describer.select.item.SortItem;
@@ -25,24 +25,6 @@ public class SQLQueryMetaDesc<T> implements SingleValueElementDesc<T>, WholeDesc
     private final Class<T> resultModelClass;
 
     /**
-     * 结果自动填充模型（默认不自动填充）
-     * 如果发现重复会报错
-     **/
-    private final boolean autoFillModel;
-
-    /**
-     * 结果自动填充模型时，自动转换下划线和驼峰式命名方式（默认不忽略）
-     * 如果发现重复会报错
-     **/
-    private final boolean fillModelAutoConvertUnderline;
-
-    /**
-     * 结果自动填充模型时，忽略大小写（默认不忽略）
-     * 如果发现重复会报错
-     **/
-    private final boolean fillModelIgnoreCase;
-
-    /**
      * 是否查询返回并映射为单个结果类型
      **/
     private final boolean isOneResult;
@@ -52,7 +34,7 @@ public class SQLQueryMetaDesc<T> implements SingleValueElementDesc<T>, WholeDesc
      **/
     private final List<Mapping<T>> mappedItemList;
 
-    private SQLTableMeta from;
+    private SQLQueryMeta from;
 
     private List<JoinItem> joinList;
 
@@ -64,7 +46,7 @@ public class SQLQueryMetaDesc<T> implements SingleValueElementDesc<T>, WholeDesc
     /**
      * 分组字段的列表
      **/
-    private final List<SQLColumnMeta> groupColumnList;
+    private final List<SQLColumnMeta<?>> groupColumnList;
 
     /**
      * having查询子项
@@ -95,15 +77,12 @@ public class SQLQueryMetaDesc<T> implements SingleValueElementDesc<T>, WholeDesc
 
     public SQLQueryMetaDesc(
             Class<T> resultModelClass,
-            boolean autoFillModel,
-            boolean fillModelAutoConvertUnderline,
-            boolean fillModelIgnoreCase,
             boolean isOneResult,
             List<Mapping<T>> mappedItemList,
-            SQLTableMeta from,
+            SQLQueryMeta from,
             List<JoinItem> joinList,
             ConditionContainer whereConditionContainer,
-            List<SQLColumnMeta> groupColumnList,
+            List<SQLColumnMeta<?>> groupColumnList,
             ConditionContainer havingConditionContainer,
             List<SortItem> orderItemList,
             Param<Integer> skit,
@@ -111,9 +90,6 @@ public class SQLQueryMetaDesc<T> implements SingleValueElementDesc<T>, WholeDesc
             Map<Class<? extends Definition>, Param<SQLPartCustomDesc>> customStatementMap
     ) {
         this.resultModelClass = resultModelClass;
-        this.autoFillModel = autoFillModel;
-        this.fillModelAutoConvertUnderline = fillModelAutoConvertUnderline;
-        this.fillModelIgnoreCase = fillModelIgnoreCase;
         this.isOneResult = isOneResult;
         this.mappedItemList = mappedItemList;
         this.from = from;
@@ -131,18 +107,6 @@ public class SQLQueryMetaDesc<T> implements SingleValueElementDesc<T>, WholeDesc
         return resultModelClass;
     }
 
-    public boolean isAutoFillModel() {
-        return autoFillModel;
-    }
-
-    public boolean isFillModelAutoConvertUnderline() {
-        return fillModelAutoConvertUnderline;
-    }
-
-    public boolean isFillModelIgnoreCase() {
-        return fillModelIgnoreCase;
-    }
-
     public boolean isOneResult() {
         return isOneResult;
     }
@@ -151,7 +115,7 @@ public class SQLQueryMetaDesc<T> implements SingleValueElementDesc<T>, WholeDesc
         return mappedItemList;
     }
 
-    public SQLTableMeta getFrom() {
+    public SQLQueryMeta getFrom() {
         return from;
     }
 
@@ -163,7 +127,7 @@ public class SQLQueryMetaDesc<T> implements SingleValueElementDesc<T>, WholeDesc
         return whereConditionContainer;
     }
 
-    public List<SQLColumnMeta> getGroupColumnList() {
+    public List<SQLColumnMeta<?>> getGroupColumnList() {
         return groupColumnList;
     }
 
@@ -205,5 +169,10 @@ public class SQLQueryMetaDesc<T> implements SingleValueElementDesc<T>, WholeDesc
     @Override
     public RivuletFlag getFlag() {
         return RivuletFlag.QUERY;
+    }
+
+    @Override
+    public Class<T> getTargetType() {
+        return this.resultModelClass;
     }
 }

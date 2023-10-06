@@ -1,17 +1,6 @@
 package zly.rivulet.mysql.integration;
 
-import org.junit.Test;
-import zly.rivulet.base.definer.annotations.RivuletDesc;
-import zly.rivulet.base.describer.WholeDesc;
-import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.base.describer.param.ParamCheckType;
-import zly.rivulet.base.generator.Fish;
-import zly.rivulet.mysql.model.join.CityProvinceJoin;
-import zly.rivulet.mysql.model.vo.CityInfo;
-import zly.rivulet.mysql.util.MySQLPrintUtils;
-import zly.rivulet.sql.describer.condition.common.Condition;
-import zly.rivulet.sql.describer.query.SQLQueryBuilder;
-import zly.rivulet.sql.describer.query.desc.Mapping;
+import zly.rivulet.sql.describer.query_.desc.Mapping;
 
 public class JoinQueryTest extends BaseTest {
 //

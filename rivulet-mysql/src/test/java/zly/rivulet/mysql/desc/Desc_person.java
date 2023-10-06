@@ -1,18 +1,23 @@
 package zly.rivulet.mysql.desc;
 
-import zly.rivulet.mysql.definer.annotations.type.numeric.MySQLBigInt;
+import zly.rivulet.mysql.discriber.meta.MySQLColumnMeta;
+import zly.rivulet.mysql.discriber.meta.MySQLTableMeta;
 import zly.rivulet.sql.describer.meta.SQLColumnMeta;
-import zly.rivulet.sql.describer.meta.SQLTableMeta;
 
-public class Desc_person extends SQLTableMeta {
+public class Desc_person extends MySQLTableMeta {
     public static final String TABLE_NAME = "t_person";
 
-    public final SQLColumnMeta<Long> id = new SQLColumnMeta<>(Long.class, this);
+    public final MySQLColumnMeta<Long> id = new MySQLColumnMeta<>("id", this, Long.class);
 
-    public final SQLColumnMeta<String> name = new SQLColumnMeta<>(String.class, this);
+    public final MySQLColumnMeta<String> name = new MySQLColumnMeta<>("name", this, String.class);
 
     @Override
     public void primaryKey() {
 
+    }
+
+    @Override
+    public String getTableName() {
+        return TABLE_NAME;
     }
 }

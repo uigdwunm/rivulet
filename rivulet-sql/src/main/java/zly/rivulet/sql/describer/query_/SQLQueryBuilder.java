@@ -1,12 +1,12 @@
-package zly.rivulet.sql.describer.query;
+package zly.rivulet.sql.describer.query_;
 
 import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.sql.describer.condition.common.ConditionContainer;
 import zly.rivulet.sql.describer.custom.SQLPartCustomDesc;
-import zly.rivulet.sql.describer.query.builder.SelectByBuilder;
-import zly.rivulet.sql.describer.query.desc.Mapping;
+import zly.rivulet.sql.describer.query_.builder.SelectByBuilder;
+import zly.rivulet.sql.describer.query_.desc.Mapping;
 import zly.rivulet.sql.describer.select.item.SortItem;
 
 import java.util.HashMap;
@@ -77,7 +77,7 @@ public class SQLQueryBuilder<F, S> {
         return new SelectByBuilder<>(from, select);
     }
 
-    public final SQLQueryMetaDesc<F, S> build() {
+    public final SQLQueryMetaDesc<S> build() {
         return new SQLQueryMetaDesc<>(
             this.modelFrom,
             this.selectModel,

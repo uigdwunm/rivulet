@@ -23,13 +23,13 @@ import zly.rivulet.sql.definer.annotations.SQLSubQuery;
 import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
-import zly.rivulet.sql.definition.query.SQLQueryDefinition;
-import zly.rivulet.sql.definition.query.mapping.MapDefinition;
-import zly.rivulet.sql.describer.query.SQLQueryMetaDesc;
+import zly.rivulet.sql.definition.query_.SQLQueryDefinition;
+import zly.rivulet.sql.definition.query_.mapping.MapDefinition;
+import zly.rivulet.sql.describer.query_.SQLQueryMetaDesc;
 import zly.rivulet.sql.exception.SQLDescDefineException;
 import zly.rivulet.sql.parser.SQLAliasManager;
 import zly.rivulet.sql.parser.SQLParser;
-import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
+import zly.rivulet.sql.parser.toolbox_.SQLParserPortableToolbox;
 
 import java.lang.reflect.Field;
 import java.sql.ResultSet;

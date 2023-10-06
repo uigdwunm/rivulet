@@ -7,7 +7,7 @@ import zly.rivulet.base.definition.param.ParamReceipt;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.describer.param.ParamCheckType;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
-import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
+import zly.rivulet.sql.parser.toolbox_.SQLParserPortableToolbox;
 
 public class ColumnItemDefinition extends AbstractDefinition {
     private final SQLFieldMeta sqlFieldMeta;

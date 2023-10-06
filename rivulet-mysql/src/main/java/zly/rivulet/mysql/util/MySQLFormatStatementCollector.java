@@ -6,7 +6,7 @@ import zly.rivulet.base.utils.Constant;
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.statement.operate.AndOperateStatement;
 import zly.rivulet.mysql.generator.statement.operate.OrOperateStatement;
-import zly.rivulet.sql.definition.query.join.SQLJoinType;
+import zly.rivulet.sql.definition.query_.join.SQLJoinType;
 import zly.rivulet.sql.utils.collector.SQLStatementCollector;
 
 import java.util.*;

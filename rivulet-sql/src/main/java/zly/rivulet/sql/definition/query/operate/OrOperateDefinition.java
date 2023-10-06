@@ -5,7 +5,6 @@ import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.sql.describer.condition.common.Condition;
 import zly.rivulet.sql.describer.condition.common.ConditionContainer;
-import zly.rivulet.sql.describer.condition.join.JoinConditionContainer;
 import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
 import java.util.ArrayList;
@@ -20,19 +19,13 @@ public class OrOperateDefinition extends OperateDefinition {
         this.operateDefinitionList =operateDefinitionList;
     }
 
-    public OrOperateDefinition(SQLParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
+    public OrOperateDefinition(SQLParserPortableToolbox sqlPreParseHelper, Condition condition) {
         super(CheckCondition.IS_TRUE, sqlPreParseHelper.getParamReceiptManager());
         List<OperateDefinition> operateDefinitionList = new ArrayList<>();
 
         if (condition instanceof ConditionContainer) {
-            ConditionContainer<?, ?> container = (ConditionContainer<?, ?>) condition;
-            for (Condition<?, ?> item : container.getConditionElementList()) {
-                operateDefinitionList.add(item.getOperate().createDefinition(sqlPreParseHelper, item));
-            }
-
-        } else if (condition instanceof JoinConditionContainer) {
-            JoinConditionContainer<?, ?> container = (JoinConditionContainer<?, ?>) condition;
-            for (Condition<?, ?> item : container.getConditionElementList()) {
+            ConditionContainer container = (ConditionContainer) condition;
+            for (Condition item : container.getConditionElementList()) {
                 operateDefinitionList.add(item.getOperate().createDefinition(sqlPreParseHelper, item));
             }
         } else {

@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class SQLFunctionDefinition extends SQLCustomDefinition implements SingleValueElementDefinition {
 
-    public SQLFunctionDefinition(SQLParserPortableToolbox toolbox, SQLFunction<?, ?> sqlFunction) {
+    public SQLFunctionDefinition(SQLParserPortableToolbox toolbox, SQLFunction<?> sqlFunction) {
         super(
             sqlFunction.getSingleValueList().stream()
             .map(toolbox::parseSingleValueForCondition)

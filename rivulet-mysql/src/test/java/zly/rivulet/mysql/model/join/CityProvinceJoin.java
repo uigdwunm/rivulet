@@ -6,7 +6,6 @@ import zly.rivulet.sql.definer.annotations.SQLSubQuery;
 import zly.rivulet.sql.describer.condition.join.JoinCondition;
 import zly.rivulet.sql.describer.join.ComplexDescriber;
 import zly.rivulet.sql.describer.join.QueryComplexModel;
-import zly.rivulet.sql.describer.query.SQLQueryMetaDesc;
 
 /**
  * 联表对象需要继承QueryComplexModel

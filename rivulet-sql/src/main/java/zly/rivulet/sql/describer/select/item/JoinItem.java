@@ -2,17 +2,17 @@ package zly.rivulet.sql.describer.select.item;
 
 import zly.rivulet.sql.definition.query.join.JoinType;
 import zly.rivulet.sql.describer.condition.common.ConditionContainer;
-import zly.rivulet.sql.describer.meta.SQLTableMeta;
+import zly.rivulet.sql.describer.meta.SQLQueryMeta;
 
 public class JoinItem {
 
     private final JoinType joinType;
 
-    private final SQLTableMeta joinTable;
+    private final SQLQueryMeta joinTable;
 
     protected ConditionContainer onConditionContainer;
 
-    public JoinItem(JoinType joinType, SQLTableMeta joinTable, ConditionContainer onConditionContainer) {
+    public JoinItem(JoinType joinType, SQLQueryMeta joinTable, ConditionContainer onConditionContainer) {
         this.joinType = joinType;
         this.joinTable = joinTable;
         this.onConditionContainer = onConditionContainer;
@@ -22,7 +22,7 @@ public class JoinItem {
         return joinType;
     }
 
-    public SQLTableMeta getJoinTable() {
+    public SQLQueryMeta getJoinTable() {
         return joinTable;
     }
 

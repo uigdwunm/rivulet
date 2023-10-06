@@ -7,9 +7,7 @@ import zly.rivulet.base.describer.field.SetMapping;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.sql.describer.function.SQLFunction;
 import zly.rivulet.sql.describer.meta.SQLColumnMeta;
-import zly.rivulet.sql.describer.query.SQLQueryMetaDesc;
-
-import java.util.function.Function;
+import zly.rivulet.sql.describer.query_.SQLQueryMetaDesc;
 
 public class Mapping<R> {
 
@@ -31,36 +29,56 @@ public class Mapping<R> {
         this.convertor = convertor;
     }
 
-    public static <V, O, T> Mapping<V> of(SetMapping<V, T> selectField, SQLFunction<?, O> desc) {
-        return of(selectField, desc, null);
+    public static <V, T> Mapping<V> of(SetMapping<V, T> selectField, SQLFunction<T> desc) {
+        return new Mapping<>(selectField, desc, ResultConvertor.SELF_CONVERTOR);
     }
 
-    public static <V, O, T> Mapping<V> of(SetMapping<V, T> selectField, SQLFunction<?, O> desc, Convertor<O, T> convertor) {
+    public static <V, O, T> Mapping<V> ofAutoConvert(SetMapping<V, T> selectField, SQLFunction<O> desc) {
+        return new Mapping<>(selectField, desc, null);
+    }
+
+    public static <V, O, T> Mapping<V> of(SetMapping<V, T> selectField, SQLFunction<O> desc, Convertor<O, T> convertor) {
         return new Mapping<>(selectField, desc, convertor);
     }
 
-    public static <V, O, T> Mapping<V> of(SetMapping<V, T> selectField, Param<O> param) {
-        return of(selectField, param, null);
+    public static <V, T> Mapping<V> of(SetMapping<V, T> selectField, Param<T> param) {
+        return new Mapping<>(selectField, param, ResultConvertor.SELF_CONVERTOR);
+    }
+
+    public static <V, O, T> Mapping<V> ofAutoConvert(SetMapping<V, T> selectField, Param<O> param) {
+        return new Mapping<>(selectField, param, null);
     }
 
     public static <V, O, T> Mapping<V> of(SetMapping<V, T> selectField, Param<O> param, Convertor<O, T> convertor) {
         return new Mapping<>(selectField, param, convertor);
     }
 
-    public static <V, O, T> Mapping<V> of(SetMapping<V, T> selectField, SQLColumnMeta<O> sqlColumnMeta) {
-        return of(selectField, sqlColumnMeta, null);
+    public static <V, T> Mapping<V> of(SetMapping<V, T> selectField, SQLColumnMeta<T> sqlColumnMeta) {
+        return new Mapping<>(selectField, sqlColumnMeta, ResultConvertor.SELF_CONVERTOR);
+    }
+
+    public static <V, O, T> Mapping<V> ofAutoConvert(SetMapping<V, T> selectField, SQLColumnMeta<O> sqlColumnMeta) {
+        return new Mapping<>(selectField, sqlColumnMeta, null);
     }
 
     public static <V, O, T> Mapping<V> of(SetMapping<V, T> selectField, SQLColumnMeta<O> sqlColumnMeta, Convertor<O, T> convertor) {
         return new Mapping<>(selectField, sqlColumnMeta, convertor);
     }
 
-    public static <V, O, T> Mapping<V> of(SetMapping<V, T> selectField, SQLQueryMetaDesc<O> sqlQueryMetaDesc) {
-        return of(selectField, sqlQueryMetaDesc, null);
+    public static <V, T> Mapping<V> of(SetMapping<V, T> selectField, SQLQueryMetaDesc<T> sqlQueryMetaDesc) {
+        return new Mapping<>(selectField, sqlQueryMetaDesc, ResultConvertor.SELF_CONVERTOR);
+    }
+
+    public static <V, O, T> Mapping<V> ofAutoConvert(SetMapping<V, T> selectField, SQLQueryMetaDesc<O> sqlQueryMetaDesc) {
+        return new Mapping<>(selectField, sqlQueryMetaDesc, null);
     }
 
     public static <V, O, T> Mapping<V> of(SetMapping<V, T> selectField, SQLQueryMetaDesc<O> sqlQueryMetaDesc, Convertor<O, T> convertor) {
         return new Mapping<>(selectField, sqlQueryMetaDesc, convertor);
+    }
+
+    public static <V, T> Mapping<V> of(SetMapping<V, T> selectField, SingleValueElementDesc<T> desc) {
+        return new Mapping<>(selectField, desc, ResultConvertor.SELF_CONVERTOR);
     }
 
     public SetMapping<R, ?> getMappingField() {

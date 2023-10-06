@@ -13,7 +13,7 @@ import zly.rivulet.mysql.DefaultMySQLDataSourceRivuletManager;
 import zly.rivulet.mysql.MySQLRivulet;
 import zly.rivulet.mysql.MySQLRivuletProperties;
 import zly.rivulet.mysql.model.PersonDO;
-import zly.rivulet.sql.describer.query.SQLQueryBuilder;
+import zly.rivulet.sql.describer.query_.SQLQueryBuilder;
 import zly.rivulet.sql.parser.analyzer.DefaultSQLAnalyzer;
 
 import javax.sql.DataSource;

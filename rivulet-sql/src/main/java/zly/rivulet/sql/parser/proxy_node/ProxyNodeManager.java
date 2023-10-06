@@ -2,9 +2,9 @@ package zly.rivulet.sql.parser.proxy_node;
 
 import zly.rivulet.base.definer.annotations.RivuletDesc;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
-import zly.rivulet.sql.definition.query.SQLQueryDefinition;
-import zly.rivulet.sql.describer.query.SQLQueryMetaDesc;
-import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
+import zly.rivulet.sql.definition.query_.SQLQueryDefinition;
+import zly.rivulet.sql.describer.query_.SQLQueryMetaDesc;
+import zly.rivulet.sql.parser.toolbox_.SQLParserPortableToolbox;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

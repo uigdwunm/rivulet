@@ -1,7 +1,7 @@
 package zly.rivulet.sql.describer.select;
 
 import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.sql.definition.query.main.OrderByDefinition;
+import zly.rivulet.sql.definition.query_.main.OrderByDefinition;
 import zly.rivulet.sql.describer.custom.SQLPartCustomDesc;
 import zly.rivulet.sql.describer.select.item.SortItem;
 

@@ -1,6 +1,6 @@
 package zly.rivulet.sql.definer.meta;
 
-import zly.rivulet.sql.definition.query.operate.OperateDefinition;
+import zly.rivulet.sql.definition.query_.operate.OperateDefinition;
 
 import java.util.List;
 

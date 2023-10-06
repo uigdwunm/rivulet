@@ -2,7 +2,7 @@ package zly.rivulet.mysql.generator.statement.query;
 
 import zly.rivulet.base.utils.collector.StatementCollector;
 import zly.rivulet.mysql.generator.statement.SingleValueElementStatement;
-import zly.rivulet.sql.definition.query.orderby.SortItemDefinition;
+import zly.rivulet.sql.definition.query_.orderby.SortItemDefinition;
 import zly.rivulet.sql.describer.select.item.SortItem;
 import zly.rivulet.sql.generator.SQLStatementFactory;
 import zly.rivulet.sql.generator.statement.SQLStatement;

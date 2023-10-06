@@ -12,11 +12,11 @@ import zly.rivulet.sql.assigner.SQLUpdateResultAssigner;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.SQLBlueprint;
-import zly.rivulet.sql.definition.query.main.FromDefinition;
-import zly.rivulet.sql.definition.query.main.WhereDefinition;
-import zly.rivulet.sql.definition.query.mapping.MapDefinition;
-import zly.rivulet.sql.definition.query.operate.AndOperateDefinition;
-import zly.rivulet.sql.definition.query.operate.EqOperateDefinition;
+import zly.rivulet.sql.definition.query_.main.FromDefinition;
+import zly.rivulet.sql.definition.query_.main.WhereDefinition;
+import zly.rivulet.sql.definition.query_.mapping.MapDefinition;
+import zly.rivulet.sql.definition.query_.operate.AndOperateDefinition;
+import zly.rivulet.sql.definition.query_.operate.EqOperateDefinition;
 import zly.rivulet.sql.describer.condition.common.ConditionContainer;
 import zly.rivulet.sql.describer.join.QueryComplexModel;
 import zly.rivulet.sql.describer.update.SQLUpdateMetaDesc;
@@ -26,7 +26,7 @@ import zly.rivulet.sql.parser.SQLParser;
 import zly.rivulet.sql.parser.proxy_node.FromNode;
 import zly.rivulet.sql.parser.proxy_node.ProxyNodeManager;
 import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
-import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
+import zly.rivulet.sql.parser.toolbox_.SQLParserPortableToolbox;
 
 public class SQLUpdateDefinition extends SQLBlueprint {
 

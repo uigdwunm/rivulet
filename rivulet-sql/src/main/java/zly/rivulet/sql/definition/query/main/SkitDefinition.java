@@ -6,7 +6,7 @@ import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.definition.param.ParamReceipt;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.parser.ParamReceiptManager;
-import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
+import zly.rivulet.sql.parser.toolbox_.SQLParserPortableToolbox;
 
 public class SkitDefinition extends AbstractDefinition {
     private ParamReceipt skit;

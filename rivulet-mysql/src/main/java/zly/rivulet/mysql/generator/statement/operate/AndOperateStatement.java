@@ -2,7 +2,7 @@ package zly.rivulet.mysql.generator.statement.operate;
 
 import zly.rivulet.base.generator.param_manager.for_proxy_method.CommonParamManager;
 import zly.rivulet.base.utils.collector.StatementCollector;
-import zly.rivulet.sql.definition.query.operate.AndOperateDefinition;
+import zly.rivulet.sql.definition.query_.operate.AndOperateDefinition;
 import zly.rivulet.sql.generator.SQLStatementFactory;
 
 import java.util.List;

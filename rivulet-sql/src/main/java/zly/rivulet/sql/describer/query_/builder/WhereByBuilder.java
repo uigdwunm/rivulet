@@ -1,26 +1,27 @@
-package zly.rivulet.sql.describer.query.builder;
+package zly.rivulet.sql.describer.query_.builder;
 
 import zly.rivulet.sql.describer.condition.common.Condition;
 import zly.rivulet.sql.describer.condition.common.ConditionContainer;
 
 import java.util.Arrays;
 
-public class HavingBuilder<F, S> extends OrderByBuilder<F, S> {
+public class WhereByBuilder<F, S> extends GroupByBuilder<F, S> {
 
     @SafeVarargs
-    public final OrderByBuilder<F, S> having(Condition<F, ?>... items) {
-        return this.havingAnd(items);
+    public final GroupByBuilder<F, S> where(Condition<F, ?>... items) {
+        return this.whereAnd(items);
     }
 
     @SafeVarargs
-    public final OrderByBuilder<F, S> havingAnd(Condition<F, ?>... items) {
+    public final GroupByBuilder<F, S> whereAnd(Condition<F, ?>... items) {
         super.whereConditionContainer = new ConditionContainer.AND<>(Arrays.asList(items));
         return this;
     }
 
     @SafeVarargs
-    public final OrderByBuilder<F, S> havingOr(Condition<F, ?>... items) {
+    public final GroupByBuilder<F, S> whereOr(Condition<F, ?>... items) {
         super.whereConditionContainer = new ConditionContainer.OR<>(Arrays.asList(items));
         return this;
     }
+
 }

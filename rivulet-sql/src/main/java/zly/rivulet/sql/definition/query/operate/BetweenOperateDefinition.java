@@ -4,8 +4,8 @@ import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
 import zly.rivulet.base.describer.SingleValueElementDesc;
-import zly.rivulet.sql.describer.condition.common.Condition;
 import zly.rivulet.sql.describer.condition.ConditionElement;
+import zly.rivulet.sql.describer.condition.common.Condition;
 import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
 public class BetweenOperateDefinition extends OperateDefinition {
@@ -28,15 +28,15 @@ public class BetweenOperateDefinition extends OperateDefinition {
         this.afterElement = afterElement;
     }
 
-    public BetweenOperateDefinition(SQLParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
-        this(sqlPreParseHelper, (ConditionElement<?, ?>) condition);
+    public BetweenOperateDefinition(SQLParserPortableToolbox sqlPreParseHelper, Condition condition) {
+        this(sqlPreParseHelper, (ConditionElement) condition);
     }
 
-    public BetweenOperateDefinition(SQLParserPortableToolbox toolbox, ConditionElement<?, ?> condition) {
+    public BetweenOperateDefinition(SQLParserPortableToolbox toolbox, ConditionElement condition) {
         super(condition.getCheckCondition(), toolbox.getParamReceiptManager());
-        SingleValueElementDesc<?, ?> leftFieldMapped = condition.getLeftFieldMapped();
-        SingleValueElementDesc<?, ?> beforeElement = condition.getRightFieldMappeds()[0];
-        SingleValueElementDesc<?, ?> afterElement = condition.getRightFieldMappeds()[1];
+        SingleValueElementDesc<?> leftFieldMapped = condition.getLeftFieldMapped();
+        SingleValueElementDesc<?> beforeElement = condition.getRightFieldMappeds()[0];
+        SingleValueElementDesc<?> afterElement = condition.getRightFieldMappeds()[1];
 
         this.leftElement = toolbox.parseSingleValueForCondition(leftFieldMapped);
         this.beforeElement = toolbox.parseSingleValueForCondition(beforeElement);

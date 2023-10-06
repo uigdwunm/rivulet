@@ -6,8 +6,9 @@ import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.sql.describer.condition.common.ConditionContainer;
 import zly.rivulet.sql.describer.custom.SQLPartCustomDesc;
 import zly.rivulet.sql.describer.meta.SQLColumnMeta;
-import zly.rivulet.sql.describer.meta.SQLTableMeta;
-import zly.rivulet.sql.describer.query.SQLQueryMetaDesc;
+import zly.rivulet.sql.describer.meta.SQLSubQueryMeta;
+import zly.rivulet.sql.describer.meta.SQLQueryMeta;
+import zly.rivulet.sql.describer.query_.SQLQueryMetaDesc;
 import zly.rivulet.sql.describer.select.item.JoinItem;
 import zly.rivulet.sql.describer.select.item.Mapping;
 import zly.rivulet.sql.describer.select.item.SortItem;
@@ -21,35 +22,17 @@ public class SQLQueryBuilder<T> {
 
     protected Class<T> resultModelClass;
 
-    /**
-     * 结果自动填充模型（默认不自动填充）
-     * 如果发现重复会报错
-     **/
-    protected boolean autoFillModel = false;
-
-    /**
-     * 结果自动填充模型时，自动转换下划线和驼峰式命名方式（默认不忽略）
-     * 如果发现重复会报错
-     **/
-    protected boolean fillModelAutoConvertUnderline = false;
-
-    /**
-     * 结果自动填充模型时，忽略大小写（默认不忽略）
-     * 如果发现重复会报错
-     **/
-    protected boolean fillModelIgnoreCase = false;
-
     protected boolean isOneResult = false;
 
     protected List<Mapping<T>> mappedItemList = null;
 
-    protected SQLTableMeta from;
+    protected SQLQueryMeta from;
 
     protected List<JoinItem> joinList = new ArrayList<>();
 
     protected ConditionContainer whereConditionContainer;
 
-    protected List<SQLColumnMeta> groupColumnList = null;
+    protected List<SQLColumnMeta<?>> groupColumnList = null;
 
     protected ConditionContainer havingConditionContainer;
 
@@ -73,6 +56,11 @@ public class SQLQueryBuilder<T> {
      **/
     protected Map<Class<? extends Definition>, Param<SQLPartCustomDesc>> customStatementMap = new HashMap<>();
 
+    public static <T extends SQLSubQueryMeta> SubQuerySelectByBuilder<T> subQuery(Class<T> clazz) {
+        SubQuerySelectByBuilder<T> selectByBuilder = new SubQuerySelectByBuilder<>();
+        selectByBuilder.resultModelClass = clazz;
+        return selectByBuilder;
+    }
 
     public static <T> SelectByBuilder<T> mappingTo(Class<T> clazz) {
         SelectByBuilder<T> selectBuilder = new SelectByBuilder<>();
@@ -83,9 +71,6 @@ public class SQLQueryBuilder<T> {
     public SQLQueryMetaDesc<T> build() {
         return new SQLQueryMetaDesc<>(
                 this.resultModelClass,
-                this.autoFillModel,
-                this.fillModelAutoConvertUnderline,
-                this.fillModelIgnoreCase,
                 this.isOneResult,
                 this.mappedItemList,
                 this.from,

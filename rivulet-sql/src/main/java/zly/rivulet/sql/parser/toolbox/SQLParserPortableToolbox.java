@@ -11,22 +11,26 @@ import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.base.parser.toolbox.ParserPortableToolbox;
 import zly.rivulet.sql.SQLRivuletProperties;
+import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.function.SQLFunctionDefinition;
-import zly.rivulet.sql.definition.query.SQLQueryDefinition;
-import zly.rivulet.sql.definition.query.mapping.MapDefinition;
+import zly.rivulet.sql.definition.query.operate.OperateDefinition;
+import zly.rivulet.sql.definition.query_.SQLQueryDefinition;
+import zly.rivulet.sql.definition.query_.mapping.MapDefinition;
+import zly.rivulet.sql.describer.condition.common.ConditionContainer;
 import zly.rivulet.sql.describer.function.SQLFunction;
-import zly.rivulet.sql.describer.query.SQLQueryMetaDesc;
+import zly.rivulet.sql.describer.meta.SQLColumnMeta;
+import zly.rivulet.sql.describer.meta.SQLQueryMeta;
+import zly.rivulet.sql.describer.meta.SQLSubQueryMeta;
+import zly.rivulet.sql.describer.meta.SQLTableMeta;
+import zly.rivulet.sql.describer.query_.SQLQueryMetaDesc;
 import zly.rivulet.sql.exception.SQLDescDefineException;
 import zly.rivulet.sql.parser.SQLAliasManager;
 import zly.rivulet.sql.parser.SQLParamReceiptManager;
 import zly.rivulet.sql.parser.SQLParser;
 import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
 
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
+import java.util.*;
 
 public class SQLParserPortableToolbox implements ParserPortableToolbox {
 
@@ -55,6 +59,8 @@ public class SQLParserPortableToolbox implements ParserPortableToolbox {
      **/
     private final Set<SQLModelMeta> repeatProxyModelCheck = new HashSet<>();
 
+    private final Map<Object, SQLAliasManager.AliasFlag> aliasFlagMap = new HashMap<>();
+
     public SQLParserPortableToolbox(SQLParser sqlPreParser) {
         this.sqlPreParser = sqlPreParser;
         this.paramReceiptManager = new SQLParamReceiptManager(sqlPreParser.getConvertorManager());
@@ -62,11 +68,34 @@ public class SQLParserPortableToolbox implements ParserPortableToolbox {
         this.sqlAliasManager = new SQLAliasManager(sqlPreParser.getConfigProperties());
     }
 
+    public SingleValueElementDefinition parseSingleValue(SingleValueElementDesc<?> singleValueElementDesc) {
+        QueryProxyNode queryProxyNode = this.getQueryProxyNode();
+        if (singleValueElementDesc instanceof SQLColumnMeta) {
+            SQLColumnMeta<?> sqlColumnMeta = (SQLColumnMeta<?>) singleValueElementDesc;
+            SQLAliasManager.AliasFlag aliasFlag = aliasFlagMap.get(sqlColumnMeta);
+            return new MapDefinition();
+        } else if (singleValueElementDesc instanceof SQLQueryMetaDesc) {
+            SQLParser sqlPreParser = this.getSqlPreParser();
+            SQLQueryDefinition sqlQueryDefinition = (SQLQueryDefinition) sqlPreParser.parse((SQLQueryMetaDesc<?>) singleValueElementDesc, this);
+            QueryProxyNode subQueryNode = this.popQueryProxyNode();
+            queryProxyNode.addConditionSubQuery(subQueryNode);
+            return sqlQueryDefinition;
+        } else if (singleValueElementDesc instanceof Param) {
+            ParamReceiptManager paramReceiptManager = this.getParamReceiptManager();
+            return paramReceiptManager.registerParam((Param<?>) singleValueElementDesc);
+        } else if (singleValueElementDesc instanceof SQLFunction) {
+            SQLFunction<?> sqlFunction = (SQLFunction<?>) singleValueElementDesc;
+            return new SQLFunctionDefinition(this, sqlFunction);
+        } else {
+            throw UnbelievableException.unknownType();
+        }
+
+    }
 
 
     public MapDefinition parseSingValueForSelect(
         Object proxyModel,
-        SingleValueElementDesc<?, ?> singleValueElementDesc
+        SingleValueElementDesc<?> singleValueElementDesc
     ) {
         QueryProxyNode queryProxyNode = this.getQueryProxyNode();
         if (singleValueElementDesc instanceof FieldMapping) {
@@ -93,7 +122,7 @@ public class SQLParserPortableToolbox implements ParserPortableToolbox {
             );
 
         } else if (singleValueElementDesc instanceof SQLFunction) {
-            SQLFunction<?, ?> sqlFunction = (SQLFunction<?, ?>) singleValueElementDesc;
+            SQLFunction<?> sqlFunction = (SQLFunction<?>) singleValueElementDesc;
             SQLFunctionDefinition sqlFunctionDefinition = new SQLFunctionDefinition(this, sqlFunction);
             return new MapDefinition(
                 sqlFunctionDefinition,
@@ -105,7 +134,7 @@ public class SQLParserPortableToolbox implements ParserPortableToolbox {
         }
     }
 
-    public SingleValueElementDefinition parseSingleValueForCondition(SingleValueElementDesc<?, ?> singleValueElementDesc) {
+    public SingleValueElementDefinition parseSingleValueForCondition(SingleValueElementDesc<?> singleValueElementDesc) {
         QueryProxyNode queryProxyNode = this.getQueryProxyNode();
         if (singleValueElementDesc instanceof FieldMapping) {
             FieldMapping<Object, Object> fieldMapping = (FieldMapping<Object, Object>) singleValueElementDesc;
@@ -115,7 +144,7 @@ public class SQLParserPortableToolbox implements ParserPortableToolbox {
             return queryProxyNode.getFieldDefinitionFromThreadLocal(joinFieldMapping, queryProxyNode.getProxyModel());
         } else if (singleValueElementDesc instanceof SQLQueryMetaDesc) {
             SQLParser sqlPreParser = this.getSqlPreParser();
-            SQLQueryDefinition sqlQueryDefinition = (SQLQueryDefinition) sqlPreParser.parse((SQLQueryMetaDesc<?, ?>) singleValueElementDesc, this);
+            SQLQueryDefinition sqlQueryDefinition = (SQLQueryDefinition) sqlPreParser.parse((SQLQueryMetaDesc<?>) singleValueElementDesc, this);
             QueryProxyNode subQueryNode = this.popQueryProxyNode();
             queryProxyNode.addConditionSubQuery(subQueryNode);
             return sqlQueryDefinition;
@@ -123,7 +152,7 @@ public class SQLParserPortableToolbox implements ParserPortableToolbox {
             ParamReceiptManager paramReceiptManager = this.getParamReceiptManager();
             return paramReceiptManager.registerParam((Param<?>) singleValueElementDesc);
         } else if (singleValueElementDesc instanceof SQLFunction) {
-            SQLFunction<?, ?> sqlFunction = (SQLFunction<?, ?>) singleValueElementDesc;
+            SQLFunction<?> sqlFunction = (SQLFunction<?>) singleValueElementDesc;
             return new SQLFunctionDefinition(this, sqlFunction);
         } else {
             throw UnbelievableException.unknownType();
@@ -138,7 +167,7 @@ public class SQLParserPortableToolbox implements ParserPortableToolbox {
      **/
     public static SingleValueElementDefinition parseSingleValueForCustom(
         QueryProxyNode queryProxyNode,
-        SingleValueElementDesc<?, ?> singleValueElementDesc
+        SingleValueElementDesc<?> singleValueElementDesc
     ) {
         if (singleValueElementDesc instanceof FieldMapping) {
             FieldMapping<Object, Object> fieldMapping = (FieldMapping<Object, Object>) singleValueElementDesc;
@@ -196,5 +225,21 @@ public class SQLParserPortableToolbox implements ParserPortableToolbox {
      **/
     public boolean repeatProxyNodeCheck(SQLModelMeta sqlModelMeta) {
         return repeatProxyModelCheck.add(sqlModelMeta);
+    }
+
+    public QueryFromMeta parseQueryFromMeta(SQLQueryMeta sqlQueryMeta) {
+        if (sqlQueryMeta instanceof SQLTableMeta) {
+            return (SQLTableMeta) sqlQueryMeta;
+        } else if (sqlQueryMeta instanceof SQLSubQueryMeta) {
+            SQLSubQueryMeta sqlSubQueryMeta = (SQLSubQueryMeta) sqlQueryMeta;
+            SQLQueryMetaDesc<?> sqlSubQueryMetaDesc = sqlSubQueryMeta.getSqlSubQueryMetaDesc();
+            return new zly.rivulet.sql.definition.query.SQLQueryDefinition(this, sqlSubQueryMetaDesc);
+        } else {
+            throw UnbelievableException.unknownType();
+        }
+    }
+
+    public OperateDefinition parseCondition(ConditionContainer onConditionContainer) {
+        return onConditionContainer.getOperate().createDefinition(this, onConditionContainer);
     }
 }

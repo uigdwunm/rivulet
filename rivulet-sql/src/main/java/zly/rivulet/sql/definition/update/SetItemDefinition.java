@@ -9,11 +9,11 @@ import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.utils.StringUtil;
 import zly.rivulet.sql.definer.meta.SQLFieldMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
-import zly.rivulet.sql.definition.query.mapping.MapDefinition;
-import zly.rivulet.sql.describer.query.desc.Mapping;
+import zly.rivulet.sql.definition.query_.mapping.MapDefinition;
+import zly.rivulet.sql.describer.query_.desc.Mapping;
 import zly.rivulet.sql.parser.proxy_node.MetaModelProxyNode;
 import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
-import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
+import zly.rivulet.sql.parser.toolbox_.SQLParserPortableToolbox;
 
 public class SetItemDefinition extends AbstractDefinition {
 

@@ -1,11 +1,11 @@
-package zly.rivulet.sql.describer.query.builder;
+package zly.rivulet.sql.describer.query_.builder;
 
 import zly.rivulet.base.describer.field.FieldMapping;
 import zly.rivulet.base.describer.field.SetMapping;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.sql.describer.function.SQLFunction;
-import zly.rivulet.sql.describer.query.SQLQueryMetaDesc;
-import zly.rivulet.sql.describer.query.desc.Mapping;
+import zly.rivulet.sql.describer.query_.SQLQueryMetaDesc;
+import zly.rivulet.sql.describer.query_.desc.Mapping;
 
 import java.util.Arrays;
 import java.util.Collections;

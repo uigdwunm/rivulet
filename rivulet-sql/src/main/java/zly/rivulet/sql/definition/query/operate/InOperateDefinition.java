@@ -6,8 +6,8 @@ import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefiniti
 import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
-import zly.rivulet.sql.describer.condition.common.Condition;
 import zly.rivulet.sql.describer.condition.ConditionElement;
+import zly.rivulet.sql.describer.condition.common.Condition;
 import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
 public class InOperateDefinition extends OperateDefinition {
@@ -23,14 +23,14 @@ public class InOperateDefinition extends OperateDefinition {
 
     }
 
-    public InOperateDefinition(SQLParserPortableToolbox sqlPreParseHelper, Condition<?, ?> condition) {
-        this(sqlPreParseHelper, (ConditionElement<?, ?>) condition);
+    public InOperateDefinition(SQLParserPortableToolbox sqlPreParseHelper, Condition condition) {
+        this(sqlPreParseHelper, (ConditionElement) condition);
     }
 
-    public InOperateDefinition(SQLParserPortableToolbox toolbox, ConditionElement<?, ?> condition) {
+    public InOperateDefinition(SQLParserPortableToolbox toolbox, ConditionElement condition) {
         super(condition.getCheckCondition(), toolbox.getParamReceiptManager());
-        SingleValueElementDesc<?, ?> leftFieldMapped = condition.getLeftFieldMapped();
-        SingleValueElementDesc<?, ?> rightFieldMapped = condition.getRightFieldMappeds()[0];
+        SingleValueElementDesc<?> leftFieldMapped = condition.getLeftFieldMapped();
+        SingleValueElementDesc<?> rightFieldMapped = condition.getRightFieldMappeds()[0];
 
         this.leftElement = toolbox.parseSingleValueForCondition(leftFieldMapped);
         this.rightElement = toolbox.parseSingleValueForCondition(rightFieldMapped);

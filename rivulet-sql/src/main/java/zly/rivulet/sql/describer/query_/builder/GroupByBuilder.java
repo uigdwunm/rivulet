@@ -1,4 +1,4 @@
-package zly.rivulet.sql.describer.query.builder;
+package zly.rivulet.sql.describer.query_.builder;
 
 import zly.rivulet.base.describer.field.FieldMapping;
 
