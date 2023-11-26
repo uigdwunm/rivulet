@@ -23,16 +23,17 @@ public class Test {
                 .from(tl)
                 .where(Condition.Equal.of(tl.id, Param.staticOf(1)))
                 .build();
-        Desc_subQuery_person descSubQueryPerson = new Desc_subQuery_person(subQuery);
+        Desc_subQuery_person subP = new Desc_subQuery_person(subQuery);
 
         Desc_person tp = new Desc_person();
         SQLQueryMetaDesc<PersonDO> build = SQLQueryBuilder.mappingTo(PersonDO.class)
                 .select(
                         Mapping.ofAutoConvert(PersonDO::setId, tp.name),
-                        Mapping.of(PersonDO::setName, tp.name)
+                        Mapping.of(PersonDO::setName, tp.name),
+                        Mapping.of(PersonDO::setId, subP.id)
                 ).from(tp)
-                .leftJoin(descSubQueryPerson, Condition.Equal.of(tp.id, descSubQueryPerson.id))
-                .rightJoin(descSubQueryPerson, Condition.Equal.of(tp.id, descSubQueryPerson.id))
+                .leftJoin(subP, Condition.Equal.of(tp.id, subP.id))
+                .rightJoin(subP, Condition.Equal.of(tp.id, subP.id))
                 .where(
                         Condition.in.of(tp.id, Param.of(List.class, "234"))
                 ).build();

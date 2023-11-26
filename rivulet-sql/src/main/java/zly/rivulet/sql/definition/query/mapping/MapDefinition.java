@@ -12,12 +12,12 @@ public class MapDefinition implements SQLSingleValueElementDefinition {
     /**
      * 引用别名，就是当前select字段的引用表别名
      **/
-    private final SQLAliasManager.AliasFlag referenceAlias;
+    private final String reference;
 
     /**
      * 别名，这个select字段自己的别名
      **/
-    private final SQLAliasManager.AliasFlag aliasFlag;
+    private final String alias;
 
     public MapDefinition(SingleValueElementDefinition valueDefinition, SQLAliasManager.AliasFlag referenceAlias, SQLAliasManager.AliasFlag aliasFlag) {
         this.valueDefinition = valueDefinition;

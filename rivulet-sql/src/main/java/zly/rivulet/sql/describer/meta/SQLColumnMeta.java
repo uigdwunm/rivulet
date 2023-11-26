@@ -1,8 +1,9 @@
 package zly.rivulet.sql.describer.meta;
 
+import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
 import zly.rivulet.base.describer.SingleValueElementDesc;
 
-public abstract class SQLColumnMeta<C> implements SingleValueElementDesc<C> {
+public abstract class SQLColumnMeta<C> implements SingleValueElementDesc<C> , SingleValueElementDefinition {
 
     protected final String name;
 

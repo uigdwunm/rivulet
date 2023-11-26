@@ -49,8 +49,6 @@ public class SQLQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
 
     private final List<AbstractDefinition> subDefinitionList = new ArrayList<>();
 
-    private final SQLAliasManager.AliasFlag aliasFlag = SQLAliasManager.createAlias();
-
     public SQLQueryDefinition(SQLParserPortableToolbox toolbox, WholeDesc wholeDesc) {
         super(RivuletFlag.QUERY, wholeDesc);
         SQLQueryMetaDesc<?> metaDesc = (SQLQueryMetaDesc<?>) wholeDesc;
@@ -114,9 +112,8 @@ public class SQLQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
                 );
         }
 
-        this.assigner = queryProxyNode.getAssigner();
+        this.assigner = selectDefinition.getAssigner();
 
-        this.aliasManager.init(queryProxyNode);
     }
 
     public SQLQueryDefinition(

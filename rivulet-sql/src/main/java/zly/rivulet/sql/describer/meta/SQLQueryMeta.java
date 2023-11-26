@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public interface SQLQueryMeta {
+
+    String name();
+
     default List<SQLColumnMeta<?>> getAllColumnMeta() {
         Class<? extends SQLQueryMeta> c = this.getClass();
         return Arrays.stream(c.getDeclaredFields())

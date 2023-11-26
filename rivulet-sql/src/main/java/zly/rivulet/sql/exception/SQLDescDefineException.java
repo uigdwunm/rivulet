@@ -1,5 +1,7 @@
 package zly.rivulet.sql.exception;
 
+import java.util.Arrays;
+
 public class SQLDescDefineException extends RuntimeException {
 
     private SQLDescDefineException(String msg) {
@@ -28,8 +30,12 @@ public class SQLDescDefineException extends RuntimeException {
         return new SQLDescDefineException("更新操作仅支持单个模型");
     }
 
-    public static SQLDescDefineException forceAliasRepeat(String forceAlias) {
-        return new SQLDescDefineException("强制指定的别名重复," + forceAlias);
+    public static SQLDescDefineException forceAliasRepeat(String ... forceAlias) {
+        return new SQLDescDefineException("强制指定的别名重复," + Arrays.toString(forceAlias));
+    }
+
+    public static SQLDescDefineException differentForceAlias(String forceAlias) {
+        return new SQLDescDefineException("同一个对象存在多个不同的强制别名," + forceAlias);
     }
 
     public static SQLDescDefineException subQueryMustOriginFrom(String value, Class<?> fieldType, Class<?> fromModel) {

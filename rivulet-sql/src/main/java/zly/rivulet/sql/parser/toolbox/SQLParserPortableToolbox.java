@@ -4,8 +4,6 @@ import zly.rivulet.base.definition.param.ParamReceipt;
 import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
 import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.base.describer.WholeDesc;
-import zly.rivulet.base.describer.field.FieldMapping;
-import zly.rivulet.base.describer.field.JoinFieldMapping;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.parser.ParamReceiptManager;
@@ -14,9 +12,9 @@ import zly.rivulet.sql.SQLRivuletProperties;
 import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.function.SQLFunctionDefinition;
+import zly.rivulet.sql.definition.query.SQLQueryDefinition;
+import zly.rivulet.sql.definition.query.mapping.MapDefinition;
 import zly.rivulet.sql.definition.query.operate.OperateDefinition;
-import zly.rivulet.sql.definition.query_.SQLQueryDefinition;
-import zly.rivulet.sql.definition.query_.mapping.MapDefinition;
 import zly.rivulet.sql.describer.condition.common.ConditionContainer;
 import zly.rivulet.sql.describer.function.SQLFunction;
 import zly.rivulet.sql.describer.meta.SQLColumnMeta;
@@ -59,8 +57,6 @@ public class SQLParserPortableToolbox implements ParserPortableToolbox {
      **/
     private final Set<SQLModelMeta> repeatProxyModelCheck = new HashSet<>();
 
-    private final Map<Object, SQLAliasManager.AliasFlag> aliasFlagMap = new HashMap<>();
-
     public SQLParserPortableToolbox(SQLParser sqlPreParser) {
         this.sqlPreParser = sqlPreParser;
         this.paramReceiptManager = new SQLParamReceiptManager(sqlPreParser.getConvertorManager());
@@ -72,8 +68,10 @@ public class SQLParserPortableToolbox implements ParserPortableToolbox {
         QueryProxyNode queryProxyNode = this.getQueryProxyNode();
         if (singleValueElementDesc instanceof SQLColumnMeta) {
             SQLColumnMeta<?> sqlColumnMeta = (SQLColumnMeta<?>) singleValueElementDesc;
-            SQLAliasManager.AliasFlag aliasFlag = aliasFlagMap.get(sqlColumnMeta);
-            return new MapDefinition();
+            sqlAliasManager.suggestAlias(sqlColumnMeta, sqlColumnMeta.getName());
+            SQLQueryMeta sqlQueryMeta = sqlColumnMeta.getSqlQueryMeta();
+            sqlAliasManager.suggestAlias(sqlQueryMeta, sqlQueryMeta.name());
+            return sqlColumnMeta;
         } else if (singleValueElementDesc instanceof SQLQueryMetaDesc) {
             SQLParser sqlPreParser = this.getSqlPreParser();
             SQLQueryDefinition sqlQueryDefinition = (SQLQueryDefinition) sqlPreParser.parse((SQLQueryMetaDesc<?>) singleValueElementDesc, this);
@@ -233,7 +231,7 @@ public class SQLParserPortableToolbox implements ParserPortableToolbox {
         } else if (sqlQueryMeta instanceof SQLSubQueryMeta) {
             SQLSubQueryMeta sqlSubQueryMeta = (SQLSubQueryMeta) sqlQueryMeta;
             SQLQueryMetaDesc<?> sqlSubQueryMetaDesc = sqlSubQueryMeta.getSqlSubQueryMetaDesc();
-            return new zly.rivulet.sql.definition.query.SQLQueryDefinition(this, sqlSubQueryMetaDesc);
+            return new SQLQueryDefinition(this, sqlSubQueryMetaDesc);
         } else {
             throw UnbelievableException.unknownType();
         }

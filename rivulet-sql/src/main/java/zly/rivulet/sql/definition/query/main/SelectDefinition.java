@@ -3,11 +3,13 @@ package zly.rivulet.sql.definition.query.main;
 import zly.rivulet.base.definition.AbstractContainerDefinition;
 import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
+import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
 import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.base.describer.field.SetMapping;
 import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.utils.CollectionUtils;
 import zly.rivulet.base.utils.View;
+import zly.rivulet.sql.assigner.SQLQueryResultAssigner;
 import zly.rivulet.sql.definition.query.mapping.MapDefinition;
 import zly.rivulet.sql.describer.meta.SQLColumnMeta;
 import zly.rivulet.sql.describer.meta.SQLQueryMeta;
@@ -37,6 +39,8 @@ public class SelectDefinition extends AbstractContainerDefinition {
 
     private final View<MapDefinition> mappingDefinitionList;
 
+    private final SQLQueryResultAssigner assigner;
+
     private SelectDefinition(CheckCondition checkCondition, Class<?> selectModel, View<MapDefinition> mappingDefinitionList) {
         super(checkCondition, null);
         this.selectModel = selectModel;
@@ -53,17 +57,24 @@ public class SelectDefinition extends AbstractContainerDefinition {
     ) {
         super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
         Map<String, List<SQLColumnMeta<?>>> allColumnMap = this.getAllColumnMetaMap(from, joinList);
+        List<SetMapping<Object, Object>> setMappingList = new ArrayList<>();
         if (mappedItemList == null || mappedItemList.isEmpty()) {
             // 没有指定映射项的，则根据映射模型字段，挨个映射字段
             Field[] fields = selectModel.getDeclaredFields();
             Map<Field, >
         } else {
             for (Mapping<?> mapping : mappedItemList) {
-
+                SingleValueElementDefinition singleValueElementDefinition = toolbox.parseSingleValue(mapping.getSingleValueElementDesc());
+                setMappingList.add((SetMapping) mapping.getMappingField());
             }
         }
 
+        this.assigner = new SQLQueryResultAssigner(toolbox.getSqlPreParser().getConvertorManager(), selectModel, setMappingList);
 
+
+        // 现在AliasManager已经放弃flag了
+        // MapDefinition还有用吗，里面的参数还都有用吗
+        // 有时候单个查询不想加表引用的那个别名，
 
 
 
@@ -138,6 +149,10 @@ public class SelectDefinition extends AbstractContainerDefinition {
 
     public Class<?> getSelectModel() {
         return selectModel;
+    }
+
+    public SQLQueryResultAssigner getAssigner() {
+        return assigner;
     }
 
     @Override

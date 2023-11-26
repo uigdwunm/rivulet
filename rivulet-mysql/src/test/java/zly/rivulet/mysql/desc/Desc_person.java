@@ -20,4 +20,9 @@ public class Desc_person extends MySQLTableMeta {
     public String getTableName() {
         return TABLE_NAME;
     }
+
+    @Override
+    public String name() {
+        return TABLE_NAME;
+    }
 }
