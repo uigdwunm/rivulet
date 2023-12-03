@@ -18,16 +18,22 @@ public class SQLAliasManager {
     /**
      * 检测用，所有别名全部加载后丢弃
      **/
-    private final Map<String, Integer> repeatAlias = new HashMap<>();
+    private final Map<String, Integer> repeatAlias;
 
     public SQLAliasManager(SQLRivuletProperties configProperties) {
-        this(configProperties, new HashMap<>(), new HashMap<>());
+        this(configProperties, new HashMap<>(), new HashMap<>(), new HashMap<>());
     }
 
-    private SQLAliasManager(SQLRivuletProperties configProperties, Map<Object, String> aliasMap, Map<Object, String> shortAliasMap) {
+    private SQLAliasManager(
+            SQLRivuletProperties configProperties,
+            Map<Object, String> aliasMap,
+            Map<Object, String> shortAliasMap,
+            Map<String, Integer> repeatAlias
+) {
         this.configProperties = configProperties;
         this.aliasMap = aliasMap;
         this.shortAliasMap = shortAliasMap;
+        this.repeatAlias = repeatAlias;
     }
 
     /**
@@ -126,46 +132,66 @@ public class SQLAliasManager {
         }
     }
 
-//    public SQLAliasManager.Copier copier() {
-//        return new SQLAliasManager.Copier(aliasMap, shortAliasMap);
-//    }
-//
-//    public class Copier {
-//
-//        private final Map<Object, String> aliasMap;
-//
-//        private final Map<Object, String> shortAliasMap;
-//
-//        private Copier(Map<Object, String> aliasMap, Map<Object, String> shortAliasMap) {
-//            this.aliasMap = aliasMap;
-//            this.shortAliasMap = shortAliasMap;
-//        }
-//
-//
-//        /**
-//         * Description 删掉某个别名，通常是为了做一些优化，让语句好看一点
-//         *
-//         * @author zhaolaiyuan
-//         * Date 2022/12/18 12:08
-//         **/
-//        public void removeAlias(Object aliasFlag) {
-//            if (aliasFlag == null) {
-//                return;
-//            }
-//            shortAliasMap.remove(aliasFlag);
-//            aliasMap.remove(aliasFlag);
-//        }
-//
-//        public void putAlias(Object aliasFlag, String alias) {
-//            this.aliasMap.put(aliasFlag, alias);
-//        }
-//
-//        public void putShortAlias(Object aliasFlag, String alias) {
-//            this.aliasMap.put(aliasFlag, alias);
-//        }
-//
-//        public SQLAliasManager copy() {
-//            return new SQLAliasManager(configProperties, aliasMap, shortAliasMap);
-//        }
-//    }
+    public SQLAliasManager.Copier copier() {
+        return new Copier(
+                configProperties,
+                new HashMap<>(aliasMap),
+                new HashMap<>(shortAliasMap),
+                new HashMap<>(repeatAlias)
+        );
+    }
+
+    public static class Copier {
+
+        private final SQLRivuletProperties configProperties;
+
+        private Map<Object, String> aliasMap;
+
+        private Map<Object, String> shortAliasMap;
+
+        /**
+         * 计数用
+         **/
+        private Map<String, Integer> repeatAlias;
+
+        private Copier(
+                SQLRivuletProperties configProperties,
+                Map<Object, String> aliasMap,
+                Map<Object, String> shortAliasMap,
+                Map<String, Integer> repeatAlias
+        ) {
+            this.configProperties = configProperties;
+            this.aliasMap = aliasMap;
+            this.shortAliasMap = shortAliasMap;
+            this.repeatAlias = repeatAlias;
+        }
+
+
+        /**
+         * Description 删掉某个别名，通常是为了做一些优化，让语句好看一点
+         *
+         * @author zhaolaiyuan
+         * Date 2022/12/18 12:08
+         **/
+        public void removeAlias(Object aliasFlag) {
+            if (aliasFlag == null) {
+                return;
+            }
+            shortAliasMap.remove(aliasFlag);
+            aliasMap.remove(aliasFlag);
+//            repeatAlias
+        }
+
+        public void putAlias(Object aliasFlag, String alias) {
+            this.aliasMap.put(aliasFlag, alias);
+        }
+
+        public void putShortAlias(Object aliasFlag, String alias) {
+            this.aliasMap.put(aliasFlag, alias);
+        }
+
+        public SQLAliasManager copy() {
+            return new SQLAliasManager(configProperties, aliasMap, shortAliasMap, repeatAlias);
+        }
+    }
 }

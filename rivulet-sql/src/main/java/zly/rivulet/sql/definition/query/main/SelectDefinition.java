@@ -3,26 +3,23 @@ package zly.rivulet.sql.definition.query.main;
 import zly.rivulet.base.definition.AbstractContainerDefinition;
 import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
-import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
-import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.base.describer.field.SetMapping;
-import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.utils.CollectionUtils;
 import zly.rivulet.base.utils.View;
 import zly.rivulet.sql.assigner.SQLQueryResultAssigner;
-import zly.rivulet.sql.definition.query.mapping.MapDefinition;
+import zly.rivulet.sql.definition.query.mapping.SelectItemDefinition;
 import zly.rivulet.sql.describer.meta.SQLColumnMeta;
 import zly.rivulet.sql.describer.meta.SQLQueryMeta;
-import zly.rivulet.sql.describer.meta.SQLTableMeta;
 import zly.rivulet.sql.describer.select.item.JoinItem;
 import zly.rivulet.sql.describer.select.item.Mapping;
-import zly.rivulet.sql.parser.proxy_node.CommonSelectNode;
-import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
+import zly.rivulet.sql.exception.SQLDescDefineException;
 import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
 import java.lang.reflect.Field;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Description
@@ -37,88 +34,63 @@ public class SelectDefinition extends AbstractContainerDefinition {
 
     private final Class<?> selectModel;
 
-    private final View<MapDefinition> mappingDefinitionList;
+    private final View<SelectItemDefinition> selectItemList;
 
     private final SQLQueryResultAssigner assigner;
 
-    private SelectDefinition(CheckCondition checkCondition, Class<?> selectModel, View<MapDefinition> mappingDefinitionList) {
+    private SelectDefinition(CheckCondition checkCondition, Class<?> selectModel, View<SelectItemDefinition> selectItemList, SQLQueryResultAssigner assigner) {
         super(checkCondition, null);
         this.selectModel = selectModel;
-        this.mappingDefinitionList = mappingDefinitionList;
+        this.selectItemList = selectItemList;
+        this.assigner = assigner;
     }
 
     public SelectDefinition(
             SQLParserPortableToolbox toolbox,
-            FromDefinition fromDefinition,
             Class<?> selectModel,
             List<? extends Mapping<?>> mappedItemList,
             SQLQueryMeta from,
             List<JoinItem> joinList
     ) {
         super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
-        Map<String, List<SQLColumnMeta<?>>> allColumnMap = this.getAllColumnMetaMap(from, joinList);
         List<SetMapping<Object, Object>> setMappingList = new ArrayList<>();
+        List<SelectItemDefinition> selectItemList = new ArrayList<>();
         if (mappedItemList == null || mappedItemList.isEmpty()) {
             // 没有指定映射项的，则根据映射模型字段，挨个映射字段
-            Field[] fields = selectModel.getDeclaredFields();
-            Map<Field, >
+            Map<String, List<SQLColumnMeta<?>>> allColumnMap = this.getAllColumnMetaMap(from, joinList);
+            for (Field field : selectModel.getDeclaredFields()) {
+                String fieldName = field.getName();
+                List<SQLColumnMeta<?>> sqlColumnMetas = allColumnMap.get(fieldName);
+                if (sqlColumnMetas == null) {
+                    continue;
+                }
+                if (sqlColumnMetas.size() > 1) {
+                    // 多个表下存在重名的字段名
+                    throw SQLDescDefineException.repeatColumnName(sqlColumnMetas);
+                }
+                setMappingList.add((s, f) -> {
+                    try {
+                        field.set(s, f);
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+                SQLColumnMeta<?> sqlColumnMeta = sqlColumnMetas.get(0);
+                selectItemList.add(new SelectItemDefinition(sqlColumnMeta, null));
+            }
         } else {
             for (Mapping<?> mapping : mappedItemList) {
-                SingleValueElementDefinition singleValueElementDefinition = toolbox.parseSingleValue(mapping.getSingleValueElementDesc());
                 setMappingList.add((SetMapping) mapping.getMappingField());
+
+                SelectItemDefinition selectItemDefinition = toolbox.parseSelectItemDefinition(mapping.getSingleValueElementDesc());
+                selectItemList.add(selectItemDefinition);
             }
         }
 
+        this.selectModel = selectModel;
+        this.selectItemList = View.create(selectItemList);
         this.assigner = new SQLQueryResultAssigner(toolbox.getSqlPreParser().getConvertorManager(), selectModel, setMappingList);
 
-
-        // 现在AliasManager已经放弃flag了
-        // MapDefinition还有用吗，里面的参数还都有用吗
-        // 有时候单个查询不想加表引用的那个别名，
-
-
-
-
-        List<MapDefinition> mapDefinitionList = queryProxyNode.getSelectNodeList().stream()
-            .map(selectNode -> {
-                if (selectNode instanceof QueryProxyNode) {
-                    // 子查询，包裹成MapDefinition
-                    return new MapDefinition(selectNode.getQuerySelectMeta(), null, selectNode.getAliasFlag());
-                } else if (selectNode instanceof CommonSelectNode) {
-                    return (MapDefinition) selectNode.getQuerySelectMeta();
-                } else {
-                    throw UnbelievableException.unknownType();
-                }
-            }).collect(Collectors.toList());
-        this.selectModel = selectModel;
-        this.mappingDefinitionList = View.create(mapDefinitionList);
-
-    }
-
-    public SelectDefinition(
-            SQLParserPortableToolbox toolbox,
-            Class<?> resultModelClass,
-            List<? extends Mapping<?>> mappedItemList,
-            SQLQueryMeta from,
-            List<JoinItem> joinList
-    ) {
-        super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
-        Map<String, List<SQLColumnMeta<?>>> allColumnMap = this.getAllColumnMetaMap(from, joinList);
-        if (mappedItemList == null || mappedItemList.isEmpty()) {
-            // 没有指定映射项的，则根据映射模型字段，挨个映射字段
-            Field[] fields = resultModelClass.getFields();
-            Map<Field, >
-        } else {
-            for (Mapping<?> mapping : mappedItemList) {
-                SingleValueElementDesc<?> singleValueElementDesc = mapping.getSingleValueElementDesc();
-                SetMapping<?, ?> mappingField = mapping.getMappingField();
-                if (mappingField == null) {
-                    // 子查询时，仅声明需要哪些字段的情况
-                } else {
-
-                }
-            }
-        }
     }
 
     private Map<String, List<SQLColumnMeta<?>>> getAllColumnMetaMap(SQLQueryMeta from, List<JoinItem> joinList) {
@@ -142,9 +114,8 @@ public class SelectDefinition extends AbstractContainerDefinition {
         }
     }
 
-
-    public View<MapDefinition> getMapDefinitionList() {
-        return mappingDefinitionList;
+    public View<SelectItemDefinition> getMapDefinitionList() {
+        return selectItemList;
     }
 
     public Class<?> getSelectModel() {
@@ -157,31 +128,30 @@ public class SelectDefinition extends AbstractContainerDefinition {
 
     @Override
     public Copier copier() {
-        return new Copier(selectModel, mappingDefinitionList);
+        return new Copier(selectModel, selectItemList, assigner);
     }
 
     public class Copier implements Definition.Copier {
 
-        private Class<?> selectModel;
+        private final Class<?> selectModel;
 
-        private View<MapDefinition> mappingDefinitionList;
+        private final View<SelectItemDefinition> selectItemList;
 
-        private Copier(Class<?> selectModel, View<MapDefinition> mappingDefinitionList) {
+        private final SQLQueryResultAssigner assigner;
+
+        private Copier(Class<?> selectModel, View<SelectItemDefinition> selectItemList, SQLQueryResultAssigner assigner) {
             this.selectModel = selectModel;
-            this.mappingDefinitionList = mappingDefinitionList;
+            this.selectItemList = selectItemList;
+            this.assigner = assigner;
         }
 
-        public void setSelectModel(Class<?> selectModel) {
-            this.selectModel = selectModel;
-        }
-
-        public void setMappingDefinitionList(View<MapDefinition> mappingDefinitionList) {
-            this.mappingDefinitionList = mappingDefinitionList;
+        public View<SelectItemDefinition> getSelectItemList() {
+            return selectItemList;
         }
 
         @Override
         public SelectDefinition copy() {
-            return new SelectDefinition(checkCondition, selectModel, mappingDefinitionList);
+            return new SelectDefinition(checkCondition, selectModel, selectItemList, assigner);
         }
     }
 }

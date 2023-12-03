@@ -6,10 +6,10 @@ import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.definition.param.ParamReceipt;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.parser.ParamReceiptManager;
-import zly.rivulet.sql.parser.toolbox_.SQLParserPortableToolbox;
+import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
 public class SkitDefinition extends AbstractDefinition {
-    private ParamReceipt skit;
+    private final ParamReceipt skit;
 
     private SkitDefinition(CheckCondition checkCondition, ParamReceipt skit) {
         super(checkCondition, null);
@@ -35,6 +35,10 @@ public class SkitDefinition extends AbstractDefinition {
         private ParamReceipt skit;
 
         private Copier(ParamReceipt skit) {
+            this.skit = skit;
+        }
+
+        public void setSkit(ParamReceipt skit) {
             this.skit = skit;
         }
 

@@ -5,7 +5,7 @@ import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
 import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.base.describer.param.Param;
-import zly.rivulet.sql.definition.query.mapping.MapDefinition;
+import zly.rivulet.sql.definition.query.mapping.SelectItemDefinition;
 import zly.rivulet.sql.describer.condition.ConditionElement;
 import zly.rivulet.sql.describer.condition.common.Condition;
 import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
@@ -35,10 +35,10 @@ public class GTEOperateDefinition extends OperateDefinition {
         this.rightElement = toolbox.parseSingleValueForCondition(rightFieldMapped);
     }
 
-    public GTEOperateDefinition(SQLParserPortableToolbox toolbox, MapDefinition mapDefinition, Param<?> param, CheckCondition checkCondition) {
+    public GTEOperateDefinition(SQLParserPortableToolbox toolbox, SelectItemDefinition selectItemDefinition, Param<?> param, CheckCondition checkCondition) {
         super(checkCondition, toolbox.getParamReceiptManager());
 
-        this.leftElement =  mapDefinition;
+        this.leftElement = selectItemDefinition;
         this.rightElement = toolbox.parseSingleValueForCondition(param);
     }
 

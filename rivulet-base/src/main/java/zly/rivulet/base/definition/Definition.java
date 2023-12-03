@@ -18,7 +18,19 @@ public interface Definition {
 
     interface Copier {
         Definition copy();
+    }
 
+    class ThisCopier<T extends Definition> implements Copier {
+        private final T t;
+
+        public ThisCopier(T t) {
+            this.t = t;
+        }
+
+        @Override
+        public Definition copy() {
+            return t;
+        }
     }
 
 

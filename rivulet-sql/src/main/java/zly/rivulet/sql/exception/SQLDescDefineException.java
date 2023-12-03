@@ -1,6 +1,9 @@
 package zly.rivulet.sql.exception;
 
+import zly.rivulet.sql.describer.meta.SQLColumnMeta;
+
 import java.util.Arrays;
+import java.util.List;
 
 public class SQLDescDefineException extends RuntimeException {
 
@@ -48,5 +51,9 @@ public class SQLDescDefineException extends RuntimeException {
 
     public static SQLDescDefineException noMappedItemList(Class<?> fromModel, Class<?> selectModel) {
         return new SQLDescDefineException("from模型和select模型不一致时，必须定义每个select字段的映射结果,fromMode=" + fromModel.getSimpleName() + ", selectModel=" + selectModel.getSimpleName());
+    }
+
+    public static SQLDescDefineException repeatColumnName(List<SQLColumnMeta<?>> sqlColumnMetas) {
+        return new SQLDescDefineException("多个表下存在重复的字段名" + sqlColumnMetas.get(0).getName());
     }
 }

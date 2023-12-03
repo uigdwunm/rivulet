@@ -5,7 +5,7 @@ import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.sql.definition.query.orderby.SortItemDefinition;
 import zly.rivulet.sql.describer.select.item.SortItem;
-import zly.rivulet.sql.parser.toolbox_.SQLParserPortableToolbox;
+import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,7 +14,7 @@ public class OrderByDefinition extends AbstractDefinition {
 
     private final List<SortItemDefinition> sortItemDefinitionList;
 
-    public OrderByDefinition(SQLParserPortableToolbox toolbox, List<? extends SortItem<?,?>> orderItemList) {
+    public OrderByDefinition(SQLParserPortableToolbox toolbox, List<? extends SortItem> orderItemList) {
         super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
         this.sortItemDefinitionList = orderItemList.stream()
             .map(orderItem -> new SortItemDefinition(toolbox, orderItem))

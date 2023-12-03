@@ -13,8 +13,9 @@ import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.function.SQLFunctionDefinition;
 import zly.rivulet.sql.definition.query.SQLQueryDefinition;
-import zly.rivulet.sql.definition.query.mapping.MapDefinition;
+import zly.rivulet.sql.definition.query.mapping.SelectItemDefinition;
 import zly.rivulet.sql.definition.query.operate.OperateDefinition;
+import zly.rivulet.sql.describer.condition.common.Condition;
 import zly.rivulet.sql.describer.condition.common.ConditionContainer;
 import zly.rivulet.sql.describer.function.SQLFunction;
 import zly.rivulet.sql.describer.meta.SQLColumnMeta;
@@ -26,21 +27,15 @@ import zly.rivulet.sql.exception.SQLDescDefineException;
 import zly.rivulet.sql.parser.SQLAliasManager;
 import zly.rivulet.sql.parser.SQLParamReceiptManager;
 import zly.rivulet.sql.parser.SQLParser;
-import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 public class SQLParserPortableToolbox implements ParserPortableToolbox {
 
     private final SQLParser sqlPreParser;
 
     private final ParamReceiptManager paramReceiptManager;
-
-    /**
-     * 由于可能存在嵌套的子查询，所以当前生效的node会变，这里改造成栈符合嵌套子查询层层解析的形式，
-     * 完成每个子查询解析后，在外层会进行弹栈
-     **/
-    private final Deque<QueryProxyNode> queryProxyNodeStack = new LinkedList<>();
 
     private final SQLRivuletProperties configProperties;
 
@@ -65,111 +60,57 @@ public class SQLParserPortableToolbox implements ParserPortableToolbox {
     }
 
     public SingleValueElementDefinition parseSingleValue(SingleValueElementDesc<?> singleValueElementDesc) {
-        QueryProxyNode queryProxyNode = this.getQueryProxyNode();
         if (singleValueElementDesc instanceof SQLColumnMeta) {
+            // 表字段类型
+            return (SQLColumnMeta<?>) singleValueElementDesc;
+        } else if (singleValueElementDesc instanceof SQLQueryMetaDesc) {
+            // 子查询类型
+            SQLQueryMetaDesc<?> sqlQueryMetaDesc = (SQLQueryMetaDesc<?>) singleValueElementDesc;
+            SQLParser sqlPreParser = this.getSqlPreParser();
+            return (SQLQueryDefinition) sqlPreParser.parse(sqlQueryMetaDesc, this);
+        } else if (singleValueElementDesc instanceof Param) {
+            // 参数类型
+            Param<?> param = (Param<?>) singleValueElementDesc;
+            ParamReceiptManager paramReceiptManager = this.getParamReceiptManager();
+            return paramReceiptManager.registerParam(param);
+        } else if (singleValueElementDesc instanceof SQLFunction) {
+            SQLFunction<?> sqlFunction = (SQLFunction<?>) singleValueElementDesc;
+            return new SQLFunctionDefinition(this, sqlFunction);
+        } else {
+            throw UnbelievableException.unknownType();
+        }
+
+    }
+
+    /**
+     * 专门用于解析SelectItem子项
+     **/
+    public SelectItemDefinition parseSelectItemDefinition(SingleValueElementDesc<?> singleValueElementDesc) {
+        if (singleValueElementDesc instanceof SQLColumnMeta) {
+            // 表字段类型
             SQLColumnMeta<?> sqlColumnMeta = (SQLColumnMeta<?>) singleValueElementDesc;
             sqlAliasManager.suggestAlias(sqlColumnMeta, sqlColumnMeta.getName());
             SQLQueryMeta sqlQueryMeta = sqlColumnMeta.getSqlQueryMeta();
             sqlAliasManager.suggestAlias(sqlQueryMeta, sqlQueryMeta.name());
-            return sqlColumnMeta;
+            return new SelectItemDefinition(sqlColumnMeta, sqlQueryMeta);
         } else if (singleValueElementDesc instanceof SQLQueryMetaDesc) {
-            SQLParser sqlPreParser = this.getSqlPreParser();
-            SQLQueryDefinition sqlQueryDefinition = (SQLQueryDefinition) sqlPreParser.parse((SQLQueryMetaDesc<?>) singleValueElementDesc, this);
-            QueryProxyNode subQueryNode = this.popQueryProxyNode();
-            queryProxyNode.addConditionSubQuery(subQueryNode);
-            return sqlQueryDefinition;
+            // 子查询类型
+            SQLQueryMetaDesc<?> sqlQueryMetaDesc = (SQLQueryMetaDesc<?>) singleValueElementDesc;
+            sqlAliasManager.suggestAlias(sqlQueryMetaDesc, null);
+            SQLQueryDefinition subSQLQuery = (SQLQueryDefinition) sqlPreParser.parse(sqlQueryMetaDesc, this);
+            return new SelectItemDefinition(subSQLQuery, null);
         } else if (singleValueElementDesc instanceof Param) {
-            ParamReceiptManager paramReceiptManager = this.getParamReceiptManager();
-            return paramReceiptManager.registerParam((Param<?>) singleValueElementDesc);
+            // 参数类型
+            Param<?> param = (Param<?>) singleValueElementDesc;
+            sqlAliasManager.suggestAlias(param, null);
+            ParamReceipt paramReceipt = paramReceiptManager.registerParam(param);
+            return new SelectItemDefinition(paramReceipt, null);
         } else if (singleValueElementDesc instanceof SQLFunction) {
+            // 函数类型
             SQLFunction<?> sqlFunction = (SQLFunction<?>) singleValueElementDesc;
-            return new SQLFunctionDefinition(this, sqlFunction);
-        } else {
-            throw UnbelievableException.unknownType();
-        }
-
-    }
-
-
-    public MapDefinition parseSingValueForSelect(
-        Object proxyModel,
-        SingleValueElementDesc<?> singleValueElementDesc
-    ) {
-        QueryProxyNode queryProxyNode = this.getQueryProxyNode();
-        if (singleValueElementDesc instanceof FieldMapping) {
-            // 字段类的select
-            return queryProxyNode.getFieldDefinitionFromThreadLocal((FieldMapping<?, ?>) singleValueElementDesc, proxyModel);
-        } else if (singleValueElementDesc instanceof SQLQueryMetaDesc) {
-            // 子查询类型的select
-            sqlPreParser.parse((WholeDesc) singleValueElementDesc, this);
-            QueryProxyNode subQueryProxyNode = this.popQueryProxyNode();
-            return new MapDefinition(
-                subQueryProxyNode.getQuerySelectMeta(),
-                null,
-                subQueryProxyNode.getAliasFlag()
-            );
-
-        } else if (singleValueElementDesc instanceof Param) {
-            // 参数类型的select
-            ParamReceiptManager paramReceiptManager = this.getParamReceiptManager();
-            ParamReceipt paramReceipt = paramReceiptManager.registerParam((Param<?>) singleValueElementDesc);
-            return new MapDefinition(
-                paramReceipt,
-                null,
-                SQLAliasManager.createAlias()
-            );
-
-        } else if (singleValueElementDesc instanceof SQLFunction) {
-            SQLFunction<?> sqlFunction = (SQLFunction<?>) singleValueElementDesc;
+            sqlAliasManager.suggestAlias(sqlFunction, null);
             SQLFunctionDefinition sqlFunctionDefinition = new SQLFunctionDefinition(this, sqlFunction);
-            return new MapDefinition(
-                sqlFunctionDefinition,
-                null,
-                SQLAliasManager.createAlias()
-            );
-        } else {
-            throw UnbelievableException.unknownType();
-        }
-    }
-
-    public SingleValueElementDefinition parseSingleValueForCondition(SingleValueElementDesc<?> singleValueElementDesc) {
-        QueryProxyNode queryProxyNode = this.getQueryProxyNode();
-        if (singleValueElementDesc instanceof FieldMapping) {
-            FieldMapping<Object, Object> fieldMapping = (FieldMapping<Object, Object>) singleValueElementDesc;
-            return queryProxyNode.getFieldDefinitionFromThreadLocal(fieldMapping, queryProxyNode.getProxyModel());
-        } else if (singleValueElementDesc instanceof JoinFieldMapping) {
-            JoinFieldMapping<Object> joinFieldMapping = (JoinFieldMapping<Object>) singleValueElementDesc;
-            return queryProxyNode.getFieldDefinitionFromThreadLocal(joinFieldMapping, queryProxyNode.getProxyModel());
-        } else if (singleValueElementDesc instanceof SQLQueryMetaDesc) {
-            SQLParser sqlPreParser = this.getSqlPreParser();
-            SQLQueryDefinition sqlQueryDefinition = (SQLQueryDefinition) sqlPreParser.parse((SQLQueryMetaDesc<?>) singleValueElementDesc, this);
-            QueryProxyNode subQueryNode = this.popQueryProxyNode();
-            queryProxyNode.addConditionSubQuery(subQueryNode);
-            return sqlQueryDefinition;
-        } else if (singleValueElementDesc instanceof Param) {
-            ParamReceiptManager paramReceiptManager = this.getParamReceiptManager();
-            return paramReceiptManager.registerParam((Param<?>) singleValueElementDesc);
-        } else if (singleValueElementDesc instanceof SQLFunction) {
-            SQLFunction<?> sqlFunction = (SQLFunction<?>) singleValueElementDesc;
-            return new SQLFunctionDefinition(this, sqlFunction);
-        } else {
-            throw UnbelievableException.unknownType();
-        }
-    }
-
-    /**
-     * Description custom解析singleValue仅支持FieldMapping
-     *
-     * @author zhaolaiyuan
-     * Date 2022/10/23 13:51
-     **/
-    public static SingleValueElementDefinition parseSingleValueForCustom(
-        QueryProxyNode queryProxyNode,
-        SingleValueElementDesc<?> singleValueElementDesc
-    ) {
-        if (singleValueElementDesc instanceof FieldMapping) {
-            FieldMapping<Object, Object> fieldMapping = (FieldMapping<Object, Object>) singleValueElementDesc;
-            return queryProxyNode.getFieldDefinitionFromThreadLocal(fieldMapping, queryProxyNode.getProxyModel());
+            return new SelectItemDefinition(sqlFunctionDefinition, null);
         } else {
             throw UnbelievableException.unknownType();
         }
@@ -181,18 +122,6 @@ public class SQLParserPortableToolbox implements ParserPortableToolbox {
 
     public ParamReceiptManager getParamReceiptManager() {
         return paramReceiptManager;
-    }
-
-    public QueryProxyNode getQueryProxyNode() {
-        return this.queryProxyNodeStack.peek();
-    }
-
-    public void setQueryProxyNode(QueryProxyNode queryProxyNode) {
-        this.queryProxyNodeStack.push(queryProxyNode);
-    }
-
-    public QueryProxyNode popQueryProxyNode() {
-        return this.queryProxyNodeStack.pop();
     }
 
     public SQLRivuletProperties getConfigProperties() {
@@ -237,7 +166,7 @@ public class SQLParserPortableToolbox implements ParserPortableToolbox {
         }
     }
 
-    public OperateDefinition parseCondition(ConditionContainer onConditionContainer) {
+    public OperateDefinition parseCondition(Condition onConditionContainer) {
         return onConditionContainer.getOperate().createDefinition(this, onConditionContainer);
     }
 }

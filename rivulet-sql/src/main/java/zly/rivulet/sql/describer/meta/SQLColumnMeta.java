@@ -29,4 +29,9 @@ public abstract class SQLColumnMeta<C> implements SingleValueElementDesc<C> , Si
     public SQLQueryMeta getSqlQueryMeta() {
         return sqlQueryMeta;
     }
+
+    @Override
+    public Copier copier() {
+        return new ThisCopier<>(this);
+    }
 }

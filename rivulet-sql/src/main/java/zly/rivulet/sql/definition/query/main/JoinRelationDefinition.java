@@ -41,10 +41,6 @@ public class JoinRelationDefinition extends AbstractDefinition {
         return operateContainerDefinition;
     }
 
-    public SQLAliasManager.AliasFlag getAliasFlag() {
-        return this.joinModel.getAliasFlag();
-    }
-
     public JoinType getJoinType() {
         return joinType;
     }

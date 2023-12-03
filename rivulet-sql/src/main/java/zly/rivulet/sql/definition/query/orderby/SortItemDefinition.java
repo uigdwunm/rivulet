@@ -5,7 +5,7 @@ import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
 import zly.rivulet.sql.describer.select.item.SortItem;
-import zly.rivulet.sql.parser.toolbox_.SQLParserPortableToolbox;
+import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
 public class SortItemDefinition extends AbstractDefinition {
     private SingleValueElementDefinition singleValue;
@@ -18,9 +18,9 @@ public class SortItemDefinition extends AbstractDefinition {
         this.sortType = sortType;
     }
 
-    public SortItemDefinition(SQLParserPortableToolbox toolbox, SortItem<?, ?> orderItem) {
+    public SortItemDefinition(SQLParserPortableToolbox toolbox, SortItem orderItem) {
         super(CheckCondition.IS_TRUE, toolbox.getParamReceiptManager());
-        this.singleValue = toolbox.parseSingleValueForCondition(orderItem.getSingleValue());
+        this.singleValue = toolbox.parseSingleValue(orderItem.getSingleValue());
         this.sortType = orderItem.getSortType();
     }
 

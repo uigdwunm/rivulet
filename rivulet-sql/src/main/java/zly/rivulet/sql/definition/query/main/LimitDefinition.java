@@ -6,7 +6,7 @@ import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.definition.param.ParamReceipt;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.parser.ParamReceiptManager;
-import zly.rivulet.sql.parser.toolbox_.SQLParserPortableToolbox;
+import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
 public class LimitDefinition extends AbstractDefinition {
     private final ParamReceipt limit;

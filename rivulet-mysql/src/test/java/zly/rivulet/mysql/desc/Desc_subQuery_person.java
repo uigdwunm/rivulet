@@ -14,4 +14,9 @@ public class Desc_subQuery_person extends SQLSubQueryMeta {
     public Desc_subQuery_person(SQLQueryMetaDesc<?> sqlSubQueryMetaDesc) {
         super(sqlSubQueryMetaDesc);
     }
+
+    @Override
+    public String name() {
+        return TABLE_NAME;
+    }
 }

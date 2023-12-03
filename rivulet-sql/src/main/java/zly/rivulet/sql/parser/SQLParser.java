@@ -21,13 +21,12 @@ import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definition.SQLCustomDefinition;
 import zly.rivulet.sql.definition.delete.SQLDeleteDefinition;
 import zly.rivulet.sql.definition.insert.SQLInsertDefinition;
-import zly.rivulet.sql.definition.query_.SQLQueryDefinition;
+import zly.rivulet.sql.definition.query.SQLQueryDefinition;
 import zly.rivulet.sql.definition.update.SQLUpdateDefinition;
-import zly.rivulet.sql.describer.query_.SQLQueryMetaDesc;
 import zly.rivulet.sql.describer.update.SQLUpdateMetaDesc;
 import zly.rivulet.sql.parser.proxy_node.ProxyNodeManager;
 import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
-import zly.rivulet.sql.parser.toolbox_.SQLParserPortableToolbox;
+import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;

@@ -4,20 +4,14 @@ import zly.rivulet.base.definition.Definition;
 import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.parser.SQLAliasManager;
 
-public abstract class SQLTableMeta implements SQLQueryMeta, QueryFromMeta {
+import java.util.List;
 
-    private SQLAliasManager.AliasFlag aliasFlag;
+public abstract class SQLTableMeta implements SQLQueryMeta, QueryFromMeta {
+    private List<SQLColumnMeta<?>> sqlColumnMetaList;
+
     public abstract void primaryKey();
 
     public abstract String getTableName();
-
-    @Override
-    public SQLAliasManager.AliasFlag getAliasFlag() {
-        if (aliasFlag == null) {
-            this.aliasFlag = SQLAliasManager.createAlias(this.getTableName());
-        }
-        return aliasFlag;
-    }
 
     @Override
     public Copier copier() {
@@ -28,5 +22,13 @@ public abstract class SQLTableMeta implements SQLQueryMeta, QueryFromMeta {
                 return oneself;
             }
         };
+    }
+
+    @Override
+    public List<SQLColumnMeta<?>> getAllColumnMeta() {
+        if (this.sqlColumnMetaList == null) {
+            this.sqlColumnMetaList = SQLQueryMeta.super.getAllColumnMeta();
+        }
+        return this.sqlColumnMetaList;
     }
 }

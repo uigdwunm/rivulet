@@ -12,7 +12,7 @@ public class SQLFunctionDefinition extends SQLCustomDefinition implements Single
     public SQLFunctionDefinition(SQLParserPortableToolbox toolbox, SQLFunction<?> sqlFunction) {
         super(
             sqlFunction.getSingleValueList().stream()
-            .map(toolbox::parseSingleValueForCondition)
+            .map(toolbox::parseSingleValue)
             .collect(Collectors.toList()),
             sqlFunction.getCustomCollect()
         );
