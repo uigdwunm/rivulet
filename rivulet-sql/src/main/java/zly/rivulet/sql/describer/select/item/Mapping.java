@@ -6,90 +6,118 @@ import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.base.describer.field.SetMapping;
 import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.sql.describer.function.SQLFunction;
-import zly.rivulet.sql.describer.meta.SQLColumnMeta;
+import zly.rivulet.sql.definer.meta.SQLColumnMeta;
 import zly.rivulet.sql.describer.query_.SQLQueryMetaDesc;
 
-public class Mapping<R> {
+import java.util.function.Function;
+
+public interface Mapping<R> {
 
     /**
-     * 里面是一个set方法的lambda表达式
+     * 函数类的select项映射到vo
      **/
-    private final SetMapping<R, ?> mappingField;
-    
-    private final SingleValueElementDesc<?> singleValueElementDesc;
+    static <V, T> CommonMapping<V> of(SetMapping<V, T> selectField, SQLFunction<T> desc) {
+        return new CommonMapping<>(selectField, desc, ResultConvertor.SELF_CONVERTOR);
+    }
+    static <V, O, T> CommonMapping<V> ofAutoConvert(SetMapping<V, T> selectField, SQLFunction<O> desc) {
+        return new CommonMapping<>(selectField, desc, null);
+    }
+    static <V, O, T> CommonMapping<V> of(SetMapping<V, T> selectField, SQLFunction<O> desc, Convertor<O, T> convertor) {
+        return new CommonMapping<>(selectField, desc, convertor);
+    }
 
     /**
-     * 指定的转换器，如果为空，则会从默认的转换器中选一个
+     * 参数类的select项映射到vo
      **/
-    private final Convertor<?, ?> convertor;
-
-    private Mapping(SetMapping<R, ?> mappingField, SingleValueElementDesc<?> singleValueElementDesc, Convertor<?, ?> convertor) {
-        this.mappingField = mappingField;
-        this.singleValueElementDesc = singleValueElementDesc;
-        this.convertor = convertor;
+    static <V, T> CommonMapping<V> of(SetMapping<V, T> selectField, Param<T> param) {
+        return new CommonMapping<>(selectField, param, ResultConvertor.SELF_CONVERTOR);
+    }
+    static <V, O, T> CommonMapping<V> ofAutoConvert(SetMapping<V, T> selectField, Param<O> param) {
+        return new CommonMapping<>(selectField, param, null);
+    }
+    static <V, O, T> CommonMapping<V> of(SetMapping<V, T> selectField, Param<O> param, Convertor<O, T> convertor) {
+        return new CommonMapping<>(selectField, param, convertor);
     }
 
-    public static <V, T> Mapping<V> of(SetMapping<V, T> selectField, SQLFunction<T> desc) {
-        return new Mapping<>(selectField, desc, ResultConvertor.SELF_CONVERTOR);
+    /**
+     * 表字段类的select项映射到vo
+     **/
+    static <V, T> CommonMapping<V> of(SetMapping<V, T> selectField, SQLColumnMeta<T> sqlColumnMeta) {
+        return new CommonMapping<>(selectField, sqlColumnMeta, ResultConvertor.SELF_CONVERTOR);
+    }
+    static <V, O, T> CommonMapping<V> ofAutoConvert(SetMapping<V, T> selectField, SQLColumnMeta<O> sqlColumnMeta) {
+        return new CommonMapping<>(selectField, sqlColumnMeta, null);
+    }
+    static <V, O, T> CommonMapping<V> of(SetMapping<V, T> selectField, SQLColumnMeta<O> sqlColumnMeta, Convertor<O, T> convertor) {
+        return new CommonMapping<>(selectField, sqlColumnMeta, convertor);
     }
 
-    public static <V, O, T> Mapping<V> ofAutoConvert(SetMapping<V, T> selectField, SQLFunction<O> desc) {
-        return new Mapping<>(selectField, desc, null);
+    /**
+     * 子查询类的select项映射到vo
+     **/
+    static <V, T> CommonMapping<V> of(SetMapping<V, T> selectField, SQLQueryMetaDesc<T> sqlQueryMetaDesc) {
+        return new CommonMapping<>(selectField, sqlQueryMetaDesc, ResultConvertor.SELF_CONVERTOR);
+    }
+    static <V, O, T> CommonMapping<V> ofAutoConvert(SetMapping<V, T> selectField, SQLQueryMetaDesc<O> sqlQueryMetaDesc) {
+        return new CommonMapping<>(selectField, sqlQueryMetaDesc, null);
+    }
+    static <V, O, T> CommonMapping<V> of(SetMapping<V, T> selectField, SQLQueryMetaDesc<O> sqlQueryMetaDesc, Convertor<O, T> convertor) {
+        return new CommonMapping<>(selectField, sqlQueryMetaDesc, convertor);
     }
 
-    public static <V, O, T> Mapping<V> of(SetMapping<V, T> selectField, SQLFunction<O> desc, Convertor<O, T> convertor) {
-        return new Mapping<>(selectField, desc, convertor);
+    /**
+     * 函数类的select项映射到子查询对象
+     **/
+    static <V, T> SubQueryMapping<V> of(Function<V, SQLColumnMeta<T>> selectField, SQLFunction<T> desc) {
+        return new SubQueryMapping<>(selectField, desc, ResultConvertor.SELF_CONVERTOR);
+    }
+    static <V, O, T> SubQueryMapping<V> ofAutoConvert(Function<V, SQLColumnMeta<T>> selectField, SQLFunction<O> desc) {
+        return new SubQueryMapping<>(selectField, desc, null);
+    }
+    static <V, O, T> SubQueryMapping<V> of(Function<V, SQLColumnMeta<T>> selectField, SQLFunction<O> desc, Convertor<O, T> convertor) {
+        return new SubQueryMapping<>(selectField, desc, convertor);
     }
 
-    public static <V, T> Mapping<V> of(SetMapping<V, T> selectField, Param<T> param) {
-        return new Mapping<>(selectField, param, ResultConvertor.SELF_CONVERTOR);
+    /**
+     * 参数类的select项映射到子查询对象
+     **/
+    static <V, T> SubQueryMapping<V> of(Function<V, SQLColumnMeta<T>> selectField, Param<T> param) {
+        return new SubQueryMapping<>(selectField, param, ResultConvertor.SELF_CONVERTOR);
+    }
+    static <V, O, T> SubQueryMapping<V> ofAutoConvert(Function<V, SQLColumnMeta<T>> selectField, Param<O> param) {
+        return new SubQueryMapping<>(selectField, param, null);
+    }
+    static <V, O, T> SubQueryMapping<V> of(Function<V, SQLColumnMeta<T>> selectField, Param<O> param, Convertor<O, T> convertor) {
+        return new SubQueryMapping<>(selectField, param, convertor);
     }
 
-    public static <V, O, T> Mapping<V> ofAutoConvert(SetMapping<V, T> selectField, Param<O> param) {
-        return new Mapping<>(selectField, param, null);
+    /**
+     * 表字段类的select项映射到子查询对象
+     **/
+    static <V, T> SubQueryMapping<V> of(Function<V, SQLColumnMeta<T>> selectField, SQLColumnMeta<T> sqlColumnMeta) {
+        return new SubQueryMapping<>(selectField, sqlColumnMeta, ResultConvertor.SELF_CONVERTOR);
+    }
+    static <V, O, T> SubQueryMapping<V> ofAutoConvert(Function<V, SQLColumnMeta<T>> selectField, SQLColumnMeta<O> sqlColumnMeta) {
+        return new SubQueryMapping<>(selectField, sqlColumnMeta, null);
+    }
+    static <V, O, T> SubQueryMapping<V> of(Function<V, SQLColumnMeta<T>> selectField, SQLColumnMeta<O> sqlColumnMeta, Convertor<O, T> convertor) {
+        return new SubQueryMapping<>(selectField, sqlColumnMeta, convertor);
     }
 
-    public static <V, O, T> Mapping<V> of(SetMapping<V, T> selectField, Param<O> param, Convertor<O, T> convertor) {
-        return new Mapping<>(selectField, param, convertor);
+    /**
+     * 子查询类的select项映射到子查询对象
+     **/
+    static <V, T> SubQueryMapping<V> of(Function<V, SQLColumnMeta<T>> selectField, SQLQueryMetaDesc<T> sqlQueryMetaDesc) {
+        return new SubQueryMapping<>(selectField, sqlQueryMetaDesc, ResultConvertor.SELF_CONVERTOR);
+    }
+    static <V, O, T> SubQueryMapping<V> ofAutoConvert(Function<V, SQLColumnMeta<T>> selectField, SQLQueryMetaDesc<O> sqlQueryMetaDesc) {
+        return new SubQueryMapping<>(selectField, sqlQueryMetaDesc, null);
+    }
+    static <V, O, T> SubQueryMapping<V> of(Function<V, SQLColumnMeta<T>> selectField, SQLQueryMetaDesc<O> sqlQueryMetaDesc, Convertor<O, T> convertor) {
+        return new SubQueryMapping<>(selectField, sqlQueryMetaDesc, convertor);
     }
 
-    public static <V, T> Mapping<V> of(SetMapping<V, T> selectField, SQLColumnMeta<T> sqlColumnMeta) {
-        return new Mapping<>(selectField, sqlColumnMeta, ResultConvertor.SELF_CONVERTOR);
-    }
+    SingleValueElementDesc<?> getSingleValueElementDesc();
 
-    public static <V, O, T> Mapping<V> ofAutoConvert(SetMapping<V, T> selectField, SQLColumnMeta<O> sqlColumnMeta) {
-        return new Mapping<>(selectField, sqlColumnMeta, null);
-    }
-
-    public static <V, O, T> Mapping<V> of(SetMapping<V, T> selectField, SQLColumnMeta<O> sqlColumnMeta, Convertor<O, T> convertor) {
-        return new Mapping<>(selectField, sqlColumnMeta, convertor);
-    }
-
-    public static <V, T> Mapping<V> of(SetMapping<V, T> selectField, SQLQueryMetaDesc<T> sqlQueryMetaDesc) {
-        return new Mapping<>(selectField, sqlQueryMetaDesc, ResultConvertor.SELF_CONVERTOR);
-    }
-
-    public static <V, O, T> Mapping<V> ofAutoConvert(SetMapping<V, T> selectField, SQLQueryMetaDesc<O> sqlQueryMetaDesc) {
-        return new Mapping<>(selectField, sqlQueryMetaDesc, null);
-    }
-
-    public static <V, O, T> Mapping<V> of(SetMapping<V, T> selectField, SQLQueryMetaDesc<O> sqlQueryMetaDesc, Convertor<O, T> convertor) {
-        return new Mapping<>(selectField, sqlQueryMetaDesc, convertor);
-    }
-
-    public static <V, T> Mapping<V> of(SetMapping<V, T> selectField, SingleValueElementDesc<T> desc) {
-        return new Mapping<>(selectField, desc, ResultConvertor.SELF_CONVERTOR);
-    }
-
-    public SetMapping<R, ?> getMappingField() {
-        return mappingField;
-    }
-
-    public SingleValueElementDesc<?> getSingleValueElementDesc() {
-        return singleValueElementDesc;
-    }
-
-    public Convertor<?, ?> getConvertor() {
-        return convertor;
-    }
+    Convertor<?, ?> getConvertor();
 }

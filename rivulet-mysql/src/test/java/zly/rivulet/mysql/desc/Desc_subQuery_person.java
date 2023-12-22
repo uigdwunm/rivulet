@@ -1,7 +1,7 @@
 package zly.rivulet.mysql.desc;
 
 import zly.rivulet.mysql.discriber.meta.MySQLColumnMeta;
-import zly.rivulet.sql.describer.meta.SQLSubQueryMeta;
+import zly.rivulet.sql.definer.meta.SQLSubQueryMeta;
 import zly.rivulet.sql.describer.query_.SQLQueryMetaDesc;
 
 public class Desc_subQuery_person extends SQLSubQueryMeta {

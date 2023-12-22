@@ -1,6 +1,6 @@
 package zly.rivulet.sql.exception;
 
-import zly.rivulet.sql.describer.meta.SQLColumnMeta;
+import zly.rivulet.sql.definer.meta.SQLColumnMeta;
 
 import java.util.Arrays;
 import java.util.List;

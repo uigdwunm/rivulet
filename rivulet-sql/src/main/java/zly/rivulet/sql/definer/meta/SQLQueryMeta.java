@@ -1,4 +1,4 @@
-package zly.rivulet.sql.describer.meta;
+package zly.rivulet.sql.definer.meta;
 
 import java.util.Arrays;
 import java.util.List;

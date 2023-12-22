@@ -2,7 +2,7 @@ package zly.rivulet.sql.describer.select.item;
 
 import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.sql.describer.function.SQLFunction;
-import zly.rivulet.sql.describer.meta.SQLColumnMeta;
+import zly.rivulet.sql.definer.meta.SQLColumnMeta;
 
 public class SortItem {
 

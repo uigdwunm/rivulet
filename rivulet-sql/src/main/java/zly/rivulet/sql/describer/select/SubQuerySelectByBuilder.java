@@ -2,6 +2,7 @@ package zly.rivulet.sql.describer.select;
 
 import zly.rivulet.base.describer.SingleValueElementDesc;
 import zly.rivulet.sql.describer.select.item.Mapping;
+import zly.rivulet.sql.describer.select.item.SubQueryMapping;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -9,11 +10,8 @@ import java.util.stream.Collectors;
 public class SubQuerySelectByBuilder<T> extends FromByBuilder<T> {
 
     @SafeVarargs
-    public final FromByBuilder<T> select(SingleValueElementDesc<?> ... descs) {
-        super.mappedItemList =
-               Arrays.stream(descs)
-                .map(desc -> (Mapping<T>) Mapping.of(null, desc))
-                .collect(Collectors.toList());
+    public final FromByBuilder<T> select(SubQueryMapping<T>... mappings) {
+        super.mappedItemList = Arrays.asList(mappings);
         return this;
     }
 

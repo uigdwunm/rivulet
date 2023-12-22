@@ -1,6 +1,6 @@
 package zly.rivulet.sql.describer.select;
 
-import zly.rivulet.sql.describer.meta.SQLColumnMeta;
+import zly.rivulet.sql.definer.meta.SQLColumnMeta;
 
 import java.util.Arrays;
 

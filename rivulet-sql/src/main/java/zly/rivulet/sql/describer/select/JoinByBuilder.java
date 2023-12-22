@@ -4,7 +4,7 @@ import zly.rivulet.sql.definition.query.join.JoinType;
 import zly.rivulet.sql.definition.query.join.SQLJoinType;
 import zly.rivulet.sql.describer.condition.common.Condition;
 import zly.rivulet.sql.describer.condition.common.ConditionContainer;
-import zly.rivulet.sql.describer.meta.SQLQueryMeta;
+import zly.rivulet.sql.definer.meta.SQLQueryMeta;
 import zly.rivulet.sql.describer.select.item.JoinItem;
 
 import java.util.Arrays;

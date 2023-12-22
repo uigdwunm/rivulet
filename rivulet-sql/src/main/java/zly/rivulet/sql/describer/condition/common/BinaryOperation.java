@@ -5,7 +5,7 @@ import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.sql.describer.condition.ConditionElement;
 import zly.rivulet.sql.describer.condition.ConditionOperate;
 import zly.rivulet.sql.describer.function.SQLFunction;
-import zly.rivulet.sql.describer.meta.SQLColumnMeta;
+import zly.rivulet.sql.definer.meta.SQLColumnMeta;
 import zly.rivulet.sql.describer.query_.SQLQueryMetaDesc;
 
 public interface BinaryOperation {

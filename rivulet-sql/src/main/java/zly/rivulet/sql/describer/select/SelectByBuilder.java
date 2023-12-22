@@ -1,13 +1,13 @@
 package zly.rivulet.sql.describer.select;
 
-import zly.rivulet.sql.describer.select.item.Mapping;
+import zly.rivulet.sql.describer.select.item.CommonMapping;
 
 import java.util.Arrays;
 
 public class SelectByBuilder<T> extends FromByBuilder<T> {
 
     @SafeVarargs
-    public final FromByBuilder<T> select(Mapping<T>... mappings) {
+    public final FromByBuilder<T> select(CommonMapping<T>... mappings) {
         super.mappedItemList = Arrays.asList(mappings);
         return this;
     }

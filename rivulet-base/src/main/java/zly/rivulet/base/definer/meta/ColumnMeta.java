@@ -1,19 +1,17 @@
-package zly.rivulet.sql.describer.meta;
+package zly.rivulet.base.definer.meta;
 
 import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
 import zly.rivulet.base.describer.SingleValueElementDesc;
 
-public abstract class SQLColumnMeta<C> implements SingleValueElementDesc<C> , SingleValueElementDefinition {
+public abstract class ColumnMeta<C> implements SingleValueElementDesc<C> , SingleValueElementDefinition {
 
     protected final String name;
 
-    protected final SQLQueryMeta sqlQueryMeta;
 
     protected final Class<C> type;
 
-    protected SQLColumnMeta(String name, SQLQueryMeta sqlQueryMeta, Class<C> type) {
+    protected ColumnMeta(String name, Class<C> type) {
         this.name = name;
-        this.sqlQueryMeta = sqlQueryMeta;
         this.type = type;
     }
 
@@ -26,12 +24,10 @@ public abstract class SQLColumnMeta<C> implements SingleValueElementDesc<C> , Si
         return name;
     }
 
-    public SQLQueryMeta getSqlQueryMeta() {
-        return sqlQueryMeta;
-    }
 
     @Override
     public Copier copier() {
         return new ThisCopier<>(this);
     }
+
 }

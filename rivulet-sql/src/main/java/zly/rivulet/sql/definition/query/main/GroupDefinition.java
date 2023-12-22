@@ -4,7 +4,7 @@ import zly.rivulet.base.definition.AbstractDefinition;
 import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.base.definition.singleValueElement.SingleValueElementDefinition;
-import zly.rivulet.sql.describer.meta.SQLColumnMeta;
+import zly.rivulet.sql.definer.meta.SQLColumnMeta;
 import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
 import java.util.List;

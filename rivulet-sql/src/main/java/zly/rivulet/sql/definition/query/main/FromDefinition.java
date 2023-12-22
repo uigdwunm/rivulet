@@ -5,7 +5,7 @@ import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definer.meta.SQLModelMeta;
-import zly.rivulet.sql.describer.meta.SQLQueryMeta;
+import zly.rivulet.sql.definer.meta.SQLQueryMeta;
 import zly.rivulet.sql.describer.select.item.JoinItem;
 import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 

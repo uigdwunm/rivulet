@@ -13,10 +13,10 @@ public enum ConditionOperate {
     // !=
     NE(NotEqOperateDefinition::new),
 
-    // =
+    // like
     LIKE(LikeOperateDefinition::new),
 
-    // !=
+    // not like
     NOT_LIKE(NotLikeOperateDefinition::new),
 
     // >

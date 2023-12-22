@@ -1,4 +1,4 @@
-package zly.rivulet.sql.describer.meta;
+package zly.rivulet.sql.definer.meta;
 
 import zly.rivulet.sql.describer.query_.SQLQueryMetaDesc;
 

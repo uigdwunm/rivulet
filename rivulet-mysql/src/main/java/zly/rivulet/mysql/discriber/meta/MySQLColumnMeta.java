@@ -1,7 +1,7 @@
 package zly.rivulet.mysql.discriber.meta;
 
-import zly.rivulet.sql.describer.meta.SQLColumnMeta;
-import zly.rivulet.sql.describer.meta.SQLQueryMeta;
+import zly.rivulet.sql.definer.meta.SQLColumnMeta;
+import zly.rivulet.sql.definer.meta.SQLQueryMeta;
 
 public class MySQLColumnMeta<C> extends SQLColumnMeta<C> {
 

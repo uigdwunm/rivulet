@@ -1,6 +1,6 @@
 package zly.rivulet.sql.describer.select;
 
-import zly.rivulet.sql.describer.meta.SQLQueryMeta;
+import zly.rivulet.sql.definer.meta.SQLQueryMeta;
 
 public class FromByBuilder<T> extends JoinByBuilder<T> {
 

@@ -1,27 +1,20 @@
-package zly.rivulet.sql.describer.meta;
-
-import zly.rivulet.base.definition.Definition;
-import zly.rivulet.sql.definer.meta.QueryFromMeta;
-import zly.rivulet.sql.parser.SQLAliasManager;
+package zly.rivulet.sql.definer.meta;
 
 import java.util.List;
 
 public abstract class SQLTableMeta implements SQLQueryMeta, QueryFromMeta {
     private List<SQLColumnMeta<?>> sqlColumnMetaList;
 
-    public abstract void primaryKey();
+    /**
+     * 主键
+     **/
+    public abstract List<SQLColumnMeta<?>> primaryKey();
 
     public abstract String getTableName();
 
     @Override
     public Copier copier() {
-        SQLTableMeta oneself = this;
-        return new Copier() {
-            @Override
-            public Definition copy() {
-                return oneself;
-            }
-        };
+        return new ThisCopier<>(this);
     }
 
     @Override

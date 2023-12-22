@@ -15,7 +15,7 @@ import zly.rivulet.sql.definition.query.main.*;
 import zly.rivulet.sql.definition.singleValueElement.SQLSingleValueElementDefinition;
 import zly.rivulet.sql.describer.condition.common.ConditionContainer;
 import zly.rivulet.sql.describer.custom.SQLPartCustomDesc;
-import zly.rivulet.sql.describer.meta.SQLColumnMeta;
+import zly.rivulet.sql.definer.meta.SQLColumnMeta;
 import zly.rivulet.sql.describer.query_.SQLQueryMetaDesc;
 import zly.rivulet.sql.describer.select.item.SortItem;
 import zly.rivulet.sql.parser.SQLAliasManager;
