@@ -4,11 +4,12 @@ import zly.rivulet.base.definition.AbstractDefinition;
 import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.definition.checkCondition.CheckCondition;
 import zly.rivulet.sql.definer.meta.QueryFromMeta;
-import zly.rivulet.sql.definer.meta.SQLModelMeta;
 import zly.rivulet.sql.definer.meta.SQLQueryMeta;
+import zly.rivulet.sql.definer.meta.SQLTableMeta;
 import zly.rivulet.sql.describer.select.item.JoinItem;
 import zly.rivulet.sql.parser.toolbox.SQLParserPortableToolbox;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,15 +38,15 @@ public class FromDefinition extends AbstractDefinition {
 
     }
 
-
-    public Class<?> getFromMode() {
-        if (mainFrom instanceof SQLModelMeta) {
-            return ((SQLModelMeta) mainFrom).getModelClass();
-        } else {
-            // 随便返回一个,无意义
-            return null;
-        }
-    }
+//    /**
+//     * 单表快捷查询专用
+//     **/
+//    public FromDefinition(SQLQueryMeta from) {
+//        super(CheckCondition.IS_TRUE, null);
+//
+//        this.mainFrom = (SQLTableMeta) from;
+//        this.joinRelations = Collections.emptyList();
+//    }
 
     public QueryFromMeta getMainFrom() {
         return mainFrom;

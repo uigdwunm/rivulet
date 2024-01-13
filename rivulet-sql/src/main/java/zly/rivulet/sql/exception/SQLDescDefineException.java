@@ -56,4 +56,8 @@ public class SQLDescDefineException extends RuntimeException {
     public static SQLDescDefineException repeatColumnName(List<SQLColumnMeta<?>> sqlColumnMetas) {
         return new SQLDescDefineException("多个表下存在重复的字段名" + sqlColumnMetas.get(0).getName());
     }
+
+    public static SQLDescDefineException cannotQuickQuery() {
+        return new SQLDescDefineException("当前Desc无法支持快捷查询");
+    }
 }

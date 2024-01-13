@@ -8,6 +8,7 @@ import zly.rivulet.sql.describer.condition.common.Condition;
 import zly.rivulet.sql.describer.query_.SQLQueryMetaDesc;
 import zly.rivulet.sql.describer.select.item.Mapping;
 import zly.rivulet.sql.describer.select.SQLQueryBuilder;
+import zly.rivulet.sql.describer.select.item.SortItem;
 
 import java.awt.*;
 
@@ -43,5 +44,21 @@ public class Test {
                 .where(
                         tp.id.in(Param.of(List.class, "234"))
                 ).build();
+    }
+
+    public void test2() {
+        Desc_person tp = new Desc_person();
+        SQLQueryMetaDesc<PersonDO> id = SQLQueryBuilder.mappingTo(PersonDO.class)
+                .select()
+                .from(tp)
+                .where(tp.id.eq(Param.of(Long.class, "id")))
+                .orderBy(SortItem.asc(tp.id))
+                .build();
+        MySQLRivulet rivulet = new DefaultAutoCommitMySQLRivulet();
+
+        SQLQueryMetaDesc<PersonDO> build = Desc_person.quickQueryById(123L);
+
+        rivulet.quickQueryOne()
+
     }
 }

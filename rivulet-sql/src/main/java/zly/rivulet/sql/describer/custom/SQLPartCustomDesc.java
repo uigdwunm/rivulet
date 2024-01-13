@@ -27,7 +27,7 @@ public class SQLPartCustomDesc implements CustomDesc {
     }
 
     @Override
-    public List<SingleValueElementDesc<?, ?>> getSingleValueList() {
+    public List<SingleValueElementDesc<?>> getSingleValueList() {
         return (List) this.fieldMappingList;
     }
 

@@ -24,10 +24,6 @@ public abstract class Param<C> implements SingleValueElementDesc<C> {
         this.paramCheckType = paramCheckType;
     }
 
-    protected Param(Class<C> paramType) {
-        this(paramType, null);
-    }
-
     public Class<C> getParamType() {
         return paramType;
     }
@@ -45,6 +41,15 @@ public abstract class Param<C> implements SingleValueElementDesc<C> {
     }
 
     public static <C> StaticParam<C> staticOf(C paramValue) {
-        return new StaticParam<>(paramValue);
+        return staticOf(paramValue, ParamCheckType.NATURE);
+    }
+
+    public static <C> StaticParam<C> staticOf(C paramValue, ParamCheckType paramCheckType) {
+        return new StaticParam<>(paramValue, paramCheckType);
+    }
+
+    @Override
+    public Class<C> getTargetType() {
+        return paramType;
     }
 }

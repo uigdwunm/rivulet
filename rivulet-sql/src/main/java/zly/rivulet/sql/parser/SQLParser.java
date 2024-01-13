@@ -23,6 +23,7 @@ import zly.rivulet.sql.definition.delete.SQLDeleteDefinition;
 import zly.rivulet.sql.definition.insert.SQLInsertDefinition;
 import zly.rivulet.sql.definition.query.SQLQueryDefinition;
 import zly.rivulet.sql.definition.update.SQLUpdateDefinition;
+import zly.rivulet.sql.describer.query_.SQLQueryMetaDesc;
 import zly.rivulet.sql.describer.update.SQLUpdateMetaDesc;
 import zly.rivulet.sql.parser.proxy_node.ProxyNodeManager;
 import zly.rivulet.sql.parser.proxy_node.QueryProxyNode;
@@ -113,74 +114,74 @@ public class SQLParser implements Parser {
         analyzerList.add(analyzer);
     }
 
-    @Override
-    public Blueprint parseInsertByMeta(ModelMeta modelMeta) {
-        RivuletFlag flag = RivuletFlag.INSERT;
-        Blueprint blueprint = modelMetaFlagBlueprintMap.get(modelMeta, flag);
-        if (blueprint == null) {
-            SQLModelMeta sqlModelMeta = (SQLModelMeta) modelMeta;
-            View<SQLFieldMeta> primaryFieldMeta = sqlModelMeta.getPrimaryFieldMeta();
-            if (primaryFieldMeta.size() != 1) {
-                throw ParseException.noAvailablePrimaryKey(modelMeta);
-            }
-            SQLParserPortableToolbox toolbox = new SQLParserPortableToolbox(this);
-            blueprint = new SQLInsertDefinition(sqlModelMeta, toolbox);
-            blueprint = this.analyze(blueprint);
-            modelMetaFlagBlueprintMap.put(modelMeta, flag, blueprint);
-        }
-        return blueprint;
-    }
-
-    @Override
-    public Blueprint parseUpdateByMeta(ModelMeta modelMeta) {
-        RivuletFlag flag = RivuletFlag.UPDATE;
-        Blueprint blueprint = modelMetaFlagBlueprintMap.get(modelMeta, flag);
-        if (blueprint == null) {
-            View<SQLFieldMeta> primaryFieldMeta = ((SQLModelMeta) modelMeta).getPrimaryFieldMeta();
-            if (primaryFieldMeta.size() != 1) {
-                throw ParseException.noAvailablePrimaryKey(modelMeta);
-            }
-            SQLParserPortableToolbox toolbox = new SQLParserPortableToolbox(this);
-            blueprint = new SQLUpdateDefinition(toolbox, (SQLModelMeta) modelMeta, primaryFieldMeta.get(0));
-            blueprint = this.analyze(blueprint);
-            modelMetaFlagBlueprintMap.put(modelMeta, flag, blueprint);
-        }
-        return blueprint;
-    }
-
-    @Override
-    public Blueprint parseDeleteByMeta(ModelMeta modelMeta) {
-        RivuletFlag flag = RivuletFlag.DELETE;
-        Blueprint blueprint = modelMetaFlagBlueprintMap.get(modelMeta, flag);
-        if (blueprint == null) {
-            View<SQLFieldMeta> primaryFieldMeta = ((SQLModelMeta) modelMeta).getPrimaryFieldMeta();
-            if (primaryFieldMeta.size() != 1) {
-                throw ParseException.noAvailablePrimaryKey(modelMeta);
-            }
-            SQLParserPortableToolbox toolbox = new SQLParserPortableToolbox(this);
-            blueprint = new SQLDeleteDefinition(toolbox, (SQLModelMeta) modelMeta, primaryFieldMeta.get(0));
-            blueprint = this.analyze(blueprint);
-            modelMetaFlagBlueprintMap.put(modelMeta, flag, blueprint);
-        }
-        return blueprint;
-    }
-
-    @Override
-    public Blueprint parseSelectByMeta(ModelMeta modelMeta) {
-        RivuletFlag flag = RivuletFlag.QUERY;
-        Blueprint blueprint = modelMetaFlagBlueprintMap.get(modelMeta, flag);
-        if (blueprint == null) {
-            View<SQLFieldMeta> primaryFieldMeta = ((SQLModelMeta) modelMeta).getPrimaryFieldMeta();
-            if (primaryFieldMeta.size() != 1) {
-                throw ParseException.noAvailablePrimaryKey(modelMeta);
-            }
-            SQLParserPortableToolbox toolbox = new SQLParserPortableToolbox(this);
-            blueprint = new SQLQueryDefinition(toolbox, (SQLModelMeta) modelMeta, primaryFieldMeta.get(0));
-            blueprint = this.analyze(blueprint);
-            modelMetaFlagBlueprintMap.put(modelMeta, flag, blueprint);
-        }
-        return blueprint;
-    }
+//    @Override
+//    public Blueprint parseInsertByMeta(ModelMeta modelMeta) {
+//        RivuletFlag flag = RivuletFlag.INSERT;
+//        Blueprint blueprint = modelMetaFlagBlueprintMap.get(modelMeta, flag);
+//        if (blueprint == null) {
+//            SQLModelMeta sqlModelMeta = (SQLModelMeta) modelMeta;
+//            View<SQLFieldMeta> primaryFieldMeta = sqlModelMeta.getPrimaryFieldMeta();
+//            if (primaryFieldMeta.size() != 1) {
+//                throw ParseException.noAvailablePrimaryKey(modelMeta);
+//            }
+//            SQLParserPortableToolbox toolbox = new SQLParserPortableToolbox(this);
+//            blueprint = new SQLInsertDefinition(sqlModelMeta, toolbox);
+//            blueprint = this.analyze(blueprint);
+//            modelMetaFlagBlueprintMap.put(modelMeta, flag, blueprint);
+//        }
+//        return blueprint;
+//    }
+//
+//    @Override
+//    public Blueprint parseUpdateByMeta(ModelMeta modelMeta) {
+//        RivuletFlag flag = RivuletFlag.UPDATE;
+//        Blueprint blueprint = modelMetaFlagBlueprintMap.get(modelMeta, flag);
+//        if (blueprint == null) {
+//            View<SQLFieldMeta> primaryFieldMeta = ((SQLModelMeta) modelMeta).getPrimaryFieldMeta();
+//            if (primaryFieldMeta.size() != 1) {
+//                throw ParseException.noAvailablePrimaryKey(modelMeta);
+//            }
+//            SQLParserPortableToolbox toolbox = new SQLParserPortableToolbox(this);
+//            blueprint = new SQLUpdateDefinition(toolbox, (SQLModelMeta) modelMeta, primaryFieldMeta.get(0));
+//            blueprint = this.analyze(blueprint);
+//            modelMetaFlagBlueprintMap.put(modelMeta, flag, blueprint);
+//        }
+//        return blueprint;
+//    }
+//
+//    @Override
+//    public Blueprint parseDeleteByMeta(ModelMeta modelMeta) {
+//        RivuletFlag flag = RivuletFlag.DELETE;
+//        Blueprint blueprint = modelMetaFlagBlueprintMap.get(modelMeta, flag);
+//        if (blueprint == null) {
+//            View<SQLFieldMeta> primaryFieldMeta = ((SQLModelMeta) modelMeta).getPrimaryFieldMeta();
+//            if (primaryFieldMeta.size() != 1) {
+//                throw ParseException.noAvailablePrimaryKey(modelMeta);
+//            }
+//            SQLParserPortableToolbox toolbox = new SQLParserPortableToolbox(this);
+//            blueprint = new SQLDeleteDefinition(toolbox, (SQLModelMeta) modelMeta, primaryFieldMeta.get(0));
+//            blueprint = this.analyze(blueprint);
+//            modelMetaFlagBlueprintMap.put(modelMeta, flag, blueprint);
+//        }
+//        return blueprint;
+//    }
+//
+//    @Override
+//    public Blueprint parseSelectByMeta(ModelMeta modelMeta) {
+//        RivuletFlag flag = RivuletFlag.QUERY;
+//        Blueprint blueprint = modelMetaFlagBlueprintMap.get(modelMeta, flag);
+//        if (blueprint == null) {
+//            View<SQLFieldMeta> primaryFieldMeta = ((SQLModelMeta) modelMeta).getPrimaryFieldMeta();
+//            if (primaryFieldMeta.size() != 1) {
+//                throw ParseException.noAvailablePrimaryKey(modelMeta);
+//            }
+//            SQLParserPortableToolbox toolbox = new SQLParserPortableToolbox(this);
+//            blueprint = new SQLQueryDefinition(toolbox, (SQLModelMeta) modelMeta, primaryFieldMeta.get(0));
+//            blueprint = this.analyze(blueprint);
+//            modelMetaFlagBlueprintMap.put(modelMeta, flag, blueprint);
+//        }
+//        return blueprint;
+//    }
 
     @Override
     public SQLDefiner getDefiner() {

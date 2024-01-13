@@ -9,6 +9,7 @@ import zly.rivulet.base.describer.param.Param;
 import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.base.utils.CollectionUtils;
 import zly.rivulet.base.utils.MapUtils;
+import zly.rivulet.sql.assigner.SQLQueryResultAssigner;
 import zly.rivulet.sql.definer.meta.QueryFromMeta;
 import zly.rivulet.sql.definition.SQLBlueprint;
 import zly.rivulet.sql.definition.query.main.*;
@@ -111,7 +112,11 @@ public class SQLQueryDefinition extends SQLBlueprint implements QueryFromMeta, S
                 );
         }
 
-        this.assigner = selectDefinition.getAssigner();
+        this.assigner = new SQLQueryResultAssigner(
+                toolbox.getSqlPreParser().getConvertorManager(),
+                metaDesc.getResultModelClass(),
+                selectDefinition.getSetMappingList()
+        );
     }
 
     private SQLQueryDefinition(

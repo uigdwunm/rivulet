@@ -3,11 +3,11 @@ package zly.rivulet.sql.describer.select;
 
 import zly.rivulet.base.definition.Definition;
 import zly.rivulet.base.describer.param.Param;
+import zly.rivulet.sql.definer.meta.SQLColumnMeta;
+import zly.rivulet.sql.definer.meta.SQLQueryMeta;
+import zly.rivulet.sql.definer.meta.SQLSubQueryMeta;
 import zly.rivulet.sql.describer.condition.common.ConditionContainer;
 import zly.rivulet.sql.describer.custom.SQLPartCustomDesc;
-import zly.rivulet.sql.definer.meta.SQLColumnMeta;
-import zly.rivulet.sql.definer.meta.SQLSubQueryMeta;
-import zly.rivulet.sql.definer.meta.SQLQueryMeta;
 import zly.rivulet.sql.describer.query_.SQLQueryMetaDesc;
 import zly.rivulet.sql.describer.select.item.JoinItem;
 import zly.rivulet.sql.describer.select.item.Mapping;

@@ -9,18 +9,13 @@ import zly.rivulet.base.exception.UnbelievableException;
 import zly.rivulet.base.parser.ParamReceiptManager;
 import zly.rivulet.base.parser.toolbox.ParserPortableToolbox;
 import zly.rivulet.sql.SQLRivuletProperties;
-import zly.rivulet.sql.definer.meta.QueryFromMeta;
-import zly.rivulet.sql.definer.meta.SQLModelMeta;
+import zly.rivulet.sql.definer.meta.*;
 import zly.rivulet.sql.definition.function.SQLFunctionDefinition;
 import zly.rivulet.sql.definition.query.SQLQueryDefinition;
 import zly.rivulet.sql.definition.query.mapping.SelectItemDefinition;
 import zly.rivulet.sql.definition.query.operate.OperateDefinition;
 import zly.rivulet.sql.describer.condition.common.Condition;
 import zly.rivulet.sql.describer.function.SQLFunction;
-import zly.rivulet.sql.definer.meta.SQLColumnMeta;
-import zly.rivulet.sql.definer.meta.SQLQueryMeta;
-import zly.rivulet.sql.definer.meta.SQLSubQueryMeta;
-import zly.rivulet.sql.definer.meta.SQLTableMeta;
 import zly.rivulet.sql.describer.query_.SQLQueryMetaDesc;
 import zly.rivulet.sql.exception.SQLDescDefineException;
 import zly.rivulet.sql.parser.SQLAliasManager;
@@ -44,12 +39,6 @@ public class SQLParserPortableToolbox implements ParserPortableToolbox {
      * 子查询循环检测
      **/
     private final Set<WholeDesc> subQueryCycleCheck = new HashSet<>();
-
-    /**
-     * 整个语句中会可能会有多个子查询，每个子查询必须要有自己的ProxyNode，要不解析会乱套
-     * 所以从缓存拿ProxyNode没问题，但是只能拿一次，如果出现重复的，一定得新建
-     **/
-    private final Set<SQLModelMeta> repeatProxyModelCheck = new HashSet<>();
 
     public SQLParserPortableToolbox(SQLParser sqlPreParser) {
         this.sqlPreParser = sqlPreParser;
@@ -94,9 +83,9 @@ public class SQLParserPortableToolbox implements ParserPortableToolbox {
             return new SelectItemDefinition(sqlColumnMeta, sqlQueryMeta);
         } else if (singleValueElementDesc instanceof SQLQueryMetaDesc) {
             // 子查询类型
-            SQLQueryMetaDesc<?> sqlQueryMetaDesc = (SQLQueryMetaDesc<?>) singleValueElementDesc;
-            sqlAliasManager.suggestAlias(sqlQueryMetaDesc, null);
-            SQLQueryDefinition subSQLQuery = (SQLQueryDefinition) sqlPreParser.parse(sqlQueryMetaDesc, this);
+            SQLQueryMetaDesc<?> sqlSubQueryMetaDesc = (SQLQueryMetaDesc<?>) singleValueElementDesc;
+            sqlAliasManager.suggestAlias(sqlSubQueryMetaDesc, null);
+            SQLQueryDefinition subSQLQuery = new SQLQueryDefinition(this, sqlSubQueryMetaDesc);
             return new SelectItemDefinition(subSQLQuery, null);
         } else if (singleValueElementDesc instanceof Param) {
             // 参数类型
@@ -141,16 +130,6 @@ public class SQLParserPortableToolbox implements ParserPortableToolbox {
     public void finishParse(WholeDesc wholeDesc) {
         // 撤销检查
         subQueryCycleCheck.remove(wholeDesc);
-    }
-
-    /**
-     * Description 重复检查，true是检查通过，false是不通过存在重复
-     *
-     * @author zhaolaiyuan
-     * Date 2022/10/27 8:41
-     **/
-    public boolean repeatProxyNodeCheck(SQLModelMeta sqlModelMeta) {
-        return repeatProxyModelCheck.add(sqlModelMeta);
     }
 
     public QueryFromMeta parseQueryFromMeta(SQLQueryMeta sqlQueryMeta) {

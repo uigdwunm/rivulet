@@ -11,13 +11,5 @@ public interface Parser {
 
     void addAnalyzer(Analyzer analyzer);
 
-    Blueprint parseInsertByMeta(ModelMeta modelMeta);
-
-    Blueprint parseUpdateByMeta(ModelMeta modelMeta);
-
-    Blueprint parseDeleteByMeta(ModelMeta modelMeta);
-
-    Blueprint parseSelectByMeta(ModelMeta modelMeta);
-
     Definer getDefiner();
 }

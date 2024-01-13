@@ -66,21 +66,12 @@ public abstract class Rivulet {
     /*-------------------------------------------------- 单个查询 --------------------------------------------------*/
 
     /**
-     * 通过预定义desc的key，查询单个
+     * 通过预定义desc的key，查询单条数据
      **/
     public <T> T queryOneByDescKey(String descKey, Map<String, Object> params) {
         // 解析definition
         Blueprint blueprint = rivuletManager.getBlueprintByDescKey(descKey);
         return this.queryOneByBlueprint(blueprint, new SimpleParamManager(params));
-    }
-
-    /**
-     * 通过id查询单个DO对象
-     **/
-    public <T, I> T queryById(I id, Class<T> modelClass) {
-        ModelMeta modelMeta = definer.createOrGetModelMeta(modelClass);
-        Blueprint blueprint = this.parser.parseSelectByMeta(modelMeta);
-        return this.queryOneByBlueprint(blueprint, Collections.singletonMap(Constant.MAIN_ID, id));
     }
 
     /**
@@ -115,24 +106,6 @@ public abstract class Rivulet {
         // 解析definition
         Blueprint blueprint = rivuletManager.getBlueprintByDescKey(descKey);
         this.queryManyByBlueprint(blueprint, params, resultContainer);
-    }
-
-    /**
-     * 通过传入的idList，查询DO模型列表
-     **/
-    public <T, I> List<T> queryByIds(Collection<I> ids, Class<T> modelClass) {
-        List<T> list = new LinkedList<>();
-        this.queryByIds(ids, modelClass, list);
-        return list;
-    }
-
-    /**
-     * 通过传入的idList，查询DO模型列表
-     **/
-    public <T, I> void queryByIds(Collection<I> ids, Class<T> modelClass, Collection<T> resultContainer) {
-        ModelMeta modelMeta = definer.createOrGetModelMeta(modelClass);
-        Blueprint blueprint = this.parser.parseSelectByMeta(modelMeta);
-        this.queryManyByBlueprint(blueprint, Collections.singletonMap(Constant.MAIN_IDS, ids), resultContainer);
     }
 
     /**

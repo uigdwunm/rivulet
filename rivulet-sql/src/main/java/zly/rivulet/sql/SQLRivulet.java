@@ -8,6 +8,9 @@ import zly.rivulet.base.generator.param_manager.for_proxy_method.SimpleParamMana
 import zly.rivulet.base.pipeline.ExecutePlan;
 import zly.rivulet.base.utils.ClassUtils;
 import zly.rivulet.base.utils.TwofoldConcurrentHashMap;
+import zly.rivulet.sql.definer.meta.SQLColumnMeta;
+import zly.rivulet.sql.definer.meta.SQLTableMeta;
+import zly.rivulet.sql.describer.query_.SQLQueryMetaDesc;
 import zly.rivulet.sql.pipeline.SQLQueryManyExecutePlan;
 import zly.rivulet.sql.pipeline.SQLQueryOneExecutePlan;
 import zly.rivulet.sql.pipeline.SQLUpdateOneExecutePlan;
@@ -17,6 +20,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 public abstract class SQLRivulet extends Rivulet {
 
@@ -67,6 +71,12 @@ public abstract class SQLRivulet extends Rivulet {
     }
 
     /*-------------------------------------------------- 查询单个 --------------------------------------------------*/
+
+    public <T> T quickQueryOne(SQLQueryMetaDesc<?> sqlQueryMetaDesc) {
+        // 单个查询
+        kwk
+
+    }
 
     @Override
     public <T> T queryOneByBlueprint(Blueprint blueprint, ParamManager paramManager) {

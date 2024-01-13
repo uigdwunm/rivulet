@@ -1,11 +1,8 @@
 package zly.rivulet.sql.describer.select;
 
-import zly.rivulet.base.describer.SingleValueElementDesc;
-import zly.rivulet.sql.describer.select.item.Mapping;
 import zly.rivulet.sql.describer.select.item.SubQueryMapping;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public class SubQuerySelectByBuilder<T> extends FromByBuilder<T> {
 

@@ -1,7 +1,5 @@
 package zly.rivulet.base.generator.param_manager.for_proxy_method;
 
-import zly.rivulet.base.definition.param.PathKeyParamReceipt;
-
 import java.util.Map;
 import java.util.function.Function;
 
